@@ -16,7 +16,7 @@
     const draw = t => C.renderFrame(ctx, show.scenes, Math.min(t, show.duration));
     G.renderAt = t => { draw(t); return true; };
     G.renderSoundtrack = () => {
-      const buf = G.Soundtrack.render({ duration: show.duration, sfx: show.sfx });
+      const buf = G.Soundtrack.render({ duration: show.duration, sfx: show.sfx, style: show.style });
       const i16 = new Int16Array(buf.length);
       for (let i = 0; i < buf.length; i++) i16[i] = Math.max(-1, Math.min(1, buf[i])) * 32767;
       let s = ''; const u8 = new Uint8Array(i16.buffer);
@@ -31,7 +31,7 @@
     function play() {
       if (!actx) {
         actx = new (G.AudioContext || G.webkitAudioContext)();
-        const data = G.Soundtrack.render({ duration: show.duration, sfx: show.sfx });
+        const data = G.Soundtrack.render({ duration: show.duration, sfx: show.sfx, style: show.style });
         music = actx.createBuffer(1, data.length, G.Soundtrack.SR); music.copyToChannel(data, 0);
       }
       if (offset >= show.duration) offset = 0;

@@ -2,6 +2,8 @@
 
 **Status:** plan and ~14 s preview only. The full build waits for the go-ahead ("run").
 
+> **Style update:** at the user's request, the look moved from doodle collage to a **vintage print-ad collage** (halftone dot printing, aged paper, hard cuts about every 1–2 s with slow push-ins, pasted word strips in retro type, fake newsprint, and a jazzy bed with vinyl crackle). The new engine is `js/print.js`. `preview.html` is the new look and `preview-doodle.html` keeps the first version. The storyboard below still applies; each scene becomes 2–4 quick cuts in the print style.
+
 ## Constraints found
 
 | Item | Finding | Consequence |

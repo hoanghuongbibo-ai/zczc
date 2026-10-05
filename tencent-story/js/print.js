@@ -70,9 +70,9 @@
       const [dx, dy] = L.reg || [0, 0]; // slight misregistration per ink
       if (L.solid) { // flat ink: tint the mask and print it with a little texture
         mg.globalCompositeOperation = 'source-in'; mg.fillStyle = L.color; mg.fillRect(0, 0, w, h);
-        g.save(); g.globalAlpha = L.alpha ?? .95; g.globalCompositeOperation = 'multiply'; g.drawImage(m, dx, dy); g.restore();
+        g.save(); g.globalAlpha = L.alpha ?? .95; g.globalCompositeOperation = L.blend || 'multiply'; g.drawImage(m, dx, dy); g.restore();
       } else {
-        halftone(g, m, { color: L.color, cell: L.cell, angle: L.angle, ox: dx, oy: dy, alpha: L.alpha, blend: 'multiply' });
+        halftone(g, m, { color: L.color, cell: L.cell, angle: L.angle, ox: dx, oy: dy, alpha: L.alpha, blend: L.blend || 'multiply' });
       }
     }
     // overall wear: re-apply paper texture on top so inks look absorbed

@@ -35,7 +35,7 @@ execFileSync('ffmpeg', ['-y', '-loglevel', 'error',
   '-framerate', String(fps), '-i', path.join(tmp, 'f%05d.png'),
   '-f', 's16le', '-ar', '44100', '-ac', '1', '-i', path.join(tmp, 'music.raw'),
   '-i', path.join(root, narration),
-  '-filter_complex', '[1:a][2:a]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]',
+  '-filter_complex', '[1:a][2:a]amix=inputs=2:duration=first:normalize=0,volume=-1.5dB,alimiter=limit=0.89[a]',
   '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-crf', '20', '-c:a', 'aac', '-b:a', '160k',
   '-t', String(duration), path.resolve(root, out)], { stdio: 'inherit' });
 fs.rmSync(tmp, { recursive: true, force: true });

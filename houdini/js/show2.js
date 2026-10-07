@@ -119,7 +119,8 @@
     FX.dateTag(ctx, '1926');
   }
   function q5(ctx, lt, dur, t) { // a war over whether the dead can speak
-    const slam = FX.settle(clamp(since(t, 'war') / .2));
+    const slam = FX.settle(clamp(lt / .35));                       // both sides are there from the cut
+    const crack = FX.settle(clamp(since(t, 'war') / .2));          // the crack and "A WAR" land on the word
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.05), 640, 380);
     shape(ctx, '#3a4a5a', 0, rect(-400, -300, 1040 + 400, 1300)); shape(ctx, '#3a2430', 0, rect(640, -300, 1100, 1300));
     glow(ctx, 330, 380, 400, 'rgba(255,240,220,.15)'); glow(ctx, 960, 420, 400, 'rgba(255,180,120,.18)');
@@ -131,7 +132,7 @@
     shape(ctx, '#3a2018', 4, rect(lerp(1300, 820, slam), 560, 300, 40, 6));
     ctx.save(); ctx.translate(lerp(1480, 960, slam) + 90, 520 - rise); ctx.rotate(-.5); glow(ctx, 0, 0, 120 * sp, `rgba(255,220,140,${.5 * sp})`); shape(ctx, '#c9a14a', 4, poly([[-10, -8], [70, -36], [70, 36], [-10, 8]])); ctx.restore();
     // the crack between them
-    if (slam > 0) { ctx.save(); ctx.globalAlpha = clamp(slam * 2); line(ctx, [[640, -100], [612, 120], [668, 260], [620, 420], [662, 560], [630, 800]], 10, '#f1ead8'); ctx.restore(); }
+    if (crack > 0) { ctx.save(); ctx.globalAlpha = clamp(crack * 2); line(ctx, [[640, -100], [612, 120], [668, 260], [620, 420], [662, 560], [630, 800]], 10, '#f1ead8'); ctx.restore(); }
     ctx.restore();
     if (since(t, 'war') > 0) FX.bigText(ctx, 'A WAR', 640, 110, 90, { color: '#f1ead8' });
     FX.caption(ctx, 'CAN THE DEAD SPEAK?', lt, Math.max(.2, since(t, 'speak') + lt - .1));

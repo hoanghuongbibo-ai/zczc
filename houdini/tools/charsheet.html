@@ -1,0 +1,50 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }</style>
+<canvas id="c" width="2400" height="2620"></canvas>
+<script src="../js/chars.js"></script>
+<script>
+const c = document.getElementById('c'), g = c.getContext('2d'), C = Chars;
+const label = (t, x, y, size = 30) => { g.font = `700 ${size}px Fredoka`; g.fillStyle = '#2b2622'; g.textAlign = 'center'; g.fillText(t, x, y); };
+const fig = (x, y, s, pose, rot = 0) => { g.save(); g.translate(x, y); g.rotate(rot); g.scale(s, s); C.figure(g, pose); g.restore(); };
+const head = (x, y, s, key, face) => { g.save(); g.translate(x, y); g.scale(s, s); g.translate(-C.HEAD.neck[0], -C.HEAD.neck[1] - 140); C.HEADS[key](g, face); g.restore(); };
+const img = new Image(); img.src = '../assets/img/houdini-suit.png';
+document.fonts.load('700 30px Fredoka').then(() => { img.onload = draw; if (img.complete) draw(); });
+let done = false;
+function draw() {
+  if (done) return; done = true;
+  g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 2400, 2620);
+  g.font = '700 54px Fredoka'; g.fillStyle = '#2b2622'; g.textAlign = 'left'; g.fillText('HOUDINI — CHARACTER SHEET', 60, 80);
+  // ---- row 1: reference vs rebuild, then outfit / pose variations ----
+  const S = .42, base = 760;
+  g.drawImage(img, 60, base - 1461 * S, 533 * S, 1461 * S); label('your reference', 172, base + 50, 24);
+  fig(420, base - 10, S, { hands: { L: [-26, -800], R: [26, -800] }, handShape: { L: 'steeple', R: 'steeple' }, feet: { L: [-115, -40], R: [115, -40] } }); label('rebuild', 420, base + 50, 24);
+  fig(720, base - 10, S, { hands: { L: [-110, -470], R: [330, -1080] }, handShape: { R: 'open' }, face: { mouth: 'smile', brows: 'calm', look: [.6, -.1] }, feet: { L: [-90, -40], R: [100, -40] }, headTilt: -.06 }); label('stage: presenting', 720, base + 50, 24);
+  fig(1060, base - 10, S, { outfit: 'swim', hands: { L: [-300, -1180], R: [300, -1180] }, face: { mouth: 'smile', brows: 'up', look: [.3, -.3] }, feet: { L: [-110, -40], R: [110, -40] } }); label('swimsuit: ta-da!', 1060, base + 50, 24);
+  fig(1420, base - 10, S, { outfit: 'gown', hands: { L: [-150, -440], R: [150, -440] }, face: { mouth: 'frown', brows: 'worried', look: [.3, -.5] }, feet: { L: [-70, -40], R: [70, -40] }, lean: .03 }); label('hospital gown', 1420, base + 50, 24);
+  fig(1760, base - 10, S, { hands: { L: [40, -560], R: [180, -640] }, handShape: { L: 'fist', R: 'open' }, face: { mouth: 'grit', brows: 'strain', eyes: .5, look: [0, .3] }, lean: -.22, feet: { L: [-60, -40], R: [110, -40] }, headTilt: .15 }); label('the punch', 1760, base + 50, 24);
+  fig(2120, base - 10, S, { hands: { L: [-110, -470], R: [110, -470] }, handShape: { L: 'fist', R: 'fist' }, face: { mouth: 'flat', brows: 'calm', look: [.7, 0] }, feet: { L: [-80, -40], R: [80, -40] } }); label('walking / neutral', 2120, base + 50, 24);
+  // ---- row 2: escape poses ----
+  const r2 = 1420;
+  fig(230, r2 - 640, S, { outfit: 'straitjacket', face: { mouth: 'grit', brows: 'strain', look: [0, -.8] }, feet: { L: [-30, -40], R: [30, -40] }, headTilt: .08 }, Math.PI); label('straitjacket, upside down', 230, r2 + 50, 24);
+  fig(640, r2 - 640, S, { outfit: 'swim', hands: { L: [-180, -560], R: [180, -560] }, face: { mouth: 'flat', brows: 'calm', look: [.2, .3] }, feet: { L: [-30, -40], R: [30, -40] } }, Math.PI + .04); label('water cell (calm, holding breath)', 640, r2 + 50, 24);
+  fig(1500, r2 - 130, S, { outfit: 'swim', hands: { L: [-40, -620], R: [40, -620] }, face: { mouth: 'flat', brows: 'calm', look: [0, -.7] }, feet: { L: [-50, -40], R: [50, -40] } }, -Math.PI / 2); label('lying in the coffin', 1200, r2 + 50, 24);
+  fig(2140, r2 - 40, S, { outfit: 'swim', hands: { L: [-260, -900], R: [260, -1240] }, handShape: { R: 'open' }, face: { mouth: 'smile', brows: 'smug', look: [.6, 0] }, lean: -.05, feet: { L: [-60, -40], R: [60, -40] } }); label('climbing out: waves', 2140, r2 + 50, 24);
+  // ---- row 3: expressions ----
+  const r3 = 1720; label('EXPRESSIONS', 140, r3 - 10, 30);
+  [['smug', 'smug', 'smirk', 1, [0, 0]], ['calm', 'calm', 'flat', 1, [.4, 0]], ['worried', 'worried', 'frown', 1, [.3, -.6]], ['straining', 'strain', 'grit', .6, [0, .2]], ['surprised', 'up', 'o', 1, [.5, -.2]], ['at peace', 'calm', 'flat', 0, [0, 0]]]
+    .forEach(([n, b, m, e, lk], i) => { head(330 + i * 340, r3 + 160, .62, 'houdini', { brows: b, mouth: m, eyes: e, look: lk }); label(n, 330 + i * 340, r3 + 220, 24); });
+  // ---- row 4: the supporting cast ----
+  const r4 = 2560; g.font = '700 30px Fredoka'; g.textAlign = 'left'; g.fillText('SUPPORTING CAST', 60, r4 - 560);
+  const cast = [
+    ['doctor', { head: 'doctor', outfit: 'doctorCoat', hands: { L: [-60, -700], R: [60, -700] }, face: { brows: 'worried', mouth: 'frown', look: [.4, .2] } }],
+    ['nurse', { head: 'nurse', outfit: 'nurseDress', hands: { L: [-30, -620], R: [30, -620] }, face: { brows: 'worried', mouth: 'flat', look: [.3, .3] } }],
+    ['stage assistant', { head: 'assistant', outfit: 'assistantVest', hands: { L: [-150, -460], R: [260, -800] }, handShape: { L: 'fist' }, face: { brows: 'calm', mouth: 'smile', look: [.5, 0] } }],
+    ['the young man', { head: 'young', outfit: 'sweater', hands: { L: [-120, -470], R: [100, -620] }, handShape: { R: 'fist' }, face: { brows: 'strain', mouth: 'flat', look: [.6, 0] } }],
+    ['crowd: bowler hat', { head: 'bowler', outfit: 'overcoat', hands: { L: [-110, -470], R: [110, -470] }, face: { brows: 'up', mouth: 'o', look: [0, -.8] } }],
+    ['crowd: cloche hat', { head: 'cloche', outfit: 'dress20s', hands: { L: [-40, -760], R: [40, -760] }, face: { brows: 'up', mouth: 'o', look: [0, -.8] } }],
+  ];
+  cast.forEach(([n, pose], i) => { fig(220 + i * 330, r4 - 40, .34, { feet: { L: [-70, -40], R: [70, -40] }, ...pose }); label(n, 220 + i * 330, r4 + 10, 24); });
+  C.seanceHand(g, 2250, r4 - 200, -.3, .9); label('séance hand', 2190, r4 + 10, 24);
+  window.DONE = true;
+}
+</script>

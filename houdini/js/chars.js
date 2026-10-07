@@ -64,19 +64,43 @@
   const rot = (p, o, a) => { const c = Math.cos(a), s = Math.sin(a), x = p[0] - o[0], y = p[1] - o[1]; return [o[0] + x * c - y * s, o[1] + x * s + y * c]; };
 
   // ---------- hands ----------
+  // Pieces of one hand are unioned: every outline is stroked first, then every fill, so the
+  // silhouette has a single clean contour and the joins between palm and fingers stay seamless.
+  function union(ctx, paths, fill, lw = LW) {
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    for (const p of paths) { ctx.beginPath(); p(ctx); ctx.lineWidth = lw * 2; ctx.strokeStyle = INK; ctx.stroke(); }
+    ctx.fillStyle = fill; for (const p of paths) { ctx.beginPath(); p(ctx); ctx.fill(); }
+  }
+  const crease = (ctx, a, b, w = 3) => stroke(ctx, [a, b], w, 'rgba(29,26,23,.55)');
+  const finger = (x, y, ang, len, w) => limb([x, y], [x + Math.sin(ang) * len, y + Math.cos(ang) * len], w, w - 2);
   function hand(ctx, at, dir, shape, skin, size = 1) {
+    if (shape === 'none') return;                                                                  // hidden (e.g. inside a handshake drawn separately)
     ctx.save(); ctx.translate(at[0], at[1]); ctx.rotate(dir - Math.PI / 2); ctx.scale(size, size);  // local +y points along the forearm
-    if (shape === 'fist') {
-      part(ctx, smooth([[-26, -6], [24, -8], [30, 26], [16, 46], [-18, 46], [-30, 24]]), skin);
-      stroke(ctx, [[-14, 24], [20, 24]], 3); stroke(ctx, [[-12, 36], [18, 36]], 3);
-    } else if (shape === 'point') {
-      part(ctx, smooth([[-24, -6], [22, -8], [28, 24], [12, 40], [-20, 38], [-28, 18]]), skin);
-      part(ctx, smooth([[-6, 30], [6, 30], [8, 92], [-6, 94]]), skin, 4.5);
-    } else { // open / relaxed: palm + four fingers + thumb
-      part(ctx, smooth([[-26, -6], [24, -8], [30, 30], [-28, 30]]), skin);
-      for (const [fx, len] of [[-20, 48], [-7, 58], [7, 56], [20, 46]]) part(ctx, smooth([[fx - 7, 22], [fx + 7, 22], [fx + 6, 22 + len], [fx - 5, 22 + len]]), skin, 4);
-      part(ctx, smooth([[22, 0], [44, 14], [50, 42], [38, 46], [24, 24]]), skin, 4);
+    if (shape === 'fist' || shape === 'point') {
+      const knuck = [-18, -6, 6, 18].map(x => c => c.arc(x, 38, 10, 0, Math.PI * 2));
+      const palm = c => c.roundRect(-26, -8, 52, 48, 16);
+      union(ctx, shape === 'point' ? [palm, ...knuck, finger(16, 30, 0, 62, 15)] : [palm, ...knuck], skin);
+      for (const x of [-12, 0, 12]) crease(ctx, [x, 32], [x, 44]);
+      part(ctx, limb([22, 8], [2, 24], 14, 12), skin, 4);                                        // thumb folded across
+    } else { // open / relaxed: palm, four slightly fanned fingers, thumb out to the side
+      union(ctx, [c => c.roundRect(-25, -8, 50, 44, 15), finger(-18, 26, -.16, 30, 13), finger(-6, 28, -.05, 42, 14), finger(6, 28, .05, 46, 14), finger(17, 26, .14, 38, 13), limb([18, 8], [40, 34], 16, 14)], skin);
+      for (const x of [-12, 0, 12]) crease(ctx, [x, 30], [x + x * .05, 44]);
     }
+    ctx.restore();
+  }
+  // Side view of two hands shaking, clasp at (x, y). A comes from the left, B from the right.
+  function handshake(ctx, x, y, s, o = {}) {
+    const A = o.skinA || HCOL.skin, B = o.skinB || '#e7b08a';
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    const reach = o.reach ?? 460;
+    if (reach) { part(ctx, limb([-reach, 26], [-84, 4], 104, 92), o.sleeveA || '#323235'); part(ctx, limb([reach, 26], [84, 4], 104, 92), o.sleeveB || '#7a6a4a'); }
+    if (o.cuffA) part(ctx, limb([-92, 4], [-64, 2], 78, 78), o.cuffA, 4);
+    if (o.cuffB) part(ctx, limb([92, 4], [64, 2], 78, 78), o.cuffB, 4);
+    union(ctx, [c => c.ellipse(26, 4, 66, 40, 0, 0, Math.PI * 2)], B);                              // B's palm, behind
+    union(ctx, [c => c.ellipse(-22, 4, 60, 44, 0, 0, Math.PI * 2), ...[0, 1, 2, 3].map(i => limb([-10, -24 + i * 17], [40, -16 + i * 16], 17, 15))], A);  // A's hand: fingers wrap over B's
+    for (let i = 1; i < 4; i++) crease(ctx, [6, -32 + i * 17], [40, -24 + i * 16]);
+    crease(ctx, [-40, -30], [-60, 20], 3);                                                               // knuckle line on the back of A's hand
+    part(ctx, limb([70, -30], [-8, -46], 22, 19), B, 4.5);                                             // B's thumb across the top
     ctx.restore();
   }
 
@@ -276,7 +300,7 @@
 
   const HEADS = { houdini: houdiniHead };
 
-  G.Chars = { figure, part, stroke, smooth, poly, limb, ik, rot, hand, HEADS, OUTFITS, SK, HEAD, HCOL, INK, LW };
+  G.Chars = { figure, part, stroke, smooth, poly, limb, ik, rot, hand, handshake, union, HEADS, OUTFITS, SK, HEAD, HCOL, INK, LW };
 
   // ======================= supporting cast =======================
   // Heads share Houdini's construction (image-space coords → L()), but with their own faces.

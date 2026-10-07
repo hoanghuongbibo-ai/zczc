@@ -433,16 +433,13 @@
     FX.darkBg(ctx, '#2a2420');
     const meet = FX.approach(lt, .05, 1, 0, .12), shake = lt > .5 ? Math.sin((lt - .5) * 14) * 10 * Math.exp(-(lt - .5) * 2) : 0;
     ctx.save(); ctx.translate(0, shake);
-    for (const [s, sleeve, cuff] of [[-1, '#2b2b2e', '#fbf0db'], [1, '#7a6a4a', '#efe9dc']]) {
-      const x = 640 + s * (10 + meet * 500);
-      shape(ctx, sleeve, 5, rect(s < 0 ? x - 640 : x + 60, 340, 580, 120, 30));
-      ctx.save(); ctx.translate(x + s * 40, 400); ctx.scale(s, 1); shape(ctx, cuff, 4, rect(-10, -64, 34, 128, 6)); shape(ctx, s < 0 ? Ch.HCOL.skin : '#e7b08a', 5, smooth([[-10, -54], [-80, -60], [-120, -30], [-118, 30], [-70, 56], [-10, 50]])); ctx.restore(); // fingers point toward the other hand
-      if (s > 0) for (let i = 0; i < 5; i++) line(ctx, [[x + 90 + i * 100, 350], [x + 70 + i * 100, 450]], 2.5, 'rgba(60,40,20,.35)');   // tweed
-    }
-    if (meet < .15) { // the tweed hand's fingers wrap over Houdini's: a clear clasp
-      for (let i = 0; i < 4; i++) Ch.part(ctx, smooth([[686 - i * 22, 352], [660 - i * 22, 344], [640 - i * 22, 372], [648 - i * 22, 420], [672 - i * 22, 424]]), '#e7b08a', 4);
-      Ch.part(ctx, smooth([[600, 330], [650, 320], [690, 340], [660, 356], [610, 352]]), Ch.HCOL.skin, 4);           // Houdini's thumb on top
-    }
+    if (meet > .03) { // the two hands reach in, open, from either side
+      for (const [s, sleeve, cuff, skin] of [[-1, '#2b2b2e', '#fbf0db', Ch.HCOL.skin], [1, '#7a6a4a', '#efe9dc', '#e7b08a']]) {
+        const x = 640 + s * (110 + meet * 500);
+        Ch.part(ctx, Ch.limb([x + s * 560, 420], [x, 400], 120, 108), sleeve); Ch.part(ctx, Ch.limb([x + s * 10, 400], [x - s * 20, 400], 92, 92), cuff, 4);
+        ctx.save(); ctx.translate(x - s * 24, 400); ctx.scale(-s, 1); Ch.hand(ctx, [0, 0], 0, 'open', skin, 1.5); ctx.restore();   // mirrored for the right-hand side so both thumbs point up
+      }
+    } else Ch.handshake(ctx, 640, 400, 1.3, { reach: 560, sleeveA: '#2b2b2e', sleeveB: '#7a6a4a', cuffA: '#fbf0db', cuffB: '#efe9dc', skinB: '#e7b08a' });
     ctx.restore();
     FX.stamp(ctx, 'CRUSADE', 640, 560, since(t, 'crusade'), { color: '#a8322a', size: 74 });
     FX.caption(ctx, 'A FRIENDSHIP', lt, .3, W - 60, 60);

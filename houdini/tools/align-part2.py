@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+"""Align the Part 2 script to the narration's word timings and write js/timing2.js.
+
+The pocketsphinx transcript (JSON: [{a, b, words: [[word, start, end], ...]}, ...]) is matched to
+the script word-by-word with difflib; unmatched script words are interpolated between matched
+neighbours. Each shot anchor is the start time of a phrase in the script.
+
+usage: python3 tools/align-part2.py transcript.json narration.mp3
+"""
+import difflib, json, os, re, subprocess, sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SCRIPT = """
+So what actually killed Harry Houdini? And why has his death never been allowed to be ordinary?
+The answer runs through a dressing room in Montreal, a hotel suite in Atlantic City, a seance room in Boston,
+and a secret code he left for his wife. Because Houdini didn't just die on Halloween. He died in the middle of
+a war, a war over whether the dead can speak.
+The man with a method.
+He was born Erik Weisz in Budapest in 1874 and grew up in an immigrant Jewish family in the United States.
+By the early 1900s, he was an international star. His act rested on one promise: whatever you lock him in,
+he gets out. Underneath that promise was a conviction. Every escape had a method. Locks could be studied.
+Bodies could be trained. Nothing he did on stage required anything supernatural.
+In 1913, his mother, Cecilia, died. Houdini was devastated. And like many grieving people of his era, he went
+looking for her. That search led him into a booming movement. Spiritualism, the belief that the living can
+contact the dead, usually through a medium, had existed since the 1800s. After the mass death of World War I
+and the influenza pandemic, it surged again. Families crowded into darkened rooms, waiting for a knock, a voice,
+a message. Houdini sat with medium after medium. None convinced him. Tricks were his profession, and he
+recognized them. That could have made him a quiet skeptic and nothing more. Instead, a friendship turned it
+into a crusade.
+"""
+ANCHORS = [  # key → phrase that starts the beat (first occurrence after the previous anchor)
+    ('q1', 'so what actually'), ('ordinary', 'ordinary'), ('q2', 'and why has'), ('q3', 'the answer runs'),
+    ('montreal', 'montreal'), ('atlantic', 'atlantic'), ('boston', 'boston'), ('code', 'secret code'),
+    ('q4', 'because houdini'), ('halloween', 'halloween'), ('q5', 'he died in'), ('war', 'war'), ('speak', 'speak'),
+    ('m1', 'the man with'), ('born', 'he was born'), ('immigrant', 'and grew up'), ('star', 'by the early'),
+    ('promise', 'his act rested'), ('getsOut', 'gets out'), ('underneath', 'underneath'), ('trained', 'bodies could'),
+    ('nothing', 'nothing he did'), ('supernatural', 'supernatural'), ('y1913', 'in 1913'), ('looking', 'and like many'),
+    ('search', 'that search'), ('spiritualism', 'spiritualism'), ('after', 'after the mass'), ('families', 'families crowded'),
+    ('knock', 'knock'), ('voice', 'voice'), ('message', 'message'), ('sat', 'houdini sat'), ('tricks', 'tricks were'),
+    ('could', 'that could'), ('nothing2', 'nothing more'), ('instead', 'instead'), ('crusade', 'crusade'),
+]
+NUM = {'1874': 'eighteen seventy four', '1900s': 'nineteen hundreds', '1913': 'nineteen thirteen', '1800s': 'eighteen hundreds', 'i': 'one'}
+
+def words(text):
+    out = []
+    for w in re.findall(r"[a-z0-9']+", text.lower()):
+        out += NUM.get(w, w).split()
+    return out
+
+def main(tr_path, audio):
+    tr = json.load(open(tr_path))
+    asr = [(w[0].lower(), w[1]) for seg in tr for w in seg['words']]
+    sw = words(SCRIPT)
+    sm = difflib.SequenceMatcher(a=sw, b=[w for w, _ in asr], autojunk=False)
+    times = [None] * len(sw)
+    for blk in sm.get_matching_blocks():
+        for k in range(blk.size): times[blk.a + k] = asr[blk.b + k][1]
+    # interpolate gaps between matched words
+    known = [i for i, v in enumerate(times) if v is not None]
+    for i in range(len(sw)):
+        if times[i] is None:
+            lo = max([k for k in known if k < i], default=None); hi = min([k for k in known if k > i], default=None)
+            if lo is None: times[i] = times[hi]
+            elif hi is None: times[i] = times[lo] + .35 * (i - lo)
+            else: times[i] = times[lo] + (times[hi] - times[lo]) * (i - lo) / (hi - lo)
+    out, pos = {}, 0
+    for key, phrase in ANCHORS:
+        p = words(phrase)
+        for i in range(pos, len(sw) - len(p) + 1):
+            if sw[i:i + len(p)] == p: out[key] = round(times[i], 2); pos = i + 1; break
+        else: raise SystemExit(f'anchor not found: {key} / {phrase}')
+    dur = float(subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', audio], capture_output=True, text=True).stdout)
+    out['end'] = round(dur, 2)
+    matched = sum(1 for b in sm.get_matching_blocks() for _ in range(b.size))
+    with open(os.path.join(ROOT, 'js/timing2.js'), 'w') as f:
+        f.write('/* Generated by tools/align-part2.py — Part 2 word anchors (s into narration-part2.mp3). */\n')
+        f.write('window.T2 = ' + json.dumps(out, indent=1) + ';\n')
+    print(f'{matched}/{len(sw)} script words matched; {len(out)} anchors; duration {dur:.2f}s')
+
+if __name__ == '__main__':
+    main(sys.argv[1], sys.argv[2])

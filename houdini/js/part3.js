@@ -64,11 +64,11 @@
     shape(ctx, D, 0, rect(-12, -320, 24, 30, 6)); shape(ctx, D, 0, ellipse(0, -360, 34, 40)); shape(ctx, D, 0, smooth([[-36, -372], [-20, -404], [24, -404], [38, -372], [10, -384]]));
     // punching arm: shoulder at (-20,-270). Pull: elbow back; hit: fully extended forward (toward -x)
     const sh = [-24, -268], ext = hit, back = pull * (1 - hit);
-    const elbow = [sh[0] - 60 * ext + 50 * back, sh[1] + 30 - 10 * ext + 20 * back], fist = [sh[0] - 170 * ext + 70 * back, sh[1] + 20 * (1 - ext) - 10 * back + 40 * ext];
+    const elbow = [sh[0] - 70 * ext + 50 * back, sh[1] + 60 + 20 * ext + 20 * back], fist = [sh[0] - 170 * ext + 70 * back, sh[1] + 50 * (1 - ext) - 10 * back + 110 * ext]; // drives low, into the abdomen
     ctx.lineCap = 'round'; ctx.strokeStyle = D; ctx.lineWidth = 30; ctx.beginPath(); ctx.moveTo(...sh); ctx.lineTo(...elbow); ctx.lineTo(...fist); ctx.stroke();
     shape(ctx, D, 0, circle(fist[0], fist[1], 22));
     ctx.restore();
-    return [x + (sh[0] - 170 * hit) * s, y + (sh[1] + 40 * hit) * s];
+    return [x + (sh[0] - 170 * hit) * s, y + (sh[1] + 110 * hit) * s];
   }
   function shotPunch(ctx, lt, dur, t) {
     const tHit = 30.12 - G.HT.punch;                               // impact lands on "punch"

@@ -334,11 +334,18 @@
     canBody(ctx, X, Y, Wc, Hc, true);
     if (lt > .08 && lt < .5) { const r = rng(5); for (let i = 0; i < 14; i++) { const k = lt - .08, a = -Math.PI / 2 + (r() - .5) * 1.6, v = 300 + r() * 260; const px = X + Math.cos(a) * v * k, py = mouthY + Math.sin(a) * v * k + 1100 * k * k; shape(ctx, '#bfe3ef', 2, T.ellipse(px, py, 7, 10)); } } // splash
     if (lt > lidT - lidFall) { const ly = mouthY - lid; shape(ctx, '#aab2b7', 5, T.ellipse(X, ly - 8, Wc * .36, 22)); shape(ctx, '#8b9398', 5, rect(X - 26, ly - 46, 52, 30, 8)); }
-    for (const [i, lx] of [[0, X - 140], [1, X + 140]]) { // padlocks snap shut on the collar
+    if (lt >= lidT) for (const s of [-1, 1]) { // hasps: hinged on the lid rim, folded down over staples riveted to the collar
+      const hx = X + s * 96, fold = FX.settle(clamp((lt - lidT - .02) / .1));
+      ctx.save(); ctx.translate(hx, mouthY - 10); ctx.scale(1, lerp(-.3, 1, fold));
+      shape(ctx, '#7d868b', 4, rect(-10, 0, 20, 58, 4)); shape(ctx, '#2a2f33', 2, rect(-4, 40, 8, 12, 2)); ctx.restore();
+      shape(ctx, '#5d656b', 3, rect(hx - 9, mouthY + 34, 18, 16, 3));                                   // staple on the collar
+    }
+    for (const [i, s] of [[0, -1], [1, 1]]) { // padlock shackle passes through hasp + staple, then snaps shut
       const k = lt - (lidT + .14 + i * .1); if (k <= 0) continue;
-      const sc = FX.settle(k / .12);
-      ctx.save(); ctx.translate(lx, mouthY + 30); ctx.scale(sc, sc);
-      shape(ctx, null, 7, c => c.arc(0, -18, 16, Math.PI, 0)); shape(ctx, '#c9a14a', 4, rect(-22, -18, 44, 38, 6)); ctx.fillStyle = FX.INK; ctx.beginPath(); ctx.arc(0, -2, 4, 0, 7); ctx.fill(); ctx.restore();
+      const hx = X + s * 96, sw = FX.ring(k, .25, 2.2, 4);                                                // swings, then hangs still
+      ctx.save(); ctx.translate(hx, mouthY + 44); ctx.rotate(sw); ctx.scale(FX.settle(k / .1), FX.settle(k / .1));
+      shape(ctx, null, 6, c => c.arc(0, 8, 12, Math.PI, 0)); shape(ctx, '#c9a14a', 4, rect(-17, 8, 34, 30, 5));
+      ctx.fillStyle = FX.INK; ctx.beginPath(); ctx.arc(0, 20, 3.5, 0, 7); ctx.fill(); ctx.fillRect(-1.5, 21, 3, 8); ctx.restore();
     }
     if (lt > lidT + .25) for (let i = 0; i < 3; i++) { const k = ((lt - lidT - .25) * 1.6 + i / 3) % 1; shape(ctx, '#bfe3ef', 2, T.ellipse(X + 120 - i * 50, mouthY + 20 + k * 400, 5, 8)); } // water leaking from the rim
     ctx.restore();
@@ -350,29 +357,35 @@
   // ================= 02D — the water torture cell (held) =================
   function shotWaterCell(ctx, lt, dur, t) {
     const TX = 640, top = 120, bot = 690, tw = 300, S = .36, ank = [266, 1370];
-    const drift = Math.sin(t * 1.1) * .03, bob = Math.sin(t * .8) * 4;                // gentle buoyant sway, nothing more
+    const lidY = top - 10, water = top + 10;                                          // stocks board at ankle height; tank filled to the brim
+    const drift = Math.sin(t * 1.1) * .025, bob = 0;                                  // ankles are clamped: he can only sway from them
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.12), 640, 400);
     shape(ctx, '#1f2a3d', 0, rect(-400, -300, 2100, 1300));
     for (let x = -400; x < 1700; x += 78) shape(ctx, '#18212f', 0, rect(x + 22, -300, 22, 1300));
     shape(ctx, '#3e3027', 0, rect(-400, 690, 2100, 300));
     glow(ctx, TX, 420, 380, 'rgba(160,210,255,.22)');
     // water volume behind him
-    ctx.fillStyle = grad(ctx, 0, top + 40, 0, bot, [[0, 'rgba(120,190,220,.55)'], [1, 'rgba(40,110,150,.75)']]); ctx.fillRect(TX - tw / 2, top + 40, tw, bot - top - 40);
-    // him, head-down, ankles locked in the stocks
-    ctx.save(); ctx.beginPath(); ctx.rect(TX - tw / 2, top, tw, bot - top); ctx.clip();
-    ctx.translate(TX, top + 30 + bob); ctx.rotate(Math.PI + drift);
-    G.Rig.drawSuit(ctx, -ank[0] * S, -ank[1] * S, S, { irons: true, look: [.1, .3], blink: G.Rig.blinkAt(t, [16.2], .35), breathe: 0 });
+    ctx.fillStyle = grad(ctx, 0, water, 0, bot, [[0, 'rgba(120,190,220,.55)'], [1, 'rgba(40,110,150,.75)']]); ctx.fillRect(TX - tw / 2, water, tw, bot - water);
+    // him, head-down; the ankle pivot sits exactly in the stocks, feet stick out above the lid
+    ctx.save(); ctx.translate(TX, lidY); ctx.rotate(Math.PI + drift);
+    G.Rig.drawSuit(ctx, -ank[0] * S, -ank[1] * S, S, { look: [.1, .3], blink: G.Rig.blinkAt(t, [16.2], .35), breathe: 0 });
     ctx.restore();
-    // bubbles from his mouth rising to the surface (his head is at the bottom)
-    const mouth = [TX + Math.sin(drift) * 160 - 8, top + 30 + bob + 1461 * S - 70];
-    for (let i = 0; i < 9; i++) { const k = ((lt * .55 + i / 9) % 1), wob = Math.sin(k * 14 + i) * 8; const yy = lerp(mouth[1], top + 50, k); shape(ctx, 'rgba(230,248,255,.5)', 2.5, circle(mouth[0] + wob + i % 3 * 6, yy, 4 + k * 7)); }
+    // bubbles from his mouth rise toward his feet (the surface) and gather under the lid
+    const mouthR = 1461 * S - 70 - (1461 - ank[1]) * S, mouth = [TX - Math.sin(drift) * mouthR - 8, lidY + Math.cos(drift) * mouthR];
+    for (let i = 0; i < 9; i++) { const k = ((lt * .55 + i / 9) % 1), wob = Math.sin(k * 14 + i) * 8; const yy = lerp(mouth[1], water + 12, k); shape(ctx, 'rgba(230,248,255,.5)', 2.5, circle(mouth[0] + wob + i % 3 * 6, yy, 4 + k * 7)); }
     // water surface, caustic ripples, glass and frame on top
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = .12; for (let i = 0; i < 6; i++) { const y = top + 80 + i * 90 + Math.sin(t * 1.4 + i) * 8; line(ctx, [[TX - tw / 2, y], [TX - 40, y + 14], [TX + tw / 2, y - 6]], 3, '#e8fbff'); } ctx.restore();
-    line(ctx, [[TX - tw / 2, top + 40 + Math.sin(t * 2) * 2], [TX + tw / 2, top + 40 - Math.sin(t * 2) * 2]], 3, 'rgba(230,248,255,.8)');
+    line(ctx, [[TX - tw / 2, water + Math.sin(t * 2) * 1.5], [TX + tw / 2, water - Math.sin(t * 2) * 1.5]], 3, 'rgba(230,248,255,.8)');
     ctx.fillStyle = 'rgba(220,240,255,.1)'; ctx.fillRect(TX - tw / 2, top, tw, bot - top);
     line(ctx, [[TX - tw / 2 + 24, top + 60], [TX - tw / 2 + 24, bot - 40]], 6, 'rgba(255,255,255,.35)');
     for (const x of [TX - tw / 2, TX + tw / 2]) shape(ctx, '#6f777c', 4, rect(x - 10, top - 10, 20, bot - top + 20, 4));
-    shape(ctx, '#5c4637', 4, rect(TX - tw / 2 - 30, top - 40, tw + 60, 46, 4));    // stocks lid clamping the ankles
+    // stocks lid: two half-boards closed around the ankles, hasps + padlocks on both ends
+    shape(ctx, '#5c4637', 4, rect(TX - tw / 2 - 30, lidY - 16, tw + 60, 32, 4)); line(ctx, [[TX - tw / 2 - 30, lidY], [TX + tw / 2 + 30, lidY]], 3);
+    for (const ax of [(266 - 150) * S, (266 - 370) * S]) { const x = TX + ax * Math.cos(drift); shape(ctx, '#2a1f18', 3, T.ellipse(x, lidY, 16, 7)); }
+    for (const s of [-1, 1]) { const x = TX + s * (tw / 2 + 12);
+      shape(ctx, '#7d868b', 3.5, rect(x - 8, lidY - 14, 16, 46, 3));
+      ctx.save(); ctx.translate(x, lidY + 36); ctx.rotate(Math.sin(t * .9 + s) * .04);
+      shape(ctx, null, 5, c => c.arc(0, 6, 10, Math.PI, 0)); shape(ctx, '#c9a14a', 3.5, rect(-14, 6, 28, 26, 4)); ctx.restore(); }
     shape(ctx, '#6f777c', 4, rect(TX - tw / 2 - 20, bot - 6, tw + 40, 26, 4));
     ctx.restore();
     FX.vignette(ctx, 640, 400, .6);

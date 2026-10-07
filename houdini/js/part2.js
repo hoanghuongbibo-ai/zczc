@@ -61,16 +61,19 @@
     FX.caption(ctx, 'HOTEL SHELTON POOL, NEW YORK', lt, .4);
   }
   function shotCoffinSeal(ctx, lt, dur, t) {
-    const lidX = FX.approach(lt, .05, 1300, CF.x, .09);           // lid slides across and seats
+    const lower = Math.min(1, ease.in(prog(lt, .02, .3))), lidS = lerp(1.22, 1, lower), lidX = CF.x;  // lowered toward the coffin from above
+    const lidLand = lt >= .3 ? FX.ring(lt - .3, .012, 6, 18) : 0;                                         // a hard metal landing
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.18, 1.26), 600, 380);
     poolDeck(ctx); coffinOpen(ctx);
     lyingHoudini(ctx, 1, t, [0, -.4], 0);
     // the closing lid steals the light from his face
-    const gap = clamp((lidX - CF.l / 2 - (CF.x - CF.l / 2)) / CF.l);
+    const gap = 1 - lower;
     ctx.save(); ctx.globalAlpha = .55 * (1 - gap); ctx.fillStyle = '#000'; ctx.fillRect(CF.x - CF.l / 2 + 20, CF.y - CF.w / 2 + 20, CF.l - 40, CF.w - 40); ctx.restore();
-    T.shadow(ctx, lidX + 10, CF.y + 14, CF.l * .5, CF.w * .5, .3, 8);
+    T.shadow(ctx, lidX + 10 + 60 * gap, CF.y + 14 + 50 * gap, CF.l * .5 * (1 + gap * .2), CF.w * .5 * (1 + gap * .2), .3 + .2 * lower, 8 + 14 * gap); // shadow sharpens as it nears
+    ctx.save(); ctx.translate(lidX, CF.y); ctx.scale(lidS + lidLand, lidS + lidLand); ctx.translate(-lidX, -CF.y);
     shape(ctx, grad(ctx, 0, CF.y - CF.w / 2, 0, CF.y + CF.w / 2, [[0, '#b7bfc4'], [1, '#8f989d']]), 5, rect(lidX - CF.l / 2, CF.y - CF.w / 2, CF.l, CF.w, 10));
     line(ctx, [[lidX - CF.l / 2 + 30, CF.y - CF.w / 2 + 26], [lidX + CF.l / 2 - 30, CF.y - CF.w / 2 + 26]], 4, 'rgba(255,255,255,.35)');
+    ctx.restore();
     if (lt > .32) bolts(ctx, t, G.Part2T.seal + .32);
     ctx.restore();
     FX.vignette(ctx, 640, 380, .5);
@@ -104,6 +107,7 @@
     const tilt = lt < land ? Math.sin(lt * 3) * .04 : FX.ring(lt - land, .03, 1.2, 4);
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.05), 640, 380);
     underwater(ctx, t);
+    for (const dx of [-290, 290]) { const ax = 640 + dx * Math.cos(tilt), ay = y - 55 + dx * Math.sin(tilt); line(ctx, [[640 + dx * 1.05, 40], [ax, ay]], 4, '#cbbf9e'); } // lowering ropes
     coffinSide(ctx, 640, y, tilt);
     for (let i = 0; i < 10; i++) { const k = ((lt * .7 + i / 10) % 1); shape(ctx, 'rgba(230,248,255,.5)', 2, circle(380 + i * 55 + Math.sin(k * 12 + i) * 6, y - 60 - k * 520, 3 + k * 6)); }  // air escaping the seams
     if (lt > land) { const k = lt - land; ctx.save(); ctx.globalAlpha = clamp(.5 - k * .5); ctx.fillStyle = '#9fc6d4'; for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(640 + s * (340 + k * 120), 636 - k * 20, 60 + k * 90, 18 + k * 20, 0, 0, 7); ctx.fill(); } ctx.restore(); } // silt puff on landing
@@ -135,7 +139,7 @@
 
   // ================= 03E — the lid swings open and he sits up =================
   function shotClimbOut(ctx, lt, dur, t) {
-    const lidA = FX.settle(prog(lt, 0, .3)) * 1.72;                 // hinged lid swings up, just past vertical, and settles
+    const lidA = FX.settle(prog(lt, 0, .3)) * 1.48;                 // lid swings up on its back hinge to just short of vertical
     const sit = ease.out(prog(lt, .12, .62));                       // he sits up from lying
     const CX = 640, CY = 520;
     ctx.save(); cam(ctx, 1.04, 640, 400);
@@ -144,12 +148,13 @@
     ctx.fillStyle = grad(ctx, 0, 560, 0, 720, [[0, '#5fa9c4'], [1, '#3b88a8']]); ctx.fillRect(-400, 600, 2100, 300); shape(ctx, '#cfc8b6', 4, rect(-400, 580, 2100, 24));
     // him: hips are the pivot; only what is above the coffin's rim is visible
     const S = .4, hip = [266, 900];
+    // the lid, seen edge-on from the side: hinged on the far long edge, so it rises as a panel behind him
+    const lidH = 110 * Math.sin(lidA); shape(ctx, '#aab2b7', 5, rect(CX - 330, CY - 55 - lidH, 660, Math.max(8, lidH), 6));
     ctx.save(); ctx.beginPath(); ctx.rect(0, -400, 1280, CY - 50 + 400); ctx.clip();
     ctx.translate(CX + 120, CY - 30); ctx.rotate(lerp(-Math.PI / 2, -.18, sit));
     G.Rig.drawSuit(ctx, -hip[0] * S, -hip[1] * S, S, { look: [.5, .2], blink: G.Rig.blinkAt(t, [22.75]) });
     ctx.restore();
     coffinSide(ctx, CX, CY, 0);
-    ctx.save(); ctx.translate(CX + 330, CY - 55); ctx.rotate(lidA); shape(ctx, '#b7bfc4', 5, rect(-660, -16, 660, 20, 6)); ctx.restore();
     ctx.restore();
     FX.vignette(ctx, 640, 380, .45);
     FX.dateTag(ctx, '5 AUG 1926');

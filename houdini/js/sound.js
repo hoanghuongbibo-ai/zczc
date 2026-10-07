@@ -55,6 +55,16 @@
     hit(b, t) { tone(b, t, .45, x => 90 - x * 80, 1, 7); noise(b, t, .1, .8, .1, k => 1 - k, 15); },
     swell(b, t) { noise(b, t, 1.2, .35, .03, k => k * k * (1 - k) * 4, 16); },
     paper(b, t) { noise(b, t, .12, .9, .35, k => Math.pow(1 - k, 2), 17); },
+    splash(b, t) { noise(b, t, .7, .9, .25, k => Math.pow(1 - k, 2), 21); noise(b, t + .05, .5, .5, .06, k => Math.sin(Math.PI * k) * (1 - k), 22); },
+    bubbles(b, t) { const r = rng(23); for (let i = 0; i < 14; i++) { const tt = t + i * .11 + r() * .06, f0 = 500 + r() * 700; tone(b, tt, .07, x => f0 + x * 4000, .18, 30); } },
+    ratchet(b, t) { for (let k = 0; k < 5; k++) { noise(b, t + k * .055, .012, .9, .9, q => 1 - q, 30 + k); tone(b, t + k * .055, .04, () => 1900, .1, 70); } },
+    creak(b, t) { tone(b, t, .45, x => 180 + Math.sin(x * 40) * 30 + x * 120, .25, 4); noise(b, t, .45, .2, .08, k => Math.sin(Math.PI * k), 24); },
+    scratch(b, t) { const r = rng(25); for (let i = 0; i < 8; i++) noise(b, t + i * .06 + r() * .02, .045, .5, .5, k => Math.sin(Math.PI * k), 40 + i); },
+    thud(b, t) { tone(b, t, .3, x => 110 - x * 160, .9, 12); noise(b, t, .08, .7, .12, k => 1 - k, 26); },
+    press(b, t) { for (let i = 0; i < 9; i++) { tone(b, t + i * .07, .06, () => 70, .5, 30); noise(b, t + i * .07, .03, .5, .4, k => 1 - k, 50 + i); } },
+    slide(b, t) { noise(b, t, .25, .45, .3, k => Math.sin(Math.PI * k), 27); },
+    wind(b, t) { noise(b, t, 3, .35, .02, k => Math.sin(Math.PI * k), 28); },
+    boom(b, t) { tone(b, t, 2.2, x => 55 - x * 8, 1, 1.6); noise(b, t, .3, .6, .05, k => 1 - k, 29); },
     window(b, t) { noise(b, t, .9, .25, .05, k => Math.sin(Math.PI * k), 18); }, // soft air as we pass through the glass
   };
 
@@ -76,6 +86,11 @@
       const end = (cues.find(x => x.t > c.t) || { t: dur }).t;
       for (let t = c.t, k = 0; t < end; t += 2.5, k++) bowed(m, t, [62, 65, 62, 61][k % 4], Math.min(2.6, end - t), .1);
     }
+    for (let t = 0; t < dur; t += .02) {
+      const md = moodAt(t);
+      if (md === 'under' || md === 'mystery') { const s0 = at(m, t); for (let i = 0; i < .02 * SR && s0 + i < m.length; i++) { const x = (s0 + i) / SR; m[s0 + i] += (Math.sin(2 * Math.PI * 49 * x) * .5 + Math.sin(2 * Math.PI * 73.4 * x) * .25 * (md === 'mystery' ? 1 : .3)) * .16; } }
+    }
+    for (let t = 0, k = 0; t < dur; t += 1.6, k++) if (moodAt(t) === 'mystery') piano(m, t, [[74], [77], [73], [70]][k % 4], .32, 1.2);
     // gramophone-ish room hiss under everything
     const r = rng(5); let lp = 0;
     for (let i = 0; i < m.length; i++) { lp += (r() - lp) * .05; m[i] += lp * .02; }

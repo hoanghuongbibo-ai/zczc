@@ -1,37 +1,70 @@
-# Houdini opening: "The Death of Harry Houdini" (plan)
+# "The Death of Harry Houdini": opening sequence
 
-**Status:** a 12 s preview covers Part 01 and the start of Part 02. The full build (≈ 40 s) waits for "run".
+**Status:** built. Open `index.html` to play it, or watch `out/houdini-opening.mp4` (42 s, 1280×720, 30 fps). `preview.html` is the 12 s preview.
 
-## Inputs
+## Style
 
-- `assets/audio/narration.mp3`: the user's narration (36.4 s, all eight parts).
-- `assets/img/houdini-bed.png` and `houdini-suit.png`: the user's character art. The suit image had a fake checkerboard background baked in, so it was cut out to real transparency.
-- Look: matches the character art. Clean black outlines, flat muted fills, soft shading and a light grain. Every set, prop and supporting figure is drawn in code (Canvas 2D) to match.
+The style is learned from the user's two reference clips (motion and design techniques only; nothing from them is copied):
 
-## Timing (word-level, from a pocketsphinx transcript of the narration)
+- **Sets:** flat colour bands, soft vignettes and a centre glow.
+- **Labels:** a paper date tag top-left, plus paper caption strips.
+- **Camera:** slow, steady push-ins and hard cuts.
+- **Graphic beats:** counters that ease out, stamps that slam with an overshoot, newspapers dropping in, evidence sliding into place.
+- **Fonts:** Fredoka and Luckiest Guy (OFL licences in `assets/fonts/`).
 
-| Part | Time | Narration anchor | Shots |
-|---|---|---|---|
-| 01 Death | 0.0–7.1 | "died" at 6.47 | Hospital exterior push-in to the lit window (0–4.15), a match cut into the dim room with the doctor and nurse as silhouettes (4.15–5.45), a pan across glass → pocket watch → handcuffs → the limp hand (5.45–7.1), then black |
-| 02 Escapes | 7.7–17.2 | "handcuffs" 12.09 · "straitjackets" 12.79 · "milk cans" 13.68 · "tank" 14.76 | 02A: medium shot of Houdini, then a close-up as the cuffs click open on "getting out" 9.95, "things" 10.39 and "killed" 11.14. Then hard cuts: 02B a straitjacket upside down over the street, 02C a match cut into the milk can (locks snap, water leaks), 02D the water torture cell, held until 17.2 |
-| 03 91 minutes | 17.2–22.7 | "coffin" 19.45 · "swimming pool" 20.5 · "ninety-one minutes" 21.3 · "climbed out" 22.36 | An overhead shot of him lying in the coffin, the lid clangs and bolts tighten (19.5), it sinks underwater into muffled silence, a counter runs 01 → 20 → 45 → 70 → 91 MIN, then the lid opens and he sits up |
-| 04 Match cut | 22.7–23.4 | — | His body climbing out matches his body lying in the hospital bed |
-| 05 Official cause | 23.4–27.6 | "fifty-two" 24.25 · "ruptured appendix" 26.3 | Pull back from the bed, then a death record with **AGE — 52**, then **RUPTURED APPENDIX** and a clinical torso diagram where the appendix swells and ruptures |
-| 06 But… | 27.6–30.9 | "newspapers" 28.44 · "stranger's punch" 29.5–30.1 | Newspapers slam down over the record, presses run and stacks pile up (HOUDINI / PUNCH / DEATH). Then a silhouette reconstruction in the dressing room: the arm pulls back and the frame freezes at impact on "punch" |
-| 07 Prophecy | 30.9–33.1 | "prophecy" 32.1 | A séance table with a candle flicker and clippings. A hand places a card and the camera moves to a circled date while the portrait fades into darkness |
-| 08 Dig him up | 33.1–36.4 (+ title ≈ 4 s) | "dig him up" 35.46 | Evidence pieces laid out around a photo, a cold morning in the cemetery, a slow track to the grave marker, silence, then black and the title card |
+## Character rig (`js/rig.js`)
 
-## Audio
+The user's two character images are sliced into cut-out puppets:
 
-- **Narration:** the user's file, unedited.
-- **Score:** procedural, in `js/sound.js`:
-  - *Still* (hospital): sparse low piano chords and a clock tick.
-  - *Tense* (escapes): a pulsing low-string ostinato and faster ticks, building through Part 02.
-  - *Silence*: underwater and at the grave.
-- **Foley:** cuff clicks and rattles, metal clangs and bolts, bubbles and muffled water, newspaper slams, a printing-press run, a punch hit and a candle.
+- **Parts:** head on a neck pivot, hands on a wrist pivot, and a collar overlay that hides the seam. Hidden fills (neck, vest, shirt front) sit behind every cut.
+- **Eyes:** repainted inside exact eye-white masks generated from the art (`assets/img/rig/`), so the outlines and the brows that cut into the eyes are untouched. This drives blinks and eye direction.
+- **Extra modes:** straitjacket overlay, ankle irons, silhouette tint (the punch reconstruction) and sepia print (old photographs).
 
-## Files
+## Motion rules
 
-- `preview.html` and `js/preview.js` are the preview.
-- `js/toon.js` holds the flat-cartoon drawing helpers, camera and finishing.
-- `js/player.js` and `tools/export-video.mjs` handle playback and rendering. The exporter launches Chromium with file access so the canvas can be read back when the PNG art loads from disk.
+The physics lives in `js/common.js`: closed-form functions of time, so any frame renders directly.
+
+- **Settle:** overshoot-and-settle for snaps (cuffs springing, padlocks, stamps).
+- **Gravity:** the milk-can lid lands exactly on the clang, and the cuffs fall away.
+- **Damped pendulums:** the chain swinging free from the remaining cuff, the hanging chains jolted by each release.
+- **Critically damped approach:** the coffin lid sliding shut, evidence settling, the grave push stopping.
+- **Anticipation:** his wrists brace before each cuff opens, and the stranger's arm pulls back before the punch. The frame freezes at impact on the word "punch".
+- **Motivated eyes:** to camera, then to the cuffs; to the window in the hospital; closed and still once he is dead.
+
+## Timeline (cuts on narration word timings)
+
+| Time | Part | Shot |
+|---|---|---|
+| 0.0 | 01 | Grace Hospital exterior, push to the lit window |
+| 3.95 | 01 | The room: bed (breathing, slow blink), doctor and nurse from behind |
+| 5.4 | 01 | Glass → pocket watch at 1:26 → handcuffs → the limp hand ("died"); cut to black |
+| 7.7 | 02 | On stage, wide: sway, smug tilt, glance at the cuffs |
+| 9.6 | 02 | Close-up on the hands: cuffs spring open on "getting out", "things" and "killed" |
+| 12.05 | 02 | Suspended straitjacket over the street (1915): the struggle drives the swing, and the camera rolls with him |
+| 13.6 | 02 | Milk can (1908): he sinks in, the lid drops, padlocks snap, water leaks |
+| 14.75 | 02 | Water torture cell (1912), held: head-down in the tank, bubbles rising |
+| 17.15 | 03 | Overhead, Hotel Shelton pool (5 Aug 1926): he lies down in the coffin |
+| 19.25 | 03 | Lid slides shut (clang), bolts tighten one by one |
+| 20.0 | 03 | Underwater: the coffin sinks with drag and lands with a silt puff |
+| 21.15 | 03 | 01 → 91 MIN counter with an hourglass |
+| 22.25 | 03 | Lid swings open; he sits up |
+| 22.9 | 04–05 | Match cut to the bed: eyes closed, pull back ("dead at fifty-two") |
+| 25.2 | 05 | Death record: AGE 52 highlighted, the physician signs |
+| 26.25 | 05 | RUPTURED APPENDIX stamped on the cause line |
+| 26.9 | 05 | Clinical diagram: the appendix swells and ruptures |
+| 27.6 | 06 | Three newspapers slam down (HOUDINI / PUNCH / DEATH) |
+| 28.85 | 06 | Presses run and the stack grows |
+| 29.4 | 06 | Silhouette reconstruction: wind-up, punch, freeze at impact |
+| 30.9 | 07 | Séance table: a hand places the OCT 31 card, the portrait fades, the candle gutters |
+| 33.1 | 08 | Evidence slides in around his photo (2007) |
+| 34.5 | 08 | Machpelah Cemetery, a cold morning, track in |
+| 35.35 | 08 | The HOUDINI grave marker; the camera eases to a stop, then silence |
+| 38.2 | — | Title: THE DEATH OF HARRY HOUDINI |
+
+## Rebuild
+
+```
+node tools/export-video.mjs index.html out/houdini-opening.mp4 30
+```
+
+The exporter needs Chromium launched with file access (it is in the script), so the canvas can read the PNG art from disk.

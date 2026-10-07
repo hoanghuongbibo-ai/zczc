@@ -56,8 +56,44 @@
     suitParts = { body: cutLayer(img, [SUIT.head, SUIT.hands]), head: clipLayer(img, SUIT.head), collar: clipLayer(img, SUIT.collar), hands: clipLayer(img, SUIT.hands) };
     return suitParts;
   }
-  // pose: { sway (rad), breathe (0..1), headRot (rad), headX, headY, look [x,y], blink 0..1, handsY, handsRot }
+  // Canvas straitjacket strapped over the torso and crossed arms (image space).
+  function straitjacket(ctx, t) {
+    const lw = 5, CAN = '#d8cdb0', SH = '#b9ad8f', STRAP = '#7a5a3a';
+    const body = c => { c.moveTo(118, 496); c.lineTo(414, 496); c.quadraticCurveTo(468, 560, 456, 700); c.lineTo(436, 900); c.lineTo(104, 900); c.lineTo(80, 700); c.quadraticCurveTo(70, 560, 118, 496); c.closePath(); };
+    ctx.beginPath(); body(ctx); ctx.fillStyle = CAN; ctx.fill(); ctx.lineWidth = lw; ctx.strokeStyle = INK; ctx.stroke();
+    // crossed sleeves wrapping the front
+    for (const [a, b2, c2] of [[[96, 560], [300, 760], [440, 700]], [[438, 560], [234, 760], [94, 700]]]) {
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.quadraticCurveTo(b2[0], b2[1] - 120, c2[0], c2[1]); ctx.lineWidth = 74; ctx.strokeStyle = INK; ctx.lineCap = 'round'; ctx.stroke();
+      ctx.lineWidth = 64; ctx.strokeStyle = SH; ctx.stroke();
+    }
+    // straps with buckles, collar
+    for (const y of [610, 800]) {
+      ctx.fillStyle = STRAP; ctx.fillRect(84, y - 14, 370, 28); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.strokeRect(84, y - 14, 370, 28);
+      ctx.fillStyle = '#c9a14a'; ctx.fillRect(250, y - 18, 36, 36); ctx.strokeRect(250, y - 18, 36, 36); ctx.fillStyle = STRAP; ctx.fillRect(258, y - 10, 20, 20);
+    }
+    ctx.beginPath(); ctx.moveTo(180, 470); ctx.quadraticCurveTo(266, 520, 352, 470); ctx.lineTo(360, 500); ctx.quadraticCurveTo(266, 548, 172, 500); ctx.closePath(); ctx.fillStyle = SH; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.stroke();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = 'rgba(29,26,23,.3)'; for (const [x1, y1, x2, y2] of [[150, 660, 180, 880], [380, 660, 352, 880], [266, 830, 266, 896]]) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+  }
+  function ankleIrons(ctx) { // stocks/irons clamped around both ankles (image space)
+    ctx.fillStyle = '#6f777c'; ctx.lineWidth = 5; ctx.strokeStyle = INK;
+    for (const x of [150, 370]) { ctx.beginPath(); ctx.roundRect(x - 64, 1352, 128, 34, 8); ctx.fill(); ctx.stroke(); }
+    ctx.beginPath(); ctx.roundRect(60, 1338, 420, 16, 6); ctx.fillStyle = '#5d656b'; ctx.fill(); ctx.stroke();
+  }
+
+  // pose: { sway (rad), breathe (0..1), headRot (rad), headX, headY, look [x,y], blink 0..1, handsY, handsRot,
+  //         jacket (bool), irons (bool), tint (css colour → silhouette), filter (css filter, e.g. sepia) }
+  const suitBuf = document.createElement('canvas');
   function drawSuit(ctx, x, y, s, pose = {}) {
+    if (pose.tint || pose.filter) { // render the whole puppet flat, then composite as silhouette / old photo
+      const img = T.IMG.suit; suitBuf.width = img.width; suitBuf.height = img.height;
+      const g = suitBuf.getContext('2d'); drawSuitRaw(g, 0, 0, 1, pose);
+      if (pose.tint) { g.globalCompositeOperation = 'source-in'; g.fillStyle = pose.tint; g.fillRect(0, 0, img.width, img.height); }
+      ctx.save(); if (pose.filter) ctx.filter = pose.filter; ctx.drawImage(suitBuf, x, y, img.width * s, img.height * s); ctx.restore();
+      return;
+    }
+    drawSuitRaw(ctx, x, y, s, pose);
+  }
+  function drawSuitRaw(ctx, x, y, s, pose = {}) {
     const P = suitRig(), C = SUIT.colors;
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
     // whole-body sway around the feet + breathing stretch
@@ -74,6 +110,8 @@
     ctx.drawImage(P.head, 0, 0);
     for (const e of SUIT.eyes) eye(ctx, e, pose.look || [0, 0], pose.blink || 0, C);
     ctx.restore();
+    if (pose.irons) ankleIrons(ctx);
+    if (pose.jacket) { straitjacket(ctx); ctx.restore(); return; } // jacket hides hands and collar
     ctx.drawImage(P.collar, 0, 0); // collar sits over the neck seam
     // hands on the wrist pivot
     ctx.save();

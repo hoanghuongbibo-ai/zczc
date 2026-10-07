@@ -160,8 +160,10 @@
     // bedside table
     shape(ctx, '#6b4f39', 4, rect(840, 520, 110, 190, 3)); shape(ctx, '#83634a', 4, rect(828, 506, 134, 20, 3));
     shape(ctx, 'rgba(210,225,230,.7)', 3, rect(848, 470, 18, 36, 3)); shape(ctx, P.PAL.gold, 3, circle(890, 494, 11)); P.metalStroke(ctx, c => c.ellipse(930, 498, 14, 7, 0, 0, 7), 3);
-    nurseBack(ctx, 1010, 640, .95, t);
-    doctorBack(ctx, 120, 720, 1.05, t, true);
+    // nurse by the window, hands folded, watching the bed; doctor at the foot of the bed reading his chart (mirrored to face the bed)
+    FX.fig(ctx, 1010, 690, .3, { head: 'nurse', outfit: 'nurseDress', hands: { L: [-30, -650], R: [30, -650] }, feet: { L: [-50, -40], R: [50, -40] }, face: { brows: 'worried', mouth: 'flat', look: [-.7, .2], eyes: 1 - G.Rig.blinkAt(t, [4.8]) }, breathe: (Math.sin(t * 1.2) + 1) / 2 });
+    FX.fig(ctx, 175, 730, .4, { head: 'doctor', outfit: 'doctorCoat', hands: { L: [-70, -720], R: [70, -720] }, feet: { L: [-60, -40], R: [60, -40] }, headTilt: .12, face: { brows: 'worried', mouth: 'frown', look: [.2, .8] }, breathe: (Math.sin(t * 1.3) + 1) / 2 }, { mirror: true });
+    ctx.save(); ctx.translate(175, 730 - 290); ctx.rotate(-.12); T.shape(ctx, '#7a5a40', 3.5, rect(-62, -40, 124, 84, 4)); T.shape(ctx, '#f2ecd9', 3, rect(-52, -32, 104, 70, 2)); for (let i = 0; i < 4; i++) line(ctx, [[-40, -20 + i * 15], [30, -20 + i * 15]], 3, 'rgba(70,64,58,.45)'); ctx.restore(); // clipboard
     ctx.restore();
     vignette(ctx, 700, 330, .5);
     dateTag(ctx, '31 OCT 1926');
@@ -226,6 +228,10 @@
   function shotStageWide(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, push(lt, dur, 1.0, 1.08), 640, 380);
     stage(ctx, t);
+    // stage assistant presents him: arm sweeps up toward him and settles
+    const sweep = FX.settle(prog(lt, .1, .55));
+    T.shadow(ctx, 360, 652, 70, 10, .4, 4);
+    FX.fig(ctx, 360, 652, .3, { head: 'assistant', outfit: 'assistantVest', hands: { L: [-120, -470], R: [lerp(130, 420, sweep), lerp(-480, -1000, sweep)] }, handShape: { R: 'open' }, feet: { L: [-60, -40], R: [60, -40] }, face: { brows: 'up', mouth: 'smile', look: [-.7, -.1] }, breathe: (Math.sin(t * 1.5) + 1) / 2 }, { mirror: true });
     T.shadow(ctx, 640, 652, 110, 14, .5, 5);
     const smug = ease.inOut(prog(lt, .15, .7)) - ease.inOut(prog(lt, 1.35, 1.8)) * .6;
     G.Rig.drawSuit(ctx, SX, SY, SW, {
@@ -284,22 +290,31 @@
       ctx.restore();
     }
   }
+  function crowdFaces(ctx, t, lt) { // onlookers below, faces turned up at him
+    const people = [['bowler', 'overcoat'], ['cloche', 'dress20s'], ['bowler', 'overcoat'], ['assistant', 'assistantVest'], ['cloche', 'dress20s'], ['bowler', 'overcoat'], ['young', 'sweater']];
+    people.forEach(([head, outfit], i) => {
+      const x = 40 + i * 205, sway = Math.sin(t * 1.4 + i) * .03, gasp = i % 2 ? 'o' : 'flat';
+      FX.fig(ctx, x, 1110 + (i % 2) * 30, .42, { head, outfit, hands: { L: [-110, -470], R: [110, -470] }, feet: { L: [-60, -40], R: [60, -40] }, headTilt: sway, face: { brows: 'up', mouth: gasp, look: [i < 3 ? .5 : -.5, -.9] } }, { mirror: i >= 4 });
+    });
+  }
   function shotStraitjacket(ctx, lt, dur, t) {
     // struggle drives the swing: he thrashes, the rope pendulum responds and decays
     const thrash = Math.sin(2 * Math.PI * 1.6 * lt) * .55 + Math.sin(2 * Math.PI * 2.7 * lt + 1) * .25;
     const swing = .1 * Math.sin(2 * Math.PI * .6 * lt + .4) + .025 * thrash;
-    const S = .34, ank = [266, 1385];
+    const S = .34;
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.06), 640, 360, swing * .35);   // camera rolls a little with his body
     street(ctx, t);
     ctx.save(); ctx.translate(CRANE[0], CRANE[1]); ctx.rotate(-swing);
-    const ropeL = 410;
+    const ropeL = 320;
     line(ctx, [[0, 0], [0, ropeL]], 5, '#6b5a44');
-    ctx.translate(0, ropeL); ctx.rotate(Math.PI + thrash * .06);                  // hanging head-down; torso twists with each thrash
-    ctx.scale(1 - Math.abs(thrash) * .05, 1);
-    G.Rig.drawSuit(ctx, -ank[0] * S, -ank[1] * S, S, { jacket: true, headRot: thrash * .08, look: [-.2, -.9], blink: G.Rig.blinkAt(t, [13.2], .2) });
-    ctx.save(); ctx.scale(S, S); line(ctx, [[-120, -1385], [120, -1385]], 9, '#6b5a44'); ctx.restore(); // rope lashed round the ankles
+    ctx.translate(0, ropeL); ctx.rotate(Math.PI + thrash * .06);                  // hanging head-down from the ankles
+    // posable Houdini: ankles bound at the rope (figure origin), knees kick, torso twists against the jacket
+    const kick = Math.sin(2 * Math.PI * 1.6 * lt + .5) * 40;
+    G.Chars.figure((ctx.save(), ctx.scale(S, S), ctx), { outfit: 'straitjacket', lean: thrash * .14, headTilt: -thrash * .12,
+      feet: { L: [-24, -30 + kick], R: [24, -30 - kick] }, face: { brows: 'strain', mouth: 'grit', look: [0, .8], eyes: 1 - G.Rig.blinkAt(t, [13.2], .2) } });
+    line(ctx, [[-60, -40], [60, -40]], 14, '#6b5a44'); ctx.restore();                // rope lashed round the ankles
     ctx.restore();
-    crowd(ctx, t);
+    crowdFaces(ctx, t, lt);
     ctx.restore();
     FX.vignette(ctx, 640, 300, .45);
     FX.dateTag(ctx, '1915');
@@ -317,7 +332,7 @@
   }
   function shotMilkCan(ctx, lt, dur, t) {
     const X = 640, Y = 690, Wc = 330, Hc = 520, neckY = Y - Hc + 70, mouthY = neckY - 40;
-    const S = .4, sink = FX.approach(lt, 0, -260, 520, .1);                       // lowered in and folds down until fully below the rim
+    const S = .36, sink = FX.approach(lt, 0, -260, 560, .1);                       // lowered in and folds down until fully below the rim
     const lidT = .62, lidH = 160, lidFall = Math.sqrt(2 * lidH / 2400), lid = FX.dropBounce(lt - (lidT - lidFall), lidH, .25); // lid lands exactly at lidT (the clang)
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.05), 640, 380);
     T.shape(ctx, '#2e3f55', 0, rect(-400, -300, 2100, 1300));                        // blue stage curtain
@@ -328,10 +343,16 @@
     canBody(ctx, X, Y, Wc, Hc, false);
     if (lt < lidT) { // him, visible only above the mouth of the can
       ctx.save(); ctx.beginPath(); ctx.rect(0, -400, 1280, mouthY + 400); ctx.clip();
-      G.Rig.drawSuit(ctx, X - 266 * S, mouthY - 1461 * S + 120 + sink, S, { look: [.3, .6], breathe: 0 });
+      FX.fig(ctx, X, mouthY + 120 + sink, S, { outfit: 'swim', hands: { L: [-70, -1600], R: [70, -1600] }, feet: { L: [-40, -40], R: [40, -40] }, face: { brows: 'calm', mouth: 'flat', look: [.4, -.2], eyes: 1 - G.Rig.blinkAt(13.6 + lt, [13.75], .25) } });
       ctx.restore();
     }
     canBody(ctx, X, Y, Wc, Hc, true);
+    { // assistant beside the can: reaches to the left hasp to snap the lock, then steps back
+      const reach = clamp((lt - (lidT + .02)) / .1) * (1 - clamp((lt - (lidT + .3)) / .2));
+      const hand = [lerp(170, -(X - 96 - 395) / .36, reach), lerp(-470, (mouthY + 44 - 690) / .36, reach)];   // figure is mirrored: flip x into its space
+      T.shadow(ctx, 395, 692, 70, 10, .4, 4);
+      FX.fig(ctx, 395, 690, .36, { head: 'assistant', outfit: 'assistantVest', hands: { L: [-120, -470], R: hand }, handShape: { R: 'fist' }, feet: { L: [-60, -40], R: [60, -40] }, lean: .08 * reach, face: { brows: 'calm', mouth: 'flat', look: [-.6, .3 * reach] } }, { mirror: true });
+    }
     if (lt > .08 && lt < .5) { const r = rng(5); for (let i = 0; i < 14; i++) { const k = lt - .08, a = -Math.PI / 2 + (r() - .5) * 1.6, v = 300 + r() * 260; const px = X + Math.cos(a) * v * k, py = mouthY + Math.sin(a) * v * k + 1100 * k * k; shape(ctx, '#bfe3ef', 2, T.ellipse(px, py, 7, 10)); } } // splash
     if (lt > lidT - lidFall) { const ly = mouthY - lid; shape(ctx, '#aab2b7', 5, T.ellipse(X, ly - 8, Wc * .36, 22)); shape(ctx, '#8b9398', 5, rect(X - 26, ly - 46, 52, 30, 8)); }
     if (lt >= lidT) for (const s of [-1, 1]) { // hasps: hinged on the lid rim, folded down over staples riveted to the collar
@@ -367,11 +388,12 @@
     // water volume behind him
     ctx.fillStyle = grad(ctx, 0, water, 0, bot, [[0, 'rgba(120,190,220,.55)'], [1, 'rgba(40,110,150,.75)']]); ctx.fillRect(TX - tw / 2, water, tw, bot - water);
     // him, head-down; the ankle pivot sits exactly in the stocks, feet stick out above the lid
-    ctx.save(); ctx.translate(TX, lidY); ctx.rotate(Math.PI + drift);
-    G.Rig.drawSuit(ctx, -ank[0] * S, -ank[1] * S, S, { look: [.1, .3], blink: G.Rig.blinkAt(t, [16.2], .35), breathe: 0 });
+    ctx.save(); ctx.translate(TX, lidY - 40 * S); ctx.rotate(Math.PI + drift); ctx.scale(S, S);
+    G.Chars.figure(ctx, { outfit: 'swim', hands: { L: [110, -880], R: [-110, -880] }, feet: { L: [-34, -40], R: [34, -40] }, headTilt: Math.sin(t * .7) * .04,
+      face: { brows: 'calm', mouth: 'flat', look: [-.5, .7], eyes: 1 - G.Rig.blinkAt(t, [16.2], .35) } });   // looks out at us (upside down)
     ctx.restore();
     // bubbles from his mouth rise toward his feet (the surface) and gather under the lid
-    const mouthR = 1461 * S - 70 - (1461 - ank[1]) * S, mouth = [TX - Math.sin(drift) * mouthR - 8, lidY + Math.cos(drift) * mouthR];
+    const mouthR = (1063 - 40) * S, mouth = [TX + 20 * S - Math.sin(drift) * mouthR, lidY + Math.cos(drift) * mouthR];
     for (let i = 0; i < 9; i++) { const k = ((lt * .55 + i / 9) % 1), wob = Math.sin(k * 14 + i) * 8; const yy = lerp(mouth[1], water + 12, k); shape(ctx, 'rgba(230,248,255,.5)', 2.5, circle(mouth[0] + wob + i % 3 * 6, yy, 4 + k * 7)); }
     // water surface, caustic ripples, glass and frame on top
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = .12; for (let i = 0; i < 6; i++) { const y = top + 80 + i * 90 + Math.sin(t * 1.4 + i) * 8; line(ctx, [[TX - tw / 2, y], [TX - 40, y + 14], [TX + tw / 2, y - 6]], 3, '#e8fbff'); } ctx.restore();
@@ -381,7 +403,7 @@
     for (const x of [TX - tw / 2, TX + tw / 2]) shape(ctx, '#6f777c', 4, rect(x - 10, top - 10, 20, bot - top + 20, 4));
     // stocks lid: two half-boards closed around the ankles, hasps + padlocks on both ends
     shape(ctx, '#5c4637', 4, rect(TX - tw / 2 - 30, lidY - 16, tw + 60, 32, 4)); line(ctx, [[TX - tw / 2 - 30, lidY], [TX + tw / 2 + 30, lidY]], 3);
-    for (const ax of [(266 - 150) * S, (266 - 370) * S]) { const x = TX + ax * Math.cos(drift); shape(ctx, '#2a1f18', 3, T.ellipse(x, lidY, 16, 7)); }
+    for (const ax of [-34 * S, 34 * S]) { const x = TX + ax * Math.cos(drift); shape(ctx, '#2a1f18', 3, T.ellipse(x, lidY, 16, 7)); }
     for (const s of [-1, 1]) { const x = TX + s * (tw / 2 + 12);
       shape(ctx, '#7d868b', 3.5, rect(x - 8, lidY - 14, 16, 46, 3));
       ctx.save(); ctx.translate(x, lidY + 36); ctx.rotate(Math.sin(t * .9 + s) * .04);

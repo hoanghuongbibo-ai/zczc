@@ -43,9 +43,9 @@
   }
   function lyingHoudini(ctx, settleK, t, look, blink) {
     // overhead: the suit art rotated so his head points left, settling into the box
-    const S = .47, drop = (1 - settleK) * 60, sc = 1 + (1 - settleK) * .08;
-    ctx.save(); ctx.translate(CF.x - 10, CF.y - drop * .2); ctx.rotate(-Math.PI / 2); ctx.scale(sc, sc);
-    G.Rig.drawSuit(ctx, -S_IMG[0] * S / 2, -S_IMG[1] * S / 2, S, { look, blink, breathe: (Math.sin(t * 1.6) + 1) / 2 });
+    const S = .46, drop = (1 - settleK) * 60, sc = 1 + (1 - settleK) * .08;    // seen from above: feet to the right, head to the left
+    ctx.save(); ctx.translate(CF.x + 335, CF.y - drop * .2); ctx.scale(sc, sc);
+    FX.fig(ctx, 0, 0, S, { outfit: 'swim', hands: { L: [-40, -640], R: [40, -640] }, feet: { L: [-50, -40], R: [50, -40] }, face: { brows: 'calm', mouth: 'flat', look, eyes: 1 - blink }, breathe: (Math.sin(t * 1.6) + 1) / 2 }, { rot: -Math.PI / 2 });
     ctx.restore();
   }
   function shotCoffinOverhead(ctx, lt, dur, t) {
@@ -147,12 +147,15 @@
     ctx.save(); ctx.strokeStyle = 'rgba(80,90,90,.2)'; ctx.lineWidth = 2; for (let x = -400; x < 1700; x += 60) { ctx.beginPath(); ctx.moveTo(x, -300); ctx.lineTo(x, 560); ctx.stroke(); } ctx.restore();
     ctx.fillStyle = grad(ctx, 0, 560, 0, 720, [[0, '#5fa9c4'], [1, '#3b88a8']]); ctx.fillRect(-400, 600, 2100, 300); shape(ctx, '#cfc8b6', 4, rect(-400, 580, 2100, 24));
     // him: hips are the pivot; only what is above the coffin's rim is visible
-    const S = .4, hip = [266, 900];
+    const S = .4;
     // the lid, seen edge-on from the side: hinged on the far long edge, so it rises as a panel behind him
     const lidH = 110 * Math.sin(lidA); shape(ctx, '#aab2b7', 5, rect(CX - 330, CY - 55 - lidH, 660, Math.max(8, lidH), 6));
     ctx.save(); ctx.beginPath(); ctx.rect(0, -400, 1280, CY - 50 + 400); ctx.clip();
     ctx.translate(CX + 120, CY - 30); ctx.rotate(lerp(-Math.PI / 2, -.18, sit));
-    G.Rig.drawSuit(ctx, -hip[0] * S, -hip[1] * S, S, { look: [.5, .2], blink: G.Rig.blinkAt(t, [22.75]) });
+    ctx.scale(S, S); ctx.translate(0, 560);                                           // pivot at the pelvis
+    const wave = clamp((lt - .35) / .15), wx = Math.sin((lt - .35) * 14) * 70 * wave;   // once upright he raises a hand and waves
+    G.Chars.figure(ctx, { outfit: 'swim', hands: { L: [-150, -600], R: [lerp(150, 320 + wx, wave), lerp(-600, -1250, wave)] }, handShape: { R: 'open' },
+      face: { brows: 'smug', mouth: 'smile', look: [.5, .1], eyes: 1 - G.Rig.blinkAt(t, [22.75]) } });
     ctx.restore();
     coffinSide(ctx, CX, CY, 0);
     ctx.restore();

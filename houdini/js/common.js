@@ -106,6 +106,18 @@
     ctx.restore();
   }
   const black = () => {};
+  // Draw a posable character (feet at x,y). o: { mirror, rot, tint (silhouette colour), filter (css) }
+  const figBuf = document.createElement('canvas');
+  function fig(ctx, x, y, s, pose, o = {}) {
+    if (o.tint || o.filter) {
+      const w = Math.ceil(1400 * s), h = Math.ceil(1700 * s); figBuf.width = w; figBuf.height = h;
+      const g = figBuf.getContext('2d'); g.translate(w / 2, h - 40 * s); g.scale(s * (o.mirror ? -1 : 1), s); G.Chars.figure(g, pose);
+      if (o.tint) { g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = o.tint; g.fillRect(0, 0, w, h); }
+      ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); if (o.filter) ctx.filter = o.filter; ctx.drawImage(figBuf, -w / 2, -(h - 40 * s)); ctx.restore();
+      return;
+    }
+    ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); ctx.scale(s * (o.mirror ? -1 : 1), s); G.Chars.figure(ctx, pose); ctx.restore();
+  }
 
-  G.FX = { INK, FONT, DISPLAY, settle, ring, pendulum, dropBounce, approach, push, dateTag, caption, vignette, darkBg, shade, plankWall, lamp, wallClock, paperDoc, stamp, bigText, black };
+  G.FX = { fig, INK, FONT, DISPLAY, settle, ring, pendulum, dropBounce, approach, push, dateTag, caption, vignette, darkBg, shade, plankWall, lamp, wallClock, paperDoc, stamp, bigText, black };
 })(window);

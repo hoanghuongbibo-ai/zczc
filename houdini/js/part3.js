@@ -81,9 +81,14 @@
     for (let i = 0; i < 7; i++) for (const yy of [60, 460]) { glow(ctx, 440 + i * 66, yy, 50, 'rgba(255,230,170,.6)'); shape(ctx, '#fff4cf', 3, circle(440 + i * 66, yy, 13)); }
     glow(ctx, 640, 260, 500, 'rgba(255,235,190,.35)');
     // Houdini as a silhouette (supplied art, tinted), the stranger stepping in on the right
-    const S = .38; G.Rig.drawSuit(ctx, 470 - S_IMG[0] * S / 2, 690 - S_IMG[1] * S, S, { tint: '#141518' });
-    const fist = student(ctx, 860 + step, 690, 1.0, pull, hit);
-    if (hit > .5) { ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 4; for (let i = 0; i < 3; i++) line(ctx, [[fist[0] + 40, fist[1] - 20 + i * 20], [fist[0] + 150, fist[1] - 20 + i * 20]], 4, 'rgba(255,255,255,.5)'); ctx.restore(); } // speed lines
+    // reconstruction in silhouette: Houdini (left, facing right) and the young man (right) — punch drives into the abdomen
+    const S = .38, hx = 470, yx = 700 + step;
+    FX.fig(ctx, hx, 690, S, { hands: { L: [-120, -470], R: [120, -470] }, feet: { L: [-70, -40], R: [70, -40] }, lean: hit * -.05 }, { mirror: true, tint: '#141518' });
+    const tgt = [(hx + 40 - yx) / S, (690 - 270 - 690) / S];                       // his abdomen, in the young man's figure space
+    const back = [140, -900], fistP = [lerp(lerp(-120, back[0], pull), tgt[0], hit), lerp(lerp(-480, back[1], pull), tgt[1], hit)];
+    FX.fig(ctx, yx, 690, S, { head: 'young', outfit: 'sweater', hands: { L: fistP, R: [120, -480] }, handShape: { L: 'fist', R: 'fist' }, lean: -.1 * pull - .12 * hit, feet: { L: [-90, -40], R: [80, -40] } }, { tint: '#141518' });
+    const fist = [yx + fistP[0] * S, 690 + fistP[1] * S];
+    if (hit > .5) { for (let i = 0; i < 3; i++) line(ctx, [[fist[0] + 50, fist[1] - 20 + i * 20], [fist[0] + 160, fist[1] - 20 + i * 20]], 4, 'rgba(255,255,255,.5)'); } // speed lines
     ctx.restore();
     if (freeze) { // flash, then hold desaturated with a red cast
       T.fill(ctx, '#fff', clamp(1 - (lt - tHit) / .12));
@@ -118,7 +123,7 @@
       c.font = FX.DISPLAY(44); c.fillStyle = INK; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('OCT 31', 0, 6);
       if (lt > .9) { const k = clamp((lt - .9) / .35); c.beginPath(); c.ellipse(0, 6, 98, 40, -.05, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * k); c.lineWidth = 5; c.strokeStyle = '#a8322a'; c.stroke(); }
     } });
-    if (handOut < 1) { const hx = cx + 120 + handOut * 500; shape(ctx, '#e7c7a8', 4, smooth([[hx - 40, cy - 30], [hx + 20, cy - 50], [hx + 70, cy - 20], [hx + 60, cy + 30], [hx - 30, cy + 30]])); shape(ctx, '#2a2420', 4.5, rect(hx + 50, cy - 60, 400, 100, 30)); }
+    if (handOut < 1) G.Chars.seanceHand(ctx, cx + 230 + handOut * 520, cy, 0, .8);    // the medium's hand slides the card in, then withdraws
     // the candle: flame flickers, gutters as the portrait fades
     const fl = 1 + Math.sin(t * 13) * .08 + Math.sin(t * 7.3) * .06 - fade * .35;
     shape(ctx, '#efe6d0', 4, rect(940, 200, 50, 130, 6));
@@ -143,7 +148,7 @@
     const items = [ // [delay, fromX, fromY, draw]
       [.1, -500, 0, () => { ctx.save(); ctx.translate(330, 230); ctx.rotate(-.1); ctx.scale(.42, .42); newspaper(ctx, 0, 0, 0, 'HOUDINI', 31); ctx.restore(); }],
       [.35, 600, -400, () => FX.paperDoc(ctx, 950, 230, 230, 290, { title: 'DEATH RECORD', titleSize: 20, lines: 7, seed: 8, rot: .08, draw: c => FX.stamp(c, 'APPENDIX', 10, 70, 1, { color: '#a8322a', size: 22 }) })],
-      [.6, -400, 500, () => photoPrint(ctx, 320, 540, 200, 230, .07, (c, w, h) => { c.fillStyle = '#bcae94'; c.fillRect(-w / 2, -h / 2, w, h); student(c, 10, 120, .38, 0, 0); })],
+      [.6, -400, 500, () => photoPrint(ctx, 320, 540, 200, 230, .07, (c, w, h) => { c.fillStyle = '#bcae94'; c.fillRect(-w / 2, -h / 2, w, h); FX.fig(c, 0, 395, .32, { head: 'young', outfit: 'sweater', hands: { L: [-110, -470], R: [110, -470] } }, { filter: 'sepia(1) contrast(.9)' }); })],
       [.85, 500, 500, () => photoPrint(ctx, 960, 540, 240, 200, -.06, (c, w, h) => { c.fillStyle = '#c9c7bb'; c.fillRect(-w / 2, -h / 2, w, h); for (let i = 0; i < 4; i++) shape(c, '#8e8f88', 2.5, rect(-90 + i * 50, -6, 30, 40, 10)); c.fillStyle = '#7b7c74'; c.fillRect(-w / 2, 34, w, 40); })],
       [1.1, 0, 600, () => FX.paperDoc(ctx, 640, 600, 300, 200, { title: 'PETITION TO EXHUME', titleSize: 20, lines: 5, seed: 12, rot: -.03 })],
     ];

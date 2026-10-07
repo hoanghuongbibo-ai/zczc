@@ -1,262 +1,249 @@
-/* Preview (0–12.1 s): PART 01 "The Death of Harry Houdini" + the opening of
- * PART 02 (handcuffs). Cue times come from the narration's word timings:
- *  "died" 6.47 · "Harry Houdini" 7.67 · "getting out" 9.95 · "things" 10.39 · "killed" 11.14 */
+/* Preview (0–12.1 s) in the reference's explainer style: flat sets, soft
+ * vignette + centre glow, a paper date tag top-left, slow steady push-ins,
+ * hard cuts, props that drop/snap in with a small settle, damped swings.
+ * Cues (narration words): "the most famous" 4.17 · "died" 6.47 · "Harry Houdini" 7.67 ·
+ * "getting out" 9.95 · "things" 10.39 · "killed" 11.14. */
 (function (G) {
   'use strict';
-  const T = G.Toon, { W, H, IMG, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, prog, lerp, ease, clamp, rng } = T;
+  const T = G.Toon, P = G.Props;
+  const { W, H, IMG, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, prog, lerp, ease, clamp, rng, glow, keys } = T;
+  const FONT = (w, px) => `${w} ${px}px Fredoka, "DejaVu Sans", sans-serif`;
+  const INK = T.LINE;
 
-  const C = {
-    skyTop: '#8f979a', skyBot: '#c9c4b6', brick: '#8c5b4a', brickDark: '#6f4638', trim: '#e6dcc6', glass: '#55606a',
-    lit: '#f1c272', tree: '#43372e', road: '#58554d', walk: '#8a8577', grass: '#6d6a4f',
-    wall: '#5f6d6b', wainscot: '#4b524c', curtain: '#d8cdb3', wood: '#7a5a40', woodDark: '#5c4230',
-    steel: '#a3abb0', steelDark: '#6f777c', gold: '#c9a14a', skin: '#e8a676', gown: '#d4cec2', sheet: '#e9e2d2',
-    stageRed: '#5c1f1b',
-  };
-
-  // ---------- PART 01A props ----------
-  function tree(ctx, x, y, s, seed) {
-    const r = rng(seed);
-    const branch = (x0, y0, len, ang, w, d) => {
-      const x1 = x0 + Math.cos(ang) * len, y1 = y0 + Math.sin(ang) * len;
-      line(ctx, [[x0, y0], [x1, y1]], w, C.tree);
-      if (d > 0) for (let i = 0; i < 2 + (r() > .6); i++) branch(x1, y1, len * (.62 + r() * .15), ang + (r() - .5) * 1.1, w * .66, d - 1);
-    };
-    branch(x, y, 120 * s, -Math.PI / 2 + (r() - .5) * .2, 14 * s, 5);
-  }
-  function car(ctx, x, y, s, color) { // 1920s sedan: tall cabin, arched fenders, spoked wheels
-    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
-    shape(ctx, color, 3, poly([[-70, -34], [-66, -96], [26, -96], [34, -34]]));            // cabin
-    shape(ctx, '#3b4448', 2.5, rect(-58, -88, 36, 34, 3)); shape(ctx, '#3b4448', 2.5, rect(-14, -88, 36, 34, 3));
-    shape(ctx, color, 3, poly([[30, -54], [92, -50], [96, -26], [30, -24]]));              // bonnet
-    shape(ctx, '#2a2a28', 3, rect(92, -56, 10, 32, 2));                                     // radiator
-    shape(ctx, '#2a2a28', 3, rect(-84, -22, 186, 8, 3));                                    // running board
-    for (const wx of [-56, 66]) {
-      shape(ctx, '#2a2a28', 3, c => { c.moveTo(wx - 36, -10); c.quadraticCurveTo(wx, -58, wx + 36, -10); c.closePath(); }); // fender
-      shape(ctx, '#222', 3, circle(wx, 0, 24)); shape(ctx, '#d8d0bc', 2, circle(wx, 0, 17));
-      for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; line(ctx, [[wx, 0], [wx + Math.cos(a) * 16, Math.sin(a) * 16]], 2); }
-      shape(ctx, '#222', 2, circle(wx, 0, 4));
-    }
-    shape(ctx, '#f0e2b0', 2.5, circle(102, -60, 7));
-    ctx.restore();
-  }
-  function kid(ctx, x, y, s, kind) { // tiny far-off trick-or-treaters
-    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
-    const bob = Math.abs(Math.sin(T.E.t * 7 + x)) * 3;
-    ctx.translate(0, -bob);
-    if (kind === 'ghost') {
-      shape(ctx, '#f1ede4', 2.5, smooth([[-16, 0], [-18, -40], [0, -62], [18, -40], [16, 0], [8, -6], [0, 0], [-8, -6]]));
-      ctx.fillStyle = T.LINE; ctx.beginPath(); ctx.ellipse(-6, -40, 3, 4, 0, 0, 7); ctx.ellipse(6, -40, 3, 4, 0, 0, 7); ctx.fill();
-    } else {
-      shape(ctx, '#2c2a33', 2.5, poly([[-14, 0], [-10, -34], [10, -34], [14, 0]]));
-      shape(ctx, C.skin, 2.5, circle(0, -44, 10));
-      shape(ctx, '#2c2a33', 2.5, poly([[-18, -48], [18, -48], [2, -82]]));
-    }
-    ctx.restore();
-  }
-  function windowPane(ctx, x, y, w, h, litK = 0) {
-    shape(ctx, C.trim, 3, rect(x - 6, y - 6, w + 12, h + 12));
-    shape(ctx, litK ? mix(C.glass, C.lit, litK) : C.glass, 2.5, rect(x, y, w, h));
-    line(ctx, [[x + w / 2, y], [x + w / 2, y + h]], 3, C.trim); line(ctx, [[x, y + h / 2], [x + w, y + h / 2]], 3, C.trim);
-    if (litK) { ctx.save(); ctx.globalAlpha = .55 * litK; shape(ctx, '#c79a5a', 0, rect(x, y, w * .3, h)); shape(ctx, '#c79a5a', 0, rect(x + w * .72, y, w * .28, h)); ctx.restore(); }
-  }
-  function mix(a, b, k) {
-    const p = s => [1, 3, 5].map(i => parseInt(s.substr(i, 2), 16)), A = p(a), B = p(b);
-    return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], k))).join(',')})`;
-  }
-  const leaves = Array.from({ length: 34 }, (_, i) => { const r = rng(300 + i); return { x: r() * 1400 - 60, y0: r() * 720, sp: 30 + r() * 40, sw: r() * 6, c: ['#a65a2a', '#c58a3a', '#7d4a2a'][i % 3] }; });
-
-  function shotExterior(ctx, lt, dur) {
-    const z = lerp(1, 3.4, ease.in(prog(lt, .4, dur))), fx = lerp(640, 724, ease.inOut(prog(lt, 0, dur * .8))), fy = lerp(360, 329, ease.inOut(prog(lt, 0, dur * .8)));
-    cam(ctx, z, fx, fy);
-    ctx.fillStyle = grad(ctx, 0, 0, 0, 600, [[0, C.skyTop], [1, C.skyBot]]); ctx.fillRect(-200, -200, 1700, 1000);
-    for (const [cx, cy, s] of [[200, 110, 1], [760, 70, 1.3], [1150, 130, .9]]) { // flat clouds drifting
-      const x = cx + lt * 6;
-      ctx.save(); ctx.globalAlpha = .55; shape(ctx, '#b3b5b0', 0, ellipse(x, cy, 120 * s, 26 * s)); shape(ctx, '#b3b5b0', 0, ellipse(x + 50 * s, cy - 18 * s, 70 * s, 24 * s)); ctx.restore();
-    }
-    // hospital
-    shape(ctx, C.brick, 4, rect(300, 170, 700, 440));
-    shape(ctx, C.brickDark, 4, poly([[290, 170], [1010, 170], [990, 140], [310, 140]]));
-    shape(ctx, C.trim, 3, rect(280, 160, 740, 14));
-    ctx.save(); ctx.globalAlpha = .18; for (let y = 190; y < 600; y += 14) line(ctx, [[302, y], [998, y]], 1.2, '#3b2219'); ctx.restore();
-    for (let row = 0; row < 4; row++) for (let col = 0; col < 7; col++) {
-      if (row === 3 && (col === 3)) continue;
-      const x = 330 + col * 92, y = 200 + row * 96, target = row === 1 && col === 4;
-      windowPane(ctx, x, y, 52, 66, target ? 1 : 0);
-    }
-    shape(ctx, C.trim, 3, rect(590, 500, 120, 110)); shape(ctx, '#3e3530', 3, rect(612, 520, 76, 90, 4)); // entrance
-    shape(ctx, C.trim, 3, rect(555, 470, 190, 26)); ctx.fillStyle = T.LINE; ctx.font = 'bold 17px "DejaVu Serif"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('HOSPITAL', 650, 484);
-    // street
-    shape(ctx, C.walk, 3, rect(-200, 610, 1700, 30)); shape(ctx, C.road, 0, rect(-200, 640, 1700, 200));
-    tree(ctx, 170, 610, 1.4, 7); tree(ctx, 1110, 612, 1.25, 9); tree(ctx, 60, 612, 1, 11);
-    // trick-or-treaters crossing far back, small detail
-    const kx = lerp(380, 560, lt / dur);
-    kid(ctx, kx, 612, .55, 'ghost'); kid(ctx, kx - 34, 612, .55, 'witch');
-    car(ctx, 210, 682, 1.1, '#2f3b3a'); car(ctx, 1060, 690, 1.05, '#4b3a33');
-    // falling leaves
-    for (const L of leaves) {
-      const y = (L.y0 + lt * L.sp) % 740 - 20, x = L.x + Math.sin(lt * 1.6 + L.sw) * 12;
-      shape(ctx, L.c, 1.5, ellipse(x, y, 6, 3, lt * 2 + L.sw));
-    }
-    // warm light swells as we reach the window
-    T.fill(ctx, '#f6d9a0', ease.in(prog(lt, dur - .45, dur)) * .9);
-  }
-
-  // ---------- PART 01B: the room ----------
-  function silhouette(ctx, x, y, s, kind) { // subdued doctor / nurse, read as shapes against the light
-    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
-    const dark = '#2b302f', mid = '#363c3b';
-    if (kind === 'doctor') { // long coat, head bowed slightly, clipboard held low
-      shape(ctx, dark, 3, smooth([[-62, 0], [-58, -150], [-64, -250], [-30, -282], [30, -282], [62, -250], [56, -150], [60, 0]]));
-      shape(ctx, mid, 2.5, poly([[-4, -282], [-26, -200], [-8, -120]], false));
-      shape(ctx, dark, 3, smooth([[-60, -250], [-84, -160], [-70, -110], [-50, -150], [-44, -240]]));       // arm
-      shape(ctx, '#3a403e', 2.5, rect(-104, -156, 46, 62, 3));                                          // clipboard
-      shape(ctx, dark, 3, ellipse(6, -318, 34, 40, .12));                                                // head
-      shape(ctx, dark, 3, poly([[-14, -282], [18, -282], [14, -292], [-10, -292]]));                       // neck
-    } else { // nurse: cap, cape over shoulders, hands folded
-      shape(ctx, dark, 3, smooth([[-50, 0], [-44, -140], [-58, -222], [-26, -256], [26, -256], [58, -222], [44, -140], [50, 0]]));
-      shape(ctx, mid, 2.5, smooth([[-60, -224], [-30, -258], [30, -258], [60, -224], [40, -190], [-40, -190]]));
-      shape(ctx, dark, 3, ellipse(-4, -290, 30, 36, -.1));
-      shape(ctx, mid, 3, poly([[-34, -312], [26, -318], [20, -340], [-26, -336]]));
-      shape(ctx, mid, 2.5, ellipse(0, -160, 22, 12));                                                   // folded hands
-    }
-    ctx.restore();
-  }
-  function shotRoom(ctx, lt, dur) {
-    cam(ctx, lerp(1, 1.07, lt / dur), 620, 380);
-    shape(ctx, C.wall, 0, rect(-100, -100, 1500, 620)); shape(ctx, C.wainscot, 3, rect(-100, 470, 1500, 400));
-    // window with Detroit grey outside
-    ctx.fillStyle = grad(ctx, 0, 110, 0, 430, [[0, '#a9aea9'], [1, '#cfc8b6']]); ctx.fillRect(930, 110, 230, 320);
-    line(ctx, [[1000, 430], [1030, 300], [1080, 250], [1150, 230]], 6, '#5a5048'); line(ctx, [[1030, 300], [990, 240]], 4, '#5a5048');
-    shape(ctx, null, 5, rect(930, 110, 230, 320)); line(ctx, [[1045, 110], [1045, 430]], 5, C.trim); line(ctx, [[930, 270], [1160, 270]], 5, C.trim);
-    const sway = Math.sin(lt * 1.3) * 10;
-    shape(ctx, C.curtain, 3, poly([[900, 90], [960, 90], [950 + sway, 470], [895, 470]]));
-    shape(ctx, C.curtain, 3, poly([[1130, 90], [1190, 90], [1195, 470], [1140 + sway * .7, 470]]));
-    // the bed (supplied art) and the two figures
-    ctx.drawImage(IMG.bed, 330, 190, IMG.bed.width * .42, IMG.bed.height * .42);
-    silhouette(ctx, 220, 720, 1.05, 'doctor');
-    silhouette(ctx, 875, 700, .95, 'nurse');
-    // dim the room except the window light falling on the bed
+  // ---------- shared explainer elements ----------
+  const back = k => { const c = 1.6; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); }; // overshoot-and-settle
+  const push = (lt, dur, a = 1, b = 1.07) => lerp(a, b, ease.sine(clamp(lt / dur)));
+  function dateTag(ctx, text) {
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-    const g = ctx.createRadialGradient(900, 300, 80, 700, 380, 900); g.addColorStop(0, 'rgba(20,24,26,0.05)'); g.addColorStop(1, 'rgba(12,14,16,0.62)');
+    ctx.font = FONT(600, 26); const w = ctx.measureText(text).width + 34;
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(52 + 4, 30 + 5, w, 46);
+    shape(ctx, '#f1ead8', 3, rect(52, 30, w, 46, 3)); line(ctx, [[58, 36], [52 + w - 6, 36]], 1.5, 'rgba(0,0,0,.15)');
+    ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, 69, 54);
+    ctx.restore();
+  }
+  function caption(ctx, text, lt, at = .4, x = W - 60, y = H - 58) {
+    const k = clamp((lt - at) / .3); if (k <= 0) return;
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = k;
+    ctx.font = FONT(700, 20); const w = ctx.measureText(text).width + 30, xx = x - w + (1 - ease.out(k)) * 40;
+    ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(xx + 4, y + 4, w, 38);
+    shape(ctx, '#f1ead8', 3, rect(xx, y, w, 38, 2)); ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, xx + 15, y + 20);
+    ctx.restore();
+  }
+  function plankWall(ctx, x0, x1, top, bottom, base, seed = 1) {
+    const r = rng(seed);
+    for (let x = x0, i = 0; x < x1; x += 56, i++) { const v = (r() - .5) * .08; ctx.fillStyle = shade(base, 1 + v); ctx.fillRect(x, top, 56, bottom - top); line(ctx, [[x, top], [x, bottom]], 2.5, 'rgba(0,0,0,.22)'); }
+  }
+  function shade(hex, k) { const p = [1, 3, 5].map(i => parseInt(hex.substr(i, 2), 16)); return `rgb(${p.map(v => Math.round(clamp(v * k, 0, 255))).join(',')})`; }
+  function lamp(ctx, x, y) {
+    line(ctx, [[x, -200], [x, y]], 3);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = .14; ctx.fillStyle = grad(ctx, 0, y, 0, y + 420, [[0, '#ffe9b8'], [1, 'rgba(0,0,0,0)']]);
+    ctx.beginPath(); ctx.moveTo(x - 30, y + 20); ctx.lineTo(x + 30, y + 20); ctx.lineTo(x + 230, y + 440); ctx.lineTo(x - 230, y + 440); ctx.closePath(); ctx.fill(); ctx.restore();
+    glow(ctx, x, y + 24, 120, 'rgba(255,230,170,.35)');
+    shape(ctx, '#c9a35a', 3.5, poly([[x - 16, y], [x + 16, y], [x + 34, y + 24], [x - 34, y + 24]]));
+  }
+  function wallClock(ctx, x, y, r) {
+    shape(ctx, '#6b4f39', 3.5, circle(x, y, r + 6)); shape(ctx, '#f1ead8', 3, circle(x, y, r));
+    const hA = (1 + 26 / 60) / 12 * Math.PI * 2 - Math.PI / 2, mA = 26 / 60 * Math.PI * 2 - Math.PI / 2;  // 1:26 p.m.
+    line(ctx, [[x, y], [x + Math.cos(hA) * r * .45, y + Math.sin(hA) * r * .45]], 4); line(ctx, [[x, y], [x + Math.cos(mA) * r * .7, y + Math.sin(mA) * r * .7]], 3);
+  }
+  function vignette(ctx, cx = W / 2, cy = H * .42, a = .55) {
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    const g = ctx.createRadialGradient(cx, cy, H * .25, cx, cy, H * 1.05); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${a})`);
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
-    T.fill(ctx, '#f6d9a0', (1 - ease.out(prog(lt, 0, .5))) * .9); // match-cut glow carries over
   }
 
-  // ---------- PART 01C: bedside objects → the hand ----------
-  function glass(ctx, x, y) {
-    ctx.save(); ctx.globalAlpha = .9;
-    shape(ctx, 'rgba(200,215,220,0.35)', 4, poly([[x - 70, y - 260], [x + 70, y - 260], [x + 56, y], [x - 56, y]]));
-    shape(ctx, 'rgba(150,180,190,0.45)', 0, poly([[x - 63, y - 150], [x + 63, y - 150], [x + 56, y], [x - 56, y]]));
-    line(ctx, [[x - 63, y - 150], [x + 63, y - 150]], 3); line(ctx, [[x - 40, y - 230], [x - 34, y - 40]], 6, 'rgba(255,255,255,0.6)');
-    ctx.restore();
+  // ================= 01A — Grace Hospital, Detroit =================
+  const WIN = { x: 607, y: 268, w: 50, h: 66 }, WC = [WIN.x + WIN.w / 2, WIN.y + WIN.h / 2];
+  function bareTree(ctx, x, y, s, seed, color) {
+    const r = rng(seed);
+    const br = (x0, y0, len, ang, w, d) => {
+      const x1 = x0 + Math.cos(ang) * len, y1 = y0 + Math.sin(ang) * len;
+      line(ctx, [[x0, y0], [x1, y1]], w, color);
+      if (d > 0) for (let i = 0; i < 2; i++) br(x1, y1, len * (.66 + r() * .12), ang + (i ? 1 : -1) * (.3 + r() * .35), w * .62, d - 1);
+    };
+    br(x, y, 110 * s, -Math.PI / 2, 13 * s, 5);
   }
-  function watch(ctx, x, y, lt) {
-    ctx.beginPath(); ctx.moveTo(x + 105, y - 40); ctx.bezierCurveTo(x + 170, y + 20, x + 250, y - 20, x + 340, y + 16); ctx.lineWidth = 9; ctx.strokeStyle = T.LINE; ctx.stroke(); ctx.lineWidth = 5; ctx.strokeStyle = C.gold; ctx.stroke();
-    shape(ctx, C.gold, 5, circle(x, y - 70, 110)); shape(ctx, '#f3ead6', 4, circle(x, y - 70, 88));
-    shape(ctx, C.gold, 4, rect(x - 18, y - 205, 36, 28, 6)); shape(ctx, null, 5, circle(x, y - 222, 16));
-    for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; line(ctx, [[x + Math.cos(a) * 72, y - 70 + Math.sin(a) * 72], [x + Math.cos(a) * 82, y - 70 + Math.sin(a) * 82]], 3); }
-    line(ctx, [[x, y - 70], [x - 30, y - 110]], 6); line(ctx, [[x, y - 70], [x + 52, y - 52]], 4); // stopped at the hour
-  }
-  function cuffRing(ctx, x, y, rx, ry, rot, open = 0) {
-    ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
-    ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, open * 1.1, Math.PI * 2 - open * .2);
-    ctx.lineWidth = ry * .55 + 10; ctx.strokeStyle = T.LINE; ctx.stroke();
-    ctx.lineWidth = ry * .55; ctx.strokeStyle = C.steel; ctx.stroke();
-    shape(ctx, C.steelDark, 3, rect(rx - 10, -ry * .5, 26, ry, 4)); // lock box
-    ctx.restore();
-  }
-  function chain(ctx, pts, size = 10) {
-    for (let i = 0; i < pts.length - 1; i++) {
-      const [x0, y0] = pts[i], [x1, y1] = pts[i + 1], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / (size * 1.6)));
-      for (let k = 0; k < n; k++) { const f = (k + .5) / n; shape(ctx, C.steel, 2.5, ellipse(lerp(x0, x1, f), lerp(y0, y1, f), size, size * .55, Math.atan2(y1 - y0, x1 - x0) + (k % 2) * Math.PI / 2)); }
+  const LEAVES = Array.from({ length: 14 }, (_, i) => { const r = rng(40 + i); return { x: r() * 1300, y0: r() * 700, sp: 34 + r() * 26, ph: r() * 6, c: ['#b0662f', '#c99a45', '#8a5230'][i % 3] }; });
+  function shotExterior(ctx, lt, dur, t) {
+    const z = keys(lt, [[0, 1], [3.0, 1.22], [dur, 1.75]], ease.sine);
+    const fx = lerp(640, WC[0], ease.sine(prog(lt, 0, dur))), fy = lerp(380, WC[1] + 60, ease.sine(prog(lt, 0, dur)));
+    ctx.save(); cam(ctx, z, fx, fy);
+    ctx.fillStyle = grad(ctx, 0, -100, 0, 560, [[0, '#8796a0'], [1, '#c5c9c3']]); ctx.fillRect(-300, -300, 1900, 1300);
+    ctx.fillStyle = 'rgba(236,236,230,.55)';
+    for (const [x, y, s] of [[230, 120, 1], [820, 80, 1.3], [1130, 150, .8]]) { const xx = x + lt * 8; ctx.beginPath(); ctx.ellipse(xx, y, 110 * s, 22 * s, 0, 0, 7); ctx.ellipse(xx + 50 * s, y - 14 * s, 60 * s, 20 * s, 0, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#a7aca8'; for (let x = -200; x < 1500; x += 90) { const h = 70 + ((x * 53) % 80 + 80) % 80; ctx.fillRect(x, 560 - h, 80, h); } // flat far city
+    // hospital: flat masses, outlined like the reference's props
+    shape(ctx, '#6e4639', 4, poly([[910, 150], [1010, 182], [1010, 560], [910, 560]]));
+    shape(ctx, '#8d5d4b', 4, rect(310, 150, 600, 410));
+    shape(ctx, '#e3d9c4', 4, rect(296, 132, 628, 22, 2));
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) {
+      if (r === 3 && (c === 2 || c === 3)) continue;
+      const x = 337 + c * 90, y = 178 + r * 90, lit = r === 1 && c === 3;
+      shape(ctx, lit ? '#f4c66e' : '#4e5c66', 3, rect(x, y, 50, 66, 2));
+      if (lit) { glow(ctx, x + 25, y + 33, 110, 'rgba(255,200,120,.5)'); shape(ctx, '#d79a52', 0, rect(x + 2, y + 2, 13, 62)); shape(ctx, '#d79a52', 0, rect(x + 35, y + 2, 13, 62)); }
+      else line(ctx, [[x + 8, y + 56], [x + 30, y + 10]], 4, 'rgba(255,255,255,.12)');
+      line(ctx, [[x + 25, y], [x + 25, y + 66]], 3, '#e3d9c4'); line(ctx, [[x, y + 33], [x + 50, y + 33]], 3, '#e3d9c4');
+      shape(ctx, '#e3d9c4', 3, rect(x - 6, y + 66, 62, 8, 2));
     }
-  }
-  function handcuffs(ctx, x, y, s) {
-    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
-    chain(ctx, [[-60, -40], [0, -20], [60, -40]], 11);
-    cuffRing(ctx, -120, -40, 70, 40, -.15); cuffRing(ctx, 120, -40, 70, 40, .15);
+    shape(ctx, '#e3d9c4', 4, rect(500, 446, 220, 114, 2)); shape(ctx, '#3b302b', 3.5, rect(574, 476, 72, 84, 3));
+    shape(ctx, '#e3d9c4', 4, rect(468, 420, 284, 34, 3));
+    ctx.fillStyle = INK; ctx.font = FONT(700, 20); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('GRACE HOSPITAL', 610, 438);
+    // street
+    shape(ctx, '#8f8b80', 0, rect(-300, 560, 1900, 30)); shape(ctx, '#5b5953', 0, rect(-300, 590, 1900, 400));
+    line(ctx, [[-300, 560], [1600, 560]], 3, 'rgba(0,0,0,.35)');
+    bareTree(ctx, 180, 562, 1.35, 3, '#3c322b'); bareTree(ctx, 1080, 562, 1.2, 9, '#3c322b');
+    // two small trick-or-treaters crossing far back
+    for (const [dx, kind] of [[0, 'ghost'], [-34, 'witch']]) {
+      const x = lerp(430, 560, lt / dur) + dx, b = Math.abs(Math.sin(t * 8 + dx)) * 3;
+      ctx.save(); ctx.translate(x, 560 - b); ctx.scale(.55, .55);
+      if (kind === 'ghost') { shape(ctx, '#f2efe7', 3, smooth([[-16, 0], [-18, -40], [0, -62], [18, -40], [16, 0], [8, -6], [0, 0], [-8, -6]])); ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(-6, -40, 3, 4, 0, 0, 7); ctx.ellipse(6, -40, 3, 4, 0, 0, 7); ctx.fill(); }
+      else { shape(ctx, '#2c2a33', 3, poly([[-14, 0], [-10, -34], [10, -34], [14, 0]])); shape(ctx, P.PAL.skin, 3, circle(0, -44, 10)); shape(ctx, '#2c2a33', 3, poly([[-20, -48], [20, -48], [3, -86]])); }
+      ctx.restore();
+    }
+    P.car(ctx, 200, 650, 1.1, '#34403e'); P.car(ctx, 1100, 660, 1.05, '#4f3d35');
+    for (const L of LEAVES) { const y = (L.y0 + lt * L.sp) % 760 - 30, x = L.x + Math.sin(lt * 1.5 + L.ph) * 14; ctx.save(); ctx.translate(x, y); ctx.rotate(lt * 2 + L.ph); shape(ctx, L.c, 2, ellipse(0, 0, 7, 3.5)); ctx.restore(); }
     ctx.restore();
-  }
-  function hangingHand(ctx, x, y) { // side of the bed: sheet + blanket hems, metal rail, limp arm
-    const hem = (y0, amp, seed) => { const r = rng(seed), pts = []; for (let k = 0; k <= 14; k++) pts.push([x + 420 - k * 80, y0 + Math.sin(k * 1.7) * amp + r() * amp]); return pts; };
-    shape(ctx, '#2e3433', 0, rect(x - 760, y - 120, 1300, 400));                                           // shadow under the bed
-    shape(ctx, '#8b8170', 4, rect(x - 760, y - 160, 1200, 26, 8));                                          // metal side rail
-    shape(ctx, C.sheet, 4, poly([[x - 760, y - 520], [x + 420, y - 520], ...hem(y - 190, 12, 4), [x - 760, y - 190]]));
-    for (const k of [-560, -420, -250, 160, 300]) line(ctx, [[x + k, y - 330], [x + k + 14, y - 200]], 2.5, 'rgba(29,26,23,.35)');
-    shape(ctx, '#97a6a2', 4, poly([[x - 760, y - 520], [x + 420, y - 520], ...hem(y - 330, 10, 8), [x - 760, y - 330]]));
-    for (const k of [-600, -380, -150, 220]) line(ctx, [[x + k, y - 500], [x + k + 20, y - 350]], 2.5, 'rgba(29,26,23,.35)');
-    shape(ctx, C.gown, 4, smooth([[x - 80, y - 360], [x + 50, y - 370], [x + 64, y - 270], [x - 20, y - 240], [x - 74, y - 270]]));  // sleeve over the hem
-    shape(ctx, C.skin, 4, smooth([[x - 30, y - 262], [x + 34, y - 268], [x + 32, y - 130], [x + 40, y - 50], [x + 52, y + 10], [x + 40, y + 70], [x + 10, y + 96], [x - 18, y + 90], [x - 26, y + 40], [x - 20, y - 40], [x - 26, y - 130]]));
-    line(ctx, [[x + 40, y - 30], [x + 62, y + 20], [x + 54, y + 52]], 3.5);                                // thumb
-    for (const k of [-8, 8, 24]) line(ctx, [[x + k, y + 30], [x + k + 3, y + 88]], 3);                    // fingers
-  }
-  function shotCloseups(ctx, lt, dur) {
-    // pan: glass → watch → cuffs → hand ("died")
-    const keys = [[0, 380], [.45, 1100], [.85, 1820], [1.15, 2500]];
-    let px = keys[keys.length - 1][1];
-    for (let i = 0; i < keys.length - 1; i++) if (lt < keys[i + 1][0]) { px = lerp(keys[i][1], keys[i + 1][1], ease.inOut(prog(lt, keys[i][0], keys[i + 1][0]))); break; }
-    cam(ctx, 1, px, 360);
-    shape(ctx, '#4f5b59', 0, rect(-400, -100, 3600, 1000));
-    ctx.fillStyle = grad(ctx, 0, 470, 0, 760, [[0, C.wood], [1, C.woodDark]]); ctx.fillRect(-400, 470, 2560, 400);
-    line(ctx, [[-400, 470], [2160, 470]], 5); line(ctx, [[2160, 470], [2160, 900]], 5);
-    glass(ctx, 380, 520); watch(ctx, 1100, 540, lt); handcuffs(ctx, 1820, 520, 1.25);
-    shape(ctx, '#3f4746', 0, rect(2160, -100, 1100, 1000));
-    hangingHand(ctx, 2500, 520);
-    // window light sliding across, and the final fade to black on "died"
-    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const g = ctx.createLinearGradient(0, 0, W, 0); g.addColorStop(0, 'rgba(10,12,14,.5)'); g.addColorStop(.5, 'rgba(10,12,14,0)'); g.addColorStop(1, 'rgba(10,12,14,.5)'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore();
-    T.fill(ctx, '#000', ease.inOut(prog(lt, dur - .3, dur)));
+    vignette(ctx, 640, 330, .45);
+    dateTag(ctx, '31 OCT 1926');
+    caption(ctx, 'DETROIT, MICHIGAN', lt, .6);
   }
 
-  // ---------- PART 02A: handcuffs on the supplied suit art ----------
-  const IX = 374, IY = 0; // suit image placement in world space (scale 1)
-  const CUFFS = [ // image-space wrists: [x, y, rot, clickTime]
-    [222, 692, -.9, 9.95], [362, 700, .9, 10.39], [192, 768, -1.0, 11.14], [394, 778, 1.0, 11.45],
-  ];
-  function shotHandcuffs(ctx, lt, dur, t) {
-    const close = lt > 1.9; // medium shot first ("Harry Houdini…"), then hard cut to the hands
-    const shake = CUFFS.reduce((a, c) => a + (t > c[3] && t < c[3] + .12 ? (Math.sin(t * 160) * 4) : 0), 0);
-    if (close) cam(ctx, lerp(2.1, 2.35, prog(lt, 1.9, dur)), IX + 292 + shake, IY + 720);
-    else cam(ctx, lerp(.62, .7, lt / 1.9), IX + 266, IY + 640);
-    // stage backdrop: red curtain folds + spotlight
-    shape(ctx, C.stageRed, 0, rect(-800, -600, 2900, 2800));
-    for (let x = -800; x < 2100; x += 70) { ctx.save(); ctx.globalAlpha = .25; shape(ctx, '#3d1210', 0, rect(x, -600, 26, 2800)); ctx.restore(); }
-    const sp = ctx.createRadialGradient(IX + 266, IY + 600, 50, IX + 266, IY + 600, 900); sp.addColorStop(0, 'rgba(255,225,170,0.35)'); sp.addColorStop(1, 'rgba(255,225,170,0)');
-    ctx.fillStyle = sp; ctx.fillRect(-800, -600, 2900, 2800);
-    ctx.drawImage(IMG.suit, IX, IY);
-    // chains drape from the lower cuffs off frame
-    chain(ctx, [[IX + 192, IY + 790], [IX + 230, IY + 900], [IX + 250, IY + 1050]], 9);
-    chain(ctx, [[IX + 394, IY + 800], [IX + 360, IY + 920], [IX + 350, IY + 1060]], 9);
-    chain(ctx, [[IX + 222, IY + 708], [IX + 292, IY + 742], [IX + 362, IY + 716]], 8);
-    for (const [x, y, rot, ct] of CUFFS) {
-      const k = clamp((t - ct) / .5);
-      if (k <= 0) cuffRing(ctx, IX + x, IY + y, 40, 20, rot, 0);
-      else { // springs open and drops away
-        ctx.save(); ctx.globalAlpha = 1 - ease.in(clamp((t - ct - .25) / .4));
-        cuffRing(ctx, IX + x + (x < 292 ? -1 : 1) * k * 30, IY + y + ease.in(k) * 160, 40, 20, rot + (x < 292 ? -1 : 1) * k * .8, Math.min(1, k * 3));
-        ctx.restore();
-      }
+  // ================= 01B — the room =================
+  function doctorBack(ctx, x, y, s, t, shadowed) { // seen from behind, foreground left — faceless, subdued
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.translate(0, Math.sin(t * 1.3) * 1.5);
+    shape(ctx, shadowed ? '#9c9a92' : '#e9e6de', 4.5, smooth([[-150, 260], [-140, 60], [-96, -10], [-40, -30], [40, -30], [96, -10], [140, 60], [150, 260]]));     // white coat
+    line(ctx, [[0, -24], [0, 260]], 3, 'rgba(0,0,0,.18)'); line(ctx, [[-60, 120], [-40, 260]], 3, 'rgba(0,0,0,.12)');
+    shape(ctx, shadowed ? '#b98260' : '#e8a676', 4, rect(-22, -60, 44, 40, 8));                                                                                          // neck
+    shape(ctx, shadowed ? '#b98260' : '#e8a676', 4, ellipse(-62, -112, 12, 20)); shape(ctx, shadowed ? '#b98260' : '#e8a676', 4, ellipse(62, -112, 12, 20));                                  // ears
+    shape(ctx, shadowed ? '#2e251e' : '#4a3a2e', 4.5, smooth([[-60, -70], [-66, -140], [-40, -186], [0, -196], [40, -186], [66, -140], [60, -70], [30, -52], [-30, -52]])); // hair (back of head)
+    line(ctx, [[-20, -180], [-26, -120]], 2.5, 'rgba(255,255,255,.12)'); line(ctx, [[10, -186], [14, -110]], 2.5, 'rgba(255,255,255,.12)');
+    ctx.restore();
+  }
+  function nurseBack(ctx, x, y, s, t) { // by the window, looking out
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.translate(0, Math.sin(t * 1.1 + 1) * 1.2);
+    shape(ctx, '#53607a', 4, smooth([[-52, 0], [-44, -150], [-46, -230], [-24, -262], [24, -262], [46, -230], [44, -150], [52, 0]]));
+    shape(ctx, '#ecebe4', 3.5, poly([[-30, -150], [30, -150], [36, 0], [-36, 0]]));                                                          // apron
+    line(ctx, [[-10, -150], [-24, -110]], 3); line(ctx, [[10, -150], [24, -110]], 3);                                                        // apron ties
+    shape(ctx, '#e8a676', 3.5, rect(-11, -278, 22, 20, 5));
+    shape(ctx, '#3b2e26', 4, ellipse(0, -310, 30, 36));                                                                                       // hair, back of head
+    shape(ctx, '#3b2e26', 3.5, circle(0, -280, 14));                                                                                          // bun
+    shape(ctx, '#f6f4ee', 3.5, poly([[-30, -330], [30, -330], [22, -356], [-22, -356]]));                                                     // cap
+    ctx.restore();
+  }
+  function shotRoom(ctx, lt, dur, t) {
+    ctx.save(); cam(ctx, push(lt, dur, 1.0, 1.06), 640, 380);
+    plankWall(ctx, -100, 1400, -100, 470, '#7a877d', 2);
+    shape(ctx, '#e9e2cf', 3.5, rect(520, 110, 120, 86, 2)); shape(ctx, '#9fb0a6', 0, rect(530, 120, 100, 66)); shape(ctx, '#6f8a7a', 0, poly([[530, 186], [570, 140], [600, 170], [615, 150], [630, 186]])); // framed landscape
+    wallClock(ctx, 740, 150, 30);
+    lamp(ctx, 470, 40);
+    shape(ctx, '#5c675f', 0, rect(-100, 420, 1500, 60)); line(ctx, [[-100, 420], [1400, 420]], 4, '#9aa69c');
+    shape(ctx, '#5d4a3b', 0, rect(-100, 480, 1500, 400)); line(ctx, [[-100, 480], [1400, 480]], 4, 'rgba(0,0,0,.4)');   // floor
+    // window: grey Detroit sky, bare branch, curtains that breathe
+    shape(ctx, '#e3d9c4', 4, rect(890, 90, 250, 300, 3));
+    ctx.fillStyle = grad(ctx, 0, 104, 0, 376, [[0, '#a5b0b5'], [1, '#d4d3ca']]); ctx.fillRect(904, 104, 222, 272);
+    line(ctx, [[904, 330], [960, 250], [1010, 210], [1126, 180]], 7, '#5f5650'); line(ctx, [[960, 250], [940, 190]], 4, '#5f5650');
+    line(ctx, [[1015, 104], [1015, 376]], 5, '#e3d9c4'); line(ctx, [[904, 240], [1126, 240]], 5, '#e3d9c4'); shape(ctx, null, 4, rect(904, 104, 222, 272));
+    for (const [x0, w, ph] of [[862, 58, 0], [1110, 58, 2]]) {
+      const sw = Math.sin(t * 1.2 + ph) * 6;
+      shape(ctx, '#e7dcc0', 4, poly([[x0, 76], [x0 + w, 76], [x0 + w + sw * .4, 300], [x0 + w + sw, 430], [x0 + sw, 430]]));
+      line(ctx, [[x0 + w / 2, 90], [x0 + w / 2 + sw * .7, 420]], 2.5, 'rgba(0,0,0,.12)');
     }
-    T.fill(ctx, '#000', 1 - ease.out(prog(lt, 0, .18)));
-    T.fill(ctx, '#000', ease.in(prog(lt, dur - .35, dur)));
+    shape(ctx, '#3b3430', 4, rect(840, 66, 330, 14, 7));
+    glow(ctx, 1015, 240, 360, 'rgba(230,236,230,.16)');
+    // the bed (supplied art) with contact shadow
+    T.shadow(ctx, 560, 712, 280, 26, .45, 6);
+    ctx.drawImage(IMG.bed, 290, 160, IMG.bed.width * .47, IMG.bed.height * .47);
+    // bedside table
+    shape(ctx, '#6b4f39', 4, rect(840, 520, 110, 190, 3)); shape(ctx, '#83634a', 4, rect(828, 506, 134, 20, 3));
+    shape(ctx, 'rgba(210,225,230,.7)', 3, rect(848, 470, 18, 36, 3)); shape(ctx, P.PAL.gold, 3, circle(890, 494, 11)); P.metalStroke(ctx, c => c.ellipse(930, 498, 14, 7, 0, 0, 7), 3);
+    nurseBack(ctx, 1010, 640, .95, t);
+    doctorBack(ctx, 120, 720, 1.05, t, true);
+    ctx.restore();
+    vignette(ctx, 700, 330, .5);
+    dateTag(ctx, '31 OCT 1926');
+  }
+
+  // ================= 01C — bedside: glass → watch → cuffs → hand =================
+  const OBJ = [380, 980, 1600, 2300];
+  function shotCloseups(ctx, lt, dur, t) {
+    const cx = keys(lt, [[0, OBJ[0]], [.42, OBJ[1]], [.78, OBJ[2]], [1.1, OBJ[3]]]);
+    ctx.save(); cam(ctx, push(lt, dur, 1.0, 1.06), cx, 380);
+    plankWall(ctx, -600, 3200, -200, 470, '#5f6b63', 5);
+    shape(ctx, '#7b5b42', 4, rect(-600, 470, 2580, 400)); shape(ctx, '#8d6a4e', 0, rect(-600, 474, 2576, 18));
+    shape(ctx, '#2c2826', 0, rect(1982, 470, 1200, 500));
+    P.waterGlass(ctx, OBJ[0], 640, 300, t);
+    P.pocketWatch(ctx, OBJ[1], 520, 110, t);
+    P.handcuffPair(ctx, OBJ[2], 610, 1.1);
+    P.hangingHand(ctx, OBJ[3], 560, t);
+    ctx.restore();
+    vignette(ctx, 640, 360, .6);
+    dateTag(ctx, '31 OCT 1926');
+  }
+
+  // ================= 02A — on stage: handcuffs =================
+  function stage(ctx, t) {
+    shape(ctx, '#7a2621', 0, rect(-600, -500, 2500, 1140));
+    for (let x = -600, i = 0; x < 1900; x += 78, i++) { const sw = Math.sin(t * .9 + i) * 2; shape(ctx, '#5f1b17', 0, poly([[x + 22, -500], [x + 44, -500], [x + 46 + sw, 640], [x + 20 + sw, 640]])); shape(ctx, '#943229', 0, poly([[x + 52, -500], [x + 60, -500], [x + 62 + sw, 640], [x + 54 + sw, 640]])); }
+    shape(ctx, '#4a1714', 4, rect(-600, -500, 2500, 560));
+    for (let x = -600; x < 1900; x += 150) { shape(ctx, '#5f1b17', 4, c => { c.moveTo(x, 58); c.quadraticCurveTo(x + 75, 116, x + 150, 58); c.closePath(); }); line(ctx, [[x + 6, 64], [x + 75, 108], [x + 144, 64]], 5, '#c9a14a'); }
+    shape(ctx, '#5a4231', 0, rect(-600, 640, 2500, 400)); line(ctx, [[-600, 640], [1900, 640]], 4, 'rgba(0,0,0,.45)');
+    glow(ctx, 640, 420, 420, 'rgba(255,220,160,.28)');
+    glow(ctx, 640, 650, 260, 'rgba(255,220,160,.25)');
+  }
+  // cuffs in the suit art's image space: [x, y, forearm axis, radius, click time]
+  const CUFFS = [[224, 690, -.94, 36, 9.95], [362, 700, -2.17, 36, 10.39], [186, 766, -.98, 44, 11.14], [398, 778, -2.2, 44, 11.5]];
+  function cuffState(c, t) {
+    const [x, y, axis, , ct] = c, k = t - ct;
+    if (k < 0) return { x, y, axis, open: 0, a: 1 };
+    const open = back(clamp(k / .14)), fall = Math.max(0, k - .12), side = x < 292 ? -1 : 1;
+    return { x: x + side * fall * 140, y: y + 1000 * fall * fall, axis: axis + side * fall * 4, open: clamp(open), a: clamp(1 - (fall - .4) / .2) };
+  }
+  function cuffs(ctx, t) {
+    const S = CUFFS.map(c => cuffState(c, t));
+    if (S[0].open === 0 && S[1].open === 0) P.chain(ctx, [S[0].x + 14, S[0].y + 16], [S[1].x - 14, S[1].y + 16], 24, Math.sin(t * 2.2) * 3, 8);
+    for (const i of [2, 3]) {
+      const s = S[i], settle = Math.exp(-Math.max(0, t - 7.7) * .6); // chain swing dies down after the cut in
+      ctx.save(); ctx.globalAlpha = s.a; P.chain(ctx, [s.x, s.y + 14], [s.x + Math.sin(t * 2.4 + i) * 40 * (.3 + settle), s.y + 320], 14, 0, 9); ctx.restore();
+    }
+    S.forEach((s, i) => { if (s.a > 0) { ctx.save(); ctx.globalAlpha = s.a; P.cuffBand(ctx, s.x, s.y, CUFFS[i][3], s.axis, { open: s.open }); ctx.restore(); } });
+  }
+  const SW = .44, SX = 640 - 533 * SW / 2, SY = 650 - 1461 * SW;
+  function shotStageWide(ctx, lt, dur, t) {
+    ctx.save(); cam(ctx, push(lt, dur, 1.0, 1.08), 640, 380);
+    stage(ctx, t);
+    T.shadow(ctx, 640, 652, 110, 14, .5, 5);
+    ctx.drawImage(IMG.suit, SX, SY, 533 * SW, 1461 * SW);
+    ctx.save(); ctx.translate(SX, SY); ctx.scale(SW, SW); cuffs(ctx, t); ctx.restore();
+    ctx.restore();
+    vignette(ctx, 640, 380, .55);
+    dateTag(ctx, '1891 – 1926');
+    caption(ctx, 'HARRY HOUDINI · ESCAPE ARTIST', lt, .5);
+  }
+  function shotStageClose(ctx, lt, dur, t) {
+    const jolt = CUFFS.reduce((a, c) => { const k = t - c[4]; return a + (k > 0 && k < .2 ? Math.sin(k * 80) * 5 * (1 - k / .2) : 0); }, 0);
+    ctx.save(); cam(ctx, push(lt, dur, 2.15, 2.32), 374 + 292 + jolt, 722);
+    ctx.save(); ctx.translate(374 - 640 * 1.9, 722 - 380 * 1.9); ctx.scale(1.9, 1.9); stage(ctx, t); ctx.restore();
+    ctx.drawImage(IMG.suit, 374, 0);
+    ctx.save(); ctx.translate(374, 0); cuffs(ctx, t); ctx.restore();
+    ctx.restore();
+    vignette(ctx, 640, 360, .5);
+    dateTag(ctx, '1891 – 1926');
   }
 
   const shots = [
-    { start: 0, end: 4.15, draw: shotExterior },
-    { start: 4.15, end: 5.45, draw: shotRoom },
-    { start: 5.45, end: 7.1, draw: shotCloseups },
-    { start: 7.1, end: 7.7, draw: () => {} }, // cut to black
-    { start: 7.7, end: 12.1, draw: shotHandcuffs },
+    { start: 0, end: 3.95, draw: shotExterior },
+    { start: 3.95, end: 5.4, draw: shotRoom },
+    { start: 5.4, end: 6.95, draw: shotCloseups },
+    { start: 6.95, end: 7.7, draw: () => {} },          // cut to black after "died"
+    { start: 7.7, end: 9.6, draw: shotStageWide },
+    { start: 9.6, end: 12.1, draw: shotStageClose },
   ];
-  const sfx = [
-    { t: 3.7, type: 'window', gain: .8 },
-    ...CUFFS.map(c => ({ t: c[3], type: 'click' })),
-    { t: 7.72, type: 'rattle', gain: .5 },
-  ];
+  const sfx = [{ t: 7.72, type: 'rattle', gain: .4 }, ...CUFFS.map(c => ({ t: c[4], type: 'click' }))];
 
   G.Show = {
     duration: 12.1, narration: 'assets/audio/narration-preview.mp3', shots, sfx,
-    moods: [{ t: 0, mood: 'still' }, { t: 7.1, mood: 'silence' }, { t: 7.7, mood: 'tense' }],
+    moods: [{ t: 0, mood: 'still' }, { t: 6.95, mood: 'silence' }, { t: 7.7, mood: 'tense' }],
     images: { bed: 'assets/img/houdini-bed.png', suit: 'assets/img/houdini-suit.png' },
+    fonts: ['600 26px Fredoka', '700 20px Fredoka'],
   };
 })(window);

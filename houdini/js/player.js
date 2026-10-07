@@ -8,6 +8,7 @@
     canvas.width = T.W; canvas.height = T.H;
     const btn = document.getElementById('play'), time = document.getElementById('time');
     await T.loadImages(show.images || {});
+    await Promise.all((show.fonts || []).map(f => document.fonts.load(f)));
     const draw = t => T.renderFrame(ctx, show.shots, Math.min(t, show.duration - 1e-3));
     const soundOpts = () => ({ duration: show.duration, sfx: show.sfx, moods: show.moods });
     G.renderAt = t => { draw(t); return true; };

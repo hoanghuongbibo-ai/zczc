@@ -74,7 +74,7 @@
       gr.addColorStop(0, 'rgba(10,8,6,0)'); gr.addColorStop(1, 'rgba(10,8,6,0.55)'); v.fillStyle = gr; v.fillRect(0, 0, W, H);
     }
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = o.grain ?? .08; ctx.drawImage(grains[Math.floor(t * 12) % 3], 0, 0, W, H);
+    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = o.grain ?? .035; ctx.drawImage(grains[Math.floor(t * 12) % 3], 0, 0, W, H);
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = o.vignette ?? 1; ctx.drawImage(vign, 0, 0);
     ctx.restore();
   }
@@ -88,5 +88,49 @@
     finish(ctx, t);
   }
 
-  G.Toon = { W, H, LINE, E, rng, clamp, prog, lerp, ease, IMG, loadImages, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, finish, fill, renderFrame };
+  // ---------- cinematic helpers ----------
+  // Smooth pseudo-noise for handheld camera drift (sum of incommensurate sines).
+  const noise = (t, seed = 0) => Math.sin(t * 1.13 + seed) * .5 + Math.sin(t * 2.71 + seed * 1.7) * .3 + Math.sin(t * 4.37 + seed * 2.3) * .2;
+  // Additive light blob (bloom / glow).
+  function glow(ctx, x, y, r, color, a = 1) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = a;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); ctx.restore();
+  }
+  // Volumetric light shaft between a source quad edge and a floor patch.
+  function shaft(ctx, pts, color, a, from, to) {
+    ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = a;
+    const g = ctx.createLinearGradient(from[0], from[1], to[0], to[1]); g.addColorStop(0, color); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.beginPath(); poly(pts)(ctx); ctx.fill(); ctx.restore();
+  }
+  // Dust motes drifting inside a clip path.
+  function dust(ctx, t, clipPath, box, n = 40, seed = 3, color = 'rgba(255,245,220,0.8)') {
+    const r = rng(seed); ctx.save(); ctx.beginPath(); clipPath(ctx); ctx.clip(); ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = color;
+    for (let i = 0; i < n; i++) {
+      const x = box[0] + ((r() * box[2] + t * (6 + r() * 10)) % box[2]), y = box[1] + ((r() * box[3] - t * (4 + r() * 8) + box[3] * 10) % box[3]);
+      ctx.globalAlpha = .25 + .5 * Math.abs(Math.sin(t * (.6 + r()) + i)); ctx.beginPath(); ctx.arc(x, y, .8 + r() * 1.8, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+  }
+  // Full-frame grade: tint (soft-light) + optional lift/crush.
+  function grade(ctx, tint, a = .25, mode = 'soft-light') { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = mode; ctx.globalAlpha = a; ctx.fillStyle = tint; ctx.fillRect(0, 0, W, H); ctx.restore(); }
+  // Draw something with a blur (depth of field). fn draws normally.
+  function blurred(ctx, px, fn) { if (px < .3) { fn(); return; } ctx.save(); ctx.filter = `blur(${px.toFixed(1)}px)`; fn(); ctx.restore(); }
+  // Soft cast shadow ellipse.
+  function shadow(ctx, x, y, rx, ry, a = .4, blur = 8) { ctx.save(); ctx.filter = `blur(${blur}px)`; ctx.globalAlpha = a; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 7); ctx.fill(); ctx.restore(); }
+  // Path traced twice: dark fill, then a rim-light stroke clipped to one side.
+  function rimmed(ctx, path, fill, rimColor, rimX, side = 1, lw = 3) {
+    shape(ctx, fill, lw, path);
+    ctx.save(); ctx.beginPath(); side > 0 ? ctx.rect(rimX, -5000, 10000, 10000) : ctx.rect(rimX - 10000, -5000, 10000, 10000); ctx.clip();
+    ctx.beginPath(); path(ctx); ctx.lineWidth = lw + 1.5; ctx.strokeStyle = rimColor; ctx.stroke(); ctx.restore();
+  }
+  // Piecewise camera keyframes [[t, value], ...] with eased segments.
+  function keys(t, ks, fn = ease.inOut) {
+    if (t <= ks[0][0]) return ks[0][1];
+    for (let i = 0; i < ks.length - 1; i++) if (t < ks[i + 1][0]) return lerp(ks[i][1], ks[i + 1][1], fn(prog(t, ks[i][0], ks[i + 1][0])));
+    return ks[ks.length - 1][1];
+  }
+
+  G.Toon = { W, H, LINE, E, rng, clamp, prog, lerp, ease, IMG, loadImages, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, finish, fill, renderFrame,
+    noise, glow, shaft, dust, grade, blurred, shadow, rimmed, keys };
 })(window);

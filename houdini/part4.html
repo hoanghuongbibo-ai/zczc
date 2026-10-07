@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Houdini — The Last Ten Days</title>
+<style>
+  @font-face { font-family: Fredoka; font-weight: 500; src: url(assets/fonts/fredoka-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 600; src: url(assets/fonts/fredoka-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: 'Luckiest Guy'; src: url(assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; box-shadow: 0 10px 40px #000a; }
+  .bar { display: flex; gap: 16px; align-items: center; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #5c1f1b; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="bar"><button id="play">▶ Play</button><span id="time"></span></div>
+<script src="js/toon.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/props.js"></script>
+<script src="js/rig.js"></script>
+<script src="js/chars.js"></script>
+<script src="js/cast2.js"></script>
+<script src="js/cast3.js"></script>
+<script src="js/cast4.js"></script>
+<script src="js/common.js"></script>
+<script src="js/timing4.js"></script>
+<script src="js/show3.js"></script>
+<script src="js/part1.js"></script>
+<script src="js/part2.js"></script>
+<script src="js/show4.js"></script>
+<script src="js/player.js"></script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

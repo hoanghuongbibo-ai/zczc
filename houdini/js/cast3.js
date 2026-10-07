@@ -123,6 +123,7 @@
     });
   }
   Object.assign(C.HEADS, { doyle, jean, margery, kingsley, professor, editor });
+  C.castFace = face; C.browSet = browSet;                                      // shared with later casts (js/cast4.js)
 
   // ---------- outfits ----------
   const legsPair = (ctx, J, cloth, shoe, w1, w2) => {

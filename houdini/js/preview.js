@@ -152,7 +152,11 @@
     glow(ctx, 1015, 240, 360, 'rgba(230,236,230,.16)');
     // the bed (supplied art) with contact shadow
     T.shadow(ctx, 560, 712, 280, 26, .45, 6);
-    ctx.drawImage(IMG.bed, 290, 160, IMG.bed.width * .47, IMG.bed.height * .47);
+    G.Rig.drawBed(ctx, 290, 160, .47, {
+      breathe: (Math.sin(t * 1.5) + 1) / 2,
+      blink: G.Rig.blinkAt(t, [4.5], .55),                                        // one slow, heavy blink
+      look: [lerp(-.2, .75, ease.inOut(prog(lt, .2, dur))), lerp(0, -.45, ease.inOut(prog(lt, .2, dur)))], // eyes drift to the window
+    });
     // bedside table
     shape(ctx, '#6b4f39', 4, rect(840, 520, 110, 190, 3)); shape(ctx, '#83634a', 4, rect(828, 506, 134, 20, 3));
     shape(ctx, 'rgba(210,225,230,.7)', 3, rect(848, 470, 18, 36, 3)); shape(ctx, P.PAL.gold, 3, circle(890, 494, 11)); P.metalStroke(ctx, c => c.ellipse(930, 498, 14, 7, 0, 0, 7), 3);
@@ -212,7 +216,13 @@
     ctx.save(); cam(ctx, push(lt, dur, 1.0, 1.08), 640, 380);
     stage(ctx, t);
     T.shadow(ctx, 640, 652, 110, 14, .5, 5);
-    ctx.drawImage(IMG.suit, SX, SY, 533 * SW, 1461 * SW);
+    const smug = ease.inOut(prog(lt, .15, .7)) - ease.inOut(prog(lt, 1.35, 1.8)) * .6;
+    G.Rig.drawSuit(ctx, SX, SY, SW, {
+      sway: Math.sin(t * .9) * .006, breathe: (Math.sin(t * 1.7) + 1) / 2,
+      headRot: -.06 * smug + Math.sin(t * 1.1) * .008, headX: -3 * smug, headY: -2 * smug,
+      look: lt < 1.25 ? [.55, .15] : [.15, .95],                                   // eyes to camera, then down to the cuffs
+      blink: G.Rig.blinkAt(t, [8.35, 9.2]),
+    });
     ctx.save(); ctx.translate(SX, SY); ctx.scale(SW, SW); cuffs(ctx, t); ctx.restore();
     ctx.restore();
     vignette(ctx, 640, 380, .55);
@@ -223,7 +233,8 @@
     const jolt = CUFFS.reduce((a, c) => { const k = t - c[4]; return a + (k > 0 && k < .2 ? Math.sin(k * 80) * 5 * (1 - k / .2) : 0); }, 0);
     ctx.save(); cam(ctx, push(lt, dur, 2.15, 2.32), 374 + 292 + jolt, 722);
     ctx.save(); ctx.translate(374 - 640 * 1.9, 722 - 380 * 1.9); ctx.scale(1.9, 1.9); stage(ctx, t); ctx.restore();
-    ctx.drawImage(IMG.suit, 374, 0);
+    const flex = CUFFS.reduce((a, c) => { const k = t - c[4]; return a + (k > 0 && k < .5 ? Math.sin(k * 18) * Math.exp(-k * 7) : 0); }, 0);
+    G.Rig.drawSuit(ctx, 374, 0, 1, { breathe: (Math.sin(t * 1.7) + 1) / 2, handsY: -10 * flex + Math.sin(t * 2.4) * 1.5, handsRot: .04 * flex, look: [.15, .95] });
     ctx.save(); ctx.translate(374, 0); cuffs(ctx, t); ctx.restore();
     ctx.restore();
     vignette(ctx, 640, 360, .5);
@@ -243,7 +254,7 @@
   G.Show = {
     duration: 12.1, narration: 'assets/audio/narration-preview.mp3', shots, sfx,
     moods: [{ t: 0, mood: 'still' }, { t: 6.95, mood: 'silence' }, { t: 7.7, mood: 'tense' }],
-    images: { bed: 'assets/img/houdini-bed.png', suit: 'assets/img/houdini-suit.png' },
+    images: { bed: 'assets/img/houdini-bed.png', suit: 'assets/img/houdini-suit.png', suitEyeL: 'assets/img/rig/suit-eye-l.png', suitEyeR: 'assets/img/rig/suit-eye-r.png', bedEyeL: 'assets/img/rig/bed-eye-l.png', bedEyeR: 'assets/img/rig/bed-eye-r.png' },
     fonts: ['600 26px Fredoka', '700 20px Fredoka'],
   };
 })(window);

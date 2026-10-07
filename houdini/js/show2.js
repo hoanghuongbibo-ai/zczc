@@ -258,7 +258,7 @@
     shape(ctx, '#8a7a6a', 0, rect(-400, 520, 2100, 400));
     // him, lying back in the tub: head sinks below the waterline
     ctx.save(); ctx.beginPath(); ctx.rect(300, 0, 680, 455); ctx.clip();
-    fig(ctx, 900, 430 + dunk * 90, .3, { outfit: 'swim', hands: { L: [-140, -700], R: [140, -700] }, feet: { L: [-50, -40], R: [50, -40] }, face: { brows: 'calm', mouth: 'flat', eyes: lt > .5 ? 0 : 1, look: [0, -.5] } }, { rot: -1.25 });
+    fig(ctx, 900, 430 + dunk * 90, .3, { outfit: 'swim', hands: { L: [-70, -520], R: [70, -520] }, feet: { L: [-50, -40], R: [50, -40] }, face: { brows: 'calm', mouth: 'flat', eyes: lt > .5 ? 0 : 1, look: [0, -.5] } }, { rot: -1.25 });
     ctx.restore();
     shape(ctx, 'rgba(150,200,220,.75)', 0, rect(330, 440, 620, 30));
     for (let i = 0; i < 6; i++) shape(ctx, 'rgba(240,250,255,.85)', 3, rect(360 + i * 95, 428 + (i % 2) * 6, 40, 30, 6));   // ice
@@ -280,7 +280,7 @@
     FX.paperDoc(ctx, 470, 380, 460, 300, { title: 'SUPERNATURAL', titleSize: 46, lines: 5, rot: -.03, seed: 61 });
     FX.stamp(ctx, 'NOT REQUIRED', 480, 430, since(t, 'supernatural'), { color: '#a8322a', size: 44 });
     const wag = Math.sin(lt * 9) * 40 * clamp(lt / .3);
-    fig(ctx, 980, 700, .34, houdini({ hands: { L: [-120, -470], R: [240 + wag, -1150] }, handShape: { R: 'point' }, face: { brows: 'smug', mouth: 'smirk', look: [-.5, 0] }, breathe: breathe(t) }));
+    fig(ctx, 980, 700, .34, houdini({ hands: { L: [-120, -470], R: [400 + wag, -1230] }, handShape: { R: 'point' }, face: { brows: 'smug', mouth: 'smirk', look: [-.5, 0] }, breathe: breathe(t) }));
     ctx.restore();
     FX.vignette(ctx, 640, 380, .55);
   }
@@ -357,7 +357,7 @@
     for (let i = 1; i <= i0; i++) ctx.lineTo(...pts[i]); if (i0 < n) { const f = upto - i0; ctx.lineTo(lerp(pts[i0][0], pts[i0 + 1][0], f), lerp(pts[i0][1], pts[i0 + 1][1], f)); } ctx.stroke(); ctx.restore();
     ctx.font = FX.FONT(700, 22); ctx.fillStyle = '#d8d2c2'; ctx.textAlign = 'center'; ctx.fillText('1914', 580, 636); ctx.fillText('1918', 800, 636); ctx.fillText('1920s', 1060, 636);
     FX.caption(ctx, 'AFTER THE WAR AND THE FLU: SPIRITUALISM SURGES', lt, .4, W - 60, 60);
-    if (k > .7) FX.bigText(ctx, 'SÉANCES', 1000, 110, 54, { color: '#f6c945' });
+    if (k > .7) FX.bigText(ctx, 'SÉANCES', 980, 210, 54, { color: '#f6c945' });
     FX.dateTag(ctx, '1920s');
   }
   function seanceRoom(ctx, t, opts = {}) {
@@ -374,7 +374,7 @@
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.06), 640, 400);
     seanceRoom(ctx, t, { knock, people: () => {
       const cast = [['cloche', 'dress20s', 330], ['bowler', 'overcoat', 500], ['mediumScarf', 'shawl', 640], ['young', 'sweater', 790], ['nurse', 'nurseDress', 950]];
-      cast.forEach(([head, outfit, x], i) => fig(ctx, x, 920, .38, { head, outfit, hands: { L: [-160, -720], R: [160, -720] }, feet: { L: [-60, -40], R: [60, -40] },
+      cast.forEach(([head, outfit, x], i) => fig(ctx, x, 860, .38, { head, outfit, hands: { L: [-160, -720], R: [160, -720] }, feet: { L: [-60, -40], R: [60, -40] },
         face: { brows: head === 'mediumScarf' ? 'calm' : (knock > 0 ? 'up' : 'worried'), mouth: knock > 0 && knock < 1.2 && head !== 'mediumScarf' ? 'o' : 'flat', eyes: head === 'mediumScarf' ? 0 : 1, look: [voice > 0 ? (640 - x) / 600 : 0, voice > 0 ? -.8 : 0] } }, { mirror: x > 640 }));
     } });
     if (knock > 0 && knock < .6) FX.bigText(ctx, 'KNOCK', 420, 470, 44, { color: '#f1ead8' });
@@ -389,8 +389,8 @@
     const i = Math.min(2, Math.floor(lt / (dur / 3))), lk = lt - i * dur / 3;
     ctx.save(); cam(ctx, 1.05 + lk * .02, 640, 400);
     seanceRoom(ctx, t, { people: () => {
-      fig(ctx, 420, 940, .44, { head: MEDIUMS[i][0], outfit: MEDIUMS[i][1], hands: { L: [-170, -720], R: [170, -720] }, feet: { L: [-60, -40], R: [60, -40] }, face: { brows: 'calm', mouth: 'flat', eyes: .2, look: [0, -.5] } });
-      fig(ctx, 880, 940, .44, houdini({ hands: { L: [110, -760], R: [-110, -740] }, face: { brows: lk > .4 ? 'smug' : 'calm', mouth: 'flat', look: [-.7, 0], eyes: blink(t, at('sat') + i * dur / 3 + .5) } }), { mirror: true });
+      fig(ctx, 420, 900, .44, { head: MEDIUMS[i][0], outfit: MEDIUMS[i][1], hands: { L: [-170, -720], R: [170, -720] }, feet: { L: [-60, -40], R: [60, -40] }, face: { brows: 'calm', mouth: 'flat', eyes: .2, look: [0, -.5] } });
+      fig(ctx, 880, 900, .44, houdini({ hands: { L: [110, -760], R: [-110, -740] }, face: { brows: lk > .4 ? 'smug' : 'calm', mouth: 'flat', look: [-.7, 0], eyes: blink(t, at('sat') + i * dur / 3 + .5) } }), { mirror: true });
     } });
     ctx.restore();
     FX.vignette(ctx, 640, 400, .65);
@@ -433,10 +433,14 @@
     const meet = FX.approach(lt, .05, 1, 0, .12), shake = lt > .5 ? Math.sin((lt - .5) * 14) * 10 * Math.exp(-(lt - .5) * 2) : 0;
     ctx.save(); ctx.translate(0, shake);
     for (const [s, sleeve, cuff] of [[-1, '#2b2b2e', '#fbf0db'], [1, '#7a6a4a', '#efe9dc']]) {
-      const x = 640 + s * (40 + meet * 500);
+      const x = 640 + s * (10 + meet * 500);
       shape(ctx, sleeve, 5, rect(s < 0 ? x - 640 : x + 60, 340, 580, 120, 30));
-      ctx.save(); ctx.translate(x + s * 40, 400); ctx.scale(-s, 1); shape(ctx, cuff, 4, rect(-10, -64, 34, 128, 6)); shape(ctx, s < 0 ? Ch.HCOL.skin : '#e7b08a', 5, smooth([[-10, -54], [-80, -60], [-120, -30], [-118, 30], [-70, 56], [-10, 50]])); ctx.restore();
+      ctx.save(); ctx.translate(x + s * 40, 400); ctx.scale(s, 1); shape(ctx, cuff, 4, rect(-10, -64, 34, 128, 6)); shape(ctx, s < 0 ? Ch.HCOL.skin : '#e7b08a', 5, smooth([[-10, -54], [-80, -60], [-120, -30], [-118, 30], [-70, 56], [-10, 50]])); ctx.restore(); // fingers point toward the other hand
       if (s > 0) for (let i = 0; i < 5; i++) line(ctx, [[x + 90 + i * 100, 350], [x + 70 + i * 100, 450]], 2.5, 'rgba(60,40,20,.35)');   // tweed
+    }
+    if (meet < .15) { // the tweed hand's fingers wrap over Houdini's: a clear clasp
+      for (let i = 0; i < 4; i++) Ch.part(ctx, smooth([[686 - i * 22, 352], [660 - i * 22, 344], [640 - i * 22, 372], [648 - i * 22, 420], [672 - i * 22, 424]]), '#e7b08a', 4);
+      Ch.part(ctx, smooth([[600, 330], [650, 320], [690, 340], [660, 356], [610, 352]]), Ch.HCOL.skin, 4);           // Houdini's thumb on top
     }
     ctx.restore();
     FX.stamp(ctx, 'CRUSADE', 640, 560, since(t, 'crusade'), { color: '#a8322a', size: 74 });

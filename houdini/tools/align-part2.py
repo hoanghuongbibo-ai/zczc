@@ -29,7 +29,7 @@ recognized them. That could have made him a quiet skeptic and nothing more. Inst
 into a crusade.
 """
 ANCHORS = [  # key → phrase that starts the beat (first occurrence after the previous anchor)
-    ('q1', 'so what actually'), ('ordinary', 'ordinary'), ('q2', 'and why has'), ('q3', 'the answer runs'),
+    ('q1', 'so what actually'), ('q2', 'and why has'), ('ordinary', 'ordinary'), ('q3', 'the answer runs'),
     ('montreal', 'montreal'), ('atlantic', 'atlantic'), ('boston', 'boston'), ('code', 'secret code'),
     ('q4', 'because houdini'), ('halloween', 'halloween'), ('q5', 'he died in'), ('war', 'war'), ('speak', 'speak'),
     ('m1', 'the man with'), ('born', 'he was born'), ('immigrant', 'and grew up'), ('star', 'by the early'),

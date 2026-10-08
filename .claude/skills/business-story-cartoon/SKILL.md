@@ -73,6 +73,23 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
   values count up, one highlight colour for the bar that matters (others dim to grey), callout points at the takeaway,
   every number from the script's source log (I extract and check it myself), source tag on screen for key figures.
 
+## Shot kit, sound and page setup
+
+- `G.Kit` (`biz/js/kit.js`): backgrounds (`bg.sky/white/cream/studio/color`), `popAt` overshoot entrances, `card`,
+  `nameCard` (black card, white handwriting), `bubble`, `stamp`, `slam` (big number), `logo` (a supplied logo on a white
+  card, `crop` option), `photoCircle`, `source` (bottom-left source tag), `headline`, `doc`, `house`, `envelope`,
+  `strike/cross/check/arrow/scribbleCircle`, `host` (talking host shortcut), `tween`.
+- Sound: `biz/js/bizsound.js` replaces the history score on biz pages — bright marimba bed (moods `bright`, `soft`,
+  `tense`, `none`) + UI foley (`pop, click, whoosh, swoosh, thud, stamp, paper, ding, cash, tick, type, buzz, boing,
+  rise, mail`). Put a `swoosh` on every cut and a `pop` on each card entrance.
+- Page script order: `../houdini/js/toon.js`, `js/bizsound.js`, `js/bean.js`, `js/host.js`, `js/icons.js`,
+  `js/charts.js`, `js/kit.js`, `js/env-<slug>.js`, `js/<slug>.js`, `../houdini/js/player.js` (example: `biz/housing-1.html`).
+- Supplied assets go in `biz/assets/<video>/` with slug names; load them through `Show.images` and draw with `Kit.logo`.
+  RAR archives: `apt-get install libarchive-tools`, then `bsdtar -xf`. Google Drive links are blocked here, so ask for a
+  zip/rar in the chat or a GitHub upload instead.
+- Spot-check frames at exact times: `node tools/_at.mjs biz/<page>.html <dir> 12.5 40 …` (from `houdini/`).
+- Long scripts arrive as several voice files (e.g. cold open + setup); build one page per voice file and join at the end.
+
 ## Content rules
 
 - Funny about money, never about the dead / victims; allegations always shown with the denial and the outcome
@@ -86,3 +103,5 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
 - Charts: keep the legend away from the tallest bar's value label; callouts above the title line; the host goes in a
   corner that doesn't cover values.
 - In tool-written JS, never let a `//` comment swallow code on the same line (it broke `host.js` once).
+- Check the voice file matches the script before building (the first housing upload was the funeral cold open).
+- Logos: check the supplied file is the right organisation (e.g. "The Cato Corporation" ≠ the Cato Institute) and flag it.

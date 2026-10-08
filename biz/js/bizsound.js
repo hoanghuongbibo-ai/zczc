@@ -1,0 +1,86 @@
+/* Music bed + UI foley for the money channel (replaces houdini/js/sound.js on biz pages — that one is a dark
+ * history score). Light, bright and out of the way of the voice: a soft marimba-style pluck pattern over a
+ * major progression, a gentle kick and shaker, and short "explainer video" foley (pops, dings, swooshes, stamps).
+ * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse), 'none'.
+ * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
+(function (G) {
+  'use strict';
+  const SR = 44100, BPM = 100, BEAT = 60 / BPM;
+  const midi = n => 440 * Math.pow(2, (n - 69) / 12);
+  function rng(seed) { let s = seed >>> 0 || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296 * 2 - 1; }; }
+  const at = t => Math.floor(t * SR);
+
+  // ---- instruments ----
+  function pluck(b, t, n, vel = 1, dec = 7) { // marimba-ish: sine + soft octave, fast decay
+    const f = midi(n), s = at(t);
+    for (let i = 0; i < .9 * SR && s + i < b.length; i++) { const x = i / SR, e = Math.min(1, x * 600) * Math.exp(-x * dec);
+      b[s + i] += vel * e * .2 * (Math.sin(2 * Math.PI * f * x) + .35 * Math.sin(4 * Math.PI * f * x) * Math.exp(-x * 14) + .12 * Math.sin(2 * Math.PI * f * 3.9 * x) * Math.exp(-x * 30)); }
+  }
+  function pad(b, t, notes, dur, vel = 1) { // warm sine pad with slow swell
+    const s = at(t);
+    for (const n of notes) { const f = midi(n);
+      for (let i = 0; i < dur * SR && s + i < b.length; i++) { const x = i / SR, e = Math.min(1, x / .6) * Math.min(1, (dur - x) / .6);
+        b[s + i] += vel * e * .05 * (Math.sin(2 * Math.PI * f * x) + .2 * Math.sin(2 * Math.PI * f * 2.003 * x)); } }
+  }
+  function tone(b, t, dur, fFn, vel, decay) {
+    const s = at(t); let ph = 0;
+    for (let i = 0; i < dur * SR && s + i < b.length; i++) { const x = i / SR; ph += fFn(x) / SR; b[s + i] += vel * Math.sin(2 * Math.PI * ph) * Math.exp(-x * decay) * Math.min(1, x * 800); }
+  }
+  function noise(b, t, dur, vel, lpK, envFn, seed = 1, hp = false) {
+    const r = rng(seed), s = at(t); let lp = 0, prev = 0;
+    for (let i = 0; i < dur * SR && s + i < b.length; i++) { lp += (r() - lp) * lpK; const v = hp ? lp - prev : lp; prev = lp; b[s + i] += vel * v * envFn(i / SR / dur); }
+  }
+  const kick = (b, t, v = 1) => tone(b, t, .22, x => 120 * Math.exp(-x * 30) + 48, .55 * v, 14);
+  const shaker = (b, t, v = 1, seed = 1) => noise(b, t, .06, .35 * v, .9, k => Math.pow(1 - k, 3), seed, true);
+
+  // ---- foley ----
+  const SFX = {
+    pop(b, t) { tone(b, t, .09, x => 520 + x * 5200, .5, 30); },                                        // bubble / card pop-in
+    click(b, t) { noise(b, t, .015, 1, .9, k => 1 - k, 11, true); tone(b, t, .04, () => 2600, .15, 90); },
+    whoosh(b, t) { noise(b, t, .45, .8, .1, k => Math.sin(Math.PI * k), 14); },
+    swoosh(b, t) { noise(b, t, .28, .7, .25, k => Math.sin(Math.PI * k) * (1 - k * .5), 15, true); },
+    thud(b, t) { tone(b, t, .3, x => 110 - x * 160, .9, 12); noise(b, t, .08, .7, .12, k => 1 - k, 26); },
+    stamp(b, t) { tone(b, t, .25, x => 90 - x * 100, 1, 16); noise(b, t, .06, 1, .3, k => 1 - k, 27); },
+    paper(b, t) { noise(b, t, .14, .9, .35, k => Math.pow(1 - k, 2), 17); },
+    ding(b, t) { for (const [f, v] of [[1568, .3], [2093, .18], [3136, .06]]) tone(b, t, 1.2, () => f, v, 4); },
+    cash(b, t) { SFX.ding(b, t + .08); noise(b, t, .08, .6, .6, k => 1 - k, 31, true); for (let i = 0; i < 5; i++) tone(b, t + .02 * i, .05, () => 3000 + i * 400, .08, 60); },
+    tick(b, t) { noise(b, t, .01, .9, .9, k => 1 - k, 33, true); },
+    type(b, t) { const r = rng(34); for (let i = 0; i < 8; i++) noise(b, t + i * .07 + r() * .02, .012, .7, .9, k => 1 - k, 40 + i, true); },
+    buzz(b, t) { tone(b, t, .35, () => 140, .35, 3); tone(b, t, .35, () => 147, .3, 3); },           // "wrong" buzzer
+    boing(b, t) { tone(b, t, .5, x => 300 + Math.sin(x * 60) * 80 * Math.exp(-x * 6), .4, 6); },
+    rise(b, t) { tone(b, t, .8, x => 300 + x * 900, .12, 1.5); noise(b, t, .8, .25, .05, k => k * k, 35); },
+    mail(b, t) { noise(b, t, .2, .6, .3, k => Math.sin(Math.PI * k), 36); tone(b, t + .12, .06, () => 900, .12, 40); },
+  };
+
+  // ---- the bed ----
+  // C – Am – F – G, one chord per bar (4 beats)
+  const CH = [[48, [60, 64, 67, 72]], [45, [57, 60, 64, 69]], [41, [57, 60, 65, 69]], [43, [55, 59, 62, 67]]];
+  const CHm = [[45, [57, 60, 64]], [41, [57, 60, 65]], [40, [55, 59, 64]], [45, [57, 60, 64]]];   // tense: Am F Em Am
+  function score(m, o) {
+    const dur = o.duration, cues = o.moods || [{ t: 0, mood: 'bright' }];
+    const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
+    const eighth = BEAT / 2, PAT = [0, 2, 1, 2, 3, 2, 1, 2];
+    for (let k = 0, t = 0; t < dur; k++, t = k * eighth) {
+      const md = moodAt(t); if (md === 'none') continue;
+      const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' ? CHm : CH)[bar % 4], i = k % 8;
+      if (md === 'tense') { tone(m, t, eighth * .9, () => midi(bass - 12 + 24), .07, 8); if (i % 4 === 0) kick(m, t, .6); continue; }
+      pluck(m, t, ch[PAT[i]] + 12, i === 0 ? .55 : .38, md === 'soft' ? 9 : 7);
+      if (i === 0) { pluck(m, t, bass, .7, 3); pad(m, t, ch.slice(0, 3), BEAT * 4, md === 'soft' ? .8 : .55); }
+      if (md === 'bright') { if (i % 4 === 0) kick(m, t, .55); if (i % 2 === 1) shaker(m, t, .5, k); }
+    }
+  }
+
+  function render(o) {
+    const buf = new Float32Array(Math.ceil(o.duration * SR));
+    score(buf, o);
+    const fadeOut = o.fadeOut ?? 1.5;
+    for (let i = 0; i < buf.length; i++) buf[i] *= (o.musicGain ?? .32) * Math.min(1, i / SR / .6) * Math.min(1, (o.duration - i / SR) / fadeOut);
+    for (const c of o.sfx || []) if (SFX[c.type]) {
+      const tmp = new Float32Array(3 * SR), s0 = at(c.t); SFX[c.type](tmp, 0);              // render the effect in a 3 s window, then mix it in
+      const g = (c.gain ?? 1) * (o.sfxGain ?? .4); for (let i = 0; i < tmp.length && s0 + i < buf.length; i++) buf[s0 + i] += tmp[i] * g;
+    }
+    let pk = 0; for (const v of buf) pk = Math.max(pk, Math.abs(v)); if (pk > .95) for (let i = 0; i < buf.length; i++) buf[i] *= .95 / pk;
+    return buf;
+  }
+  G.Soundtrack = { SR, render };
+})(window);

@@ -11,7 +11,7 @@
 (function (G) {
   'use strict';
   const INK = '#2a2622', LW = 4.2;
-  const SKIN = '#f2d2a9', WHITE = '#fbfaf7', SHADE = '#d9d6d0';
+  const SKIN = '#ffd3a8', WHITE = '#ffffff', SHADE = '#e3e6ec';
 
   function outline(ctx, path, fill, lw = LW) {
     ctx.beginPath(); path(ctx); ctx.lineJoin = 'round'; ctx.lineCap = 'round';

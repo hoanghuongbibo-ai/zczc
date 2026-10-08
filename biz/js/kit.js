@@ -135,5 +135,10 @@
   function check(ctx, x, y, s, k, col = P.green) { if (k <= 0) return; const pts = [[-.5, 0], [-.15, .35], [.55, -.45]].map(([a, b]) => [x + a * s, y + b * s]); const u = out(k) * 2; const seg = u < 1 ? [pts[0], [lerp(pts[0][0], pts[1][0], u), lerp(pts[0][1], pts[1][1], u)]] : [pts[0], pts[1], [lerp(pts[1][0], pts[2][0], u - 1), lerp(pts[1][1], pts[2][1], u - 1)]]; T.line(ctx, seg, s * .16, col); }
   function cross(ctx, x, y, s, k, col = P.red) { strike(ctx, x - s / 2, y - s / 2, x + s / 2, y + s / 2, k * 2, col, s * .16); strike(ctx, x + s / 2, y - s / 2, x - s / 2, y + s / 2, k * 2 - 1, col, s * .16); }
 
-  G.Kit = { INK, P, HAND, PRINT, clamp, lerp, back, out, inout, txt, sh, wrap, bg, popK, popAt, card, nameCard, bubble, stamp, imageFit, logo, photoCircle, source, headline, doc, house, envelope, host, tween, slam, strike, scribbleCircle, arrow, check, cross };
+  function chapterCard(ctx, lt, num, title, col) { // full-frame chapter title: moving stripes, number tab, handwritten title
+    bg.color(ctx, col); ctx.fillStyle = 'rgba(255,255,255,.18)'; for (let i = -4; i < 20; i++) { ctx.beginPath(); ctx.moveTo(i * 90 + lt * 30, 0); ctx.lineTo(i * 90 + 300 + lt * 30, H); ctx.lineTo(i * 90 + 340 + lt * 30, H); ctx.lineTo(i * 90 + 40 + lt * 30, 0); ctx.fill(); }
+    popAt(ctx, 640, 270, lt, () => { card(ctx, 520, 230, 240, 80, '#1f1c1a', 14, 0); txt(ctx, 'CHAPTER ' + num, 640, 270, PRINT(40), '#fff'); });
+    popAt(ctx, 640, 390, lt - .15, () => txt(ctx, title, 640, 390, HAND(700, 84), '#fff'));
+  }
+  G.Kit = { chapterCard, INK, P, HAND, PRINT, clamp, lerp, back, out, inout, txt, sh, wrap, bg, popK, popAt, card, nameCard, bubble, stamp, imageFit, logo, photoCircle, source, headline, doc, house, envelope, host, tween, slam, strike, scribbleCircle, arrow, check, cross };
 })(window);

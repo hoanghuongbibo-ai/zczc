@@ -1,0 +1,300 @@
+/* "Why Americans Can't Buy a House Until 40" — part 4: CHAPTER 5 (The Thaw That Didn't Happen) + CHAPTER 6 (Washington's
+ * Fixes). Voice: assets/audio/housing-04-ch5-6.mp3; shot times are the narration's word times. */
+(function (G) {
+  'use strict';
+  const K = G.Kit, B = G.Bean, Ch = G.Charts, I = G.Icons, Tn = G.Toon;
+  const { P, HAND, PRINT, txt, sh, clamp, lerp, out, inout, back, popAt } = K;
+  const INK = K.INK, W = 1280, H = 720;
+  G.TOON_FINISH = { grain: .015, vignette: 0 };
+  const host = K.host, money = v => '$' + Math.round(v).toLocaleString('en-US');
+  const bean = (ctx, x, y, s, t, o) => B.person(ctx, x, y, s, Object.assign({ bob: Math.sin(t * 2.2 + x) * 2 }, o));
+  const ground = (ctx, c = '#7ccf55', y = 590) => { ctx.fillStyle = c; ctx.fillRect(0, y, W, H - y); Tn.line(ctx, [[0, y], [W, y]], 4, INK); };
+  const quoteShot = (ctx, at, who, role, t0, draw, lines, src) => { // portrait left, name card, quote bubbles right
+    draw(); K.nameCard(ctx, who, role, 290, 110, at(t0));
+    lines.forEach(([s, t1, y, fill], i) => K.bubble(ctx, s, 840, y, 640, [450, 300 + i * 60], at(t1), { size: 42, fill }));
+    if (src) K.source(ctx, src, at(lines[0][1]));
+  };
+  // real people as house-style cartoons (from the user's photos)
+  const warsh = (ctx, x, y, s, t, face) => bean(ctx, x, y, s, t, { skin: '#f2c9a5', hair: 'side', hairColor: '#2a2420', body: '#2f3b52', top: 'suit', tie: '#3b6fb6', face: Object.assign({ mouth: 'flat', brows: 'calm' }, face), armR: [.3, .6] });
+  const yun = (ctx, x, y, s, t, face) => bean(ctx, x, y, s, t, { skin: '#f0cfa8', hair: 'side', hairColor: '#1d1b1a', glasses: true, body: '#2e2f36', top: 'suit', tie: '#a3333a', face: Object.assign({ mouth: 'smile', brows: 'calm' }, face), armL: [.3, .5] });
+  const trump = (ctx, x, y, s, t, face, o = {}) => bean(ctx, x, y, s, t, Object.assign({ skin: '#f3b98c', hair: 'side', hairColor: '#f0cf86', body: '#1f2c4d', top: 'suit', tie: '#d23a3a', face: Object.assign({ mouth: 'flat', brows: 'calm' }, face) }, o));
+  const pulte = (ctx, x, y, s, t, face, o = {}) => bean(ctx, x, y, s, t, Object.assign({ skin: '#f6cfae', hair: 'short', hairColor: '#2a2420', body: '#1f2c4d', top: 'suit', tie: '#4d86d6', face: Object.assign({ mouth: 'grin', brows: 'calm' }, face) }, o));
+  const berner = (ctx, x, y, s, t, face) => bean(ctx, x, y, s, t, { skin: '#f6d2b5', hair: 'short', hairColor: '#7a4f2c', body: '#5d6670', top: 'suit', tie: '#2e3a4f', face: Object.assign({ mouth: 'smile', brows: 'calm' }, face), armR: [.3, .5] });
+  function rateLine(ctx, pts, lt, o = {}) { // pts = [[label, value, appearAt(lt)]], categorical x
+    const x0 = o.x0 ?? 180, x1 = o.x1 ?? 1080, y0 = o.y0 ?? 580, lo = o.lo ?? 5.5, hi = o.hi ?? 7.6, hgt = o.h ?? 360, X = i => lerp(x0, x1, i / (pts.length - 1)), Y = v => y0 - hgt * (v - lo) / (hi - lo);
+    ctx.save(); ctx.globalAlpha = clamp(lt / .4) * .6; ctx.strokeStyle = '#c9ced6'; ctx.lineWidth = 2; ctx.setLineDash([6, 8]); for (const v of o.grid || [6, 6.5, 7, 7.5]) { ctx.beginPath(); ctx.moveTo(x0 - 30, Y(v)); ctx.lineTo(x1 + 30, Y(v)); ctx.stroke(); txt(ctx, v.toFixed(1) + '%', x0 - 50, Y(v), PRINT(22), '#8a8f96', 'right'); } ctx.restore();
+    Tn.line(ctx, [[x0 - 40, y0], [x1 + 40, y0]], 5, INK);
+    pts.forEach(([label, v, a], i) => { const k = a; if (k <= 0) { return; } txt(ctx, label, X(i), y0 + 30, PRINT(24), INK, 'center', clamp(k / .3));
+      if (i > 0 && pts[i - 1][2] > 0) { const e = inout(clamp(k / .6)); Tn.line(ctx, [[X(i - 1), Y(pts[i - 1][1])], [lerp(X(i - 1), X(i), e), lerp(Y(pts[i - 1][1]), Y(v), e)]], 7, o.color || P.red); }
+      sh(ctx, c => c.arc(X(i), Y(v), 10 * back(k / .3), 0, 7), '#fff', 4);
+      popAt(ctx, X(i), Y(v) - 48, k - .2, () => { const hot = o.hot && o.hot.includes(i); K.card(ctx, X(i) - 66, Y(v) - 80, 132, 58, hot ? P.red : '#1f1c1a', 12, 0); txt(ctx, v.toFixed(2) + '%', X(i), Y(v) - 50, HAND(700, 40), '#fff'); }); });
+  }
+
+  // ================= CHAPTER 5: THE THAW THAT DIDN'T HAPPEN =================
+  function f1(ctx, lt, dur, t) { // late 2025 rates fell; Jan 2026 ~6.1%, close to the lowest in 3+ years (Freddie Mac)
+    if (lt < 1.7) { K.chapterCard(ctx, lt, 5, "The Thaw That Didn't Happen", '#3a9fd8'); return; }
+    K.bg.white(ctx); const at = s => lt - s;
+    txt(ctx, '30-year mortgage rate (Freddie Mac)', 600, 70, HAND(700, 44), INK, 'center', clamp(at(1.8) / .3));
+    rateLine(ctx, [['Oct 2025', 6.34, at(2.0) + 0], ['Jan 2026', 6.1, at(9.11)]], 1, { x0: 300, x1: 800, color: P.green, lo: 5.5, hi: 7.0, grid: [6, 6.5] });
+    if (at(2.8) > 0) txt(ctx, 'falling…', 560, 230, HAND(700, 40), P.green, 'center', clamp(at(2.8) / .3));
+    if (at(10.92) > 0) popAt(ctx, 1060, 300, at(10.92), () => { K.card(ctx, 920, 230, 280, 140, P.yellow, 20); txt(ctx, 'near the lowest', 1060, 275, HAND(700, 38)); txt(ctx, 'in 3+ years', 1060, 325, HAND(700, 38)); });
+    K.logo(ctx, 'freddie', 1060, 520, 260, at(14.28), { crop: [85, 90, 425, 110], pad: 8 });
+    K.source(ctx, 'Source: Freddie Mac PMMS; AP, Jan 2026', at(13.9));
+  }
+  function f2(ctx, lt, dur, t) { // buyers came back: Dec 2025 sales pace 4.35M, fastest in nearly 3 years; Redfin's gap shrinking — a thaw
+    const T0 = 15.7, at = s => lt - (s - T0);
+    if (at(29.71) < 0) {
+      K.bg.cream(ctx);
+      for (let i = 0; i < 7; i++) { const k = at(15.9 + i * .12); if (k <= 0) continue; const x = lerp(-80, 120 + i * 90, out(k / .8)); bean(ctx, x, 690, .42, t + i, { skin: 'white', hair: ['short', 'bob', 'side', 'bun', 'short', 'long', 'side'][i], hairColor: '#3a2a1e', body: [P.blue, P.pink, P.teal, P.orange, P.purple, P.green, P.red][i], face: { mouth: 'smile' }, walk: t * 8 + i }); }
+      popAt(ctx, 640, 90, at(17.76), () => { K.card(ctx, 500, 50, 280, 80, P.yellow, 16); txt(ctx, 'December 2025', 640, 90, HAND(700, 44)); });
+      txt(ctx, 'existing-home sales (annual pace)', 640, 200, PRINT(34), INK, 'center', clamp(at(19.35) / .3));
+      if (at(21.51) > 0) Ch.counter(ctx, { x: 640, y: 300, value: 4.35, decimals: 2, suffix: 'M', lt: at(21.51), dur: 1.0, size: 120, color: P.green });
+      K.stamp(ctx, 'FASTEST IN ~3 YEARS', 640, 430, at(23.38), { color: P.green, size: 48, rot: -.04 });
+      if (at(26.13) > 0) popAt(ctx, 1080, 560, at(26.13), () => { K.card(ctx, 940, 500, 280, 120, '#fff', 18); txt(ctx, 'Redfin: gap', 1080, 540, HAND(700, 36)); txt(ctx, 'shrinking ↓', 1080, 585, HAND(700, 40), P.green); });
+      K.source(ctx, 'Source: Scripps News (NAR data), Jan 14, 2026', at(21.5)); return;
+    }
+    // the thaw: ice melting
+    const k = at(29.71); K.bg.sky(ctx); ground(ctx, '#9fd97f');
+    for (let i = 0; i < 3; i++) K.house(ctx, 250 + i * 390, 600, 1.0, { wall: ['#ffe1a8', '#c8ecff', '#ffd3e0'][i], roof: [P.purple, P.blue, P.red][i] });
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 6; j++) { const ix = 250 + i * 390 - 125 + j * 50, l = Math.max(0, (24 + (j % 3) * 10) * (1 - k / 2.5)); if (l > 0) sh(ctx, c => { c.moveTo(ix - 7, 452); c.lineTo(ix + 7, 452); c.lineTo(ix, 452 + l); c.closePath(); }, '#e9f7ff', 2.5); const dy = ((k * 2 + j * .3) % 1) * 120; ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(ix, 470 + dy, 4, 7, 0, 0, 7); ctx.fill(); }
+    sh(ctx, c => c.arc(1120, 120, 70, 0, 7), P.yellow, 5);
+    popAt(ctx, 600, 120, k, () => { K.card(ctx, 380, 76, 440, 90, '#fff', 18); txt(ctx, 'finally thawing?', 600, 121, HAND(700, 56), P.blue); });
+  }
+  function f3(ctx, lt, dur, t) { // but there was a problem → Sep 16, 2026: the Fed raised rates for the first time since 2023 → 3.75–4.00%, unanimous
+    const T0 = 33.5, at = s => lt - (s - T0);
+    if (at(35.76) < 0) { K.bg.studio(ctx, '#ffb3a3', '#ffece6'); host(ctx, 640, 700, 1.2, t, [[T0, 'pointUp']], { mouth: 'flat', brows: 'worried', look: [0, 0] }); return; }
+    K.bg.white(ctx);
+    K.logo(ctx, 'fed', 220, 220, 230, at(38.12), { round: 115, pad: 6 });
+    popAt(ctx, 220, 450, at(35.89), () => { K.card(ctx, 100, 380, 240, 150, '#fff', 16); sh(ctx, c => c.roundRect(100, 380, 240, 48, [16, 16, 0, 0]), P.red, 4.5); txt(ctx, 'SEPTEMBER', 220, 404, PRINT(28), '#fff'); txt(ctx, '16, 2026', 220, 475, HAND(700, 54)); });
+    if (at(39.96) > 0) popAt(ctx, 760, 120, at(39.96), () => { K.card(ctx, 520, 80, 480, 80, P.yellow, 16); txt(ctx, 'first hike since 2023', 760, 120, HAND(700, 46)); });
+    if (at(41.92) > 0) { popAt(ctx, 760, 330, at(41.92), () => { K.card(ctx, 540, 230, 440, 200, '#fff', 22); txt(ctx, 'Fed funds rate', 760, 270, PRINT(28)); I.draw(ctx, 'arrowUp', 600, 350, 70, 1); }); }
+    if (at(44.12) > 0) txt(ctx, '+0.25', 820, 340, HAND(700, 70), P.red, 'center', clamp(at(44.12) / .3));
+    if (at(45.36) > 0) popAt(ctx, 760, 500, at(45.36), () => { K.card(ctx, 560, 455, 400, 90, '#1f1c1a', 18, 0); txt(ctx, '3.75% – 4.00%', 760, 500, HAND(700, 56), '#fff'); });
+    if (at(49.17) > 0) popAt(ctx, 1110, 330, at(49.17), () => { K.card(ctx, 1000, 270, 220, 120, P.green, 18); txt(ctx, 'unanimous', 1110, 330, HAND(700, 44), '#fff'); });
+    K.source(ctx, 'Source: Federal Reserve, Sep 16, 2026; Central Banking', at(38.2));
+  }
+  function f3b(ctx, lt, dur, t) { // Fed Chair Kevin Warsh: "removed a dose of accommodation" … "geopolitical landscape of shocks and uncertainty"
+    K.bg.studio(ctx, '#d6e2f2', '#f4f8fd'); const T0 = 50.6, at = s => lt - (s - T0);
+    quoteShot(ctx, at, 'Kevin Warsh', 'Fed Chair', 50.89, () => popAt(ctx, 290, 650, at(50.7), () => warsh(ctx, 290, 650, 1.15, t, at(54.76) > 0 ? { brows: 'worried' } : {})),
+      [['the Fed "removed a dose of accommodation"', 52.23, 250], ['"…geopolitical landscape of shocks and uncertainty"', 55.23, 480, '#fff4d6']], 'Source: Central Banking (partial transcript), Sep 2026');
+  }
+  function f4(ctx, lt, dur, t) { // mortgage rates kept climbing: 7.03% (Sep 24) → 7.28% (Oct 1); a year earlier 6.34%
+    K.bg.white(ctx); const T0 = 59.42, at = s => lt - (s - T0);
+    txt(ctx, '30-year fixed rate (Freddie Mac)', 640, 60, HAND(700, 44), INK, 'center', clamp(lt / .3));
+    rateLine(ctx, [['Jan 2026', 6.1, at(59.5)], ['Sep 24, 2026', 7.03, at(64.76)], ['Oct 1, 2026', 7.28, at(69.55)]], 1, { x0: 380, x1: 1060, hot: [2] });
+    if (at(72.16) > 0) { const x = 180, y = 580 - 360 * (6.34 - 5.5) / 2.1; ctx.save(); ctx.globalAlpha = clamp(at(72.16) / .3); sh(ctx, c => c.arc(x, y, 10, 0, 7), '#d5dbe3', 4); txt(ctx, 'a year earlier', x, y - 70, HAND(700, 32), '#6b717a'); txt(ctx, '6.34%', x, y - 36, HAND(700, 40), '#6b717a'); ctx.restore(); }
+    K.logo(ctx, 'freddie', 1130, 140, 200, at(61.64), { crop: [85, 90, 425, 110], pad: 8 });
+    K.source(ctx, 'Source: Freddie Mac PMMS, Oct 1, 2026', at(62));
+  }
+  function f5(ctx, lt, dur, t) { // back to our household and the $429,100 house: 10% down (NAR median for first-time buyers) = $42,910 cash
+    K.bg.sky(ctx); ground(ctx); const T0 = 73.88, at = s => lt - (s - T0);
+    K.house(ctx, 420, 600, 1.5);
+    popAt(ctx, 420, 120, at(75.91), () => { K.card(ctx, 280, 80, 280, 80, '#fff', 16); txt(ctx, '$429,100', 420, 120, HAND(700, 54), P.red); });
+    bean(ctx, 780, 650, .9, t, { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.teal, face: { mouth: at(84.88) > 0 ? 'o' : 'flat', brows: at(84.88) > 0 ? 'worried' : 'calm', look: [-.6, -.2] }, armR: [1.0, -.4] });
+    if (at(79.4) > 0) popAt(ctx, 1050, 260, at(79.4), () => { K.card(ctx, 920, 190, 260, 140, P.yellow, 20); txt(ctx, '10% down', 1050, 245, HAND(700, 52)); txt(ctx, 'median, first-timers (NAR)', 1050, 295, PRINT(18)); });
+    if (at(84.88) > 0) { for (let i = 0; i < 8; i++) { const k = at(85.0 + i * .08); if (k > 0) { ctx.save(); ctx.translate(1050 + (i % 4) * 26 - 40, 470 - Math.floor(i / 4) * 16 - Math.max(0, .4 - k) * 200); sh(ctx, c => c.roundRect(-60, -16, 120, 32, 4), '#7cc46a', 3); txt(ctx, '$', 0, 0, HAND(700, 24), '#1d5a2a'); ctx.restore(); } }
+      popAt(ctx, 1050, 560, at(84.88), () => { K.card(ctx, 900, 515, 300, 90, '#1f1c1a', 18, 0); txt(ctx, '$42,910 cash', 1050, 560, HAND(700, 50), '#fff'); }); }
+    if (at(87.62) > 0) K.arrow(ctx, [880, 560], [560, 520], clamp(at(87.62) / .5), INK, 5);
+    K.source(ctx, 'Source: NAR (10% median down payment), Nov 2025', at(80.5));
+  }
+  function payCard(ctx, x, rate, pay, lt0, lt1, col) {
+    popAt(ctx, x, 330, lt0, () => { K.card(ctx, x - 200, 150, 400, 360, '#fff', 24); txt(ctx, 'at ' + rate, x, 200, HAND(700, 52), col); txt(ctx, 'monthly principal + interest', x, 255, PRINT(22), '#6b717a'); });
+    if (lt1 > 0) Ch.counter(ctx, { x, y: 360, value: pay, prefix: '$', lt: lt1, dur: .9, size: 100, color: INK });
+    if (lt1 > 0) txt(ctx, 'per month', x, 450, HAND(700, 38), INK, 'center', clamp(lt1 / .3));
+  }
+  function f6(ctx, lt, dur, t) { // January 6.1% → ~$2,340/mo; today 7.28% → ~$2,642 → ~$300 more a month, ~$3,600 a year, same house — before taxes & insurance
+    K.bg.white(ctx); const T0 = 89.22, at = s => lt - (s - T0);
+    payCard(ctx, 330, '6.1% (Jan)', 2340, at(89.4), at(94.17), P.green);
+    payCard(ctx, 950, '7.28% (now)', 2642, at(96.1), at(98.79), P.red);
+    if (at(100.71) > 0) popAt(ctx, 640, 330, at(100.71), () => { K.card(ctx, 540, 280, 200, 100, P.red, 18); txt(ctx, '+$300', 640, 315, HAND(700, 50), '#fff'); txt(ctx, 'a month', 640, 355, PRINT(22), '#fff'); });
+    if (at(103.4) > 0) popAt(ctx, 640, 580, at(103.4), () => { K.card(ctx, 440, 540, 400, 80, '#1f1c1a', 16, 0); txt(ctx, '≈ $3,600 a year', 640, 580, HAND(700, 50), '#fff'); });
+    K.stamp(ctx, 'SAME HOUSE', 640, 100, at(106.48), { color: P.blue, size: 44, rot: -.05 });
+    if (at(108.08) > 0) popAt(ctx, 1010, 600, at(108.08), () => { K.card(ctx, 850, 560, 320, 80, P.yellow, 16); txt(ctx, '+ taxes + insurance', 1010, 600, HAND(700, 40)); });
+    K.logo(ctx, 'jchs', 1220, 600, 60, at(110.64), { pad: 6 });
+    if (at(91.0) > 0) txt(ctx, 'Our math: $386,190 loan (10% down), 30-yr fixed, principal + interest only', 640, 690, PRINT(20), '#55606b', 'center', clamp(at(91.0) / .4));
+  }
+  function f7(ctx, lt, dur, t) { // the 3% owners: the gap between their rate and the market just got bigger → even less likely to sell
+    K.bg.cream(ctx); const T0 = 113.21, at = s => lt - (s - T0);
+    const y0 = 560, sc = 52, gap = clamp(at(116.2) / 1.2);
+    txt(ctx, 'the rate gap', 640, 70, HAND(700, 50), INK, 'center', clamp(lt / .3));
+    sh(ctx, c => c.roundRect(300, y0 - 3 * sc, 200, 3 * sc, [12, 12, 0, 0]), P.green); txt(ctx, 'their rate: 3%', 400, y0 + 30, PRINT(26)); txt(ctx, '3%', 400, y0 - 3 * sc - 30, HAND(700, 50), P.green);
+    const mh = lerp(6.1, 7.28, out(gap)) * sc; sh(ctx, c => c.roundRect(780, y0 - mh, 200, mh, [12, 12, 0, 0]), P.red); txt(ctx, 'market rate', 880, y0 + 30, PRINT(26)); txt(ctx, lerp(6.1, 7.28, out(gap)).toFixed(2) + '%', 880, y0 - mh - 30, HAND(700, 50), P.red);
+    Tn.line(ctx, [[180, y0], [1100, y0]], 5, INK);
+    ctx.save(); ctx.setLineDash([10, 8]); Tn.line(ctx, [[500, y0 - 3 * sc], [780, y0 - 3 * sc]], 3, '#8a8f96'); ctx.restore();
+    K.arrow(ctx, [640, y0 - 3 * sc], [640, y0 - mh + 8], 1, P.purple, 5); txt(ctx, 'gap', 680, y0 - (3 * sc + mh) / 2, HAND(700, 40), P.purple, 'left');
+    if (at(118.1) > 0) txt(ctx, 'bigger', 680, y0 - (3 * sc + mh) / 2 + 40, HAND(700, 34), P.red, 'left', clamp(at(118.1) / .3));
+    cuffs(ctx, 400, 220, .55 * (1 + .12 * Math.sin(lt * 6) * clamp(at(122.0) / .3)), .1);
+    if (at(122.02) > 0) popAt(ctx, 1130, 260, at(122.02), () => { K.card(ctx, 1010, 200, 240, 120, P.yellow, 18); txt(ctx, 'even less', 1130, 245, HAND(700, 38)); txt(ctx, 'likely to sell', 1130, 290, HAND(700, 34)); });
+    K.source(ctx, 'FHFA: −18.1% chance of selling per point of gap', at(120.2));
+  }
+  function cuffs(ctx, x, y, s, rot = 0, col = '#f6c945') {
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+    for (const dx of [-60, 60]) { ctx.beginPath(); ctx.arc(dx, 0, 44, 0, 7); ctx.arc(dx, 0, 28, 0, 7, true); ctx.fillStyle = col; ctx.fill('evenodd'); ctx.lineWidth = 4.5; ctx.strokeStyle = INK; ctx.beginPath(); ctx.arc(dx, 0, 44, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(dx, 0, 28, 0, 7); ctx.stroke(); }
+    for (let i = 0; i < 3; i++) sh(ctx, c => c.ellipse(-22 + i * 22, -50, 12, 7, 0, 0, 7), null, 4); ctx.restore();
+  }
+  function f8(ctx, lt, dur, t) { // sales slipping: August pace 3.98M — Lawrence Yun quote — the thaw is on ice again
+    const T0 = 124.55, at = s => lt - (s - T0);
+    if (at(132.39) < 0) {
+      K.bg.white(ctx);
+      popAt(ctx, 640, 100, at(126.75), () => { K.card(ctx, 520, 60, 240, 80, P.yellow, 16); txt(ctx, 'August 2026', 640, 100, HAND(700, 44)); });
+      txt(ctx, 'existing-home sales (annual pace)', 640, 210, PRINT(34), INK, 'center', clamp(at(127.79) / .3));
+      if (at(130.11) > 0) Ch.counter(ctx, { x: 640, y: 330, value: 3.98, decimals: 2, suffix: 'M', lt: at(130.11), dur: .9, size: 120, color: P.red });
+      if (at(130.5) > 0) { I.draw(ctx, 'arrowDown', 900, 330, 80, 1); txt(ctx, 'vs 4.35M in Dec', 640, 450, HAND(700, 36), '#6b717a', 'center', clamp(at(131) / .3)); }
+      K.source(ctx, 'Source: NAR, Sep 10, 2026', at(130)); return;
+    }
+    if (at(140.57) < 0) { K.bg.studio(ctx, '#c6ecd9', '#f1fbf5');
+      quoteShot(ctx, at, 'Lawrence Yun', 'Chief Economist, NAR', 132.94, () => popAt(ctx, 290, 650, at(132.5), () => yun(ctx, 290, 650, 1.15, t, {})),
+        [['"Mortgage rates and home sales move in opposite directions, so it\'s not surprising to see a mild dip."', 135.32, 330]], 'Source: NAR, Sep 10, 2026'); return; }
+    // the thaw, on ice again
+    K.bg.color(ctx, '#dff1ff'); const k = at(140.57);
+    popAt(ctx, 640, 340, k, () => { ctx.save(); ctx.translate(640, 340); ctx.rotate(-.06); sh(ctx, c => c.roundRect(-230, -170, 460, 340, 40), 'rgba(190,230,255,.85)', 6); ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(-190, -140, 60, 16); ctx.fillRect(-190, -110, 30, 12); K.house(ctx, 0, 110, .9); ctx.restore(); });
+    if (k > .6) popAt(ctx, 640, 610, k - .6, () => { K.card(ctx, 420, 570, 440, 84, '#1f1c1a', 18, 0); txt(ctx, 'the thaw: on ice', 640, 612, HAND(700, 52), '#fff'); });
+  }
+
+  // ================= CHAPTER 6: WASHINGTON'S FIXES =================
+  function g1(ctx, lt, dur, t) { // what's the government doing about it? Two big ideas from the White House — more complicated than the headlines
+    if (lt < 1.7) { K.chapterCard(ctx, lt, 6, "Washington's Fixes", '#3d4f8f'); return; }
+    K.bg.studio(ctx, '#d9ccff', '#f5f1ff'); const T0 = 143.12, at = s => lt - (s - T0);
+    host(ctx, 330, 700, 1.1, t, [[T0, 'think'], [145.7, 'presentL'], [149.0, 'shrug']], { mouth: 'flat', brows: 'skeptic', look: [.6, -.1] });
+    K.logo(ctx, 'whitehouse', 860, 200, 260, at(147.05), { pad: 8, round: 20 });
+    popAt(ctx, 760, 440, at(145.95), () => { K.card(ctx, 680, 390, 160, 110, P.yellow, 20); txt(ctx, 'idea 1', 760, 445, HAND(700, 44)); });
+    popAt(ctx, 960, 440, at(146.2), () => { K.card(ctx, 880, 390, 160, 110, P.yellow, 20); txt(ctx, 'idea 2', 960, 445, HAND(700, 44)); });
+    if (at(149.95) > 0) popAt(ctx, 860, 590, at(149.95), () => { K.card(ctx, 640, 550, 440, 80, '#fff', 16); txt(ctx, 'more complicated than the headlines', 860, 590, HAND(700, 32)); });
+  }
+  function eoDoc(ctx, x, y, lt, rot = -.03) { K.doc(ctx, x, y, 400, 300, 'Executive Order', ['Stopping Wall Street from', 'Competing with Main Street', 'Homebuyers', '—', 'Jan 20, 2026'], lt, { rot, titleSize: 40, lineSize: 26 }); }
+  function g2(ctx, lt, dur, t) { // idea #1: blame Wall Street — Jan 20, 2026, Trump signs the executive order
+    const T0 = 152.14, at = s => lt - (s - T0);
+    K.bg.cream(ctx);
+    popAt(ctx, 640, 80, at(152.2), () => { K.card(ctx, 360, 40, 560, 80, '#1f1c1a', 18, 0); txt(ctx, 'Idea #1: blame Wall Street', 640, 81, HAND(700, 50), '#fff'); });
+    if (at(153.6) > 0 && at(155.09) < 0) { I.draw(ctx, 'barsUp', 640, 360, 200, 1); txt(ctx, 'WALL ST', 640, 500, PRINT(40), P.red); }
+    if (at(155.09) > 0) {
+      popAt(ctx, 1080, 200, at(155.29), () => { K.card(ctx, 960, 150, 240, 100, P.yellow, 16); txt(ctx, 'Jan 20, 2026', 1080, 200, HAND(700, 44)); });
+      popAt(ctx, 300, 650, at(157.31), () => trump(ctx, 300, 650, 1.1, t, { mouth: 'flat' }, { armR: [1.2, -.6] }));
+      K.nameCard(ctx, 'President Trump', null, 300, 200, at(157.5));
+      eoDoc(ctx, 800, 440, at(158.42));
+      if (at(158.0) > 0) { const k = clamp(at(158.0) / 1.0); ctx.save(); ctx.beginPath(); ctx.moveTo(660, 545); for (let i = 0; i <= 20 * k; i++) ctx.lineTo(660 + i * 9, 545 - Math.sin(i * 1.3) * 10); ctx.lineWidth = 4; ctx.strokeStyle = '#1d3a8a'; ctx.stroke(); ctx.restore(); }
+      K.logo(ctx, 'whitehouse', 1120, 560, 150, at(159.3), { pad: 6, round: 10 });
+    }
+  }
+  function g3(ctx, lt, dur, t) { // headlines said "banned" — not exactly (Cooley): no outright ban, no forced sales; directs agencies; exempts built-to-rent
+    const T0 = 163.53, at = s => lt - (s - T0);
+    if (at(169.94) < 0) {
+      K.bg.white(ctx);
+      K.headline(ctx, 560, 300, 700, 'the headlines', 'Trump "bans" big investors from buying homes', at(164.0), { rot: -.03, size: 46 });
+      K.stamp(ctx, 'NOT EXACTLY', 860, 500, at(168.27), { color: P.blue, size: 60, rot: .08 }); return;
+    }
+    K.bg.white(ctx);
+    K.logo(ctx, 'cooley', 240, 110, 230, at(169.94), { pad: 6 });
+    txt(ctx, 'what the order actually does', 760, 110, HAND(700, 42), INK, 'center', clamp(at(170.3) / .3));
+    const rows = [[false, 'ban anything outright', 172.37], [false, 'force anyone to sell', 173.39], [true, 'directs agencies to write guidance & rules', 175.2], [true, 'restricts sales of single-family homes to large investors', 178.44], [true, 'exempts homes built as rentals', 183.29]];
+    rows.forEach(([ok, label, s], i) => { const y = 230 + i * 92, k = at(s); popAt(ctx, 640, y, k, () => { K.card(ctx, 150, y - 38, 980, 76, ok ? '#e4f6e6' : '#fde6e2', 16); txt(ctx, (ok ? '' : "doesn't ") + label, 240, y, HAND(700, 38), INK, 'left'); });
+      if (ok) K.check(ctx, 200, y, 44, clamp((k - .1) / .4)); else K.cross(ctx, 200, y, 36, clamp((k - .1) / .4)); });
+    K.source(ctx, 'Source: Cooley, Jan 2026', at(170));
+  }
+  function g4(ctx, lt, dur, t) { // EconoFact: large investors own ~3%–3.8% of single-family rental stock nationally; 12.4% in their top 20 metros; buying <2% of all homes (John Burns)
+    K.bg.white(ctx); const T0 = 186.42, at = s => lt - (s - T0);
+    popAt(ctx, 640, 80, at(186.67), () => txt(ctx, 'How big are these investors, really?', 640, 80, HAND(700, 48)));
+    K.logo(ctx, 'econofact', 1120, 80, 190, at(189.92), { pad: 6 });
+    const card = (x, title, sub, val, col, k0, kv, src) => { popAt(ctx, x, 370, at(k0), () => { K.card(ctx, x - 180, 170, 360, 400, '#fff', 22); txt(ctx, title, x, 220, HAND(700, 36)); txt(ctx, sub, x, 258, PRINT(20), '#6b717a'); }); if (at(kv) > 0) { popAt(ctx, x, 380, at(kv), () => txt(ctx, val, x, 380, HAND(700, 84), col)); } if (src && at(kv) > 0) txt(ctx, src, x, 530, PRINT(18), '#8a8f96', 'center', clamp(at(kv) / .4)); };
+    card(240, 'nationally', 'share of single-family rentals', '3–3.8%', P.blue, 191.65, 193.74, 'Brookings · Urban Institute');
+    card(640, 'top 20 metros', 'where they\'re most active', '12.4%', P.red, 201.4, 204.32, null);
+    card(1040, 'of all home purchases', 'what they\'re buying', '< 2%', P.green, 206.05, 207.02, null);
+    if (at(209.29) > 0) K.nameCard(ctx, 'John Burns Research & Consulting', null, 1040, 620, at(209.29));
+    if (at(196.04) > 0) popAt(ctx, 240, 470, at(196.04), () => { K.card(ctx, 110, 440, 260, 56, P.yellow, 12); txt(ctx, 'of RENTALS, not all homes', 240, 468, PRINT(19)); });
+    K.source(ctx, 'Source: EconoFact fact brief, Sep 19, 2025', at(190));
+  }
+  function g5(ctx, lt, dur, t) { // in certain cities they matter; nationally a small slice — supporters vs critics (AEI on a Senate proposal) — both have a point; fight isn't over
+    const T0 = 211.53, at = s => lt - (s - T0);
+    if (at(217.72) < 0) {
+      K.bg.cream(ctx);
+      popAt(ctx, 340, 360, at(212.14), () => { K.card(ctx, 140, 160, 400, 400, '#fff', 22); txt(ctx, 'certain cities', 340, 210, HAND(700, 44)); for (let i = 0; i < 6; i++) K.house(ctx, 230 + (i % 3) * 110, 340 + Math.floor(i / 3) * 140, .32, { wall: i < 2 ? '#ffd2cc' : '#fff', roof: i < 2 ? P.red : '#c4c8ce' }); txt(ctx, 'can matter a lot', 340, 520, HAND(700, 36), P.red); });
+      popAt(ctx, 940, 360, at(215.14), () => { K.card(ctx, 740, 160, 400, 400, '#fff', 22); txt(ctx, 'nationally', 940, 210, HAND(700, 44)); });
+      if (at(215.3) > 0) Ch.donut(ctx, { x: 940, y: 370, r: 110, lt: at(215.3), thickness: 50, slices: [{ value: 3.8, color: P.red, pop: true }, { value: 96.2, color: '#e3e7ec' }] });
+      if (at(216.21) > 0) txt(ctx, 'a small slice', 940, 520, HAND(700, 36), P.blue, 'center', clamp(at(216.21) / .3));
+      return;
+    }
+    K.bg.white(ctx);
+    // a balance: supporters left, critics right
+    const tilt = Math.sin(lt * 1.3) * .05; ctx.save(); ctx.translate(640, 300); sh(ctx, c => { c.moveTo(-30, 260); c.lineTo(0, 0); c.lineTo(30, 260); c.closePath(); }, '#9aa0a6'); ctx.rotate(tilt); sh(ctx, c => c.roundRect(-420, -10, 840, 20, 10), '#8a5a36'); ctx.restore();
+    const sideY = s => 300 + Math.sin(tilt) * s * 400;
+    popAt(ctx, 300, sideY(-1) + 120, at(217.72), () => { K.card(ctx, 110, sideY(-1) + 30, 380, 200, '#e4f6e6', 20); txt(ctx, 'Supporters', 300, sideY(-1) + 75, HAND(700, 44), P.green); K.wrap(ctx, "big investors shouldn't compete with first-time families", PRINT(24), 330).forEach((l, i) => txt(ctx, l, 300, sideY(-1) + 125 + i * 30, PRINT(24))); });
+    popAt(ctx, 980, sideY(1) + 120, at(222.33), () => { K.card(ctx, 790, sideY(1) + 30, 380, 200, '#fde6e2', 20); txt(ctx, 'Critics (AEI)', 980, sideY(1) + 75, HAND(700, 44), P.red); K.wrap(ctx, 'could cut rental supply and hurt lower-income families', PRINT(24), 330).forEach((l, i) => txt(ctx, l, 980, sideY(1) + 125 + i * 30, PRINT(24))); });
+    if (at(224.0) > 0) txt(ctx, 'writing about a similar Senate proposal', 980, sideY(1) + 260, PRINT(19), '#6b717a', 'center', clamp(at(225.3) / .3));
+    if (at(233.61) > 0) popAt(ctx, 640, 640, at(233.61), () => { K.card(ctx, 380, 600, 520, 80, P.yellow, 16); txt(ctx, 'both sides have a point', 640, 640, HAND(700, 44)); });
+    if (at(235.3) > 0) popAt(ctx, 640, 120, at(235.3), () => { K.card(ctx, 450, 80, 380, 80, '#1f1c1a', 16, 0); txt(ctx, 'fight not over', 640, 120, HAND(700, 46), '#fff'); });
+    K.source(ctx, 'Source: AEI, Apr 2026', at(222.5));
+  }
+  function g6(ctx, lt, dur, t) { // idea #2: make the mortgage longer — Nov 2025, Trump and FHFA director Bill Pulte floated a 50-year mortgage
+    K.bg.sky(ctx); const T0 = 237.08, at = s => lt - (s - T0);
+    popAt(ctx, 640, 80, at(237.1), () => { K.card(ctx, 330, 40, 620, 80, '#1f1c1a', 18, 0); txt(ctx, 'Idea #2: make the mortgage longer', 640, 81, HAND(700, 46), '#fff'); });
+    popAt(ctx, 1080, 200, at(240.68), () => { K.card(ctx, 960, 160, 240, 80, P.yellow, 16); txt(ctx, 'Nov 2025', 1080, 200, HAND(700, 46)); });
+    popAt(ctx, 300, 660, at(242.47), () => trump(ctx, 300, 660, .95, t, { mouth: 'grin' }, { armR: [2.3, .2] }));
+    popAt(ctx, 520, 660, at(244.93), () => pulte(ctx, 520, 660, .95, t, {}, { armL: [2.3, .2] }));
+    K.nameCard(ctx, 'Bill Pulte', 'FHFA Director', 560, 220, at(245.33));
+    // the floated idea: a balloon
+    if (at(246.42) > 0) { const k = at(246.42), by = lerp(560, 330, out(k / 1.5)) + Math.sin(lt * 2) * 8; Tn.line(ctx, [[410, 420], [900, by + 110]], 3, INK); popAt(ctx, 900, by, k, () => { sh(ctx, c => c.ellipse(900, by, 150, 120, 0, 0, 7), P.red, 5); txt(ctx, '50-year', 900, by - 20, HAND(700, 56), '#fff'); txt(ctx, 'mortgage', 900, by + 30, HAND(700, 44), '#fff'); }); }
+  }
+  function g7(ctx, lt, dur, t) { // the pitch: stretch the loan, payment goes down — on our house at today's rate: ~$2,642 → ~$2,407, save ~$235/mo
+    K.bg.white(ctx); const T0 = 249.1, at = s => lt - (s - T0);
+    popAt(ctx, 640, 80, at(249.2), () => txt(ctx, 'The pitch', 640, 80, HAND(700, 56)));
+    // a stretching loan bar 30 → 50 years
+    const k = clamp(at(250.51) / 1.4), w = lerp(480, 800, inout(k));
+    sh(ctx, c => c.roundRect(640 - w / 2, 160, w, 70, 35), P.blue); txt(ctx, Math.round(lerp(30, 50, inout(k))) + ' years', 640, 196, HAND(700, 48), '#fff');
+    if (at(252.9) > 0) txt(ctx, 'monthly payment goes down ✓', 640, 290, HAND(700, 44), P.green, 'center', clamp(at(252.9) / .3));
+    if (at(256.34) > 0) {
+      popAt(ctx, 330, 470, at(256.34), () => { K.card(ctx, 150, 360, 360, 220, '#fff', 22); txt(ctx, '30-year', 330, 400, HAND(700, 40)); txt(ctx, '$2,642', 330, 480, HAND(700, 76), P.red); txt(ctx, 'per month', 330, 545, PRINT(22)); });
+      popAt(ctx, 950, 470, at(259.93), () => { K.card(ctx, 770, 360, 360, 220, '#fff', 22); txt(ctx, '50-year', 950, 400, HAND(700, 40)); txt(ctx, '$2,407', 950, 480, HAND(700, 76), P.green); txt(ctx, 'per month', 950, 545, PRINT(22)); });
+      if (at(260.89) > 0) K.arrow(ctx, [530, 470], [750, 470], clamp(at(260.89) / .5), INK, 6);
+      if (at(265.66) > 0) popAt(ctx, 640, 630, at(265.66), () => { K.card(ctx, 440, 590, 400, 80, P.green, 16); txt(ctx, 'save ≈ $235/mo', 640, 630, HAND(700, 46), '#fff'); });
+    }
+    if (at(257) > 0) txt(ctx, 'Our math: $386,190 loan at 7.28%, principal + interest', 640, 700, PRINT(18), '#55606b', 'center', clamp(at(257) / .4));
+  }
+  function g8(ctx, lt, dur, t) { // but total interest: 30-year ~$565,000 vs 50-year ~$1.06 million — Joel Berner: "almost double…"
+    const T0 = 267.97, at = s => lt - (s - T0);
+    if (at(281.39) < 0) {
+      K.bg.white(ctx);
+      popAt(ctx, 640, 80, at(268.12), () => txt(ctx, 'Total interest over the life of the loan', 640, 80, HAND(700, 48)));
+      Tn.line(ctx, [[240, 600], [1040, 600]], 5, INK);
+      const bar = (x, v, lbl, col, a) => { const k = a > 0 ? back(a / .7) : 0, h = 420 * v / 1.1e6 * k; if (h > 1) sh(ctx, c => c.roundRect(x - 120, 600 - h, 240, h, [12, 12, 0, 0]), col); txt(ctx, lbl, x, 632, PRINT(28), INK, 'center', clamp((a + 1) / .3)); if (a > 0) txt(ctx, v >= 1e6 ? '≈ $' + (v / 1e6 * clamp(out(a / .7))).toFixed(2) + 'M' : '≈ ' + money(v * clamp(out(a / .7))), x, 600 - h - 34, HAND(700, 52), col === P.red ? P.red : INK); };
+      bar(440, 565059, '30-year loan', P.blue, at(271.74)); bar(840, 1057871, '50-year loan', P.red, at(278.66));
+      txt(ctx, 'Our math: $386,190 at 7.28%', 640, 690, PRINT(18), '#55606b', 'center', clamp(at(272) / .4)); return;
+    }
+    K.bg.studio(ctx, '#c6ecd9', '#f1fbf5');
+    quoteShot(ctx, at, 'Joel Berner', 'Senior Economist, Realtor.com', 282.17, () => popAt(ctx, 290, 650, at(281.5), () => berner(ctx, 290, 650, 1.15, t, {})),
+      [['"A 50-year mortgage results in almost double the interest payments of a 30-year mortgage…', 286.03, 250], ['…and a longer path to meaningful home equity."', 290.71, 480, '#fff4d6']], 'Source: FOX 5 NY, Nov 11, 2025');
+    K.logo(ctx, 'realtor', 560, 650, 170, at(283.0), { pad: 6 });
+  }
+  function g9(ctx, lt, dur, t) { // the bigger problem: if everyone can afford a bigger payment, sellers raise prices — same house, higher price, debt till you're 80
+    K.bg.sky(ctx); ground(ctx); const T0 = 293.82, at = s => lt - (s - T0);
+    K.house(ctx, 640, 600, 1.4);
+    const up = at(300.17) > 0;
+    popAt(ctx, 640, 150, at(294.0), () => { K.card(ctx, 440, 100, 400, 100, '#fff', 18); txt(ctx, up ? '$429,100 + ?' : '$429,100', 640, 150, HAND(700, 60), up ? P.red : INK); });
+    if (at(300.17) > 0) I.draw(ctx, 'arrowUp', 850, 150, 70, 1);
+    if (at(296.47) > 0 && at(304.69) < 0) popAt(ctx, 190, 300, at(296.47), () => { K.card(ctx, 60, 240, 260, 120, '#fff', 18); txt(ctx, 'bigger monthly', 190, 285, HAND(700, 36)); txt(ctx, 'budget', 190, 325, HAND(700, 36)); });
+    if (at(299.52) > 0) popAt(ctx, 1090, 300, at(299.52), () => { bean(ctx, 1090, 640, .8, t, { skin: 'white', hair: 'side', hairColor: '#3a2a1e', body: P.purple, top: 'suit', tie: P.yellow, face: { mouth: 'grin', brows: 'up' }, armR: [2.4, .2] }); });
+    if (at(304.69) > 0) popAt(ctx, 280, 600, at(304.69), () => { bean(ctx, 260, 640, .8, t, { skin: 'white', hair: 'bald', body: P.teal, face: { mouth: 'frown', brows: 'sad', look: [.6, -.2] }, glasses: true, lean: .06, armR: [.4, .1] }); Tn.line(ctx, [[322, 560], [330, 640]], 6, '#8a5a36'); K.card(ctx, 160, 330, 200, 70, P.red, 14); txt(ctx, 'paying till 80', 260, 365, HAND(700, 34), '#fff'); });
+    K.stamp(ctx, 'SAME HOUSE', 640, 400, at(302.45), { color: P.blue, size: 50 });
+      }
+  function g10(ctx, lt, dur, t) { // the real question: if the age barely changed — early 30s — who exactly is getting through the door?
+    K.bg.studio(ctx, '#ffd9a8', '#fff4e6'); const T0 = 307.57, at = s => lt - (s - T0);
+    host(ctx, 300, 700, 1.1, t, [[T0, 'presentBoth'], [309.9, 'count'], [315.4, 'pointSide']], { mouth: 'flat', brows: at(315.5) > 0 ? 'up' : 'neutral', look: [.6, 0] });
+    popAt(ctx, 860, 160, at(310.0), () => { K.card(ctx, 640, 110, 440, 100, '#fff', 20); txt(ctx, 'age: barely changed', 860, 160, HAND(700, 46), P.green); });
+    popAt(ctx, 860, 290, at(314.19), () => { K.card(ctx, 680, 245, 360, 90, '#fff', 18); txt(ctx, 'still early 30s', 860, 290, HAND(700, 44)); });
+    if (at(315.5) > 0) { popAt(ctx, 900, 520, at(315.5), () => { sh(ctx, c => c.roundRect(820, 380, 160, 250, [14, 14, 0, 0]), '#4a7bd0', 5); ctx.fillStyle = P.yellow; ctx.beginPath(); ctx.arc(955, 510, 8, 0, 7); ctx.fill(); txt(ctx, '?', 900, 500, HAND(700, 120), '#fff'); }); }
+  }
+
+  const SH = [
+    [0, 15.7, f1], [15.7, 33.5, f2], [33.5, 50.6, f3], [50.6, 59.42, f3b], [59.42, 73.88, f4], [73.88, 89.22, f5], [89.22, 113.21, f6], [113.21, 124.55, f7], [124.55, 143.12, f8],
+    [143.12, 152.14, g1], [152.14, 163.53, g2], [163.53, 186.42, g3], [186.42, 211.53, g4], [211.53, 237.08, g5], [237.08, 249.1, g6], [249.1, 267.97, g7], [267.97, 293.82, g8], [293.82, 307.57, g9], [307.57, 317.57, g10],
+  ];
+  const shots = SH.map(([start, end, draw]) => ({ start, end, draw }));
+  const cuts = SH.slice(1).map(([s]) => ({ t: s, type: 'swoosh', gain: .55 })).concat([1.7, 29.71, 35.76, 132.39, 140.57, 144.82, 169.94, 217.72, 281.39].map(t => ({ t, type: 'swoosh', gain: .4 })));
+  const pops = [9.2, 10.9, 14.3, 17.8, 26.1, 38.1, 35.9, 40.0, 41.9, 45.4, 49.2, 50.9, 52.2, 55.2, 61.6, 64.8, 69.6, 72.2, 75.9, 79.4, 84.9, 89.4, 96.1, 100.7, 103.4, 108.1, 122.0, 126.8, 132.9, 135.3, 145.9, 146.2, 147.1, 149.9, 152.2, 155.3, 157.3, 158.4, 164.0, 172.4, 173.4, 175.2, 178.4, 183.3, 189.9, 191.7, 196.0, 201.4, 206.1, 209.3, 212.1, 215.1, 222.3, 233.6, 235.3, 237.1, 240.7, 242.5, 244.9, 249.2, 256.3, 259.9, 265.7, 268.1, 282.2, 286.0, 290.7, 294.0, 296.5, 299.5, 304.7, 310.0, 314.2, 315.5]
+    .map(t => ({ t, type: 'pop', gain: .5 }));
+  const hits = [[0, 'whoosh'], [9.11, 'ding'], [21.51, 'ding'], [23.38, 'stamp'], [41.92, 'thud'], [44.12, 'buzz'], [69.55, 'thud'], [85.0, 'cash'], [94.17, 'tick'], [98.79, 'buzz'], [106.48, 'stamp'], [130.11, 'thud'], [143.12, 'whoosh'], [158.0, 'type'], [168.27, 'stamp'], [193.74, 'tick'], [204.32, 'tick'], [207.02, 'tick'], [246.42, 'rise'], [250.51, 'boing'], [262.0, 'ding'], [278.66, 'thud'], [300.17, 'rise'], [302.45, 'stamp']]
+    .map(([t, type]) => ({ t, type, gain: .6 }));
+  G.Show = { duration: 317.57, narration: '../biz/assets/audio/housing-04-ch5-6.mp3', shots, sfx: cuts.concat(pops, hits),
+    moods: [{ t: 0, mood: 'soft' }, { t: 15.7, mood: 'bright' }, { t: 33.5, mood: 'tense' }, { t: 73.88, mood: 'soft' }, { t: 124.55, mood: 'tense' }, { t: 143.12, mood: 'bright' }, { t: 163.53, mood: 'soft' }, { t: 237.08, mood: 'bright' }, { t: 267.97, mood: 'soft' }, { t: 293.82, mood: 'tense' }],
+    images: { freddie: 'assets/housing/freddie-mac.jpg', fed: 'assets/housing/federal-reserve-seal.webp', jchs: 'assets/housing/harvard-jchs.webp', whitehouse: 'assets/housing/white-house.webp', cooley: 'assets/housing/cooley.jpg', econofact: 'assets/housing/econofact.png', realtor: 'assets/housing/realtor.png' },
+    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+})(window);

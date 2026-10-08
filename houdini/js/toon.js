@@ -85,7 +85,7 @@
   function renderFrame(ctx, shots, t) {
     E.t = t; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
     for (const s of shots) if (t >= s.start && t < s.end) { ctx.save(); s.draw(ctx, t - s.start, s.end - s.start, t); ctx.restore(); }
-    finish(ctx, t);
+    finish(ctx, t, G.TOON_FINISH || {});   // a page can set window.TOON_FINISH = { grain, vignette }
   }
 
   // ---------- cinematic helpers ----------

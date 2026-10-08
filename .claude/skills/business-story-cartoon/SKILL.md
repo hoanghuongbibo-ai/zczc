@@ -33,7 +33,7 @@ and compute the lip-sync envelope (`python3 biz/tools/envelope.py voice.mp3 biz/
 (`biz/PLAN-<slug>.md`, shot table keyed to anchor words) → ~10 s preview, wait for "run" (unless the user already
 said run) → build chapter by chapter → contact-sheet review of every shot (`node houdini/tools/_stills.mjs ../biz/<page>.html <dir> 0.75`
 from `houdini/`) → render (`node tools/export-video.mjs ../biz/<page>.html ../biz/out/<name>.mp4 30` from `houdini/`)
-→ audio check (~−1.5 dB peaks) → commit + push → send. Long videos (20 min+) are delivered in chapter batches, then joined.
+→ audio check (~−1.5 dB peaks) → commit + push → send. Long videos (20 min+) are delivered in chapter batches (one mp4 per voice file). Do NOT join them into a full video — the user only wants the parts.
 After each video add the user's feedback to *Lessons* below and push this file.
 
 ## Look (locked)
@@ -105,3 +105,4 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
 - In tool-written JS, never let a `//` comment swallow code on the same line (it broke `host.js` once).
 - Check the voice file matches the script before building (the first housing upload was the funeral cold open).
 - Logos: check the supplied file is the right organisation (e.g. "The Cato Corporation" ≠ the Cato Institute) and flag it.
+- Deliver parts only (one mp4 per voice file); the user doesn't want a joined full video. Chat uploads cap at 30 MB.

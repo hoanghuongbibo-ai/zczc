@@ -9,20 +9,22 @@ Work lives in `biz/`. References: `biz/references/ref1-story.mp4`, `ref2-busines
 new video). Host sheets + icon sheet: `biz/assets/host/*.webp`. Approved demos: `biz/out/preview.mp4` (cold-open
 style + brighter palette), `biz/out/host-demo.mp4` (talking host + icons + charts).
 
-## Step 1 — when the user sends a SCRIPT: reply with the asset list FIRST (agreed rule)
+## Step 1 — when the user sends the SCRIPT + SOURCE LOG: read it all, then order the visual assets (agreed rule)
 
-Before planning shots, read the script and send the user a checklist of what to provide, grouped:
-1. **Brands / companies named** — official logo files (PNG/SVG) for each company the video talks about, and the exact
-   name spelling. (Default if missing: the name as plain text in the channel font — never redraw a logo from memory.)
-2. **Products** — photos or images of products shown (e.g. a casket, an app screen, a store front).
-3. **People talked about** — a photo of each real person, so they can be drawn as a cartoon in the house style.
-   People who should not be identifiable (private individuals, victims, families) become white-faced characters
-   or name cards instead — say which ones you'll treat that way.
-4. **Places / maps**, **documents** (filings, court headers, letters to show), **data** (the source log for every
-   number on screen), and any fictional names the script asks for.
-5. **Voice-over** (clean, no music), **music tracks** they own, sponsor slot assets, end-screen layout.
-Mark each item *needed* / *nice to have* and give the default you'll use if it doesn't come. Then wait for the
-voice + assets (or "run").
+The user sends the full script together with its source log. Read the whole script and the whole log before anything
+else. **All data work is mine:** extract every number, date, quote and claim from the log, check each against the
+script line that says it, and flag anything missing, mismatched or outdated. Never ask the user to filter text or data.
+
+Then reply with an asset order that contains **only visual assets the user can supply** (photos, logos, designs):
+1. **Logos** — one per brand / company named in the video, with the exact name spelling. (Default if missing: the name
+   as plain text in the channel font — never redraw a logo from memory.)
+2. **Photos of people** — each real, named person, to draw as a cartoon in the house style. Say which people become
+   white-faced characters or name cards instead (private individuals, victims, families).
+3. **Photos / designs of things** — products, store fronts, buildings, app screens, packaging, documents the user wants
+   shown as real screenshots.
+For each item say where it appears (chapter / line), mark it *needed* / *nice to have*, and give the default if it
+doesn't come. Also list in one short line what I'll build myself (charts, counters, maps, document cards with source
+tags, fictional names) and any data issues found in the log. Then wait for the assets + voice-over (or "run").
 
 ## Step 2 onwards — the protocol (same as the history channel)
 
@@ -69,7 +71,7 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
   (draw-on, area fill, travelling value tag, dashed projection), `donut` (sweep, popped slice, centre counter),
   `counter`, `progress`, `callout`. Rules: gridlines/axis fade in first, bars stagger with a soft overshoot while
   values count up, one highlight colour for the bar that matters (others dim to grey), callout points at the takeaway,
-  every number from the script's source log, source tag on screen for key figures.
+  every number from the script's source log (I extract and check it myself), source tag on screen for key figures.
 
 ## Content rules
 

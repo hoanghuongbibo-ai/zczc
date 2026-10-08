@@ -1,0 +1,86 @@
+---
+name: business-story-cartoon
+description: Make a video for the user's money / business-story channel — bright cartoon "business story" style (round-head bean characters, white-faced extras, handwritten text, white explainer slides) with the channel's own animated host and modern chart motion (biz/). Use when the user sends a script (and later a voice-over) for this channel, asks which assets a script needs, or asks to change/improve this channel's style, host, icons or charts.
+---
+
+# Business-story cartoon video (money channel)
+
+Work lives in `biz/`. References: `biz/references/ref1-story.mp4`, `ref2-business.mp4` (study a few frames before a
+new video). Host sheets + icon sheet: `biz/assets/host/*.webp`. Approved demos: `biz/out/preview.mp4` (cold-open
+style + brighter palette), `biz/out/host-demo.mp4` (talking host + icons + charts).
+
+## Step 1 — when the user sends a SCRIPT: reply with the asset list FIRST (agreed rule)
+
+Before planning shots, read the script and send the user a checklist of what to provide, grouped:
+1. **Brands / companies named** — official logo files (PNG/SVG) for each company the video talks about, and the exact
+   name spelling. (Default if missing: the name as plain text in the channel font — never redraw a logo from memory.)
+2. **Products** — photos or images of products shown (e.g. a casket, an app screen, a store front).
+3. **People talked about** — a photo of each real person, so they can be drawn as a cartoon in the house style.
+   People who should not be identifiable (private individuals, victims, families) become white-faced characters
+   or name cards instead — say which ones you'll treat that way.
+4. **Places / maps**, **documents** (filings, court headers, letters to show), **data** (the source log for every
+   number on screen), and any fictional names the script asks for.
+5. **Voice-over** (clean, no music), **music tracks** they own, sponsor slot assets, end-screen layout.
+Mark each item *needed* / *nice to have* and give the default you'll use if it doesn't come. Then wait for the
+voice + assets (or "run").
+
+## Step 2 onwards — the protocol (same as the history channel)
+
+Intake → align the voice to the words (`houdini/tools/asr.py` + an aligner like `houdini/tools/align-part5.py`)
+and compute the lip-sync envelope (`python3 biz/tools/envelope.py voice.mp3 biz/js/env-<slug>.js`) → plan
+(`biz/PLAN-<slug>.md`, shot table keyed to anchor words) → ~10 s preview, wait for "run" (unless the user already
+said run) → build chapter by chapter → contact-sheet review of every shot (`node houdini/tools/_stills.mjs ../biz/<page>.html <dir> 0.75`
+from `houdini/`) → render (`node tools/export-video.mjs ../biz/<page>.html ../biz/out/<name>.mp4 30` from `houdini/`)
+→ audio check (~−1.5 dB peaks) → commit + push → send. Long videos (20 min+) are delivered in chapter batches, then joined.
+After each video add the user's feedback to *Lessons* below and push this file.
+
+## Look (locked)
+
+- From the references: round heads, dot eyes + short brows, bean bodies on thin stick legs, thin dark outlines;
+  the lead / key people have skin tone, everyone else a white face with a grey shading crescent (`G.Bean.person`,
+  `biz/js/bean.js`). Handwritten fonts: Caveat (dialogue, numbers, titles) + Patrick Hand (labels/print) — OFL, in
+  `biz/assets/fonts/`. Dialogue = handwritten line beside the speaker or a speech/thought bubble; names = black card
+  with white handwriting; explainer beats = clean white slides with icons, `$$$` vs `$$`, ticks/crosses.
+- **Brighter than the references** (user's request): clear blue sky, fresh green grass, warm red brick, saturated
+  clothes, peach/cream memory backgrounds, bright chart colours. No vignette (`window.TOON_FINISH = { grain: .015, vignette: 0 }`).
+- Motion: calm and readable — cuts, gentle push-ins, pops with a soft overshoot, bubbles popping in, small acting.
+
+## The host (always alive — locked rule)
+
+`G.Host` (`biz/js/host.js`) is the user's host, rebuilt from `biz/assets/host/` (messy brown hair, stubble beard,
+white shirt, olive tie, black mitten hands, black stick legs). He must never stand like a paper cut-out:
+- **Talks**: whenever the narration is his voice on screen, pass `talk: Host.talk(t)` (envelope lip sync) — the head
+  nods slightly with the voice.
+- **Breathes and blinks** automatically from `t`; **glances** with `face.look`.
+- **Gestures on the beats**: `pose: Host.pose(t, [[t0,'present'], [t1,'pointUp'], …])` — change pose every 2–4 s on
+  key words. Poses: idle, present, presentL, presentBoth, pointUp, pointSide, pointSideL, crossed, hips, think, cheer,
+  wave, shrug, chest, ok, thumbsUp, count.
+- **Expressions** match the line: eyes open/happy/closed/wink/side; brows neutral/up/worried/angry/skeptic; mouth
+  flat/smile/open/laugh/o/frown/scared/smirk. `walk` phase for walking.
+- Skits ([BIT]) use the host as a character in sets (props like a slide deck, a cheap-suit variant via colours).
+
+## Icons and modern chart motion
+
+- `G.Icons` (`biz/js/icons.js`): the user's icon set as animatable vectors — barsUp, barsDown, lineUp, lineDown, pie,
+  calculator, laptop, phone, doc, clipboard, books, moneyBag, coins, piggy, wallet, magnifier, bulb, question, exclaim,
+  arrowUp, arrowDown, check, cross, warning, coin. `Icons.pop(ctx, name, x, y, size, lt)` = overshoot entrance + the
+  icon's own animation (bars grow, line draws, coins drop, check draws, bulb lights…).
+- `G.Charts` (`biz/js/charts.js`): `bars`, `compare` (A vs B groups + legend), `hbars` (ranked/breakdown), `line`
+  (draw-on, area fill, travelling value tag, dashed projection), `donut` (sweep, popped slice, centre counter),
+  `counter`, `progress`, `callout`. Rules: gridlines/axis fade in first, bars stagger with a soft overshoot while
+  values count up, one highlight colour for the bar that matters (others dim to grey), callout points at the takeaway,
+  every number from the script's source log, source tag on screen for key figures.
+
+## Content rules
+
+- Funny about money, never about the dead / victims; allegations always shown with the denial and the outcome
+  (e.g. ALLEGED → DENIED → SETTLED stamps); "not advice" lines kept.
+- No copied logos unless the user supplies the file; fictional names where the script asks (e.g. the funeral-home sign).
+- Real people the script names: cartoon in house style from the user's photo, or a name card / white-faced figure.
+
+## Lessons (keep adding)
+
+- Keep IK targets reachable: arm length 90 + 86 units from the shoulder; hanging hands at ~(±84, −160).
+- Charts: keep the legend away from the tallest bar's value label; callouts above the title line; the host goes in a
+  corner that doesn't cover values.
+- In tool-written JS, never let a `//` comment swallow code on the same line (it broke `host.js` once).

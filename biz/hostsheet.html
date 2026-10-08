@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><canvas id="stage" width="1600" height="1100"></canvas>
+<script src="../houdini/js/toon.js"></script><script src="js/host.js"></script>
+<script>
+const c = document.getElementById('stage'), g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 1600, 1100);
+const poses = ['idle','present','presentBoth','pointUp','pointSide','crossed','hips','think','cheer','wave','shrug','chest','ok','thumbsUp'];
+poses.forEach((p, i) => { const x = 110 + (i % 7) * 225, y = 500 + Math.floor(i / 7) * 520; Host.draw(g, x, y, .82, { pose: p, t: 1, face: { mouth: p === 'think' ? 'flat' : p === 'cheer' ? 'laugh' : p === 'shrug' ? 'frown' : 'open', eyes: p === 'cheer' ? 'happy' : 'open', brows: p === 'think' ? 'skeptic' : p === 'shrug' ? 'worried' : 'neutral' } }); g.font = '22px sans-serif'; g.fillStyle = '#333'; g.textAlign = 'center'; g.fillText(p, x, y + 26); });
+window.DONE = true;
+</script>

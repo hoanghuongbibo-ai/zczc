@@ -6,7 +6,8 @@
  * 'pop' (upbeat corporate pop: four-on-the-floor kick, claps, bright plucks), and the history channel's myth-buster score:
  * 'mstill' (sparse low piano chords + clock tick), 'mystery' (low drone + high piano notes), 'mtense' (low string pulse + ticks + bowed pad),
  * 'lofi' (lo-fi hip-hop: swung boom-bap at 82 BPM, electric-piano 7th chords, sub bass, vinyl crackle — the standard for narrated
- * money explainers; leaves room for the voice) and 'lofiKeys' (the same chords and crackle, no drums — for serious beats), 'none'.
+ * money explainers; leaves room for the voice), 'lofiKeys' (no drums — serious beats), 'lofiDark' (minor chords + low drone —
+ * concerns, scandals), 'lofiUp' (extra hats + a pentatonic top line — wins). Lo-fi moods crossfade (cue.fade, default 3 s), 'none'.
  * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
 (function (G) {
   'use strict';
@@ -55,6 +56,7 @@
     buzz(b, t) { tone(b, t, .35, () => 140, .35, 3); tone(b, t, .35, () => 147, .3, 3); },           // "wrong" buzzer
     boing(b, t) { tone(b, t, .5, x => 300 + Math.sin(x * 60) * 80 * Math.exp(-x * 6), .4, 6); },
     rise(b, t) { tone(b, t, .8, x => 300 + x * 900, .12, 1.5); noise(b, t, .8, .25, .05, k => k * k, 35); },
+    scratch(b, t) { tone(b, t, .18, x => 900 - x * 4200, .35, 4); tone(b, t + .18, .14, x => 300 + x * 3600, .3, 6); noise(b, t, .32, .5, .45, k => Math.sin(Math.PI * k), 81, true); },   // record scratch
     mail(b, t) { noise(b, t, .2, .6, .3, k => Math.sin(Math.PI * k), 36); tone(b, t + .12, .06, () => 900, .12, 40); },
   };
 
@@ -83,25 +85,37 @@
     const s = at(t); for (const n of notes) { const f = midi(n); for (let i = 0; i < dur * SR && s + i < b.length; i++) { const x = i / SR, env = Math.min(1, x * 300) * Math.exp(-x * 1.1) * Math.min(1, (dur - x) / .15);
       b[s + i] += vel * env * .09 * (Math.sin(2 * Math.PI * f * x) * (1 + .12 * Math.sin(2 * Math.PI * 4.5 * x)) + .25 * Math.sin(2 * Math.PI * f * 3.01 * x) * Math.exp(-x * 7)); } } }
   function snare(b, t, v = 1, seed = 1) { noise(b, t, .16, .32 * v, .35, k => Math.pow(1 - k, 3), seed, true); tone(b, t, .08, () => 190, .18 * v, 30); }
-  const LOFI = new Set(['lofi', 'lofiKeys']);
-  // Fmaj7 – Em7 – Dm7 – Cmaj7 (voiced around middle C), roots for the sub bass
-  const LP = [[41, [57, 60, 64, 65]], [40, [55, 59, 62, 64]], [38, [53, 57, 60, 64]], [36, [55, 59, 60, 64]]];
-  function lofiScore(m, cues, dur) {
-    const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
-    const bt = 60 / 82, sw = bt / 2 * 1.16;                        // swung eighths
+  const LOFI = new Set(['lofi', 'lofiKeys', 'lofiDark', 'lofiUp']);
+  // all lo-fi variants share one tempo and one bar grid, so they can crossfade mid-phrase without the beat jumping
+  const LP = [[41, [57, 60, 64, 65]], [40, [55, 59, 62, 64]], [38, [53, 57, 60, 64]], [36, [55, 59, 60, 64]]];   // Fmaj7 Em7 Dm7 Cmaj7
+  const LPd = [[45, [55, 60, 64, 67]], [41, [57, 60, 64, 65]], [38, [57, 60, 62, 65]], [40, [56, 59, 62, 64]]];  // Am7 Fmaj7 Dm7 E7 (darker)
+  const LMEL = [72, 74, 76, 79, 81];                                   // pentatonic notes for the 'lofiUp' top line
+  function lofiLayer(m, md, dur, w) {                                  // render one variant into m, scaled per bar by w(t)
+    const bt = 60 / 82, sw = bt / 2 * 1.16;
     for (let bar = 0; bar * 4 * bt < dur; bar++) {
-      const t0 = bar * 4 * bt, md = moodAt(t0); if (!LOFI.has(md)) continue;
-      const [root, ch] = LP[bar % 4];
-      epiano(m, t0, ch, bt * 2.6, .9); epiano(m, t0 + bt * 2.5, ch.slice(1), bt * 1.4, .55);
+      const t0 = bar * 4 * bt; if (w(t0) <= 0 && w(t0 + 4 * bt) <= 0) continue;
+      const dark = md === 'lofiDark', [root, ch] = (dark ? LPd : LP)[bar % 4];
+      epiano(m, t0, ch, bt * 2.6, dark ? .8 : .9); epiano(m, t0 + bt * 2.5, ch.slice(1), bt * 1.4, .55);
       tone(m, t0, bt * 1.6, () => midi(root - 12), .22, 1.6); tone(m, t0 + bt * 2.5, bt, () => midi(root - 12 + (bar % 2 ? 7 : 0)), .15, 2.5);
-      if (md === 'lofi') {
-        kick(m, t0, .55); kick(m, t0 + bt * 2.5, .45); if (bar % 2) kick(m, t0 + bt * 1.75, .3);
-        snare(m, t0 + bt, .9, bar * 3); snare(m, t0 + bt * 3, .9, bar * 3 + 1);
-        for (let j = 0; j < 4; j++) { shaker(m, t0 + j * bt, .32, bar * 8 + j); shaker(m, t0 + j * bt + sw, .2, bar * 8 + j + 4); }
-      }
+      if (md === 'lofiKeys') continue;
+      kick(m, t0, .55); kick(m, t0 + bt * 2.5, .45); if (bar % 2) kick(m, t0 + bt * 1.75, .3);
+      snare(m, t0 + bt, dark ? .7 : .9, bar * 3); snare(m, t0 + bt * 3, dark ? .7 : .9, bar * 3 + 1);
+      for (let j = 0; j < 4; j++) { shaker(m, t0 + j * bt, .32, bar * 8 + j); if (!dark) shaker(m, t0 + j * bt + sw, .2, bar * 8 + j + 4); }
+      if (dark) tone(m, t0, bt * 4, () => midi(root - 24 + 12), .05, .4);                     // low drone under the minor chords
+      if (md === 'lofiUp') { for (let j = 0; j < 8; j++) shaker(m, t0 + j * bt / 2 + bt / 4, .12, bar * 16 + j + 90);
+        [0, 1.5, 2, 3].forEach((b2, q) => pluck(m, t0 + b2 * bt, LMEL[(bar * 3 + q * 2) % 5], .18, 8)); }
     }
-    const r = rng(77); let lp = 0;                                  // vinyl: soft hiss + sparse crackles
-    for (let i = 0; i < m.length; i++) { const t = i / SR; if (!LOFI.has(moodAt(t))) continue; lp += (r() - lp) * .03; m[i] += lp * .035; if (r() > .9996) m[i] += r() * .12; }
+  }
+  function lofiScore(m, cues, dur) {
+    // equal-power crossfades between moods; a cue may carry `fade` (s, default 3) for a faster or slower blend
+    const seg = cues.map((c, i) => ({ md: c.mood, a: c.t, b: i + 1 < cues.length ? cues[i + 1].t : dur + 9, fa: c.fade ?? 3, fb: i + 1 < cues.length ? (cues[i + 1].fade ?? 3) : 0 }));
+    const ramp = (t, a, f) => f <= 0 ? (t >= a ? 1 : 0) : Math.sin(Math.PI / 2 * Math.max(0, Math.min(1, (t - (a - f / 2)) / f)));
+    const wOf = md => t => { let v = 0; for (const s0 of seg) if (s0.md === md) { const up = s0.a <= 0 ? 1 : ramp(t, s0.a, s0.fa), dn = s0.b > dur ? 1 : Math.cos(Math.PI / 2 * Math.max(0, Math.min(1, (t - (s0.b - s0.fb / 2)) / Math.max(1e-3, s0.fb)))); v = Math.max(v, up * dn); } return v; };
+    for (const md of LOFI) { if (!cues.some(c => c.mood === md)) continue;
+      const w = wOf(md), tmp = new Float32Array(m.length); lofiLayer(tmp, md, dur, w);
+      for (let i = 0; i < m.length; i += 64) { const g = w(i / SR); for (let k = i; k < i + 64 && k < m.length; k++) m[k] += tmp[k] * g; } }
+    const vin = t => LOFI.has((cues.filter(c => c.t <= t).pop() || cues[0]).mood) ? 1 : 0, r = rng(77); let lp = 0;   // vinyl: soft hiss + sparse crackles
+    for (let i = 0; i < m.length; i++) { lp += (r() - lp) * .03; const v = vin(i / SR); if (!v) continue; m[i] += lp * .035; if (r() > .9996) m[i] += r() * .12; }
   }
 
   // ---- the bed ----

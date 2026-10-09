@@ -13,13 +13,13 @@ On a Thursday in September 2025, more than 40 strangers got on the same video ca
 
 They all opened the Instacart app. They all picked the same Safeway in Washington, D.C. They all picked the same carton of eggs, a dozen Lucerne. They all chose pickup. And at the same moment, they all looked at the price.
 
-A couple of them saw $3.99. Others saw $4.59 or $4.69. A few saw $4.79.
+A couple of them saw $3.99. Others saw $4.28, $4.59, or $4.69. A few saw $4.79.
 
 [VISUAL: Five egg cartons side by side, $3.99 / $4.28 / $4.59 / $4.69 / $4.79]
 
 Same eggs. Same store. Same minute. Five different prices.
 
-Nobody did anything different. Nobody used a coupon. So who decided that one person pays 80 cents more for breakfast?
+Nobody did anything different. So who decided that one person pays 80 cents more for breakfast?
 
 That video call was part of an investigation into one of the biggest grocery apps in America. About a week after it came out, federal regulators started asking that company questions. Within two weeks, the company shut down the program behind it.
 
@@ -97,7 +97,7 @@ Jeff Bezos added: "We've never tested and we never will test prices based on cus
 
 [VISUAL: Bezos quote card, CNN Money, Sept. 28, 2000]
 
-So the internet already had this fight 25 years ago, and the customers won.
+So the internet already had this fight more than 25 years ago, and the customers won.
 
 Then in 2012, the Wall Street Journal reported that Orbitz had found Mac users spend as much as 30% more a night on hotels. So Orbitz started showing Mac users different, sometimes more expensive hotel options than Windows users.
 
@@ -181,7 +181,7 @@ Let's go back to Instacart, because December 2025 was a brutal month for them.
 
 December 9: the Consumer Reports and Groundwork investigation comes out.
 
-About a week later, according to reports, the FTC, the same agency that looked like it had given up on surveillance pricing, sent Instacart what's called a civil investigative demand. That's basically a legal order to hand over information, in this case about its pricing.
+On December 17, Reuters reported that the FTC, the same agency that looked like it had given up on surveillance pricing, had sent Instacart what's called a civil investigative demand. That's basically a legal order to hand over information, in this case about its pricing.
 
 Around the same time, in a completely separate case, Instacart agreed to pay $60 million in refunds to settle an FTC lawsuit. That one was about other things. The FTC alleged Instacart advertised "free delivery" while charging service fees and made refunds hard to get. Instacart said it "flatly" denies any wrongdoing.
 
@@ -211,9 +211,9 @@ It took effect on October 1, 2026.
 
 **New Jersey** signed one on July 23. Governor Mikie Sherrill signed it at a grocery store in Newark, and said, "Part of affordability is making sure consumers get a fair shake." New Jersey also paused the installation of new digital price tags for a year while the state studies them.
 
-**New York** went the furthest. In June, the legislature passed the One Fair Price Act, which would ban using things like your browsing history, location, income, or ZIP code to set individual prices. As of the latest reports I could find, it was waiting on Governor Kathy Hochul, who has until December 31 to act on it.
+**New York** went the furthest. In June, the legislature passed the One Fair Price Act, which would ban using things like your browsing history, location, income, or ZIP code to set individual prices. As of early October, it was still waiting on Governor Kathy Hochul's signature or veto. Business groups have asked her to change it first.
 
-And then this became one of the rare things both parties in Washington agree on. On August 4, 2026, a Senate subcommittee chaired by Republican Josh Hawley held a hearing literally called "Your Data, Their Profit." Democrat Richard Blumenthal said, "We need a law. We need a federal law."
+And then this became one of the rare things both parties in Washington agree on. On August 4, 2026, the Senate Judiciary Subcommittee on Crime and Counterterrorism, chaired by Republican Josh Hawley, held a hearing literally called "Your Data, Their Profit." Democrat Richard Blumenthal said, "We need a law. We need a federal law."
 
 [VISUAL: Hawley and Blumenthal at the hearing]
 
@@ -225,7 +225,7 @@ In New Jersey, Michele Siekerka, president of the New Jersey Business & Industry
 
 And at the Senate hearing, Wharton marketing professor Z. John Zhang argued that personalized pricing can sometimes help consumers, especially price-sensitive ones. Think student discounts or senior pricing. That's technically charging different people different prices too.
 
-And to be fair to that point, the Maryland, Connecticut, and New York laws all carve out exceptions for things like discounts, loyalty programs, and coupons.
+And to be fair to that point, Maryland's law and New York's bill both carve out exceptions for things like discounts, loyalty programs, and coupons. Connecticut's law has an exception for discounts too.
 
 So the fight isn't really about whether different people can ever pay different prices. It's about whether a company can quietly raise your price because of what it knows about you.
 
@@ -241,9 +241,9 @@ That's the whole reason competition works. You can only shop around against a pr
 
 What those 40 people on that video call proved is that the price on your phone isn't always a fact. Sometimes it's a guess about you. A test. A number picked to see if you'll flinch.
 
-Instacart stopped. Amazon stopped 25 years ago. But the tools have only gotten better since then, and the data has only gotten bigger. And right now, whether a company is allowed to use what it knows about you to set your price depends mostly on which state you live in.
+Instacart stopped. Amazon stopped more than 25 years ago. But the tools have only gotten better since then, and the data has only gotten bigger. And right now, whether a company is allowed to use what it knows about you to set your price depends mostly on which state you live in.
 
-So here's my advice, and it's not financial advice, just common sense. If something feels expensive in an app, check it somewhere else. Check the store. Check another app. Ask a friend what they see. Because the only reason any of this came out is that regular people compared their screens.
+So here's my advice, and it's not financial advice, just common sense. If something feels expensive in an app, check it somewhere else. Check the store. Check another app. Ask a friend what they see. Because a big reason any of this came out is that regular people compared their screens.
 
 Your price isn't my price. And until the law catches up, the only way you'll know is if we compare notes.
 

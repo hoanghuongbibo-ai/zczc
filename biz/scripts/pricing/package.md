@@ -83,14 +83,14 @@ See [script.md](script.md).
 **1.** Groundwork Collaborative, Consumer Reports, More Perfect Union: "Same Cart, Different Price"
 URL: https://groundworkcollaborative.org/?p=2659
 Date: Dec 9, 2025
-Info: 4 cities; Safeway and Target main tests; nearly three-quarters of items varied; up to 5 price points; up to 23%; basket ~7%; ~$1,200/yr (7% × Instacart's average family-of-four spend); "original price" manipulation; Lucerne egg prices $3.99/$4.28/$4.59/$4.69/$4.79; Instacart website: "end shoppers are not aware that they're in an experiment."
+Info: 4 cities (North Canton, OH; Saint Paul, MN; Seattle, WA; Washington, DC); Safeway and Target main tests; nearly three-quarters of items varied; up to 5 price points; up to 23%; basket ~7%; ~$1,200/yr (7% × Instacart's average family-of-four spend); "original price" manipulation; Lucerne egg prices $3.99/$4.28/$4.59/$4.69/$4.79; Instacart website: "end shoppers are not aware that they're in an experiment." (Report footnote 13 cites Instacart's Eversight product page: https://www.instacart.com/company/retailer-platform/connected-stores/eversight. The italics are Groundwork's.)
 Used: Cold open, Setup, Ch. 1
 Reliability: High (primary), but the authors are advocacy groups. Pair with AP.
 
 **2.** AP via GV Wire, "Same product, same store, but on Instacart prices might differ"
 URL: https://gvwire.com/2025/12/11/same-product-same-store-but-on-instacart-prices-might-differ/
 Date: Dec 11, 2025
-Info: Nearly 200 volunteers, 20 items; the Thursday early-Sept egg test with 40+ volunteers; Skippy, Wheat Thins and Cheerios examples; Instacart statements ("never based on personal or behavioral characteristics," randomized, retailers set prices); no evidence of income, ZIP or history pricing; Simo told investors about price sensitivity; Eversight acquired 2022.
+Info: Nearly 200 volunteers, 20 items; the Thursday early-Sept egg test with 40+ volunteers, who simultaneously selected the same DC Safeway, the same egg brand, and pickup; Skippy, Wheat Thins and Cheerios examples; Instacart statements ("never based on personal or behavioral characteristics," randomized, retailers set prices); no evidence of income, ZIP or history pricing; Simo told investors about price sensitivity; Eversight acquired 2022.
 Used: Cold open, Setup, Ch. 1
 Reliability: High
 
@@ -202,21 +202,21 @@ Reliability: High
 **18.** Stateline, "States begin banning 'surveillance pricing'"
 URL: https://stateline.org/2026/08/04/states-begin-banning-surveillance-pricing-that-uses-personal-data-to-charge-more/
 Date: Aug 4, 2026
-Info: Connecticut signed in June (Lamont); 11+ states considered bills; industry pushback.
+Info: Connecticut signed in June (Lamont), broadly bars surveillance pricing "with exceptions for discounts and certain price differences unrelated to personal data"; 11+ states considered bills; industry pushback.
 Used: Ch. 6
 Reliability: High
 
 **19.** New Jersey Monitor, "NJ bans 'surveillance pricing' for grocery items"
 URL: https://newjerseymonitor.com/2026/07/23/nj-ban-surveillance-pricing-grocery/
 Date: Jul 23, 2026
-Info: Fair Price Protection Act (A4085); Sherrill quote; one-year pause on new digital labels; fines up to $20K; Siekerka quote.
+Info: Fair Price Protection Act (A4085); signed July 23, 2026 by Sherrill at a Newark grocery store; Sherrill quote; one-year pause on new digital labels; fines up to $20K; Siekerka quote.
 Used: Ch. 6
 Reliability: High
 
 **20.** Consumer Finance Monitor (Ballard Spahr), Senate hearing summary
 URL: https://www.consumerfinancemonitor.com/2026/08/14/senate-judiciary-hearing-reveals-bipartisan-support-for-federal-action-on-ai-driven-surveillance-pricing/
 Date: Aug 14, 2026
-Info: Aug 4 hearing chaired by Hawley; Blumenthal quote; witnesses including Zhang (Wharton), who argued personalized pricing can benefit price-sensitive consumers.
+Info: Aug 4 hearing of the Senate Judiciary Committee's Subcommittee on Crime and Counterterrorism, chaired by Hawley; Blumenthal quote; witnesses including Zhang (Wharton), who argued personalized pricing can benefit price-sensitive consumers.
 Used: Ch. 6
 Reliability: High (official hearing page: https://www.judiciary.senate.gov/committee-activity/hearings/your-data-their-profit-the-consumer-cost-of-ai-surveillance-pricing)
 
@@ -227,17 +227,52 @@ Info: NRF written statement: tools respond to competitors and demand, enable per
 Used: Ch. 6
 Reliability: Medium (trade press summarizing NRF statement)
 
+**22.** TechCrunch, citing Reuters: "Instacart's AI-driven pricing tool attracted attention -- now the FTC has questions"
+URL: https://techcrunch.com/2025/12/17/instacarts-ai-driven-pricing-tool-attracted-attention-now-the-ftc-has-questions/
+Date: Dec 17, 2025
+Info: Reuters reported the FTC sent Instacart a civil investigative demand about Eversight; not proof of wrongdoing; Instacart says it "never use[s] personal, demographic, or user-level behavioral data to set item prices."
+Used: Ch. 5
+Reliability: High (independent confirmation of the CID; Reuters original: https://www.yahoo.com/news/articles/exclusive-ftc-investigating-instacarts-ai-233726985.html)
+
+**23.** FTC case page, "Instacart"
+URL: https://www.ftc.gov/legal-library/browse/cases-proceedings/instacart
+Date: checked Oct 9, 2026
+Info: Complaint filed Dec 18, 2025; stipulated order filed Jan 14, 2026; case status "Pending." No court entry date or refund distribution is listed.
+Used: Ch. 5
+Reliability: High (primary)
+
+**24.** Spokesman-Review (Michelle Singletary, Washington Post), "Companies know how to charge us more for almost everything"
+URL: https://spokesman.com/stories/2026/oct/04/companies-know-how-to-charge-us-more-for-almost-ev
+Date: Oct 4, 2026
+Info: NY One Fair Price Act "awaiting Gov. Kathy Hochul's signature or veto."
+Used: Ch. 6
+Reliability: High
+
+**25.** Spectrum News NY1 / State of Politics, "NYC businesses urge Hochul to back changes to bill banning 'surveillance pricing'"
+URL: https://nystateofpolitics.com/state-of-politics/new-york/inside-city-hall/2026/08/12/nyc-businesses-urge-hochul-to-back-changes-to-bill-banning--surveillance-pricing-
+Date: Aug 12, 2026
+Info: Not yet signed; Tech:NYC-led coalition asks for changes (separate dynamic from surveillance pricing; exemption for discount and loyalty programs).
+Used: Ch. 6
+Reliability: High
+
+**26.** PYMNTS, "New York Governor Weighs Signing Ban on Surveillance Pricing"
+URL: https://www.pymnts.com/news/retail/2026/new-york-governor-weighs-signing-ban-on-surveillance-pricing/
+Date: Jun 7, 2026
+Info: Both chambers passed the bill Thursday, June 4 (per Reuters); Hochul reviewing; deadline end of year.
+Used: Ch. 6 (background)
+Reliability: Medium
+
 ---
 
 ## 6. Fact-Check Notes
 
 **Most sensitive (defamation risk):**
 - **Instacart did NOT use personal data, per the study itself.** The script says so explicitly in the Setup. Keep that paragraph in any edit. Never caption footage with "Instacart tracks you."
-- **FTC civil investigative demand.** This is a request for information, not a finding. Its date (~Dec 17, 2025) comes from Groundwork ("yesterday," Dec 18 release) and SiliconANGLE ("last week," Dec 22). Confirm with an independent outlet (Reuters/Bloomberg) before voiceover. **Open gap:** the probe's status in 2026.
-- **$60M settlement.** A separate case. The allegations are the FTC's, and Instacart denies them. Script frames it this way. Confirm the final approval status with the FTC.
+- **FTC civil investigative demand.** This is a request for information, not a finding. **Confirmed:** Reuters reported it on Dec 17, 2025 (#22). The script now says "On December 17, Reuters reported that the FTC had sent..." because the exact send date isn't public. **Still open:** I found no 2026 reporting that the probe has closed or produced any action. Treat it as having no public update, rather than as confirmed still open.
+- **$60M settlement.** A separate case. The allegations are the FTC's, and Instacart denies them. **Checked Oct 9, 2026:** the FTC's case page lists the stipulated order as filed Jan 14, 2026, with case status "Pending" and no court-entry date (#23). The script says Instacart "agreed to pay," which stays accurate either way. Don't say "paid" or "approved."
 - **Instacart's "That's not okay" quote.** It follows "We understand that the tests we ran with a small number of retail partners..." Read the full blog post and make sure the cut doesn't change the meaning.
 - **Delta, Fetcherr, Walmart, Kroger.** Each concern is paired with the company's denial. Keep them together.
-- **"End shoppers are not aware..."** Groundwork attributes this to Instacart's website. It may be Eversight's product page. Capture a screenshot or archive link before using it on screen.
+- **"End shoppers are not aware..."** **Resolved:** Groundwork's footnote 13 cites Instacart's own Eversight product page (instacart.com/company/retailer-platform/connected-stores/eversight). So it's both Instacart's site and the Eversight page. On screen: "Instacart's Eversight page, via Groundwork Collaborative." The page may have been taken down after Dec 22, so check the Wayback Machine for a capture before using a screenshot.
 
 **Figures and discrepancies:**
 - **Participant count.** Groundwork says "more than 400 Instacart shoppers" in its intro and 193 analyzed submissions in its methodology. AP says "nearly 200 volunteers." WTTW/CNN said 437. The script avoids a total and uses only "more than 40" for the egg call.
@@ -249,12 +284,14 @@ Reliability: Medium (trade press summarizing NRF statement)
 - **Business Insider's date** for the disclosure going live is inferred (Monday, ~Nov 10, 2025). The script says "in November 2025."
 
 **Status checks before voiceover:**
-- NY One Fair Price Act: signed, vetoed or pending? (Hochul deadline Dec 31, 2026.)
+- NY One Fair Price Act: **pending as of Oct 4, 2026** (#24, #25). One site (stateofsurveillance.org) claims Hochul signed it June 17. That contradicts the Aug 12 and Oct 4 reporting and cites no official release, so I didn't use it. Recheck right before voiceover. Passage date conflicts too: June 4 (PYMNTS/Reuters) vs June 10 (Regulatory Oversight). The script says only "In June."
 - Connecticut and NJ effective dates (not found).
 - Any 2026 FTC action on Instacart or on surveillance pricing generally.
 - Any federal bill from Hawley or Blumenthal since August.
 
 **Interpretive lines (opinion, framed as such):** "You're not a customer in that moment. You're a data point." "The eggs were the innocent version." The ending's "competition only works against a price you can see."
+
+**Review fixes, Oct 9, 2026 (from Nguyen's data review):** "25 years ago" changed to "more than 25 years ago" (×2); exceptions line now names only Maryland's law and New York's bill, with Connecticut limited to discounts (#18); the ending's "the only reason" changed to "a big reason"; $4.28 added to the spoken prices; "Nobody used a coupon" cut (unsourced); the CID line now attributed to Reuters on Dec 17; the subcommittee named in full; the NY status updated. Source lines were added for pickup (#2), the four cities (#1), the Newark grocery store (#19) and the subcommittee name (#20).
 
 **Step 12 pass done 2026-10-09.** Twelve lines were fixed: causal FTC claim softened, "nine days ago" ×2 replaced with dates, "compared notes online" removed, "nobody else has done" removed, the NRF paraphrase tightened, Siekerka's title corrected, "almost every law" narrowed to the three verified laws, the NY status hedged, "only reason we know" softened, the November date generalized, and More Perfect Union described accurately.
 

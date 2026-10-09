@@ -227,8 +227,8 @@
     K.logo(ctx, 'redfin', 1150, 60, 150, at(173.0), { pad: 8 });
     // a roomy kitchen: the boomer couple relaxing with coffee
     sh(ctx, c => c.rect(820, 260, 150, 360), '#e9eef2', 5); Tn.line(ctx, [[820, 400], [970, 400]], 4, INK); sh(ctx, c => c.rect(940, 300, 10, 60), '#9aa0a6', 2); sh(ctx, c => c.rect(940, 430, 10, 80), '#9aa0a6', 2);
-    bean(ctx, 520, 650, .8, t, { skin: 'white', hair: 'greyBun', body: P.purple, top: 'cardigan', face: { mouth: 'smile', brows: 'calm', eyes: .3 }, armR: [1.3, -.6] });
-    bean(ctx, 660, 650, .8, t + 1, { skin: 'white', hair: 'bald', glasses: true, body: '#7a8088', face: { mouth: 'smile', brows: 'calm' }, armL: [1.3, -.6] });
+    bean(ctx, 470, 650, .8, t, { skin: 'white', hair: 'greyBun', body: P.purple, top: 'cardigan', face: { mouth: 'smile', brows: 'calm', eyes: .3 }, armR: [1.3, -.6] });
+    bean(ctx, 700, 650, .8, t + 1, { skin: 'white', hair: 'bald', glasses: true, body: '#7a8088', face: { mouth: 'smile', brows: 'calm' }, armL: [1.3, -.6] });
     for (const [x, y] of [[588, 425], [600, 425]]) { sh(ctx, c => c.roundRect(x - 12, y - 14, 24, 28, 5), '#fff', 3); } ctx.save(); ctx.globalAlpha = .5; Tn.line(ctx, [[592, 405], [596 + Math.sin(t * 3) * 6, 380]], 3, '#9aa3ad'); ctx.restore();
     // the mortgage, stamped PAID OFF
     if (at(173.88) > 0) K.doc(ctx, 230, 330, 260, 300, 'MORTGAGE', ['—', '—', '—', '—'], at(173.88), { rot: -.06, titleSize: 44 });

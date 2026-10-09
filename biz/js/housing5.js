@@ -89,95 +89,207 @@
     K.headline(ctx, 640, 340, 760, 'FOX 9 · Jul 2025', '"Nepo-homebuyers?" Young Americans use family money to buy', at(23.84), { rot: -.03, size: 46, bar: P.purple });
     if (at(25.4) > 0) K.stamp(ctx, 'NEPO-HOMEBUYERS', 640, 590, at(25.6), { color: P.purple, size: 56, rot: .05 });
   }
+  // ---- props for the scenes ----
+  function piggy(ctx, x, y, s, fill, t) { // a big piggy bank with a window that fills up
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    for (const lx of [-70, -30, 30, 70]) sh(ctx, c => c.roundRect(lx - 14, 70, 28, 46, 8), '#f59ab0', 4);
+    sh(ctx, c => c.ellipse(0, 0, 150, 110, 0, 0, 7), '#f8b4c4', 5);
+    sh(ctx, c => { c.moveTo(-90, -80); c.lineTo(-60, -130); c.lineTo(-40, -90); c.closePath(); }, '#f59ab0', 4);
+    sh(ctx, c => c.ellipse(145, 10, 34, 40, 0, 0, 7), '#f59ab0', 4); ctx.fillStyle = INK; for (const dy of [-6, 22]) { ctx.beginPath(); ctx.ellipse(152, dy, 5, 8, 0, 0, 7); ctx.fill(); }
+    ctx.beginPath(); ctx.arc(95, -30, 7, 0, 7); ctx.fill();
+    sh(ctx, c => c.roundRect(-30, -112, 60, 12, 6), INK, 0);                       // coin slot
+    // the window
+    sh(ctx, c => c.roundRect(-90, -50, 160, 100, 14), '#fff', 4);
+    ctx.save(); ctx.beginPath(); ctx.roundRect(-88, -48, 156, 96, 12); ctx.clip(); ctx.fillStyle = '#f6c945'; ctx.fillRect(-88, 48 - 96 * fill, 156, 96 * fill);
+    ctx.fillStyle = '#e0ad2b'; for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.ellipse(-70 + i * 20, 48 - 96 * fill + 4, 9, 4, 0, 0, 7); ctx.fill(); } ctx.restore();
+    txt(ctx, Math.round(fill * 100) + '%', -10, 0, HAND(700, 56), INK);
+    ctx.restore();
+  }
+  function coin(ctx, x, y, r = 16) { sh(ctx, c => c.arc(x, y, r, 0, 7), '#f6c945', 3.5); txt(ctx, '$', x, y + 1, HAND(700, r * 1.3), '#a8781a'); }
+  function poof(ctx, x, y, k) { if (k <= 0 || k >= 1) return; const r = Tn.rng(7); for (let i = 0; i < 12; i++) { const a = i / 12 * 7 + r(), d = 40 + 140 * out(k), rr = (40 + r() * 30) * (1 - k * .6); ctx.save(); ctx.globalAlpha = 1 - k; sh(ctx, c => c.arc(x + Math.cos(a) * d, y + Math.sin(a) * d * .7, rr, 0, 7), '#fff', 3); ctx.restore(); }
+    for (let i = 0; i < 8; i++) { const a = i / 8 * 7, d = 60 + 220 * k; ctx.save(); ctx.globalAlpha = 1 - k; txt(ctx, '✦', x + Math.cos(a) * d, y + Math.sin(a) * d * .7, PRINT(36), P.yellow); ctx.restore(); } }
+  function cake(ctx, x, y, s, lit, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    sh(ctx, c => c.roundRect(-80, -60, 160, 60, 10), '#f8d1dc', 4); sh(ctx, c => c.roundRect(-80, -60, 160, 16, 8), '#fff', 3);
+    txt(ctx, '40', 0, -26, HAND(700, 36), P.red);
+    for (const cx of [-40, 0, 40]) { sh(ctx, c => c.rect(cx - 5, -100, 10, 40), P.blue, 2.5); if (lit) sh(ctx, c => c.ellipse(cx, -110 + Math.sin(t * 9 + cx) * 2, 6, 10, 0, 0, 7), P.orange, 2); else { ctx.save(); ctx.globalAlpha = .5; Tn.line(ctx, [[cx, -104], [cx + Math.sin(t * 3 + cx) * 8, -140]], 3, '#9aa3ad'); ctx.restore(); } }
+    ctx.restore(); }
+  function wheel(ctx, x, y, r, spin) { ctx.save(); ctx.translate(x, y);
+    sh(ctx, c => { c.moveTo(-r * .6, r + 40); c.lineTo(0, 0); c.lineTo(r * .6, r + 40); }, null, 8);
+    sh(ctx, c => c.arc(0, 0, r, 0, 7), null, 10); sh(ctx, c => c.arc(0, 0, r - 26, 0, 7), null, 4);
+    for (let i = 0; i < 16; i++) { const a = spin + i / 16 * Math.PI * 2; Tn.line(ctx, [[Math.cos(a) * (r - 26), Math.sin(a) * (r - 26)], [Math.cos(a) * r, Math.sin(a) * r]], 4, INK); }
+    sh(ctx, c => c.arc(0, 0, 12, 0, 7), '#5d6166', 3); ctx.restore(); }
+  function backpack(ctx, x, y, s, label) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); sh(ctx, c => c.roundRect(-60, -80, 120, 140, 22), '#8a5a36', 4.5); sh(ctx, c => c.roundRect(-44, -20, 88, 50, 10), '#a06b42', 3.5); txt(ctx, label, 0, 5, PRINT(26), '#fff'); ctx.restore(); }
+
   function h4(ctx, lt, dur, t) { // to be fair: 57% saved from their own paychecks — people are grinding — but about 1 in 4 needed family money
-    K.bg.white(ctx); const T0 = 27.28, at = s => lt - (s - T0);
+    const T0 = 27.28, at = s => lt - (s - T0);
     if (at(36.18) < 0) {
-      txt(ctx, 'How young buyers paid', 640, 80, HAND(700, 50), INK, 'center', clamp(at(28.8) / .3));
-      Ch.progress(ctx, { x: 240, y: 260, w: 800, h: 70, value: .57, label: 'saved from their own paychecks', color: P.green, lt: at(32.6) });
-      if (at(34.87) > 0) popAt(ctx, 640, 500, at(34.87), () => { bean(ctx, 560, 620, .7, t * 3, Object.assign({ face: { mouth: 'flat', brows: 'angry' }, armR: [1.6 + Math.sin(t * 12) * .3, -.4], armL: [1.6 + Math.cos(t * 12) * .3, -.4] }, YOU)); K.card(ctx, 660, 450, 260, 80, '#fff', 16); txt(ctx, 'people are grinding', 790, 490, HAND(700, 34)); for (let i = 0; i < 3; i++) { ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(510 + i * 30, 400 + ((t * 2 + i * .3) % 1) * 40, 5, 8, 0, 0, 7); ctx.fill(); } });
+      K.bg.cream(ctx); ground(ctx, '#e8d6b8', 610);
+      // the grind: a desk, a laptop, a coffee, an "overtime" clock, coins going into the piggy bank
+      const grind = at(34.87) > 0, sp = grind ? 2.2 : 1;
+      sh(ctx, c => c.rect(130, 470, 330, 20), '#b07a46', 4); sh(ctx, c => c.rect(150, 490, 16, 120), '#b07a46', 3); sh(ctx, c => c.rect(424, 490, 16, 120), '#b07a46', 3);
+      I.draw(ctx, 'laptop', 300, 430, 120, 1); sh(ctx, c => c.roundRect(390, 425, 34, 44, 6), '#fff', 3.5); if (grind) for (let i = 0; i < 2; i++) { ctx.save(); ctx.globalAlpha = .6; Tn.line(ctx, [[400 + i * 14, 420], [404 + i * 14 + Math.sin(t * 4 + i) * 6, 395]], 3, '#9aa3ad'); ctx.restore(); }
+      bean(ctx, 200, 640, .85, t * sp, Object.assign({ face: { mouth: grind ? 'flat' : 'smile', brows: grind ? 'angry' : 'calm', look: [.7, .2] }, armR: [1.5 + Math.sin(t * 14 * sp) * .2, -.6], armL: [1.4 + Math.cos(t * 14 * sp) * .2, -.5] }, YOU));
+      if (grind) { for (let i = 0; i < 3; i++) { ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(130 + i * 26, 330 + ((t * 2 + i * .3) % 1) * 50, 5, 8, 0, 0, 7); ctx.fill(); } popAt(ctx, 200, 150, at(34.87), () => { K.card(ctx, 60, 112, 280, 76, '#fff', 14); txt(ctx, 'people are grinding', 200, 150, HAND(700, 36)); }); }
+      // coins arc from the paycheck to the piggy
+      const fill = .57 * (at(29.88) > 0 ? out(clamp(at(29.88) / 3.4)) : 0);
+      for (let i = 0; i < 5; i++) { const k = ((lt * .9 * sp + i * .2) % 1); if (at(29.9) <= 0) break; coin(ctx, lerp(300, 840, k), lerp(380, 300, k) - Math.sin(k * Math.PI) * 150, 15); }
+      piggy(ctx, 880, 470, 1.2, fill, t);
+      popAt(ctx, 880, 175, at(30.84), () => { K.card(ctx, 700, 135, 360, 80, P.yellow, 16); txt(ctx, 'saved from paychecks', 880, 175, HAND(700, 38)); });
+      if (at(32.82) > 0) popAt(ctx, 880, 650, at(32.82), () => { K.card(ctx, 740, 615, 280, 70, P.green, 14); txt(ctx, '57% did that', 880, 650, HAND(700, 40), '#fff'); });
       K.source(ctx, 'Source: Redfin survey via FOX 9, Jul 2025', at(32.8)); return;
     }
-    txt(ctx, 'about 1 in 4 needed family money', 640, 100, HAND(700, 52), INK, 'center', clamp(at(36.4) / .3));
-    for (let i = 0; i < 4; i++) { const x = 250 + i * 260, hit = i === 2 && at(37.82) > 0; popAt(ctx, x, 560, at(36.5 + i * .15), () => { bean(ctx, x, 620, 1.0, t + i, { skin: hit ? B.SKIN : 'white', hair: ['short', 'bob', 'side', 'bun'][i], hairColor: '#3a2a1e', body: hit ? P.purple : '#c4c8ce', face: { mouth: hit ? 'grin' : 'flat' } }); if (hit) { moneyBag(ctx, x + 90, 470, .7); } }); }
+    // the race to the house: four runners, one gets a family-powered rocket skateboard
+    K.bg.sky(ctx); ground(ctx); const k = at(36.18);
+    K.house(ctx, 1150, 600, .9); sh(ctx, c => c.rect(1040, 380, 6, 220), '#fff', 2); txt(ctx, 'FINISH', 1043, 365, PRINT(24), P.red);
+    ctx.save(); ctx.setLineDash([16, 12]); Tn.line(ctx, [[0, 655], [W, 655]], 3, '#fff'); ctx.restore();
+    for (let i = 0; i < 4; i++) { const boost = i === 2 && at(37.48) > 0, bk = boost ? out(clamp((at(37.48)) / 2.2)) : 0;
+      const x = 110 + i * 70 + Math.min(k, 4) * 30 + bk * 640 + Math.sin(t * 6 + i) * 3, y = 600 + i * 30;
+      if (boost) { sh(ctx, c => c.roundRect(x - 50, y + 4, 100, 14, 7), P.red, 3); for (const wx of [-30, 30]) sh(ctx, c => c.arc(x + wx, y + 22, 8, 0, 7), INK, 0);
+        for (let j = 0; j < 4; j++) { ctx.save(); ctx.globalAlpha = .7; sh(ctx, c => c.ellipse(x - 70 - j * 26, y + 10, 16 - j * 2, 9, 0, 0, 7), j % 2 ? P.yellow : P.orange, 0); ctx.restore(); }
+        moneyBag(ctx, x - 70, y - 120, .6); }
+      bean(ctx, x, y, .55, t + i, { skin: boost ? B.SKIN : 'white', hair: ['short', 'bob', 'side', 'bun'][i], hairColor: '#3a2a1e', body: boost ? P.purple : ['#9aa0a6', '#b8bcc2', '#9aa0a6', '#b8bcc2'][i], face: { mouth: boost ? 'grin' : 'flat', brows: boost ? 'up' : 'worried' }, walk: boost ? undefined : t * 10 + i }); }
+    popAt(ctx, 520, 110, at(36.4), () => { K.card(ctx, 250, 70, 540, 80, '#fff', 16); txt(ctx, 'the race to a first home', 520, 110, HAND(700, 44)); });
+    if (at(37.82) > 0) popAt(ctx, 1000, 220, at(37.82), () => { K.card(ctx, 830, 180, 340, 80, P.purple, 16); txt(ctx, '≈ 1 in 4: family money', 1000, 220, HAND(700, 38), '#fff'); });
   }
-  function h5(ctx, lt, dur, t) { // the question isn't "how old will you be when you buy a house?" — it's "does your family already own one?"
-    K.bg.studio(ctx, '#d9ccff', '#f5f1ff'); const T0 = 40.49, at = s => lt - (s - T0);
-    host(ctx, 300, 700, 1.1, t, [[T0, 'presentL'], [44.5, 'pointSide']], { mouth: 'flat', brows: at(44.57) > 0 ? 'up' : 'neutral', look: [.6, 0] });
-    popAt(ctx, 860, 230, at(42.16), () => { K.card(ctx, 600, 170, 520, 120, '#fff', 20); txt(ctx, '"How old will you be', 860, 210, HAND(700, 42)); txt(ctx, 'when you buy a house?"', 860, 255, HAND(700, 42)); });
-    if (at(44.57) > 0) K.strike(ctx, 620, 230, 1100, 230, clamp(at(44.57) / .4), P.red, 9);
-    popAt(ctx, 860, 450, at(45.11), () => { K.card(ctx, 600, 380, 520, 140, P.yellow, 20); txt(ctx, '"Does your family', 860, 430, HAND(700, 50)); txt(ctx, 'already own one?"', 860, 480, HAND(700, 50)); });
+  function h5(ctx, lt, dur, t) { // quiz show: "How old will you be when you buy a house?" — BZZT — the real question: "Does your family already own one?"
+    const T0 = 40.49, at = s => lt - (s - T0), real = at(44.57) > 0;
+    K.bg.color(ctx, '#2c2457');
+    for (let i = 0; i < 14; i++) { ctx.save(); ctx.globalAlpha = .12 + .08 * Math.sin(t * 3 + i); ctx.fillStyle = i % 2 ? P.yellow : P.pink; ctx.beginPath(); ctx.moveTo(640, -50); ctx.lineTo(i * 100 - 50, 720); ctx.lineTo(i * 100 + 10, 720); ctx.fill(); ctx.restore(); }
+    for (let i = 0; i < 20; i++) { ctx.fillStyle = (Math.floor(t * 6) + i) % 2 ? P.yellow : '#fff'; ctx.beginPath(); ctx.arc(40 + i * 63, 30, 7, 0, 7); ctx.fill(); }
+    // podium + host
+    host(ctx, 230, 720, 1.0, t, [[T0, 'presentL'], [44.5, 'cheer'], [45.4, 'pointSide']], { mouth: real ? 'laugh' : 'smile', brows: 'up', look: [.6, 0] });
+    sh(ctx, c => c.roundRect(110, 560, 240, 160, 12), P.red, 5); txt(ctx, 'HOST', 230, 620, PRINT(34), '#fff');
+    // the big screen
+    sh(ctx, c => c.roundRect(470, 120, 700, 380, 24), '#141a3a', 6);
+    const flip = clamp(at(44.57) / .4), sx = Math.abs(Math.cos(flip * Math.PI));
+    ctx.save(); ctx.translate(820, 310); ctx.scale(sx, 1);
+    if (flip < .5) { popAt(ctx, 0, 0, at(41.0), () => { txt(ctx, 'QUESTION', 0, -110, PRINT(30), P.yellow); txt(ctx, '"How old will you be', 0, -20, HAND(700, 50), '#fff'); txt(ctx, 'when you buy a house?"', 0, 40, HAND(700, 50), '#fff'); }); }
+    else { txt(ctx, 'THE REAL QUESTION', 0, -110, PRINT(30), P.green); txt(ctx, '"Does your family', 0, -20, HAND(700, 58), P.yellow); txt(ctx, 'already own one?"', 0, 45, HAND(700, 58), P.yellow); }
+    ctx.restore();
+    if (at(44.2) > 0 && at(44.9) < 0) { K.cross(ctx, 820, 310, 260, clamp(at(44.2) / .3), P.red); }
+    if (real) for (let i = 0; i < 30; i++) { const r = Tn.rng(i * 13 + 5), x = 470 + r() * 700, y = 80 + ((at(44.9) * (120 + r() * 160) + r() * 200) % 560); ctx.save(); ctx.translate(x, y); ctx.rotate(t * 4 + i); ctx.fillStyle = [P.red, P.yellow, P.green, P.blue][i % 4]; ctx.fillRect(-7, -3, 14, 6); ctx.restore(); }
   }
-  function h6(ctx, lt, dur, t) { // those without help disappear from the data: Census — under-35 homeownership 35.2% in Q2 2026, down 1.2 pts, steepest drop of any age group
+  function h6(ctx, lt, dur, t) { // the ones without help disappear from the data → Census elevator: under-35 homeownership 35.2% (Q2 2026), down 1.2 pts, steepest drop
     const T0 = 47.18, at = s => lt - (s - T0);
-    if (at(51.84) < 0) { K.bg.cream(ctx);
-      for (let i = 0; i < 6; i++) { const a = clamp(1 - Math.max(0, at(50.03) - i * .2) / .8); ctx.save(); ctx.globalAlpha = a; bean(ctx, 190 + i * 180, 620, .8, t + i, { skin: 'white', hair: ['short', 'bob', 'side', 'bun', 'long', 'short'][i], hairColor: '#3a2a1e', body: [P.blue, P.pink, P.teal, P.orange, P.purple, P.green][i], face: { mouth: 'frown', brows: 'worried' } }); ctx.restore(); }
-      popAt(ctx, 640, 120, at(47.4), () => { K.card(ctx, 420, 80, 440, 80, '#fff', 16); txt(ctx, 'no family help', 640, 120, HAND(700, 48)); }); return; }
-    K.bg.white(ctx);
-    K.nameCard(ctx, 'U.S. Census Bureau', 'homeownership, households under 35', 640, 90, at(51.9));
-    popAt(ctx, 640, 200, at(58.53), () => { K.card(ctx, 540, 170, 200, 60, P.yellow, 14); txt(ctx, 'Q2 2026', 640, 200, HAND(700, 40)); });
-    if (at(56.64) > 0) Ch.counter(ctx, { x: 640, y: 340, value: 35.2, decimals: 1, suffix: '%', lt: at(56.64), dur: 1.0, size: 150, color: P.blue });
-    if (at(61.16) > 0) popAt(ctx, 640, 480, at(61.16), () => { K.card(ctx, 470, 440, 340, 80, P.red, 16); I.draw(ctx, 'arrowDown', 520, 480, 50, 1); txt(ctx, '1.2 pts in a year', 660, 480, HAND(700, 42), '#fff'); });
-    K.stamp(ctx, 'STEEPEST DROP OF ANY AGE GROUP', 640, 610, at(63.73), { color: P.red, size: 44, rot: -.03 });
+    if (at(51.84) < 0) { // a group photo where people fade out
+      K.bg.cream(ctx);
+      sh(ctx, c => c.roundRect(150, 120, 980, 520, 10), '#8a5a36', 6); sh(ctx, c => c.rect(180, 150, 920, 460), '#cfe9ff', 4); ctx.fillStyle = '#9fd97f'; ctx.fillRect(182, 470, 916, 138);
+      txt(ctx, 'young would-be buyers', 640, 100, HAND(700, 44), INK, 'center', clamp(lt / .3));
+      for (let i = 0; i < 6; i++) { const help = i === 1 || i === 4, a = help ? 1 : clamp(1 - Math.max(0, at(50.03) - i * .15) / .9); ctx.save(); ctx.globalAlpha = a; bean(ctx, 260 + i * 150, 590, .7, t + i, { skin: help ? B.SKIN : 'white', hair: ['short', 'bob', 'side', 'bun', 'long', 'short'][i], hairColor: '#3a2a1e', body: [P.blue, P.pink, P.teal, P.orange, P.purple, P.green][i], face: { mouth: help ? 'smile' : 'frown', brows: help ? 'calm' : 'worried' } }); ctx.restore();
+        if (help && at(48.31) > 0) moneyBag(ctx, 330 + i * 150, 520, .45); }
+      if (at(50.03) > 0) popAt(ctx, 640, 680, at(50.03), () => { K.card(ctx, 440, 645, 400, 70, '#fff', 14); txt(ctx, 'no family help → gone', 640, 680, HAND(700, 38), P.red); });
+      return; }
+    // the homeownership elevator
+    K.bg.color(ctx, '#e9edf3');
+    sh(ctx, c => c.rect(380, 90, 520, 620), '#c9ced6', 5);
+    const drop = at(61.16) > 0 ? out(clamp(at(61.16) / 1.4)) : 0, ey = 200 + drop * 120;
+    ctx.save(); ctx.beginPath(); ctx.rect(400, 150, 480, 560); ctx.clip();
+    sh(ctx, c => c.rect(420, ey, 440, 400), '#f3e2c4', 5);
+    for (let i = 0; i < 3; i++) bean(ctx, 520 + i * 120, ey + 380, .6, t + i, { skin: 'white', hair: ['short', 'bob', 'side'][i], hairColor: '#3a2a1e', body: [P.blue, P.pink, P.teal][i], face: { mouth: drop > .1 ? 'o' : 'flat', brows: drop > .1 ? 'worried' : 'calm', look: [0, -1] } });
+    ctx.restore();
+    for (let i = 0; i < 6; i++) Tn.line(ctx, [[640, 150], [640, ey]], 3, '#5d6166');
+    // display panel
+    sh(ctx, c => c.roundRect(470, 60, 340, 110, 14), '#1f1c1a', 5);
+    if (at(56.64) > 0) Ch.counter(ctx, { x: 620, y: 116, value: 35.2, decimals: 1, suffix: '%', lt: at(56.64), dur: .9, size: 70, color: '#ff9d4d' });
+    if (at(61.16) > 0) { sh(ctx, c => { c.moveTo(740, 96); c.lineTo(790, 96); c.lineTo(765, 140); c.closePath(); }, P.red, 0); }
+    K.nameCard(ctx, 'U.S. Census Bureau', 'homeownership, households under 35', 1090, 120, at(51.9));
+    popAt(ctx, 1090, 260, at(58.53), () => { K.card(ctx, 990, 225, 200, 70, P.yellow, 14); txt(ctx, 'Q2 2026', 1090, 260, HAND(700, 40)); });
+    if (at(61.16) > 0) popAt(ctx, 1090, 400, at(61.16), () => { K.card(ctx, 960, 350, 260, 100, P.red, 16); txt(ctx, '▼ 1.2 pts', 1090, 385, HAND(700, 46), '#fff'); txt(ctx, 'vs a year earlier', 1090, 425, PRINT(20), '#fff'); });
+    K.stamp(ctx, 'STEEPEST DROP OF ANY AGE GROUP', 640, 640, at(63.73), { color: P.red, size: 40, rot: -.04 });
     K.source(ctx, 'Source: NAHB Eye on Housing (Census HVS), Aug 2026', at(56.7));
   }
-  function stack(ctx, x, y, n, k) { for (let i = 0; i < n * k; i++) { const yy = y - i * 13; sh(ctx, c => c.roundRect(x - 80, yy - 13, 160, 14, 3), i % 2 ? '#7cc46a' : '#6ab45a', 2.5); } }
-  function h7(ctx, lt, dur, t) { // wealth: SCF 2022 — median homeowner ~$396,000 net worth vs renter $10,400 — ~38× — the house is the biggest piece
-    K.bg.white(ctx); const T0 = 65.79, at = s => lt - (s - T0);
+  function moneyTower(ctx, x, base, h, w) { const n = Math.floor(h / 14); for (let i = 0; i < n; i++) sh(ctx, c => c.roundRect(x - w / 2, base - (i + 1) * 14, w, 14, 3), i % 2 ? '#7cc46a' : '#6ab45a', 2.5); }
+  function h7(ctx, lt, dur, t) { // houses → wealth. SCF 2022: owner ~$396,000 (on a money tower, the house the biggest piece) vs renter $10,400 (with binoculars) — ~38×
+    const T0 = 65.79, at = s => lt - (s - T0);
     if (at(69.93) < 0) { K.bg.studio(ctx, '#c6ecd9', '#f1fbf5'); host(ctx, 640, 700, 1.2, t, [[T0, 'presentBoth']], { mouth: 'flat', brows: 'up' }); popAt(ctx, 1050, 300, at(67.27), () => { K.card(ctx, 900, 230, 300, 140, '#fff', 20); txt(ctx, 'houses', 1050, 280, HAND(700, 40), '#8a8f96'); txt(ctx, '→ wealth', 1050, 330, HAND(700, 52), P.green); }); K.strike(ctx, 960, 280, 1140, 280, clamp(at(68.0) / .4), P.red, 6); return; }
-    K.nameCard(ctx, 'Federal Reserve', 'Survey of Consumer Finances, 2022', 900, 90, at(70.0));
-    Tn.line(ctx, [[180, 620], [1100, 620]], 5, INK);
-    const k1 = at(76.58) > 0 ? out(at(76.58) / 1.4) : 0, k2 = at(80.26) > 0 ? out(at(80.26) / .5) : 0;
-    stack(ctx, 400, 620, 30, k1); txt(ctx, 'median homeowner', 400, 655, PRINT(28), INK, 'center', clamp(at(74.86) / .3));
-    if (k1 > 0) txt(ctx, '≈ $' + Math.round(396 * k1) + ',000', 400, 620 - 30 * 13 * k1 - 40, HAND(700, 56), P.green);
-    stack(ctx, 880, 620, 1, k2); txt(ctx, 'median renter', 880, 655, PRINT(28), INK, 'center', clamp(at(78.92) / .3));
-    if (k2 > 0) txt(ctx, '$10,400', 880, 560, HAND(700, 56), P.red);
-    if (at(81.95) > 0) popAt(ctx, 880, 300, at(81.95), () => { K.card(ctx, 760, 240, 240, 120, P.yellow, 20); txt(ctx, '≈ 38×', 880, 300, HAND(700, 70), P.red); });
-    if (at(84.32) > 0) popAt(ctx, 400, 420, at(84.32), () => { sh(ctx, c => c.roundRect(310, 340, 180, 150, 16), 'rgba(255,255,255,.9)', 4); K.house(ctx, 400, 480, .55); txt(ctx, 'the house = biggest piece', 400, 322, HAND(700, 30), P.green); });
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 640);
+    K.nameCard(ctx, 'Federal Reserve', 'Survey of Consumer Finances, 2022', 1010, 70, at(70.0));
+    // the owner's tower grows, lifting them up; the biggest block is the house itself
+    const k1 = at(76.58) > 0 ? out(clamp(at(76.58) / 1.6)) : 0, th = 440 * k1, top = 640 - th;
+    if (k1 > 0) { moneyTower(ctx, 380, 640, th * .45, 170); const hy = 640 - th * .45; sh(ctx, c => c.rect(295, hy - th * .4, 170, th * .4), '#ffcf7a', 4); if (th * .4 > 60) { K.house(ctx, 380, hy - 6, Math.min(.55, th * .4 / 300), { wall: '#ffcf7a' }); }
+      moneyTower(ctx, 380, hy - th * .4, th * .15, 170); }
+    bean(ctx, 380, top, .5, t, { skin: 'white', hair: 'side', hairColor: '#3a2a1e', body: P.green, top: 'shirt', face: { mouth: 'grin', brows: 'up' }, armR: [2.5, .1], armL: [2.5, .1] });
+    txt(ctx, 'median homeowner', 380, 680, PRINT(26), INK, 'center', clamp(at(74.86) / .3));
+    if (k1 > 0) popAt(ctx, 560, top + 10, at(77.0), () => { K.card(ctx, 470, top - 20, 200, 60, '#fff', 12); txt(ctx, '≈ $' + Math.round(396 * k1) + ',000', 570, top + 10, HAND(700, 36), P.green); });
+    if (at(84.32) > 0) popAt(ctx, 180, 640 - th * .65, at(84.32), () => { K.card(ctx, 60, 640 - th * .65 - 30, 210, 60, P.yellow, 12); txt(ctx, 'the house: biggest piece', 165, 640 - th * .65, PRINT(19)); });
+    // the renter with a tiny stack and binoculars
+    const k2 = at(80.26) > 0 ? 1 : 0;
+    moneyTower(ctx, 900, 640, 14 * k2, 120);
+    bean(ctx, 990, 660, .75, t + 1, { skin: 'white', hair: 'bob', hairColor: '#3a2a1e', body: P.orange, face: { mouth: 'o', brows: 'up', look: [-.6, -1] }, armL: [2.3, .7], armR: [2.3, .7] });
+    if (at(81.6) > 0) { sh(ctx, c => { c.roundRect(952, 432, 34, 26, 8); c.roundRect(990, 432, 34, 26, 8); }, '#2e2f36', 3); }
+    txt(ctx, 'median renter', 950, 690, PRINT(26), INK, 'center', clamp(at(78.92) / .3));
+    if (k2) popAt(ctx, 900, 580, at(80.26), () => { K.card(ctx, 820, 550, 160, 56, '#fff', 12); txt(ctx, '$10,400', 900, 578, HAND(700, 36), P.red); });
+    if (at(82.29) > 0) popAt(ctx, 760, 380, at(82.29), () => { K.card(ctx, 650, 320, 220, 110, P.yellow, 18); txt(ctx, '≈ 38×', 760, 375, HAND(700, 66), P.red); });
     K.source(ctx, 'Source: NAHB Eye on Housing (Fed SCF 2022), Mar 2024', at(76.6));
   }
-  function h8(ctx, lt, dur, t) { // Harvard: nearly half of renter households in 2024 were cost-burdened (>30% of income) → the loop
+  function h8(ctx, lt, dur, t) { // nearly half of renter households (2024) cost-burdened: a rent backpack that crushes — then the loop as a hamster wheel
     const T0 = 88.44, at = s => lt - (s - T0);
-    if (at(97.79) < 0) { K.bg.white(ctx);
-      K.logo(ctx, 'jchs', 1150, 90, 110, at(89.74), { pad: 6 });
-      txt(ctx, 'renter households, 2024', 600, 90, HAND(700, 48), INK, 'center', clamp(at(90.0) / .3));
-      for (let i = 0; i < 10; i++) { const x = 160 + i * 106, hit = i < 5 && at(93.44) > i * .1; popAt(ctx, x, 380, at(90.43 + i * .06), () => bean(ctx, x, 470, .55, t + i, { skin: 'white', hair: ['short', 'bob', 'side', 'bun', 'long'][i % 5], hairColor: '#3a2a1e', body: hit ? P.red : '#c4c8ce', face: { mouth: hit ? 'frown' : 'flat', brows: hit ? 'worried' : 'calm' } })); }
-      if (at(90.43) > 0) popAt(ctx, 400, 560, at(90.75), () => { K.card(ctx, 250, 520, 300, 80, P.red, 16); txt(ctx, 'nearly half', 400, 560, HAND(700, 46), '#fff'); });
-      if (at(94.84) > 0) popAt(ctx, 900, 560, at(94.84), () => { K.card(ctx, 680, 520, 440, 80, '#fff', 16); txt(ctx, '> 30% of income on housing', 900, 560, HAND(700, 38)); });
+    if (at(97.79) < 0) { K.bg.cream(ctx); ground(ctx, '#e8d6b8', 620);
+      K.logo(ctx, 'jchs', 1170, 80, 100, at(89.74), { pad: 6 });
+      txt(ctx, 'renter households, 2024', 600, 80, HAND(700, 46), INK, 'center', clamp(at(90.0) / .3));
+      for (let i = 0; i < 8; i++) { const x = 140 + i * 135, heavy = i % 2 === 0 && at(93.44) > i * .08, sq = heavy ? .12 + Math.sin(t * 5 + i) * .02 : 0;
+        popAt(ctx, x, 500, at(90.43 + i * .06), () => { if (heavy) backpack(ctx, x - 52, 540 + sq * 100, .75 + .2 * clamp(at(93.44) / .6), 'RENT'); bean(ctx, x, 640, .58, t + i, { skin: 'white', hair: ['short', 'bob', 'side', 'bun'][i % 4], hairColor: '#3a2a1e', body: heavy ? P.red : '#c4c8ce', lean: heavy ? .08 : 0, face: { mouth: heavy ? 'frown' : 'flat', brows: heavy ? 'worried' : 'calm' } }); }); }
+      if (at(90.75) > 0) popAt(ctx, 320, 180, at(90.75), () => { K.card(ctx, 180, 140, 280, 80, P.red, 16); txt(ctx, 'nearly half', 320, 180, HAND(700, 46), '#fff'); });
+      if (at(94.84) > 0) popAt(ctx, 860, 180, at(94.84), () => { K.card(ctx, 640, 140, 440, 80, '#fff', 16); txt(ctx, '> 30% of income on housing', 860, 180, HAND(700, 38)); });
       K.source(ctx, "Source: Harvard JCHS, State of the Nation's Housing 2026", at(90)); return; }
-    // the loop
-    K.bg.cream(ctx); const cx = 640, cy = 380, R = 200;
-    const nodes = [['rent eats the paycheck', -Math.PI / 2, 98.21, P.red], ['hard to save a down payment', Math.PI / 6, 102.98, P.orange], ['keep renting', 5 * Math.PI / 6, 105.03, P.purple]];
-    const spin = at(105.6) > 0 ? (at(105.6) * .8) : 0;
-    for (let i = 0; i < 3; i++) { const a0 = nodes[i][1] + .35, a1 = nodes[(i + 1) % 3][1] - .35 + (i === 2 ? Math.PI * 2 : 0), k = clamp((at(nodes[(i + 1) % 3][2]) + .1) / .6); if (i === 2) { if (at(105.5) <= 0) continue; }
-      if (k > 0 || i === 2) { const kk = i === 2 ? clamp(at(105.5) / .6) : k; ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, a0 + spin, a0 + spin + (a1 - a0) * kk); ctx.lineWidth = 8; ctx.strokeStyle = INK; ctx.lineCap = 'round'; ctx.stroke(); ctx.restore(); if (kk >= 1) { const ea = a1 + spin, ex = cx + Math.cos(ea) * R, ey = cy + Math.sin(ea) * R; K.arrow(ctx, [ex - Math.cos(ea + Math.PI / 2) * 20, ey - Math.sin(ea + Math.PI / 2) * 20], [ex, ey], 1, INK, 6); } } }
-    nodes.forEach(([label, a, s, col]) => { const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R; popAt(ctx, x, y, at(s), () => { K.card(ctx, x - 150, y - 45, 300, 90, col, 18); K.wrap(ctx, label, HAND(700, 34), 270).forEach((l, j, arr) => txt(ctx, l, x, y + (j - (arr.length - 1) / 2) * 34, HAND(700, 34), '#fff')); }); });
-    if (at(106.75) > 0) popAt(ctx, cx, cy, at(106.75), () => txt(ctx, 'the loop', cx, cy, HAND(700, 60), INK));
+    // the loop = a hamster wheel
+    K.bg.cream(ctx); const sp = at(105.6) > 0 ? 6 : 3;
+    wheel(ctx, 640, 380, 220, -lt * sp * .5);
+    bean(ctx, 640, 560, .6, t * (sp / 3), Object.assign({ face: { mouth: 'frown', brows: 'worried', look: [.8, 0] }, walk: t * 4 * sp }, YOU));
+    for (let i = 0; i < 3; i++) { ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(590 - i * 20, 410 + ((t * 2 + i * .3) % 1) * 40, 4, 7, 0, 0, 7); ctx.fill(); }
+    const lab = [['rent eats the paycheck', 230, 200, 98.21, P.red], ['hard to save a down payment', 1050, 200, 102.98, P.orange], ['so: keep renting', 1050, 560, 105.03, P.purple]];
+    lab.forEach(([s, x, y, a, col]) => popAt(ctx, x, y, at(a), () => { K.card(ctx, x - 170, y - 45, 340, 90, col, 18); K.wrap(ctx, s, HAND(700, 34), 300).forEach((l, j, arr) => txt(ctx, l, x, y + (j - (arr.length - 1) / 2) * 34, HAND(700, 34), '#fff')); }));
+    if (at(106.75) > 0) popAt(ctx, 230, 560, at(106.75), () => { K.card(ctx, 90, 515, 280, 90, '#1f1c1a', 18, 0); txt(ctx, "that's the loop", 230, 560, HAND(700, 44), '#fff'); });
   }
 
   // ================= ENDING: WHY IT MATTERS =================
-  function k1(ctx, lt, dur, t) { // back to the viral number: is the typical first-time buyer 40? Probably not — early-to-mid 30s, not that different from a decade ago
-    K.bg.white(ctx); const T0 = 108.07, at = s => lt - (s - T0);
-    popAt(ctx, 640, 260, at(108.2), () => { K.card(ctx, 470, 120, 340, 280, '#fff', 24); txt(ctx, '40?', 640, 250, HAND(700, 170), P.red); txt(ctx, 'the viral number', 640, 360, PRINT(28)); });
-    K.stamp(ctx, 'PROBABLY NOT', 900, 180, at(113.14), { color: P.blue, size: 56, rot: .1 });
-    if (at(114.4) > 0) popAt(ctx, 640, 520, at(114.4), () => { K.card(ctx, 380, 470, 520, 100, P.green, 20); txt(ctx, 'early-to-mid 30s', 640, 520, HAND(700, 60), '#fff'); });
-    if (at(117.57) > 0) txt(ctx, '≈ the same as a decade ago', 640, 630, HAND(700, 42), '#55606b', 'center', clamp(at(117.57) / .3));
+  function k1(ctx, lt, dur, t) { // the viral 40-year-old buyer (birthday cake, grey temples) → poof → his real early-to-mid-30s self; a decade-ago photo looks about the same
+    K.bg.studio(ctx, '#ffe1b3', '#fff6e8'); const T0 = 108.07, at = s => lt - (s - T0);
+    const morph = clamp(at(114.2) / .25), young = morph >= .5;
+    popAt(ctx, 640, 90, at(108.2), () => { K.card(ctx, 380, 50, 520, 80, '#fff', 16); txt(ctx, young ? 'the real typical buyer' : 'the "viral" first-time buyer', 640, 90, HAND(700, 42)); });
+    const face = young ? { mouth: 'grin', brows: 'up', look: [.3, 0] } : { mouth: 'flat', brows: 'worried', look: [.2, .2] };
+    const who = young ? { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.blue, top: 'plain' } : { skin: B.SKIN, hair: 'side', hairColor: '#8d8a85', body: '#7a8088', top: 'cardigan', glasses: true };
+    const x = at(117.57) > 0 ? lerp(640, 470, out(clamp(at(117.57) / .6))) : 640;
+    bean(ctx, x, 660, 1.2, t, Object.assign({ face, armR: young ? [2.5, .2] : [.3, .2], scaleHead: 1 }, who));
+    if (!young) { cake(ctx, x + 230, 600, 1.2, at(112.0) < 0, t); popAt(ctx, x - 230, 260, at(110.5), () => { K.card(ctx, x - 330, 220, 200, 80, P.red, 14); txt(ctx, 'age 40?', x - 230, 260, HAND(700, 46), '#fff'); }); }
+    poof(ctx, 640, 420, at(113.9) / .8);
+    K.stamp(ctx, 'PROBABLY NOT', 990, 200, at(113.14), { color: P.blue, size: 50, rot: .1 });
+    if (young) popAt(ctx, x, 230, at(114.4), () => { K.card(ctx, x - 170, 190, 340, 80, P.green, 16); txt(ctx, 'early-to-mid 30s', x, 230, HAND(700, 44), '#fff'); });
+    // "a decade ago": a framed photo of a buyer the same age
+    if (at(117.57) > 0) popAt(ctx, 930, 470, at(117.8), () => { ctx.save(); ctx.translate(930, 470); ctx.rotate(.05); sh(ctx, c => c.rect(-150, -190, 300, 330), '#fff', 5); sh(ctx, c => c.rect(-130, -170, 260, 250), '#e9d9b8', 3); ctx.restore();
+      ctx.save(); ctx.filter = 'sepia(.6)'; bean(ctx, 930, 545, .55, t, { skin: B.SKIN, hair: 'bob', hairColor: '#6b4a2c', body: P.orange }); ctx.restore(); txt(ctx, 'a decade ago: about the same', 930, 668, HAND(700, 30), '#6b4a1d'); });
   }
-  function k2(ctx, lt, dur, t) { // why it went viral anyway: it felt true — the honest answer isn't 40, it's "I don't know if I ever will"
-    K.bg.studio(ctx, '#ffd9a8', '#fff4e6'); const T0 = 120.2, at = s => lt - (s - T0);
-    if (at(124.77) < 0) { host(ctx, 640, 700, 1.2, t, [[T0, 'chest'], [123.3, 'presentBoth']], { mouth: 'flat', brows: 'up', look: [0, 0] }); if (at(123.49) > 0) popAt(ctx, 1020, 220, at(123.49), () => { K.card(ctx, 880, 170, 280, 100, '#fff', 20); txt(ctx, 'it felt true', 1020, 220, HAND(700, 52), P.red); }); return; }
-    bean(ctx, 360, 660, 1.2, t, Object.assign({ face: { mouth: at(131.44) > 0 ? 'frown' : 'flat', brows: 'worried', look: [.5, -.3] } }, YOU));
-    popAt(ctx, 860, 200, at(127.57), () => { K.card(ctx, 620, 150, 480, 100, '#fff', 20); txt(ctx, '"When will you buy a house?"', 860, 200, HAND(700, 42)); });
-    if (at(129.41) > 0) popAt(ctx, 760, 360, at(129.41), () => { txt(ctx, '40', 760, 360, HAND(700, 100), '#9aa3ad'); K.cross(ctx, 760, 360, 100, clamp(at(129.6) / .4)); });
-    K.bubble(ctx, '"I don\'t know if I ever will."', 880, 520, 520, [480, 380], at(131.44), { size: 50 });
+  function k2(ctx, lt, dur, t) { // why it went viral: it felt true — the honest answer isn't 40, it's "I don't know if I ever will" (the dream house floats away)
+    const T0 = 120.2, at = s => lt - (s - T0);
+    if (at(124.77) < 0) { K.bg.studio(ctx, '#ffd9a8', '#fff4e6'); host(ctx, 640, 700, 1.2, t, [[T0, 'chest'], [123.3, 'presentBoth']], { mouth: 'flat', brows: 'up', look: [0, 0] }); if (at(123.49) > 0) popAt(ctx, 1020, 220, at(123.49), () => { K.card(ctx, 880, 170, 280, 100, '#fff', 20); txt(ctx, 'it felt true', 1020, 220, HAND(700, 52), P.red); }); return; }
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 620);
+    const away = at(131.44) > 0 ? clamp(at(131.44) / 2.4) : 0;
+    // rain cloud arrives with "I don't know if I ever will"
+    if (away > 0) { ctx.save(); ctx.globalAlpha = clamp(away * 3); ctx.fillStyle = '#7f8a99'; for (const [dx, dy, r] of [[0, 0, 50], [55, -18, 60], [110, 0, 48], [56, 16, 50]]) { ctx.beginPath(); ctx.arc(300 + dx, 150 + dy, r, 0, 7); ctx.fill(); } ctx.fillStyle = '#7fb6d9'; for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.ellipse(290 + i * 18, 210 + ((t * 2 + i * .37) % 1) * 220, 3, 8, 0, 0, 7); ctx.fill(); } ctx.restore(); }
+    bean(ctx, 360, 660, 1.1, t, Object.assign({ face: { mouth: away > 0 ? 'frown' : 'smile', brows: away > 0 ? 'sad' : 'up', look: [.6, -.6] } }, YOU));
+    // the dream house in a thought bubble, tied like a balloon; it drifts off
+    const bx = lerp(760, 1180, away * away), by = lerp(300, -120, away * away);
+    for (let i = 0; i < 3; i++) sh(ctx, c => c.arc(lerp(440, bx - 120, (i + 1) / 4), lerp(330, by + 60, (i + 1) / 4), 10 + i * 6, 0, 7), '#fff', 3);
+    popAt(ctx, bx, by, at(125.2), () => { sh(ctx, c => c.ellipse(bx, by, 190, 140, 0, 0, 7), '#fff', 4.5); K.house(ctx, bx, by + 80, .6); });
+    popAt(ctx, 900, 560, at(127.57), () => { K.card(ctx, 660, 520, 480, 80, '#fff', 16); txt(ctx, '"When will you buy a house?"', 900, 560, HAND(700, 40)); });
+    if (at(129.41) > 0 && away === 0) { txt(ctx, '40?', 600, 380, HAND(700, 80), '#9aa3ad'); K.cross(ctx, 600, 380, 90, clamp(at(129.6) / .4)); }
+    if (away > 0) popAt(ctx, 900, 650, at(131.44), () => { K.card(ctx, 640, 615, 520, 70, '#1f1c1a', 16, 0); txt(ctx, '"I don\'t know if I ever will."', 900, 650, HAND(700, 38), '#fff'); });
   }
-  function k3(ctx, lt, dur, t) { // what changed: the price of the ticket (3× → 5×), a decade of underbuilding, half of mortgages locked under 4%, rates back up just as it thawed
-    K.bg.white(ctx); const T0 = 133.76, at = s => lt - (s - T0);
-    popAt(ctx, 640, 70, at(136.17), () => { K.card(ctx, 420, 32, 440, 76, '#1f1c1a', 16, 0); txt(ctx, 'the price of the ticket', 640, 70, HAND(700, 46), '#fff'); });
-    const panel = (x, y, s, draw) => popAt(ctx, x + 270, y + 130, at(s), () => { K.card(ctx, x, y, 540, 260, '#fff', 20); draw(x + 270, y + 130); });
-    panel(80, 130, 138.26, (cx, cy) => { txt(ctx, 'home price ÷ income', cx, cy - 80, PRINT(26)); txt(ctx, '3×', cx - 120, cy + 10, HAND(700, 90), P.green); K.arrow(ctx, [cx - 50, cy + 10], [cx + 50, cy + 10], 1, INK, 6); txt(ctx, '5×', cx + 120, cy + 10, HAND(700, 90), P.red); });
-    panel(660, 130, 141.76, (cx, cy) => { txt(ctx, 'a decade of', cx, cy - 80, PRINT(26)); ctx.save(); ctx.translate(cx - 80, cy + 90); for (let i = 0; i <= 5; i++) Tn.line(ctx, [[-60 + i * 24, 0], [-60 + i * 24, -110]], 6, '#c98d4f'); ctx.restore(); txt(ctx, 'not building', cx + 90, cy + 10, HAND(700, 50), P.red); });
-    panel(80, 410, 144.64, (cx, cy) => { cuffs(ctx, cx - 140, cy + 10, .7, -.1); txt(ctx, 'half of mortgages', cx + 80, cy - 20, HAND(700, 40)); txt(ctx, 'locked under 4%', cx + 80, cy + 30, HAND(700, 40), P.orange); });
-    panel(660, 410, 148.58, (cx, cy) => { txt(ctx, 'just as it thawed…', cx, cy - 70, PRINT(26)); txt(ctx, '6.1%', cx - 120, cy + 20, HAND(700, 70), P.green); K.arrow(ctx, [cx - 40, cy + 20], [cx + 40, cy + 20], 1, INK, 6); txt(ctx, '7.28%', cx + 130, cy + 20, HAND(700, 70), P.red); });
+  function k3(ctx, lt, dur, t) { // the price of the ticket: a theme-park ticket booth for a first home — 3×→5× income, under construction for a decade, riders locked in, rates spike just as it thawed
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 600); const T0 = 133.76, at = s => lt - (s - T0);
+    // the park gate
+    sh(ctx, c => c.roundRect(330, 120, 620, 90, 20), P.purple, 5); txt(ctx, 'FIRST-HOME PARK', 640, 166, PRINT(52), '#fff');
+    for (const x of [360, 920]) sh(ctx, c => c.rect(x - 18, 200, 36, 400), '#f3e2c4', 5);
+    // booth
+    sh(ctx, c => c.roundRect(500, 300, 280, 300, 12), P.red, 5); sh(ctx, c => c.roundRect(530, 340, 220, 120, 10), '#cfe9ff', 4);
+    popAt(ctx, 640, 400, at(136.17), () => { txt(ctx, 'TICKET', 640, 380, PRINT(30)); txt(ctx, at(138.9) > 0 ? '5× income' : '3× income', 640, 425, HAND(700, 46), at(138.9) > 0 ? P.red : P.green); });
+    if (at(138.9) > 0 && at(139.4) < 0) { K.strike(ctx, 560, 425, 720, 425, clamp(at(138.9) / .3), P.red, 6); }
+    // the queue
+    for (let i = 0; i < 4; i++) bean(ctx, 420 - i * 80, 650, .45, t + i, { skin: i === 0 ? B.SKIN : 'white', hair: ['short', 'bob', 'side', 'bun'][i], hairColor: '#3a2a1e', body: i === 0 ? P.teal : '#c4c8ce', face: { mouth: at(138.9) > 0 ? 'o' : 'flat', brows: at(138.9) > 0 ? 'worried' : 'calm', look: [1, -.3] } });
+    // signs pop up: under construction (a decade), locked riders, the rate spike
+    popAt(ctx, 1110, 300, at(141.76), () => { ctx.save(); ctx.translate(1110, 300); ctx.rotate(.05); sh(ctx, c => { c.moveTo(-120, 70); c.lineTo(0, -80); c.lineTo(120, 70); c.closePath(); }, P.orange, 5); txt(ctx, 'UNDER', 0, 0, PRINT(28)); txt(ctx, 'CONSTRUCTION', 0, 30, PRINT(20)); ctx.restore(); txt(ctx, 'a decade of not building', 1110, 410, HAND(700, 28), INK); });
+    popAt(ctx, 160, 300, at(144.64), () => { K.card(ctx, 40, 230, 240, 150, '#fff', 18); cuffs(ctx, 160, 290, .5, -.1); txt(ctx, 'half of mortgages', 160, 340, PRINT(20)); txt(ctx, 'locked under 4%', 160, 362, PRINT(20), P.orange); });
+    if (at(148.58) > 0) popAt(ctx, 1110, 520, at(148.58), () => { K.card(ctx, 990, 470, 240, 110, '#fff', 18); txt(ctx, 'just as it thawed…', 1110, 500, PRINT(20)); txt(ctx, '6.1% → 7.28%', 1110, 545, HAND(700, 38), P.red); });
   }
   function ladder(ctx, x0, y0, x1, y1) { const n = 12, dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy), nx = -dy / len * 34, ny = dx / len * 34;
     Tn.line(ctx, [[x0 - nx, y0 - ny], [x1 - nx, y1 - ny]], 7, '#8a5a36'); Tn.line(ctx, [[x0 + nx, y0 + ny], [x1 + nx, y1 + ny]], 7, '#8a5a36');

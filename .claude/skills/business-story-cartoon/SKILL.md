@@ -157,3 +157,5 @@ would look "wrong" to a viewer even in a cartoon.
 - Housing video feedback: the numbers and charts were right but the video felt like a lesson. Act stats out as scenes (see "Entertainment first, precise always").
 - Housing ending feedback: don't keep one scene and pop title cards over it; build a scene for each line and put the card inside it.
 - Housing video final feedback: all parts OK; some scenes broke the logic of physics/reality — run the physics check. Fonts switched to Fredoka + Nunito.
+- Pricing video: the user asked to replace the minor 'investigate' bed with **upbeat corporate/pop** (`mood: 'pop'` in `bizsound.js`: kick on every beat, claps, bright arpeggio, C–G–Am–F). Default to 'pop' for this channel; use 'soft' only for short serious beats (denials, the "nightmare" moment). Pricing pages use `musicGain: .25` because the pop bed is busier.
+- Check spoken numbers against the script after ASR (pricing part 2: ASR heard "$4.77" where the script says "$4.79"); show the script's figure and tell the user.

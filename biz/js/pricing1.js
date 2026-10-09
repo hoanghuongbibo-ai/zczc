@@ -562,8 +562,8 @@
     [179.1, 'swoosh'], [187.65, 'stamp'], [188.64, 'stamp'], [190.05, 'stamp'], [197.34, 'boing'], [198.11, 'tick'], [200.49, 'click'], [203.7, 'buzz'], [205.95, 'ding']].map(([t, type]) => ({ t, type, gain: .55 }));
   const tiles = Array.from({ length: 10 }, (_, i) => ({ t: 3.0 + i * .15, type: 'tick', gain: .35 }));
   G.Show = { duration: DUR, narration: '../biz/assets/audio/pricing-1.mp3', shots,
-    sfx: cuts.concat(pops, hits, tiles), musicGain: .3,
-    moods: [{ t: 0, mood: 'investigate' }, { t: 49.88, mood: 'tense' }, { t: 74.07, mood: 'bright' }, { t: 147.45, mood: 'investigate' }, { t: 166.9, mood: 'bright' }, { t: 176.49, mood: 'soft' }, { t: 204.6, mood: 'investigate' }],
+    sfx: cuts.concat(pops, hits, tiles), musicGain: .25,
+    moods: [{ t: 0, mood: 'pop' }, { t: 176.49, mood: 'soft' }, { t: 202.14, mood: 'pop' }],
     images: { instacart: 'assets/pricing/instacart.png', safeway: 'assets/pricing/safeway.png', ftc: 'assets/pricing/ftc-seal.png', cr: 'assets/pricing/consumer-reports.png', gw: 'assets/pricing/groundwork-collaborative.png',
       mpu: 'assets/pricing/more-perfect-union.png', report: 'assets/pricing/same-cart-different-price.png', target: 'assets/pricing/target.png', skippy: 'assets/pricing/skippy.png', wheat: 'assets/pricing/wheat-thins.png' },
     fonts: G.BizFont.load };

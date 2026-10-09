@@ -2,7 +2,8 @@
  * history score). Light, bright and out of the way of the voice: a soft marimba-style pluck pattern over a
  * major progression, a gentle kick and shaker, and short "explainer video" foley (pops, dings, swooshes, stamps).
  * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse),
- * 'investigate' (curious minor pizzicato + ticking hat — scandals, "how they quietly…" stories), 'none'.
+ * 'investigate' (curious minor pizzicato + ticking hat — scandals, "how they quietly…" stories),
+ * 'pop' (upbeat corporate pop: four-on-the-floor kick, claps, bright plucks — the user's pick for the pricing video), 'none'.
  * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
 (function (G) {
   'use strict';
@@ -33,6 +34,7 @@
   }
   const kick = (b, t, v = 1) => tone(b, t, .22, x => 120 * Math.exp(-x * 30) + 48, .55 * v, 14);
   const shaker = (b, t, v = 1, seed = 1) => noise(b, t, .06, .35 * v, .9, k => Math.pow(1 - k, 3), seed, true);
+  const clap = (b, t, v = 1, seed = 1) => { for (let j = 0; j < 3; j++) noise(b, t + j * .011, .09, .32 * v, .55, k => Math.pow(1 - k, 4), seed + j, true); };
 
   // ---- foley ----
   const SFX = {
@@ -57,14 +59,23 @@
   // C – Am – F – G, one chord per bar (4 beats)
   const CH = [[48, [60, 64, 67, 72]], [45, [57, 60, 64, 69]], [41, [57, 60, 65, 69]], [43, [55, 59, 62, 67]]];
   const CHm = [[45, [57, 60, 64]], [41, [57, 60, 65]], [40, [55, 59, 64]], [45, [57, 60, 64]]];   // tense: Am F Em Am
+  const CHp = [[48, [60, 64, 67, 72]], [43, [59, 62, 67, 71]], [45, [60, 64, 69, 72]], [41, [60, 65, 69, 72]]];   // pop: C G Am F
   function score(m, o) {
     const dur = o.duration, cues = o.moods || [{ t: 0, mood: 'bright' }];
     const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
     const eighth = BEAT / 2, PAT = [0, 2, 1, 2, 3, 2, 1, 2];
     for (let k = 0, t = 0; t < dur; k++, t = k * eighth) {
       const md = moodAt(t); if (md === 'none') continue;
-      const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' || md === 'investigate' ? CHm : CH)[bar % 4], i = k % 8;
+      const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' || md === 'investigate' ? CHm : md === 'pop' ? CHp : CH)[bar % 4], i = k % 8;
       if (md === 'tense') { tone(m, t, eighth * .9, () => midi(bass - 12 + 24), .07, 8); if (i % 4 === 0) kick(m, t, .6); continue; }
+      if (md === 'pop') { // upbeat corporate pop: kick on every beat, claps on 2 and 4, off-beat bass, bright arpeggio, a little hook every other bar
+        const ARP = [0, 1, 2, 3, 2, 1, 2, 3];
+        pluck(m, t, ch[ARP[i]] + 12, i % 2 ? .3 : .42, 9);
+        if (i % 2 === 0) kick(m, t, .7); if (i === 2 || i === 6) clap(m, t, .9, k); shaker(m, t + eighth / 2, .4, k + 7);
+        if (i % 2 === 1) pluck(m, t, bass + 12, .55, 6);
+        if (i === 0) pad(m, t, ch.slice(0, 3), BEAT * 4, .4);
+        if (bar % 2 === 1 && (i === 4 || i === 5 || i === 7)) pluck(m, t, ch[[3, 2, 3][i === 4 ? 0 : i === 5 ? 1 : 2]] + 24, .22, 12);
+        continue; }
       if (md === 'investigate') { // sneaky pizzicato walk over the minor loop, soft kick on 1 and 3, a ticking hat
         const WALK = [0, null, 2, 1, null, 2, 0, 1];
         if (WALK[i] !== null) pluck(m, t, ch[WALK[i]], i === 0 ? .5 : .34, 16);

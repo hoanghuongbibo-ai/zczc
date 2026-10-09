@@ -202,32 +202,68 @@
       K.logo(ctx, 'whitehouse', 1120, 560, 150, at(159.3), { pad: 6, round: 10 });
     }
   }
-  function g3(ctx, lt, dur, t) { // headlines said "banned" — not exactly (Cooley): no outright ban, no forced sales; directs agencies; exempts built-to-rent
+  function banker(ctx, x, y, s, t, face, o = {}) { bean(ctx, x, y, s, t, Object.assign({ skin: 'white', hair: 'none', body: '#2e2f36', top: 'suit', tie: P.yellow, face: Object.assign({ mouth: 'smirk', brows: 'calm' }, face) }, o));
+    const hy = y - (230 + 2 * 70 - 18) * s; sh(ctx, c => c.rect(x - 46 * s, hy - 60 * s, 92 * s, 64 * s), '#1f1c1a', 3); sh(ctx, c => c.rect(x - 70 * s, hy, 140 * s, 12 * s), '#1f1c1a', 3); }
+  function g3(ctx, lt, dur, t) { // the headlines said "banned" — not exactly. Cooley: no outright ban, no forced sales; agencies write new rules restricting sales of single-family homes to big investors; built-to-rent exempt
     const T0 = 163.53, at = s => lt - (s - T0);
     if (at(169.94) < 0) {
       K.bg.white(ctx);
       K.headline(ctx, 560, 300, 700, 'the headlines', 'Trump "bans" big investors from buying homes', at(164.0), { rot: -.03, size: 46 });
       K.stamp(ctx, 'NOT EXACTLY', 860, 500, at(168.27), { color: P.blue, size: 60, rot: .08 }); return;
     }
-    K.bg.white(ctx);
-    K.logo(ctx, 'cooley', 240, 110, 230, at(169.94), { pad: 6 });
-    txt(ctx, 'what the order actually does', 760, 110, HAND(700, 42), INK, 'center', clamp(at(170.3) / .3));
-    const rows = [[false, 'ban anything outright', 172.37], [false, 'force anyone to sell', 173.39], [true, 'directs agencies to write guidance & rules', 175.2], [true, 'restricts sales of single-family homes to large investors', 178.44], [true, 'exempts homes built as rentals', 183.29]];
-    rows.forEach(([ok, label, s], i) => { const y = 230 + i * 92, k = at(s); popAt(ctx, 640, y, k, () => { K.card(ctx, 150, y - 38, 980, 76, ok ? '#e4f6e6' : '#fde6e2', 16); txt(ctx, (ok ? '' : "doesn't ") + label, 240, y, HAND(700, 38), INK, 'left'); });
-      if (ok) K.check(ctx, 200, y, 44, clamp((k - .1) / .4)); else K.cross(ctx, 200, y, 36, clamp((k - .1) / .4)); });
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 610);
+    K.logo(ctx, 'cooley', 150, 70, 170, at(169.94), { pad: 6 });
+    bean(ctx, 150, 660, .7, t, { skin: B.SKIN, hair: 'bob', hairColor: '#3a2a1e', glasses: true, body: '#3d4f8f', top: 'suit', face: { mouth: 'smile', brows: 'up', look: [.8, 0] }, armR: [1.5, -.6] });
+    sh(ctx, c => c.roundRect(185, 470, 60, 76, 6), '#fff', 3); txt(ctx, 'E.O.', 215, 508, PRINT(18));
+    if (at(175.2) < 0) { // no ban, no forced sales: the investor keeps standing with his houses
+      for (let i = 0; i < 3; i++) K.house(ctx, 760 + i * 170, 600, .55, { wall: '#ffe1a8', roof: P.purple });
+      banker(ctx, 560, 660, .75, t, { look: [.6, 0], mouth: 'smirk' });
+      popAt(ctx, 560, 220, at(172.37), () => { K.card(ctx, 420, 180, 280, 80, '#fff', 14); txt(ctx, '"BANNED"', 560, 220, HAND(700, 44), P.red); }); if (at(172.6) > 0) K.cross(ctx, 560, 220, 120, clamp(at(172.6) / .4));
+      if (at(173.39) > 0) { popAt(ctx, 940, 260, at(173.39), () => { K.card(ctx, 790, 220, 300, 80, '#fff', 14); txt(ctx, 'no forced sales', 940, 260, HAND(700, 38)); }); ctx.save(); ctx.translate(1100, 600); Tn.line(ctx, [[0, 0], [0, -70]], 5, '#8a5a36'); sh(ctx, c => c.roundRect(-55, -110, 110, 44, 6), '#fff', 3.5); txt(ctx, 'FOR SALE', 0, -88, PRINT(20), P.red); ctx.restore(); K.cross(ctx, 1100, 512, 70, clamp(at(173.6) / .4)); }
+      return; }
+    if (at(178.44) < 0) { // agencies write new guidance and rules
+      sh(ctx, c => { c.moveTo(560, 250); c.lineTo(860, 160); c.lineTo(1160, 250); c.closePath(); }, '#eef0f3', 5); sh(ctx, c => c.rect(580, 250, 560, 360), '#f6f2ea', 5); for (let i = 0; i < 6; i++) sh(ctx, c => c.rect(610 + i * 90, 270, 30, 340), '#fff', 3);
+      txt(ctx, 'FEDERAL AGENCIES', 860, 225, PRINT(24));
+      for (let i = 0; i < 2; i++) { bean(ctx, 700 + i * 320, 660, .62, t + i, { skin: 'white', hair: ['side', 'bun'][i], hairColor: '#3a2a1e', body: '#5d6670', top: 'suit', face: { mouth: 'flat', brows: 'calm', look: [.2, .8] }, armR: [1.3, -.4] }); }
+      K.doc(ctx, 860, 470, 220, 200, 'NEW RULES', ['—', '—', '— ' + '…'.repeat(Math.floor(lt * 3) % 4)], at(175.2), { titleSize: 34 });
+      popAt(ctx, 860, 120, at(175.3), () => { K.card(ctx, 640, 82, 440, 76, P.yellow, 14); txt(ctx, 'write guidance & rules', 860, 120, HAND(700, 38)); }); return; }
+    // restrict sales of single-family homes to large investors — but built-to-rent is exempt
+    for (let i = 0; i < 3; i++) K.house(ctx, 560 + i * 150, 600, .5, { wall: '#ffcf7a' });
+    sh(ctx, c => c.rect(470, 540, 14, 70), '#9aa0a6', 3); ctx.save(); ctx.translate(477, 560); ctx.rotate(at(178.6) > 0 ? 0 : -1.2); for (let i = 0; i < 6; i++) sh(ctx, c => c.rect(i * 60, -14, 60, 28), i % 2 ? '#fff' : P.red, 3); ctx.restore();
+    banker(ctx, 380, 660, .62, t, { look: [.6, 0], mouth: at(183.29) > 0 ? 'grin' : 'frown', brows: at(183.29) > 0 ? 'up' : 'worried' });
+    popAt(ctx, 700, 250, at(178.44), () => { K.card(ctx, 520, 210, 360, 80, P.red, 14); txt(ctx, 'single-family: restricted', 700, 250, HAND(700, 34), '#fff'); });
+    if (at(183.29) > 0) { sh(ctx, c => c.rect(1010, 330, 240, 280), '#c8ecff', 5); for (let r = 0; r < 3; r++) for (let c2 = 0; c2 < 3; c2++) sh(ctx, c => c.rect(1030 + c2 * 74, 350 + r * 80, 50, 50), '#fff', 3); txt(ctx, 'BUILT TO RENT', 1130, 312, PRINT(22));
+      popAt(ctx, 1130, 250, at(183.4), () => { K.card(ctx, 1010, 214, 240, 70, P.green, 14); txt(ctx, 'exempt ✓', 1130, 249, HAND(700, 38), '#fff'); }); }
     K.source(ctx, 'Source: Cooley, Jan 2026', at(170));
   }
-  function g4(ctx, lt, dur, t) { // EconoFact: large investors own ~3%–3.8% of single-family rental stock nationally; 12.4% in their top 20 metros; buying <2% of all homes (John Burns)
-    K.bg.white(ctx); const T0 = 186.42, at = s => lt - (s - T0);
-    popAt(ctx, 640, 80, at(186.67), () => txt(ctx, 'How big are these investors, really?', 640, 80, HAND(700, 48)));
-    K.logo(ctx, 'econofact', 1120, 80, 190, at(189.92), { pad: 6 });
-    const card = (x, title, sub, val, col, k0, kv, src) => { popAt(ctx, x, 370, at(k0), () => { K.card(ctx, x - 180, 170, 360, 400, '#fff', 22); txt(ctx, title, x, 220, HAND(700, 36)); txt(ctx, sub, x, 258, PRINT(20), '#6b717a'); }); if (at(kv) > 0) { popAt(ctx, x, 380, at(kv), () => txt(ctx, val, x, 380, HAND(700, 84), col)); } if (src && at(kv) > 0) txt(ctx, src, x, 530, PRINT(18), '#8a8f96', 'center', clamp(at(kv) / .4)); };
-    card(240, 'nationally', 'share of single-family rentals', '3–3.8%', P.blue, 191.65, 193.74, 'Brookings · Urban Institute');
-    card(640, 'top 20 metros', 'where they\'re most active', '12.4%', P.red, 201.4, 204.32, null);
-    card(1040, 'of all home purchases', 'what they\'re buying', '< 2%', P.green, 206.05, 207.02, null);
-    if (at(209.29) > 0) K.nameCard(ctx, 'John Burns Research & Consulting', null, 1040, 620, at(209.29));
-    if (at(196.04) > 0) popAt(ctx, 240, 470, at(196.04), () => { K.card(ctx, 110, 440, 260, 56, P.yellow, 12); txt(ctx, 'of RENTALS, not all homes', 240, 468, PRINT(19)); });
-    K.source(ctx, 'Source: EconoFact fact brief, Sep 19, 2025', at(190));
+  function houseGrid(ctx, x0, y0, cols, rows, dx, dy, s, hot, kAppear, t) { let n = 0; for (let r = 0; r < rows; r++) for (let c2 = 0; c2 < cols; c2++, n++) { const k = clamp(kAppear * 2 - n / (rows * cols)); if (k <= 0) continue; const x = x0 + c2 * dx, y = y0 + r * dy, h = hot(n);
+    ctx.save(); ctx.translate(x, y); ctx.scale(s * back(k), s * back(k)); K.house(ctx, 0, 0, 1, { wall: h ? '#d7d0ff' : '#fff', roof: h ? '#1f1c1a' : '#c4c8ce', doorColor: h ? '#1f1c1a' : '#b9c0c9' }); if (h) { sh(ctx, c => c.rect(-46, -330, 92, 70), '#1f1c1a', 3); sh(ctx, c => c.rect(-70, -266, 140, 14), '#1f1c1a', 3); } ctx.restore(); } }
+  function g4(ctx, lt, dur, t) { // how big are investors? nationally ~3–3.8% of single-family RENTALS wear the top hat; in their top 20 metros 12.4%; and they buy <2% of all homes (a shopping cart)
+    const T0 = 186.42, at = s => lt - (s - T0);
+    if (at(201.19) < 0) { K.bg.sky(ctx); ground(ctx, '#9fd97f', 640);
+      popAt(ctx, 520, 50, at(186.67), () => txt(ctx, 'How big are these investors, really?', 520, 50, HAND(700, 44)));
+      K.logo(ctx, 'econofact', 1130, 60, 170, at(189.92), { pad: 6 });
+      const hot = n => at(193.74) > 0 && (n === 23 || n === 61 || n === 87 || (at(195.14) > 0 && n === 44));
+      houseGrid(ctx, 150, 170, 20, 5, 52, 96, .14, hot, clamp(at(191.08) / 1.5), t);
+      popAt(ctx, 640, 120, at(193.74), () => { K.card(ctx, 330, 86, 620, 66, '#fff', 14); txt(ctx, '≈ 3–3.8 in 100 single-family RENTALS', 640, 119, HAND(700, 34), '#3d2f7a'); });
+      K.source(ctx, 'Source: EconoFact, Sep 19, 2025 (Brookings · Urban Institute)', at(190)); return; }
+    if (at(206.05) < 0) { K.bg.color(ctx, '#ffe7c7'); // zoom into their top 20 metros: a skyline, 12 in 100
+      for (let i = 0; i < 12; i++) sh(ctx, c => c.rect(40 + i * 105, 120 + (i % 3) * 40, 80, 200 - (i % 3) * 40), '#c9d5e6', 3);
+      ground(ctx, '#e8d6b8', 330);
+      const hot = n => at(204.15) > 0 && [3, 11, 18, 26, 34, 41, 47, 55, 63, 70, 82, 91].includes(n);
+      houseGrid(ctx, 150, 400, 20, 5, 52, 70, .12, hot, clamp(at(201.4) / 1.0), t);
+      popAt(ctx, 640, 70, at(201.48), () => { K.card(ctx, 420, 34, 440, 74, '#1f1c1a', 14, 0); txt(ctx, 'their top 20 metros', 640, 71, HAND(700, 40), '#fff'); });
+      if (at(204.32) > 0) popAt(ctx, 1110, 200, at(204.32), () => { K.card(ctx, 990, 160, 240, 80, P.red, 14); txt(ctx, '12.4%', 1110, 200, HAND(700, 52), '#fff'); });
+      return; }
+    // buying fewer than 2 of every 100 homes: a parade of purchases, the investor's cart holds 2
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 600);
+    for (let i = 0; i < 14; i++) { const x = ((lt * 80 + i * 100) % 1500) - 120; K.house(ctx, x, 470, .3, { wall: ['#ffcf7a', '#c8ecff', '#ffd3e0', '#d7f0c6'][i % 4] }); }
+    txt(ctx, 'all home purchases →', 1080, 330, HAND(700, 34), INK, 'center', clamp(at(206.3) / .3));
+    banker(ctx, 300, 660, .7, t, { look: [.8, 0], mouth: 'smirk' }, { armR: [1.6, -.4] });
+    sh(ctx, c => { c.moveTo(390, 540); c.lineTo(600, 540); c.lineTo(580, 620); c.lineTo(410, 620); c.closePath(); }, '#c9ced6', 4); for (const wx of [430, 560]) sh(ctx, c => c.arc(wx, 640, 14, 0, 7), INK, 0);
+    K.house(ctx, 460, 560, .22, { wall: '#d7d0ff', roof: '#1f1c1a' }); K.house(ctx, 530, 560, .22, { wall: '#d7d0ff', roof: '#1f1c1a' });
+    popAt(ctx, 500, 180, at(207.02), () => { K.card(ctx, 330, 140, 340, 80, P.green, 16); txt(ctx, '< 2 in 100 purchases', 500, 180, HAND(700, 38), '#fff'); });
+    if (at(209.29) > 0) K.nameCard(ctx, 'John Burns Research & Consulting', null, 900, 650, at(209.29));
   }
   function g5(ctx, lt, dur, t) { // in certain cities they matter; nationally a small slice — supporters vs critics (AEI on a Senate proposal) — both have a point; fight isn't over
     const T0 = 211.53, at = s => lt - (s - T0);
@@ -260,30 +296,32 @@
     // the floated idea: a balloon
     if (at(246.42) > 0) { const k = at(246.42), by = lerp(560, 330, out(k / 1.5)) + Math.sin(lt * 2) * 8; Tn.line(ctx, [[410, 420], [900, by + 110]], 3, INK); popAt(ctx, 900, by, k, () => { sh(ctx, c => c.ellipse(900, by, 150, 120, 0, 0, 7), P.red, 5); txt(ctx, '50-year', 900, by - 20, HAND(700, 56), '#fff'); txt(ctx, 'mortgage', 900, by + 30, HAND(700, 44), '#fff'); }); }
   }
-  function g7(ctx, lt, dur, t) { // the pitch: stretch the loan, payment goes down — on our house at today's rate: ~$2,642 → ~$2,407, save ~$235/mo
-    K.bg.white(ctx); const T0 = 249.1, at = s => lt - (s - T0);
-    popAt(ctx, 640, 80, at(249.2), () => txt(ctx, 'The pitch', 640, 80, HAND(700, 56)));
-    // a stretching loan bar 30 → 50 years
-    const k = clamp(at(250.51) / 1.4), w = lerp(480, 800, inout(k));
-    sh(ctx, c => c.roundRect(640 - w / 2, 160, w, 70, 35), P.blue); txt(ctx, Math.round(lerp(30, 50, inout(k))) + ' years', 640, 196, HAND(700, 48), '#fff');
-    if (at(252.9) > 0) txt(ctx, 'monthly payment goes down ✓', 640, 290, HAND(700, 44), P.green, 'center', clamp(at(252.9) / .3));
-    if (at(256.34) > 0) {
-      popAt(ctx, 330, 470, at(256.34), () => { K.card(ctx, 150, 360, 360, 220, '#fff', 22); txt(ctx, '30-year', 330, 400, HAND(700, 40)); txt(ctx, '$2,642', 330, 480, HAND(700, 76), P.red); txt(ctx, 'per month', 330, 545, PRINT(22)); });
-      popAt(ctx, 950, 470, at(259.93), () => { K.card(ctx, 770, 360, 360, 220, '#fff', 22); txt(ctx, '50-year', 950, 400, HAND(700, 40)); txt(ctx, '$2,407', 950, 480, HAND(700, 76), P.green); txt(ctx, 'per month', 950, 545, PRINT(22)); });
-      if (at(260.89) > 0) K.arrow(ctx, [530, 470], [750, 470], clamp(at(260.89) / .5), INK, 6);
-      if (at(265.66) > 0) popAt(ctx, 640, 630, at(265.66), () => { K.card(ctx, 440, 590, 400, 80, P.green, 16); txt(ctx, 'save ≈ $235/mo', 640, 630, HAND(700, 46), '#fff'); });
-    }
+  function g7(ctx, lt, dur, t) { // the pitch: stretch the loan like taffy (30 → 50 years) and the monthly bill gets thinner — $2,642 → ~$2,407, save ~$235 a month
+    K.bg.cream(ctx); ground(ctx, '#e8d6b8', 620); const T0 = 249.1, at = s => lt - (s - T0);
+    popAt(ctx, 640, 60, at(249.2), () => txt(ctx, 'The pitch: stretch the loan', 640, 60, HAND(700, 50)));
+    const k = clamp(at(250.51) / 1.6), half = lerp(230, 430, inout(k)), wob = Math.sin(t * 6) * 6 * (1 - k);
+    // two characters pull a taffy loan
+    trump(ctx, 640 - half - 70, 660, .7, t, { mouth: 'grin' }, { lean: -.15, armR: [1.6, -.2] }); pulte(ctx, 640 + half + 70, 660, .7, t, {}, { lean: .15, armL: [1.6, -.2] });
+    sh(ctx, c => { c.moveTo(640 - half, 400); c.quadraticCurveTo(640, 400 + 40 * k + wob, 640 + half, 400); c.lineTo(640 + half, 470); c.quadraticCurveTo(640, 470 - 30 * k + wob, 640 - half, 470); c.closePath(); }, P.pink, 5);
+    txt(ctx, Math.round(lerp(30, 50, inout(k))) + '-year loan', 640, 436 + 5 * k, HAND(700, 42), '#7a2440');
+    if (at(252.9) > 0) txt(ctx, 'monthly payment goes down ✓', 640, 150, HAND(700, 40), P.green, 'center', clamp(at(252.9) / .3));
+    // the monthly bill above shrinks
+    if (at(256.34) > 0) { const sk = at(259.93) > 0 ? out(clamp(at(259.93) / .8)) : 0, amt = at(261.71) > 0 ? '$2,407' : '$2,642';
+      popAt(ctx, 640, 260, at(256.34), () => { ctx.save(); ctx.translate(640, 270); ctx.scale(lerp(1, .9, sk), 1); sh(ctx, c => c.roundRect(-140, -70, 280, 140, 14), '#fff', 5); txt(ctx, 'monthly bill', 0, -38, PRINT(22)); txt(ctx, amt, 0, 20, HAND(700, 64), at(261.71) > 0 ? P.green : P.red); ctx.restore(); }); }
+    if (at(265.66) > 0) popAt(ctx, 1080, 260, at(265.66), () => { K.card(ctx, 940, 220, 280, 80, P.green, 16); txt(ctx, 'save ≈ $235/mo', 1080, 260, HAND(700, 40), '#fff'); });
     if (at(257) > 0) txt(ctx, 'Our math: $386,190 loan at 7.28%, principal + interest', 640, 700, PRINT(18), '#55606b', 'center', clamp(at(257) / .4));
   }
-  function g8(ctx, lt, dur, t) { // but total interest: 30-year ~$565,000 vs 50-year ~$1.06 million — Joel Berner: "almost double…"
+  function g8(ctx, lt, dur, t) { // total interest: the lender's piles — 30-year ~$565,000 vs 50-year ~$1.06 million — Joel Berner: "almost double…"
     const T0 = 267.97, at = s => lt - (s - T0);
     if (at(281.39) < 0) {
-      K.bg.white(ctx);
-      popAt(ctx, 640, 80, at(268.12), () => txt(ctx, 'Total interest over the life of the loan', 640, 80, HAND(700, 48)));
-      Tn.line(ctx, [[240, 600], [1040, 600]], 5, INK);
-      const bar = (x, v, lbl, col, a) => { const k = a > 0 ? back(a / .7) : 0, h = 420 * v / 1.1e6 * k; if (h > 1) sh(ctx, c => c.roundRect(x - 120, 600 - h, 240, h, [12, 12, 0, 0]), col); txt(ctx, lbl, x, 632, PRINT(28), INK, 'center', clamp((a + 1) / .3)); if (a > 0) txt(ctx, v >= 1e6 ? '≈ $' + (v / 1e6 * clamp(out(a / .7))).toFixed(2) + 'M' : '≈ ' + money(v * clamp(out(a / .7))), x, 600 - h - 34, HAND(700, 52), col === P.red ? P.red : INK); };
-      bar(440, 565059, '30-year loan', P.blue, at(271.74)); bar(840, 1057871, '50-year loan', P.red, at(278.66));
-      txt(ctx, 'Our math: $386,190 at 7.28%', 640, 690, PRINT(18), '#55606b', 'center', clamp(at(272) / .4)); return;
+      K.bg.cream(ctx); ground(ctx, '#e8d6b8', 620);
+      popAt(ctx, 640, 60, at(268.12), () => txt(ctx, 'Total interest you pay the lender', 640, 60, HAND(700, 48)));
+      const pile = (x, v, lbl, a, col) => { const k = a > 0 ? out(clamp(a / 1.2)) : 0, h = 440 * v / 1.1e6 * k; for (let i = 0; i < h / 14; i++) sh(ctx, c => c.roundRect(x - 90, 620 - (i + 1) * 14, 180, 14, 3), i % 2 ? '#7cc46a' : '#6ab45a', 2.5);
+        txt(ctx, lbl, x, 655, PRINT(26), INK, 'center', clamp((a + 1.2) / .3)); if (a > 0) popAt(ctx, x, 620 - h - 40, a, () => { K.card(ctx, x - 110, 620 - h - 72, 220, 64, col, 14); txt(ctx, v >= 1e6 ? '≈ $' + (v / 1e6 * k).toFixed(2) + 'M' : '≈ $' + Math.round(v * k / 1000) + 'K', x, 620 - h - 40, HAND(700, 42), '#fff'); }); };
+      pile(400, 565059, '30-year loan', at(271.74), P.blue); pile(820, 1057871, '50-year loan', at(278.66), P.red);
+      banker(ctx, 1100, 660, .7, t, { mouth: at(278.66) > 0 ? 'grin' : 'smirk', brows: at(278.66) > 0 ? 'up' : 'calm', look: [-.8, -.2] }, { armL: at(278.66) > 0 ? [2.5, .1] : [.3, .2] });
+      if (at(278.66) > 0) popAt(ctx, 1100, 250, at(279.0), () => { K.card(ctx, 1000, 215, 200, 70, '#fff', 14); txt(ctx, 'the lender', 1100, 250, HAND(700, 36)); });
+      txt(ctx, 'Our math: $386,190 at 7.28%', 640, 700, PRINT(18), '#55606b', 'center', clamp(at(272) / .4)); return;
     }
     K.bg.studio(ctx, '#c6ecd9', '#f1fbf5');
     quoteShot(ctx, at, 'Joel Berner', 'Senior Economist, Realtor.com', 282.17, () => popAt(ctx, 290, 650, at(281.5), () => berner(ctx, 290, 650, 1.15, t, {})),

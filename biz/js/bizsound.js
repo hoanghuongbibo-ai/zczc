@@ -4,7 +4,9 @@
  * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse),
  * 'investigate' (curious minor pizzicato + ticking hat — scandals, "how they quietly…" stories),
  * 'pop' (upbeat corporate pop: four-on-the-floor kick, claps, bright plucks), and the history channel's myth-buster score:
- * 'mstill' (sparse low piano chords + clock tick), 'mystery' (low drone + high piano notes), 'mtense' (low string pulse + ticks + bowed pad), 'none'.
+ * 'mstill' (sparse low piano chords + clock tick), 'mystery' (low drone + high piano notes), 'mtense' (low string pulse + ticks + bowed pad),
+ * 'lofi' (lo-fi hip-hop: swung boom-bap at 82 BPM, electric-piano 7th chords, sub bass, vinyl crackle — the standard for narrated
+ * money explainers; leaves room for the voice) and 'lofiKeys' (the same chords and crackle, no drums — for serious beats), 'none'.
  * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
 (function (G) {
   'use strict';
@@ -76,6 +78,32 @@
     for (let t = 0, k = 0; t < dur; t += 1.6, k++) if (moodAt(t) === 'mystery') piano(m, t, [[74], [77], [73], [70]][k % 4], .32, 1.2);
   }
 
+  // ---- lo-fi hip-hop bed ----
+  function epiano(b, t, notes, dur, vel = 1) { // Rhodes-ish: sine + soft bell partial, slow tremolo, gentle decay
+    const s = at(t); for (const n of notes) { const f = midi(n); for (let i = 0; i < dur * SR && s + i < b.length; i++) { const x = i / SR, env = Math.min(1, x * 300) * Math.exp(-x * 1.1) * Math.min(1, (dur - x) / .15);
+      b[s + i] += vel * env * .09 * (Math.sin(2 * Math.PI * f * x) * (1 + .12 * Math.sin(2 * Math.PI * 4.5 * x)) + .25 * Math.sin(2 * Math.PI * f * 3.01 * x) * Math.exp(-x * 7)); } } }
+  function snare(b, t, v = 1, seed = 1) { noise(b, t, .16, .32 * v, .35, k => Math.pow(1 - k, 3), seed, true); tone(b, t, .08, () => 190, .18 * v, 30); }
+  const LOFI = new Set(['lofi', 'lofiKeys']);
+  // Fmaj7 – Em7 – Dm7 – Cmaj7 (voiced around middle C), roots for the sub bass
+  const LP = [[41, [57, 60, 64, 65]], [40, [55, 59, 62, 64]], [38, [53, 57, 60, 64]], [36, [55, 59, 60, 64]]];
+  function lofiScore(m, cues, dur) {
+    const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
+    const bt = 60 / 82, sw = bt / 2 * 1.16;                        // swung eighths
+    for (let bar = 0; bar * 4 * bt < dur; bar++) {
+      const t0 = bar * 4 * bt, md = moodAt(t0); if (!LOFI.has(md)) continue;
+      const [root, ch] = LP[bar % 4];
+      epiano(m, t0, ch, bt * 2.6, .9); epiano(m, t0 + bt * 2.5, ch.slice(1), bt * 1.4, .55);
+      tone(m, t0, bt * 1.6, () => midi(root - 12), .22, 1.6); tone(m, t0 + bt * 2.5, bt, () => midi(root - 12 + (bar % 2 ? 7 : 0)), .15, 2.5);
+      if (md === 'lofi') {
+        kick(m, t0, .55); kick(m, t0 + bt * 2.5, .45); if (bar % 2) kick(m, t0 + bt * 1.75, .3);
+        snare(m, t0 + bt, .9, bar * 3); snare(m, t0 + bt * 3, .9, bar * 3 + 1);
+        for (let j = 0; j < 4; j++) { shaker(m, t0 + j * bt, .32, bar * 8 + j); shaker(m, t0 + j * bt + sw, .2, bar * 8 + j + 4); }
+      }
+    }
+    const r = rng(77); let lp = 0;                                  // vinyl: soft hiss + sparse crackles
+    for (let i = 0; i < m.length; i++) { const t = i / SR; if (!LOFI.has(moodAt(t))) continue; lp += (r() - lp) * .03; m[i] += lp * .035; if (r() > .9996) m[i] += r() * .12; }
+  }
+
   // ---- the bed ----
   // C – Am – F – G, one chord per bar (4 beats)
   const CH = [[48, [60, 64, 67, 72]], [45, [57, 60, 64, 69]], [41, [57, 60, 65, 69]], [43, [55, 59, 62, 67]]];
@@ -86,7 +114,7 @@
     const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
     const eighth = BEAT / 2, PAT = [0, 2, 1, 2, 3, 2, 1, 2];
     for (let k = 0, t = 0; t < dur; k++, t = k * eighth) {
-      const md = moodAt(t); if (md === 'none' || MYTH.has(md)) continue;
+      const md = moodAt(t); if (md === 'none' || MYTH.has(md) || LOFI.has(md)) continue;
       const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' || md === 'investigate' ? CHm : md === 'pop' ? CHp : CH)[bar % 4], i = k % 8;
       if (md === 'tense') { tone(m, t, eighth * .9, () => midi(bass - 12 + 24), .07, 8); if (i % 4 === 0) kick(m, t, .6); continue; }
       if (md === 'pop') { // upbeat corporate pop: kick on every beat, claps on 2 and 4, off-beat bass, bright arpeggio, a little hook every other bar
@@ -114,6 +142,7 @@
     const buf = new Float32Array(Math.ceil(o.duration * SR));
     score(buf, o);
     if ((o.moods || []).some(c => MYTH.has(c.mood))) mythScore(buf, o.moods, o.duration);
+    if ((o.moods || []).some(c => LOFI.has(c.mood))) lofiScore(buf, o.moods, o.duration);
     const fadeOut = o.fadeOut ?? 1.5;
     for (let i = 0; i < buf.length; i++) buf[i] *= (o.musicGain ?? .32) * Math.min(1, i / SR / .6) * Math.min(1, (o.duration - i / SR) / fadeOut);
     for (const c of o.sfx || []) if (SFX[c.type]) {

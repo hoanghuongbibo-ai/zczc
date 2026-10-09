@@ -563,7 +563,7 @@
   const tiles = Array.from({ length: 10 }, (_, i) => ({ t: 3.0 + i * .15, type: 'tick', gain: .35 }));
   G.Show = { duration: DUR, narration: '../biz/assets/audio/pricing-1.mp3', shots,
     sfx: cuts.concat(pops, hits, tiles), musicGain: .14,
-    moods: [{ t: 0, mood: 'mystery' }, { t: 26.05, mood: 'mtense' }, { t: 36.17, mood: 'mstill' }, { t: 49.88, mood: 'mystery' }, { t: 74.07, mood: 'mstill' }, { t: 113.95, mood: 'mtense' }, { t: 147.45, mood: 'mstill' }, { t: 176.49, mood: 'mystery' }, { t: 191.19, mood: 'mstill' }, { t: 202.14, mood: 'mystery' }],
+    moods: [{ t: 0, mood: 'lofi' }, { t: 176.49, mood: 'lofiKeys' }, { t: 202.14, mood: 'lofi' }],
     images: { instacart: 'assets/pricing/instacart.png', safeway: 'assets/pricing/safeway.png', ftc: 'assets/pricing/ftc-seal.png', cr: 'assets/pricing/consumer-reports.png', gw: 'assets/pricing/groundwork-collaborative.png',
       mpu: 'assets/pricing/more-perfect-union.png', report: 'assets/pricing/same-cart-different-price.png', target: 'assets/pricing/target.png', skippy: 'assets/pricing/skippy.png', wheat: 'assets/pricing/wheat-thins.png' },
     fonts: G.BizFont.load };

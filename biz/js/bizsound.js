@@ -1,7 +1,8 @@
 /* Music bed + UI foley for the money channel (replaces houdini/js/sound.js on biz pages — that one is a dark
  * history score). Light, bright and out of the way of the voice: a soft marimba-style pluck pattern over a
  * major progression, a gentle kick and shaker, and short "explainer video" foley (pops, dings, swooshes, stamps).
- * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse), 'none'.
+ * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse),
+ * 'investigate' (curious minor pizzicato + ticking hat — scandals, "how they quietly…" stories), 'none'.
  * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
 (function (G) {
   'use strict';
@@ -62,8 +63,15 @@
     const eighth = BEAT / 2, PAT = [0, 2, 1, 2, 3, 2, 1, 2];
     for (let k = 0, t = 0; t < dur; k++, t = k * eighth) {
       const md = moodAt(t); if (md === 'none') continue;
-      const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' ? CHm : CH)[bar % 4], i = k % 8;
+      const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' || md === 'investigate' ? CHm : CH)[bar % 4], i = k % 8;
       if (md === 'tense') { tone(m, t, eighth * .9, () => midi(bass - 12 + 24), .07, 8); if (i % 4 === 0) kick(m, t, .6); continue; }
+      if (md === 'investigate') { // sneaky pizzicato walk over the minor loop, soft kick on 1 and 3, a ticking hat
+        const WALK = [0, null, 2, 1, null, 2, 0, 1];
+        if (WALK[i] !== null) pluck(m, t, ch[WALK[i]], i === 0 ? .5 : .34, 16);
+        if (i === 0) { pluck(m, t, bass, .6, 5); pad(m, t, ch.slice(0, 3), BEAT * 4, .35); }
+        if (i % 4 === 0) kick(m, t, .45); shaker(m, t, i % 2 ? .22 : .35, k);
+        if (bar % 4 === 3 && i === 6) pluck(m, t, ch[2] + 12, .3, 10);
+        continue; }
       pluck(m, t, ch[PAT[i]] + 12, i === 0 ? .55 : .38, md === 'soft' ? 9 : 7);
       if (i === 0) { pluck(m, t, bass, .7, 3); pad(m, t, ch.slice(0, 3), BEAT * 4, md === 'soft' ? .8 : .55); }
       if (md === 'bright') { if (i % 4 === 0) kick(m, t, .55); if (i % 2 === 1) shaker(m, t, .5, k); }

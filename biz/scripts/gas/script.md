@@ -157,7 +157,7 @@ And here's where the story gets interesting, because the person who got angriest
 
 On Truth Social, Trump wrote: "The big Oil Companies are not dropping their price at the pump commensurate with the sharply lower prices they are paying for Oil. In other words, customers are being 'gouged.'" He said he'd told the Justice Department to investigate. [S21]
 
-The industry pushed back. The American Petroleum Institute said: "Gasoline prices don't move in lockstep with crude oil." Chevron's CFO said companies were "doing everything we can," but that "it's going to take time." [S21] As of now, we haven't found any public result from that investigation.
+The industry pushed back. The American Petroleum Institute said: "Gasoline prices don't move in lockstep with crude oil." Chevron's CFO said companies were "doing everything we can," but that "it's going to take time." [S21] Since then, the Justice Department and the Federal Trade Commission have urged state attorneys general to look into gas pricing, but we haven't found any charges or findings so far. [S34]
 
 So who's right?
 
@@ -165,7 +165,7 @@ Economists have a name for this. They call it "rockets and feathers." Prices go 
 
 [VISUAL: Animated rocket and feather]
 
-The classic research on this comes from economists Severin Borenstein and Colin Cameron, published in the Quarterly Journal of Economics in 1997. They found that when crude oil goes up, nearly all of the increase reaches the pump within about four weeks. When crude goes down, the drop takes about eight weeks to pass through. [S22]
+The classic research on this comes from economists Severin Borenstein, Colin Cameron and Richard Gilbert, published in the Quarterly Journal of Economics in 1997. They found that when crude oil goes up, nearly all of the increase reaches the pump within about four weeks. When crude goes down, the drop takes about eight weeks to pass through. [S22]
 
 But here's the detail most people miss. In their data, wholesale gasoline prices tracked oil pretty evenly. The biggest lag was at the last step, between wholesale and the price on the sign at your gas station. They suggested this likely reflected short-run market power among retail sellers. [S22]
 
@@ -185,7 +185,7 @@ Then the peace fell apart.
 
 In late June and early July, ships in and around the strait were hit by drones and projectiles, including a Qatari gas tanker and a Saudi supertanker. On July 8th, President Trump said the truce was "over." The U.S. resumed strikes. [S23]
 
-By mid-August, the 60-day ceasefire had expired with no deal. [S24] Oil climbed back above $90, then around $100. [S25]
+By mid-August, the 60-day ceasefire had expired with no deal. [S24] Oil climbed back above $90, [S24] then around $100. [S25]
 
 And in September, things got worse. AAA said Labor Day travelers faced "the highest gas prices ever for this time of year." [S25] On September 22nd, diesel hit $6.53 a gallon, an all-time national record, beating the peak set after Russia invaded Ukraine. [S5][S26] Diesel moves trucks, trains, and farm equipment, so that cost shows up on almost everything you buy. [S26]
 
@@ -259,7 +259,7 @@ Because the next time oil spikes, you now know exactly how the money moves.
 
 [VISUAL: End card]
 
-And one more thing. Somebody else made a fortune off this war, and it wasn't an American company. When the price of its oil roughly tripled, by one estimate, [S33] one of America's biggest rivals suddenly had a lot more cash. That's our next video.
+And one more thing. Somebody else made a fortune off this war, and it wasn't an American company. When the price of its oil roughly tripled, by one estimate this spring, [S33] one of America's biggest rivals suddenly had a lot more cash. That's our next video.
 
 **[CTA 4: end, strongest]** That's part two of this series, and after that we're taking on what some big-name investors are calling a bubble: the hundreds of billions going into AI, more and more of it on borrowed money. If you want to understand where your money is really going in 2026, subscribe and turn on notifications so you catch both. And if this video helped you, share it with one person who complains about gas prices. They'll finally know why.
 

@@ -176,7 +176,7 @@ URL: https://reuters.screenocean.com/record/2359438 ; https://reuters.screenocea
 Publication date: Feb 28–Mar 1, 2026
 Relevant information: Khamenei killed in US-Israeli strikes; Iranian state TV confirmed
 Used in script section: Ch. 1
-Reliability level: High (Reuters); confirm with a Reuters or AP text story before lock
+Reliability level: High. CONFIRMED by Reuters text story (Yomna Ehab, Hatem Maher), Mar 1, 2026, via Al-Monitor: Khamenei "killed in Israeli and US strikes," announced by state media: https://www.al-monitor.com/originals/2026/02/irans-supreme-leader-khamenei-killed-iranian-state-media-confirm . Also Bloomberg, Mar 1: https://www.bloomberg.com/news/articles/2026-03-01/iran-state-tv-confirms-khamenei-s-death
 
 **S12**
 Source name: The White House, "President Trump's Clear and Unchanging Objectives..."
@@ -259,7 +259,7 @@ Used in script section: Ch. 5
 Reliability level: High
 
 **S22**
-Source name: Borenstein & Cameron, "Do Gasoline Prices Respond Asymmetrically to Crude Oil Price Changes?" NBER WP 4138; published QJE 1997 (with Gilbert)
+Source name: Borenstein, Cameron & Gilbert, "Do Gasoline Prices Respond Asymmetrically to Crude Oil Price Changes?" QJE 1997 (NBER WP 4138 by Borenstein & Cameron, 1992)
 URL: https://www.nber.org/papers/w4138
 Publication date: 1992 (WP); Feb 1997 (QJE)
 Relevant information: Increases pass through in ~4 weeks, decreases over ~8 weeks; largest asymmetry between wholesale and retail; likely short-run retail market power
@@ -278,7 +278,7 @@ Reliability level: High
 Source name: Al Jazeera, "Oil prices jump as US, Iranian attacks stoke fears of escalation"
 URL: https://www.aljazeera.com/economy/2026/9/1/oil-prices-climb-as-us-iranian-attacks-stoke-fears-of-escalation
 Publication date: Sep 1, 2026
-Relevant information: 60-day ceasefire expired mid-August with no deal; Brent $92.31
+Relevant information: 60-day ceasefire expired mid-August with no deal; Brent $92.31 on Sep 1 (supports "back above $90")
 Used in script section: Ch. 6
 Reliability level: High
 
@@ -354,8 +354,16 @@ Relevant information: Urals prices "likely roughly tripled" (Bloomberg calculati
 Used in script section: End tease
 Reliability level: High (think tank citing Bloomberg)
 
+**S34**
+Source name: Washington Examiner, "DOJ investigating oil companies over manipulating gas prices" (body: DOJ Antitrust Division + FTC letter urging state AG probes)
+URL: https://www.washingtonexaminer.com/news/justice/4635657/doj-investigating-oil-companies-over-manipulating-gas-prices/
+Publication date: Jul 3, 2026
+Relevant information: Joint DOJ/FTC letter urging state attorneys general to investigate; no charges or findings reported. Headline overstates; use body only
+Used in script section: Ch. 5
+Reliability level: Medium (corroborate with The Hill, https://thehill.com/homenews/administration/5953013-justice-dept-urges-gas-price-probe/ , or the letter itself)
+
 **Supporting sources (cross-checks, not cited on screen)**
-- S34: Yahoo Finance, "Gas prices on track to blow away September record," Sep 24, 2026, https://finance.yahoo.com/energy/articles/gas-prices-track-blow-away-193357463.html (diesel $6.53 corroboration; gas $4.48 on Sep 24). Medium.
+- S34a: Yahoo Finance, "Gas prices on track to blow away September record," Sep 24, 2026, https://finance.yahoo.com/energy/articles/gas-prices-track-blow-away-193357463.html (diesel $6.53 corroboration; gas $4.48 on Sep 24). Medium.
 - S35: EIA July STEO press release, Jul 7, 2026, https://www.eia.gov/pressroom/releases/press590.php (MoU, May gas $4.48 average, Brent April peak). High.
 - S36: PolitiFact, "The war powers resolution on the Iran war: What's next?", Jun 4, 2026, https://politifact.com/article/2026/jun/04/war-powers-vote-house-senate-iran/ (House 215-208 on Jun 3). High.
 - S37: Al Jazeera, "Iran war: How US consumers spent an additional $100bn on fuel," Sep 7, 2026, https://www.aljazeera.com/news/2026/9/7/iran-war-how-us-consumers-spent-an-additional-100bn-on-fuel (pre-war diesel $3.67). High.
@@ -363,15 +371,15 @@ Reliability level: High (think tank citing Bloomberg)
 - S39: BLS CPI news release, August 2026 data, released Sep 11, 2026, https://www.bls.gov/news.release/cpi.nr0.htm (CPI 3.4%, gasoline +27.4%). High.
 - S40: Wikipedia, "2026 Iran war" and "2026 Iran war fuel crisis" — orientation only, never cited.
 
-Total: 33 cited sources plus 6 supporting.
+Total: 34 cited sources plus 6 supporting.
 
 ---
 
 ## 6. Fact-Check Notes
 
-1. **Khamenei's death (Ch. 1).** Very big claim. Sourced to Reuters video archive records. Confirm with a Reuters or AP text story before lock.
+1. **Khamenei's death (Ch. 1).** CONFIRMED (Oct 9): Reuters text story, Mar 1, 2026, plus Bloomberg. See S11.
 2. **"Largest oil supply shock on record" (Ch. 2).** Attributed to ABC News on screen. The IEA has used similar language ("largest supply disruption in the history of the global oil market," per its March Oil Market Report as cited on Wikipedia). Pull the IEA report directly if you want to quote the IEA instead.
-3. **Price gouging (Ch. 5).** Stated only as Trump's accusation, with the API and Chevron responses next to it. We found no public result of a DOJ investigation as of Oct 9. Re-check before publishing. Never say oil companies gouged.
+3. **Price gouging (Ch. 5).** Stated only as Trump's accusation, with the API and Chevron responses next to it. Checked Oct 9: on ~Jul 2–3 the DOJ Antitrust Division and FTC sent a joint letter urging state AGs to investigate (S34). No DOJ case, charges or findings found. Re-check before publishing. Never say oil companies gouged.
 4. **Rockets and feathers (Ch. 5).** The Borenstein-Cameron findings use 1980s data. The script says so. A St. Louis Fed piece (Aug 2026, "When Oil Prices Drop, Why Do Gasoline Prices Stay Elevated?") exists, but its page returned 404 during research. Worth adding if it can be retrieved.
 5. **Household cost (Ch. 7, Our Take).** $750+ (Brown, gasoline and diesel, through Sep 7) and $860 (Zandi, includes jet fuel) are model-based estimates. The script presents them as a range of estimates, not a bill.
 6. **Exxon "$160 million a day."** Our calculation: $14.5B / 91 days ≈ $159M. CNN's Jul 31 headline uses the same figure. Spoken as "roughly."
@@ -392,7 +400,7 @@ Total: 33 cited sources plus 6 supporting.
 | AAA price board, $2.98 | AAA national average graphic | gasprices.aaa.com Feb 26 post (S1) |
 | Split screen exports vs gas | Kpler export line + AAA price | S6, S7 |
 | Map zooming into Hormuz | Map of the strait with Gulf producers labeled | EIA World Oil Transit Chokepoints page; licensed map |
-| Bar chart US vs Russia vs Saudi | 2025 crude output | EIA Today in Energy (S10) |
+| Bar chart US vs Russia vs Saudi | US 13.6M b/d (2025), Saudi Arabia 9.6M b/d (2025), Russia 9.9M b/d (2024, "largely unchanged" in 2025; label it that way). All crude incl. lease condensate | EIA via AJOT: https://www.ajot.com/news/the-united-states-produced-more-crude-oil-than-any-other-country-in-2025 (S10) |
 | Archival news footage Feb 28 | Strike coverage | Reuters/AP licensed footage |
 | Tanker traffic map going dark | Ship-tracking animation | MarineTraffic / IMF PortWatch (licensing needed) |
 | Insurance 0.001% → 4% | Simple stat graphic | S14 |
@@ -421,3 +429,7 @@ Total: 33 cited sources plus 6 supporting.
 | Originality | 10 | 9 | The "oil came back, gas didn't" angle, the wholesale-to-retail detail, and the who-paid/who-earned ledger go beyond headlines |
 | Writing quality | 10 | 9 | Read-aloud pass done |
 | **Total** | **100** | **89** | Above the 85 target |
+
+
+## Change log
+- Oct 9: Added 4 CTAs. Added Gilbert as co-author (Ch. 5). End tease now says "by one estimate this spring." Added S24 to the "back above $90" line. Khamenei confirmed via Reuters text. DOJ line updated to the DOJ/FTC letter (S34). Added EIA bar-chart figures. The AI teaser in CTA 4 is a promo line with no on-screen number.

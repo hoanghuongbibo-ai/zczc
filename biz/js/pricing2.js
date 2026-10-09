@@ -525,8 +525,8 @@
     [119.91, 'boing'], [120.0, 'ding'], [128.05, 'thud'], [131.01, 'swoosh'], [140.25, 'ding'], [145.15, 'click'], [160.2, 'paper'], [163.93, 'buzz'], [167.48, 'swoosh'], [175.26, 'tick'], [176.66, 'tick'], [178.06, 'tick'], [184.68, 'paper'], [185.54, 'stamp'],
     [198.0, 'ding'], [215.22, 'type'], [218.4, 'cash'], [221.91, 'rise'], [230.86, 'stamp'], [234.58, 'tick'], [234.98, 'tick'], [254.75, 'thud'], [264.03, 'buzz'], [264.78, 'thud'], [264.9, 'stamp'], [271.91, 'ding']].map(([t, type]) => ({ t, type, gain: .55 }));
   G.Show = { duration: DUR, narration: '../biz/assets/audio/pricing-2.mp3', shots,
-    sfx: cuts.concat(pops, hits), musicGain: .25,
-    moods: [{ t: 0, mood: 'pop' }, { t: 221.91, mood: 'soft' }, { t: 237.42, mood: 'pop' }],
+    sfx: cuts.concat(pops, hits), musicGain: .14,
+    moods: [{ t: 0, mood: 'mystery' }, { t: 22.93, mood: 'mstill' }, { t: 39.11, mood: 'mtense' }, { t: 50.5, mood: 'mstill' }, { t: 73.37, mood: 'mystery' }, { t: 90.03, mood: 'mtense' }, { t: 103.55, mood: 'mstill' }, { t: 146.02, mood: 'mystery' }, { t: 157.81, mood: 'mstill' }, { t: 207.48, mood: 'mtense' }, { t: 226.65, mood: 'mstill' }, { t: 251.51, mood: 'mtense' }, { t: 265.9, mood: 'mystery' }],
     images: { instacart: 'assets/pricing/instacart.png', eversight: 'assets/pricing/eversight.png', gw: 'assets/pricing/groundwork-collaborative.png', amazon: 'assets/pricing/amazon.png', orbitz: 'assets/pricing/orbitz.png', ftc: 'assets/pricing/ftc-seal.png' },
     fonts: G.BizFont.load };
 })(window);

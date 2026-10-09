@@ -3,7 +3,8 @@
  * major progression, a gentle kick and shaker, and short "explainer video" foley (pops, dings, swooshes, stamps).
  * Moods (switched at cue times): 'bright' (full bed), 'soft' (plucks + pad only), 'tense' (minor pulse),
  * 'investigate' (curious minor pizzicato + ticking hat — scandals, "how they quietly…" stories),
- * 'pop' (upbeat corporate pop: four-on-the-floor kick, claps, bright plucks — the user's pick for the pricing video), 'none'.
+ * 'pop' (upbeat corporate pop: four-on-the-floor kick, claps, bright plucks), and the history channel's myth-buster score:
+ * 'mstill' (sparse low piano chords + clock tick), 'mystery' (low drone + high piano notes), 'mtense' (low string pulse + ticks + bowed pad), 'none'.
  * Same API as the history score: G.Soundtrack.render({ duration, sfx:[{t, type, gain}], moods:[{t, mood}] }). */
 (function (G) {
   'use strict';
@@ -55,6 +56,26 @@
     mail(b, t) { noise(b, t, .2, .6, .3, k => Math.sin(Math.PI * k), 36); tone(b, t + .12, .06, () => 900, .12, 40); },
   };
 
+  // ---- myth-buster score (ported from the history channel, houdini/js/sound.js) ----
+  function piano(b, t, notes, vel = 1, dec = 1.6) { const s = at(t), len = 4 * SR;
+    for (const n of notes) { const f = midi(n); for (let i = 0; i < len && s + i < b.length; i++) { const x = i / SR, env = Math.min(1, x * 400) * Math.exp(-x * dec);
+      b[s + i] += vel * env * .22 * (Math.sin(2 * Math.PI * f * x) + .4 * Math.sin(4 * Math.PI * f * x) * Math.exp(-x * 3) + .15 * Math.sin(6 * Math.PI * f * x) * Math.exp(-x * 6)); } } }
+  function bowed(b, t, note, dur, vel = 1) { const f = midi(note), s = at(t), len = Math.floor(dur * SR); let ph = 0;
+    for (let i = 0; i < len && s + i < b.length; i++) { const x = i / SR, env = Math.min(1, x / .25) * Math.min(1, (dur - x) / .3); ph += f * (1 + .004 * Math.sin(2 * Math.PI * 5.2 * x)) / SR;
+      b[s + i] += vel * env * .5 * (Math.sin(2 * Math.PI * ph) + .3 * Math.sin(4 * Math.PI * ph) + .12 * Math.sin(6 * Math.PI * ph)); } }
+  const tickC = (b, t, v = 1, hi = true) => { noise(b, t, .012, v, .9, k => 1 - k, hi ? 61 : 62, true); tone(b, t, .03, () => hi ? 2400 : 1800, .08 * v, 80); };
+  const MYTH = new Set(['mstill', 'mystery', 'mtense']), PROGd = [[38, 50, 53, 57], [34, 46, 50, 53], [31, 43, 46, 50], [33, 45, 49, 52]]; // Dm Bb Gm A
+  function mythScore(m, cues, dur) {
+    const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
+    for (let t = 0, k = 0; t < dur; t += 3.2, k++) if (moodAt(t) === 'mstill') piano(m, t, PROGd[k % 4], .55, 1.1);
+    for (let t = .5; t < dur; t += 1) if (moodAt(t) === 'mstill') tickC(m, t, .35, Math.round(t) % 2 === 0);
+    const beat = 60 / 96 / 2;
+    for (let t = 0, k = 0; t < dur; t += beat, k++) if (moodAt(t) === 'mtense') { tone(m, t, beat * .9, () => midi(k % 8 === 7 ? 37 : 38), .32, 6); if (k % 2 === 0) tickC(m, t, .22, k % 4 === 0); }
+    for (const c of cues) if (c.mood === 'mtense') { const end = (cues.find(x => x.t > c.t) || { t: dur }).t; for (let t = c.t, k = 0; t < end; t += 2.5, k++) bowed(m, t, [62, 65, 62, 61][k % 4], Math.min(2.6, end - t), .1); }
+    for (let t = 0; t < dur; t += .02) if (moodAt(t) === 'mystery') { const s0 = at(t); for (let i = 0; i < .02 * SR && s0 + i < m.length; i++) { const x = (s0 + i) / SR; m[s0 + i] += (Math.sin(2 * Math.PI * 49 * x) * .5 + Math.sin(2 * Math.PI * 73.4 * x) * .25) * .16; } }
+    for (let t = 0, k = 0; t < dur; t += 1.6, k++) if (moodAt(t) === 'mystery') piano(m, t, [[74], [77], [73], [70]][k % 4], .32, 1.2);
+  }
+
   // ---- the bed ----
   // C – Am – F – G, one chord per bar (4 beats)
   const CH = [[48, [60, 64, 67, 72]], [45, [57, 60, 64, 69]], [41, [57, 60, 65, 69]], [43, [55, 59, 62, 67]]];
@@ -65,7 +86,7 @@
     const moodAt = t => { let md = cues[0].mood; for (const c of cues) if (t >= c.t) md = c.mood; return md; };
     const eighth = BEAT / 2, PAT = [0, 2, 1, 2, 3, 2, 1, 2];
     for (let k = 0, t = 0; t < dur; k++, t = k * eighth) {
-      const md = moodAt(t); if (md === 'none') continue;
+      const md = moodAt(t); if (md === 'none' || MYTH.has(md)) continue;
       const bar = Math.floor(k / 8), [bass, ch] = (md === 'tense' || md === 'investigate' ? CHm : md === 'pop' ? CHp : CH)[bar % 4], i = k % 8;
       if (md === 'tense') { tone(m, t, eighth * .9, () => midi(bass - 12 + 24), .07, 8); if (i % 4 === 0) kick(m, t, .6); continue; }
       if (md === 'pop') { // upbeat corporate pop: kick on every beat, claps on 2 and 4, off-beat bass, bright arpeggio, a little hook every other bar
@@ -92,6 +113,7 @@
   function render(o) {
     const buf = new Float32Array(Math.ceil(o.duration * SR));
     score(buf, o);
+    if ((o.moods || []).some(c => MYTH.has(c.mood))) mythScore(buf, o.moods, o.duration);
     const fadeOut = o.fadeOut ?? 1.5;
     for (let i = 0; i < buf.length; i++) buf[i] *= (o.musicGain ?? .32) * Math.min(1, i / SR / .6) * Math.min(1, (o.duration - i / SR) / fadeOut);
     for (const c of o.sfx || []) if (SFX[c.type]) {

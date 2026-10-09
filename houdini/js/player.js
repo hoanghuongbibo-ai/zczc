@@ -10,7 +10,7 @@
     await T.loadImages(show.images || {});
     await Promise.all((show.fonts || []).map(f => document.fonts.load(f)));
     const draw = t => T.renderFrame(ctx, show.shots, Math.min(t, show.duration - 1e-3));
-    const soundOpts = () => ({ duration: show.duration, sfx: show.sfx, moods: show.moods });
+    const soundOpts = () => ({ duration: show.duration, sfx: show.sfx, moods: show.moods, musicGain: show.musicGain, sfxGain: show.sfxGain });
     G.renderAt = t => { draw(t); return true; };
     G.renderSoundtrack = () => {
       const buf = G.Soundtrack.render(soundOpts()), i16 = new Int16Array(buf.length);

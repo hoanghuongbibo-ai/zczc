@@ -7,6 +7,7 @@
   const INK = K.INK, W = 1280, H = 720;
   G.TOON_FINISH = { grain: .015, vignette: 0 };
   const host = K.host;
+  const ground = (ctx, c = '#7ccf55', y = 590) => { ctx.fillStyle = c; ctx.fillRect(0, y, W, H - y); Tn.line(ctx, [[0, y], [W, y]], 4, INK); };
   const mixHex = (a, b, k) => { const pa = [1, 3, 5].map(i => parseInt(a.slice(i, i + 2), 16)), pb = [1, 3, 5].map(i => parseInt(b.slice(i, i + 2), 16)); return '#' + pa.map((v, i) => Math.round(lerp(v, pb[i], clamp(k))).toString(16).padStart(2, '0')).join(''); };
   const drift = (lt, dur, z0 = 1, z1 = 1.05) => lerp(z0, z1, inout(clamp(lt / dur)));
   function camZoom(ctx, z, fx = W / 2, fy = H / 2) { ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-fx, -fy); }
@@ -100,17 +101,29 @@
     K.stamp(ctx, 'PROBABLY WRONG', 900, 520, at(32.1), { color: P.red, rot: -.08, size: 52 });
     if (wrong) txt(ctx, '?', 1075, 220, HAND(700, 120), P.blue, 'center', clamp(at(31.6) / .3));
   }
-  function srcCard(ctx, x, y, icon, title, lt, cut) {
-    popAt(ctx, x, y, lt, () => { K.card(ctx, x - 150, y - 150, 300, 300, '#fff', 22); I.draw(ctx, icon, x, y - 50, 120, clamp(lt / .8)); txt(ctx, title, x, y + 55, HAND(700, 38));
-      if (cut > 0) { txt(ctx, '40?', x, y + 112, HAND(700, 44), '#9aa3ad', 'center', clamp(cut / .3)); K.cross(ctx, x, y + 112, 60, clamp(cut / .4)); } });
+  function docChar(ctx, x, y, s, label, col, face, t, o = {}) { // a document with a face and little legs
+    ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); ctx.scale(s, s);
+    for (const lx of [-26, 26]) { Tn.line(ctx, [[lx, 0], [lx + (o.walk ? Math.sin(o.walk + lx) * 10 : 0), 50]], 7, INK); sh(ctx, c => c.ellipse(lx + 6 + (o.walk ? Math.sin(o.walk + lx) * 10 : 0), 52, 14, 7, 0, 0, 7), INK, 0); }
+    sh(ctx, c => { c.moveTo(-80, -220); c.lineTo(50, -220); c.lineTo(80, -190); c.lineTo(80, 0); c.lineTo(-80, 0); c.closePath(); }, '#fff', 5);
+    sh(ctx, c => c.rect(-80, -220, 160, 46), col, 5); txt(ctx, label, 0, -197, PRINT(22), '#fff');
+    ctx.fillStyle = '#d5dbe3'; for (let i = 0; i < 3; i++) ctx.fillRect(-56, -60 + i * 18, 112, 7);
+    const lk = face.look || 0; ctx.fillStyle = INK; for (const ex of [-26, 26]) { ctx.beginPath(); ctx.ellipse(ex + lk * 6, -130, 7, 10, 0, 0, 7); ctx.fill(); }
+    if (face.mouth === 'smile') { ctx.beginPath(); ctx.moveTo(-18, -100); ctx.quadraticCurveTo(0, -86, 18, -100); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.stroke(); } else Tn.line(ctx, [[-14, -96], [14, -96]], 4, INK);
+    if (o.sign) { Tn.line(ctx, [[70, -40], [110, -150]], 6, '#8a5a36'); ctx.save(); ctx.translate(110, -190); ctx.rotate(.08); sh(ctx, c => c.roundRect(-70, -36, 140, 72, 10), P.green, 4); txt(ctx, o.sign, 0, 2, HAND(700, 38), '#fff'); ctx.restore(); }
+    ctx.restore();
   }
-  function c6(ctx, lt, dur, t) { // mortgage records, credit-bureau data, Census numbers — almost none say 40 → early-to-mid 30s
-    K.bg.white(ctx); const T0 = 32.92, at = s => lt - (s - T0);
-    txt(ctx, 'When you line up the actual data…', 640, 70, HAND(700, 46), INK, 'center', clamp(lt / .4));
-    srcCard(ctx, 290, 330, 'doc', 'Mortgage records', at(34.25), at(37.9));
-    srcCard(ctx, 640, 330, 'clipboard', 'Credit-bureau data', at(35.11), at(38.15));
-    srcCard(ctx, 990, 330, 'books', 'Census numbers', at(36.47), at(38.4));
-    popAt(ctx, 640, 600, at(39.6), () => { K.card(ctx, 380, 552, 520, 96, P.green, 20); txt(ctx, 'early-to-mid 30s', 640, 601, HAND(700, 60), '#fff'); });
+  function c6(ctx, lt, dur, t) { // mortgage records, credit-bureau data, Census numbers walk in as characters — they shake their heads at the "40" balloon — and hold up "30s" signs
+    K.bg.sky(ctx); ground(ctx); const T0 = 32.92, at = s => lt - (s - T0);
+    txt(ctx, 'When you line up the actual data…', 640, 60, HAND(700, 46), INK, 'center', clamp(lt / .4));
+    // the viral "40" balloon, until it pops
+    const pop = at(38.4);
+    if (pop < 0) { const by = 210 + Math.sin(t * 2) * 10; Tn.line(ctx, [[640, by + 95], [640, 420]], 3, INK); sh(ctx, c => c.ellipse(640, by, 90, 100, 0, 0, 7), P.red, 5); txt(ctx, '40', 640, by, HAND(700, 90), '#fff'); }
+    else if (pop < .5) { for (let i = 0; i < 10; i++) { const a = i / 10 * 7; ctx.save(); ctx.globalAlpha = 1 - pop * 2; ctx.fillStyle = P.red; ctx.fillRect(640 + Math.cos(a) * pop * 300, 210 + Math.sin(a) * pop * 240, 18, 10); ctx.restore(); } txt(ctx, 'POP!', 640, 210, HAND(700, 80), INK, 'center', 1 - pop * 2); }
+    const docs = [['Mortgage records', P.blue, 34.25, 300, 'early 30s'], ['Credit-bureau data', P.purple, 35.11, 640, 'mid 30s'], ['Census numbers', P.teal, 36.47, 980, 'early 30s']];
+    docs.forEach(([label, col, s, x], i) => { const k = at(s); if (k <= 0) return; const wx = lerp(1400, x, out(clamp(k / 1.0))), shake = at(37.65) > 0 && at(39.5) < 0 ? Math.sin(t * 14) * .12 : 0;
+      docChar(ctx, wx, 620, 1.15, label, col, { mouth: at(39.5) > 0 ? 'smile' : 'flat', look: shake ? Math.sin(t * 14) : -.5 }, t, { rot: shake, walk: k < 1 ? t * 12 : 0, sign: at(39.5 + i * .12) > 0 ? docs[i][4] : null }); });
+    if (at(37.65) > 0 && at(39.5) < 0) popAt(ctx, 640, 470, at(37.65), () => { K.card(ctx, 470, 435, 340, 70, '#fff', 14); txt(ctx, 'almost none say 40', 640, 470, HAND(700, 38), P.red); });
+    if (at(39.9) > 0) popAt(ctx, 640, 150, at(39.9), () => { K.card(ctx, 380, 105, 520, 90, P.green, 20); txt(ctx, 'early-to-mid 30s', 640, 151, HAND(700, 56), '#fff'); });
   }
   function c7(ctx, lt, dur, t) { // so, case closed? everyone's fine? — No.
     K.bg.studio(ctx, '#bfe3ff', '#eef8ff'); const T0 = 41.45, at = s => lt - (s - T0), no = at(44.04) > 0;
@@ -170,18 +183,31 @@
     popAt(ctx, 1030, 160, at(66.1), () => { K.card(ctx, 900, 120, 260, 80, '#fff', 16); txt(ctx, 'every year', 1030, 160, HAND(700, 44)); });
     K.logo(ctx, 'nar', 250, 160, 220, at(66.3));
   }
-  function s3(ctx, lt, dur, t) { // Nov 2025: median first-time buyer 40, first-time buyers only 21% of the market — both records
-    K.bg.white(ctx); const T0 = 69.96, at = s => lt - (s - T0);
-    popAt(ctx, 640, 70, at(70.1), () => { K.card(ctx, 480, 36, 320, 68, P.yellow, 16); txt(ctx, 'November 2025', 640, 70, HAND(700, 44)); });
-    // left: the age
-    popAt(ctx, 350, 360, at(72.37), () => { K.card(ctx, 140, 160, 420, 400, '#fff', 24); txt(ctx, 'median first-time buyer', 350, 210, PRINT(30)); });
-    if (at(73.9) > 0) { Ch.counter(ctx, { x: 350, y: 360, value: 40, lt: at(73.9), dur: .6, size: 200, color: P.red }); txt(ctx, 'years old', 350, 480, HAND(700, 44), INK, 'center', clamp(at(74.3) / .3)); }
-    // right: the share
-    popAt(ctx, 930, 360, at(74.93), () => { K.card(ctx, 720, 160, 420, 400, '#fff', 24); txt(ctx, 'first-time buyers\' share', 930, 210, PRINT(30)); });
-    if (at(75.2) > 0) Ch.donut(ctx, { x: 930, y: 390, r: 120, lt: at(75.6), slices: [{ value: 21, color: P.blue, pop: true }, { value: 79, color: '#e3e7ec' }], centre: { value: 21, suffix: '%', color: INK } });
-    if (at(77.4) > 0) txt(ctx, 'of the market', 930, 535, HAND(700, 34), INK, 'center', clamp(at(77.4) / .3));
-    K.stamp(ctx, 'RECORD', 350, 140, at(78.8), { color: P.red, rot: -.12, size: 48 });
-    K.stamp(ctx, 'RECORD', 930, 140, at(79.1), { color: P.red, rot: .1, size: 48 });
+  function s3(ctx, lt, dur, t) { // Nov 2025: the median first-time buyer turns 40 (birthday party) — and first-timers get only a 21% slice of the market pie — both records
+    K.bg.cream(ctx); ground(ctx, '#f0dcb8', 620); const T0 = 69.96, at = s => lt - (s - T0);
+    popAt(ctx, 640, 60, at(70.1), () => { K.card(ctx, 480, 26, 320, 68, P.yellow, 16); txt(ctx, 'November 2025', 640, 60, HAND(700, 44)); });
+    Tn.line(ctx, [[640, 110], [640, 620]], 4, '#d8c4a0');
+    // left: a 40th birthday
+    const party = at(73.98) > 0;
+    popAt(ctx, 320, 500, at(72.37), () => {
+      bean(ctx, 290, 640, .95, t, { skin: B.SKIN, hair: 'side', hairColor: '#7a6a5a', body: P.blue, face: { mouth: party ? 'o' : 'flat', brows: party ? 'up' : 'calm', look: [.3, -.2] }, armR: party ? [2.4, .2] : [.3, .2] });
+      if (party) { sh(ctx, c => { c.moveTo(250, 285); c.lineTo(290, 195); c.lineTo(330, 285); c.closePath(); }, P.pink, 4); sh(ctx, c => c.arc(290, 192, 9, 0, 7), P.yellow, 3); } });
+    txt(ctx, 'median first-time buyer', 320, 150, HAND(700, 38), INK, 'center', clamp(at(72.37) / .3));
+    if (party) { for (const [dx, d, col] of [[-30, '4', P.red], [40, '0', P.red]]) { const by = 260 + Math.sin(t * 2 + dx) * 8; Tn.line(ctx, [[480 + dx, by + 60], [380, 430]], 2.5, INK); popAt(ctx, 480 + dx, by, at(73.98), () => txt(ctx, d, 480 + dx, by, HAND(700, 130), col)); }
+      for (let i = 0; i < 24; i++) { const r = Tn.rng(i * 7 + 3), x = 40 + r() * 580, y = 120 + ((at(73.98) * (100 + r() * 120) + r() * 300) % 500); ctx.save(); ctx.translate(x, y); ctx.rotate(t * 3 + i); ctx.fillStyle = [P.red, P.yellow, P.green, P.blue][i % 4]; ctx.fillRect(-6, -3, 12, 6); ctx.restore(); } }
+    // right: the market as a pie; first-time buyers get the 21% slice
+    txt(ctx, 'the home-buying market', 960, 150, HAND(700, 38), INK, 'center', clamp(at(74.93) / .3));
+    if (at(75.0) > 0) { sh(ctx, c => c.ellipse(960, 470, 230, 60, 0, 0, 7), '#fff', 4);
+      const cut = at(76.49) > 0 ? out(clamp(at(76.49) / .8)) : 0, a0 = -Math.PI / 2, a1 = a0 + .21 * Math.PI * 2;
+      ctx.save(); ctx.translate(960, 400); ctx.scale(1, .55);
+      sh(ctx, c => { c.moveTo(0, 0); c.arc(0, 0, 190, a1, a0 + Math.PI * 2); c.closePath(); }, '#e9b467', 5);
+      ctx.translate(Math.cos((a0 + a1) / 2) * 90 * cut, Math.sin((a0 + a1) / 2) * 90 * cut - 40 * cut);
+      sh(ctx, c => { c.moveTo(0, 0); c.arc(0, 0, 190, a0, a1); c.closePath(); }, P.yellow, 5); ctx.restore();
+      if (cut > .5) { popAt(ctx, 1110, 250, at(77.0), () => { K.card(ctx, 1010, 215, 200, 70, P.blue, 14); txt(ctx, '21%', 1060, 250, HAND(700, 44), '#fff'); txt(ctx, 'first-timers', 1150, 250, PRINT(18), '#fff'); }); }
+      bean(ctx, 1170, 640, .6, t, { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.teal, face: { mouth: cut > .5 ? 'smile' : 'o', brows: 'up', look: [-.8, -.3] }, armL: [1.4, -.3] });
+      txt(ctx, 'of the market', 960, 560, HAND(700, 34), INK, 'center', clamp(at(77.4) / .3)); }
+    K.stamp(ctx, 'RECORD', 470, 480, at(78.8), { color: P.red, rot: -.12, size: 48 });
+    K.stamp(ctx, 'RECORD', 790, 230, at(79.1), { color: P.red, rot: .1, size: 48 });
     K.source(ctx, 'Source: NAR, Nov 4, 2025', at(72));
   }
   function lautz(ctx, x, y, s, t, face) { bean(ctx, x, y, s, t, { skin: '#ffd9bf', hair: 'bob', hairColor: '#f0cf86', glasses: true, body: '#e7795f', top: 'cardigan', face: Object.assign({ mouth: 'grin', brows: 'calm', blush: true }, face), armR: [.35, .5], armL: [.2, .2] }); }
@@ -260,18 +286,26 @@
     K.bg.studio(ctx, '#ffd76a', '#fff3c9'); const T0 = 117.51;
     host(ctx, 640, 700, 1.2, t, [[T0, 'hips']], { mouth: 'smirk', brows: 'skeptic', eyes: lt > 1.2 ? 'wink' : 'open', look: [0, 0] });
   }
-  function s10(ctx, lt, dur, t) { // AEI Housing Center, NY Fed credit data (random sample of credit reports) → 34
-    K.bg.white(ctx); const T0 = 119.9, at = s => lt - (s - T0);
-    K.nameCard(ctx, 'American Enterprise Institute', 'Housing Center', 640, 80, at(120.0));
-    popAt(ctx, 1080, 210, at(124.8), () => { K.card(ctx, 960, 175, 240, 70, P.blue, 14); txt(ctx, 'New York Fed', 1080, 210, HAND(700, 38), '#fff'); txt(ctx, 'credit data', 1080, 268, PRINT(24)); });
-    // a grid of credit reports; a random sample lights up
-    const pick = new Set([3, 9, 14, 22, 27, 31, 38]);
-    for (let i = 0; i < 40; i++) { const cx = 150 + (i % 10) * 74, cy = 200 + Math.floor(i / 10) * 92, k = at(123.3 + i * .015); if (k <= 0) continue; const sel = pick.has(i) && at(127.04) > (i % 7) * .12;
-      popAt(ctx, cx, cy, k, () => { sh(ctx, c => c.roundRect(cx - 28, cy - 36, 56, 72, 6), sel ? P.yellow : '#fff', 3.5); ctx.fillStyle = sel ? '#b9902a' : '#d5dbe3'; ctx.fillRect(cx - 18, cy - 22, 36, 6); ctx.fillRect(cx - 18, cy - 8, 28, 6); ctx.fillRect(cx - 18, cy + 6, 32, 6); }); }
-    if (at(127.04) > 0) txt(ctx, 'random sample', 520, 600, HAND(700, 40), '#b9902a', 'center', clamp(at(127.04) / .3));
-    // the answer
-    if (at(129.07) > 0) popAt(ctx, 1060, 470, at(129.07), () => { K.card(ctx, 920, 330, 280, 280, '#fff', 24); txt(ctx, 'median age, 2025', 1060, 370, PRINT(26)); });
-    if (at(133.6) > 0) K.slam(ctx, '34', 1060, 490, at(133.6), 170, P.green);
+  function s10(ctx, lt, dur, t) { // AEI Housing Center: NY Fed credit data — a lottery drum of credit reports picks a random sample → out rolls "34"
+    K.bg.cream(ctx); ground(ctx, '#f0dcb8', 620); const T0 = 119.9, at = s => lt - (s - T0);
+    K.nameCard(ctx, 'American Enterprise Institute', 'Housing Center', 640, 70, at(120.0));
+    // the lottery drum
+    const spin = at(124.0) > 0 ? lt * 2.4 : 0, cx = 470, cy = 360, R = 170;
+    sh(ctx, c => { c.moveTo(cx - 120, 600); c.lineTo(cx, cy); c.lineTo(cx + 120, 600); }, null, 8);
+    ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.clip(); ctx.fillStyle = 'rgba(207,233,255,.6)'; ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+    for (let i = 0; i < 22; i++) { const a = spin * (1 + (i % 3) * .2) + i * 1.7, rr = 40 + (i * 37) % 110; const x = cx + Math.cos(a) * rr, y = cy + Math.sin(a) * rr; sh(ctx, c => c.roundRect(x - 16, y - 20, 32, 40, 4), '#fff', 2.5); ctx.fillStyle = '#c9d2de'; ctx.fillRect(x - 10, y - 10, 20, 4); ctx.fillRect(x - 10, y, 16, 4); }
+    ctx.restore(); sh(ctx, c => c.arc(cx, cy, R, 0, 7), null, 7);
+    for (let i = 0; i < 8; i++) { const a = spin + i / 8 * Math.PI * 2; Tn.line(ctx, [[cx, cy], [cx + Math.cos(a) * R, cy + Math.sin(a) * R]], 3, '#8a8f96'); }
+    sh(ctx, c => c.arc(cx, cy, 16, 0, 7), P.red, 3);
+    popAt(ctx, cx, 140, at(122.67), () => { K.card(ctx, cx - 150, 108, 300, 64, '#fff', 14); txt(ctx, 'credit reports', cx, 140, HAND(700, 38)); });
+    popAt(ctx, cx + 230, 220, at(124.96), () => { K.card(ctx, cx + 120, 190, 220, 60, P.blue, 12); txt(ctx, 'New York Fed', cx + 230, 220, HAND(700, 34), '#fff'); });
+    // the random sample drops into a tray
+    sh(ctx, c => c.roundRect(700, 560, 360, 40, 10), '#b07a46', 4);
+    for (let i = 0; i < 6; i++) { const k = at(127.04 + i * .25); if (k <= 0) continue; const e = clamp(k / .6), x = lerp(cx + R, 740 + i * 56, e), y = lerp(cy, 540, e) - Math.sin(e * Math.PI) * 80; sh(ctx, c => c.roundRect(x - 18, y - 22, 36, 44, 4), P.yellow, 3); }
+    if (at(127.04) > 0) popAt(ctx, 880, 500, at(127.4), () => { K.card(ctx, 760, 470, 240, 56, P.yellow, 12); txt(ctx, 'random sample', 880, 498, HAND(700, 34)); });
+    // the answer rolls out as a big ball
+    if (at(129.07) > 0) popAt(ctx, 1080, 300, at(129.07), () => { K.card(ctx, 960, 170, 240, 80, '#fff', 14); txt(ctx, 'median age, 2025', 1080, 210, PRINT(24)); });
+    if (at(133.6) > 0) { const k = clamp(at(133.6) / .7), bx = lerp(cx + R, 1080, out(k)), by = lerp(cy, 360, out(k)) - Math.sin(k * Math.PI) * 120; sh(ctx, c => c.arc(bx, by, 80, 0, 7), P.green, 5); txt(ctx, '34', bx, by + 2, HAND(700, 90), '#fff'); }
     K.source(ctx, 'Source: AEI Housing Center, Feb 19, 2026', at(129.1));
   }
   // the MBA comparison, one bar per source as the narration names it
@@ -293,7 +327,8 @@
       txt(ctx, d.label, bx + bw / 2, y + 30, PRINT(26), INK, 'center', clamp(kn / .3)); if (d.sub) txt(ctx, d.sub, bx + bw / 2, y + 58, PRINT(20), '#6b717a', 'center', clamp(kn / .3));
       const k = kv > 0 ? back(kv / .55) : 0, bh = h * d.v / max * k, dim = at(157.6) > 0 && !d.hot;
       if (bh > 1) sh(ctx, c => c.roundRect(bx, y - bh, bw, bh, [10, 10, 0, 0]), d.hot ? P.red : dim ? '#9fbbe6' : P.blue);
-      if (kv > 0) txt(ctx, String(Math.round(d.v * clamp(out(kv / .55)))), bx + bw / 2, y - bh - 28, HAND(700, 46), d.hot ? P.red : INK, 'center', clamp(kv / .3)); });
+      if (kv > 0) txt(ctx, String(Math.round(d.v * clamp(out(kv / .55)))), bx + bw * .3, y - bh - 28, HAND(700, 46), d.hot ? P.red : INK, 'center', clamp(kv / .3));
+      if (kv > .4) { const bxm = bx + bw * .8; B.person(ctx, bxm, y - bh, .22, { skin: d.hot ? B.SKIN : 'white', hair: d.hot ? 'side' : ['short', 'bob', 'side', 'bun', 'short'][i % 5], hairColor: d.hot ? '#8d8a85' : '#3a2a1e', body: d.hot ? P.red : '#9fbbe6', face: { mouth: d.hot ? 'o' : 'smile' }, armR: d.hot ? [2.5, .1] : [.3, .2] }); } });
   }
   function s11(ctx, lt, dur, t) { // the MBA lined up basically every data source that exists → bars, NAR way out on its own
     K.bg.white(ctx); const T0 = 134.93, at = s => lt - (s - T0);
@@ -305,12 +340,18 @@
   }
   // small helper: a Charts-style callout without the import (Charts.callout draws the box at x,y and points to tx,ty)
   K.callout = (ctx, o) => Ch.callout(ctx, o);
-  function s12(ctx, lt, dur, t) { // MBA's conclusion: "likely not much older than one a decade ago"
-    K.bg.cream(ctx); const T0 = 160.57, at = s => lt - (s - T0);
-    K.nameCard(ctx, "The MBA's conclusion", null, 640, 110, at(160.6));
-    popAt(ctx, 640, 360, at(161.4), () => { K.card(ctx, 180, 220, 920, 300, '#fff', 26);
-      txt(ctx, '“The typical first-time buyer', 640, 300, HAND(700, 58)); txt(ctx, 'is likely not much older', 640, 370, HAND(700, 58)); txt(ctx, 'than one a decade ago.”', 640, 440, HAND(700, 58)); });
-    if (at(165.35) > 0) { ctx.save(); ctx.globalAlpha = .6; ctx.fillStyle = P.yellow; ctx.fillRect(445, 395 - 26, 410 * out(at(165.35) / .5), 50); ctx.restore(); txt(ctx, 'is likely not much older', 640, 370, HAND(700, 58)); }
+  function s12(ctx, lt, dur, t) { // the verdict: a judge (the MBA) reads it out — "likely not much older than one a decade ago" — gavel
+    K.bg.color(ctx, '#e9dcc6'); const T0 = 160.57, at = s => lt - (s - T0);
+    for (let i = 0; i < 6; i++) sh(ctx, c => c.rect(80 + i * 200, 60, 30, 380), '#d8c4a0', 0);
+    bean(ctx, 320, 500, .85, t, { skin: B.SKIN, hair: 'side', hairColor: '#c9c4bc', glasses: true, body: '#1f1c1a', face: { mouth: 'flat', brows: 'calm', look: [.6, 0] } });
+    sh(ctx, c => c.roundRect(100, 440, 440, 280, 16), '#8a5a36', 6); sh(ctx, c => c.roundRect(220, 470, 200, 56, 10), '#d9b98a', 4); txt(ctx, 'MBA', 320, 498, PRINT(34), '#5a3b26');
+    const bang = at(165.35), ga = bang > 0 && bang < .25 ? -.2 + bang * 4 : -1.0;
+    ctx.save(); ctx.translate(500, 440); ctx.rotate(ga); sh(ctx, c => c.roundRect(-6, -110, 12, 110, 5), '#6b3e2a', 3); sh(ctx, c => c.roundRect(-36, -140, 72, 40, 8), '#6b3e2a', 4); ctx.restore();
+    if (bang > 0 && bang < .5) for (let i = 0; i < 6; i++) { const a = -Math.PI + i * .5; Tn.line(ctx, [[560 + Math.cos(a) * 40, 440 + Math.sin(a) * 40], [560 + Math.cos(a) * 70, 440 + Math.sin(a) * 70]], 4, INK); }
+    K.nameCard(ctx, "The MBA's verdict", null, 900, 110, at(160.6));
+    popAt(ctx, 900, 340, at(161.4), () => { sh(ctx, c => c.roundRect(600, 200, 600, 280, 20), '#fff7d6', 5);
+      txt(ctx, '"The typical first-time', 900, 270, HAND(700, 48)); txt(ctx, 'buyer is likely not much', 900, 335, HAND(700, 48)); txt(ctx, 'older than one a decade ago."', 900, 400, HAND(700, 44)); });
+    if (bang > 0) { ctx.save(); ctx.globalAlpha = .45; ctx.fillStyle = P.yellow; ctx.fillRect(640, 312, 520 * out(bang / .5), 110); ctx.restore(); txt(ctx, 'buyer is likely not much', 900, 335, HAND(700, 48)); txt(ctx, 'older than one a decade ago."', 900, 400, HAND(700, 44)); }
     K.source(ctx, 'Source: MBA NewsLink, Jul 20, 2026', at(161.4));
   }
   function s13(ctx, lt, dur, t) { // so, fake news, right? everybody can calm down?

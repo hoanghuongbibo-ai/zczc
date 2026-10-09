@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gas 1 — Cold open + Setup</title>
+<style>
+  @font-face { font-family: Fredoka; font-weight: 500; src: url(assets/fonts/fredoka-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 600; src: url(assets/fonts/fredoka-latin-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: Nunito; font-weight: 700; src: url(assets/fonts/nunito-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: Nunito; font-weight: 800; src: url(assets/fonts/nunito-latin-800-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; }
+  .bar { display: flex; gap: 16px; align-items: center; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #333; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="bar"><button id="play">▶ Play</button><span id="time"></span></div>
+<script src="../houdini/js/toon.js"></script>
+<script src="js/bizsound.js"></script>
+<script src="js/fonts.js"></script>
+<script src="js/bean.js"></script>
+<script src="js/host.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/kit.js"></script>
+<script src="js/env-gas-1.js"></script>
+<script src="js/pricing-props.js"></script>
+<script src="js/gas1.js"></script>
+<script src="../houdini/js/player.js"></script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

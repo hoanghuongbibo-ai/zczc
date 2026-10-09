@@ -398,5 +398,5 @@
     sfx: cuts.concat(pops, hits), musicGain: .3,
     moods: [{ t: 0, mood: 'bright' }, { t: 28.68, mood: 'soft' }, { t: 44.04, mood: 'tense' }, { t: 60.03, mood: 'soft' }, { t: 89.51, mood: 'bright' }, { t: 93.03, mood: 'soft' }, { t: 171.18, mood: 'tense' }],
     images: { nar: 'assets/housing/nar.png' },
-    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+    fonts: G.BizFont.load };
 })(window);

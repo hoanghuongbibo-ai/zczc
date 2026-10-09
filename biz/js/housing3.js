@@ -290,5 +290,5 @@
   G.Show = { duration: 212.98, narration: '../biz/assets/audio/housing-03-ch3-4.mp3', shots, sfx: cuts.concat(pops, hits),
     moods: [{ t: 0, mood: 'bright' }, { t: 20.87, mood: 'tense' }, { t: 47.01, mood: 'soft' }, { t: 72.64, mood: 'bright' }, { t: 101.99, mood: 'soft' }, { t: 137.45, mood: 'bright' }, { t: 172.95, mood: 'soft' }, { t: 201.57, mood: 'tense' }, { t: 209.82, mood: 'bright' }],
     images: { redfin: 'assets/housing/redfin.png', freddie: 'assets/housing/freddie-mac.jpg', fhfa: 'assets/housing/fhfa.jpg' },
-    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+    fonts: G.BizFont.load };
 })(window);

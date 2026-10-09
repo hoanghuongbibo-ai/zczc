@@ -397,5 +397,5 @@
   G.Show = { duration: 182.73, narration: '../biz/assets/audio/housing-05-ch7-end.mp3', shots, sfx: cuts.concat(pops, hits),
     moods: [{ t: 0, mood: 'bright' }, { t: 27.28, mood: 'soft' }, { t: 47.18, mood: 'tense' }, { t: 65.79, mood: 'soft' }, { t: 108.07, mood: 'soft' }, { t: 151.69, mood: 'tense' }, { t: 170.15, mood: 'bright' }],
     images: { redfin: 'assets/housing/redfin.png', jchs: 'assets/housing/harvard-jchs.webp' },
-    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+    fonts: G.BizFont.load };
 })(window);

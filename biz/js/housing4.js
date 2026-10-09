@@ -360,5 +360,5 @@
   G.Show = { duration: 317.57, narration: '../biz/assets/audio/housing-04-ch5-6.mp3', shots, sfx: cuts.concat(pops, hits),
     moods: [{ t: 0, mood: 'soft' }, { t: 15.7, mood: 'bright' }, { t: 33.5, mood: 'tense' }, { t: 73.88, mood: 'soft' }, { t: 124.55, mood: 'tense' }, { t: 143.12, mood: 'bright' }, { t: 163.53, mood: 'soft' }, { t: 237.08, mood: 'bright' }, { t: 267.97, mood: 'soft' }, { t: 293.82, mood: 'tense' }],
     images: { freddie: 'assets/housing/freddie-mac.jpg', fed: 'assets/housing/federal-reserve-seal.webp', jchs: 'assets/housing/harvard-jchs.webp', whitehouse: 'assets/housing/white-house.webp', cooley: 'assets/housing/cooley.jpg', econofact: 'assets/housing/econofact.png', realtor: 'assets/housing/realtor.png' },
-    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+    fonts: G.BizFont.load };
 })(window);

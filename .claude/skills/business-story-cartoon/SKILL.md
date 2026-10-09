@@ -40,8 +40,10 @@ After each video add the user's feedback to *Lessons* below and push this file.
 
 - From the references: round heads, dot eyes + short brows, bean bodies on thin stick legs, thin dark outlines;
   the lead / key people have skin tone, everyone else a white face with a grey shading crescent (`G.Bean.person`,
-  `biz/js/bean.js`). Handwritten fonts: Caveat (dialogue, numbers, titles) + Patrick Hand (labels/print) — OFL, in
-  `biz/assets/fonts/`. Dialogue = handwritten line beside the speaker or a speech/thought bubble; names = black card
+  `biz/js/bean.js`). Fonts (user's choice after the housing video: professional, easy to read, eye-catching): **Fredoka** (rounded display —
+  titles, numbers, labels, dialogue) + **Nunito** (small print, sources, body lines), both OFL in `biz/assets/fonts/`.
+  Wired through `biz/js/fonts.js` (`window.BIZ_FONT = 'clean'`, the default; `'classic'` = the old Caveat + Patrick Hand,
+  kept only so the housing pages re-render unchanged). Kit/Charts call `HAND(w, px)` / `PRINT(px)`; sizes auto-scale. Dialogue = handwritten line beside the speaker or a speech/thought bubble; names = black card
   with white handwriting; explainer beats = clean white slides with icons, `$$$` vs `$$`, ticks/crosses.
 - **Brighter than the references** (user's request): clear blue sky, fresh green grass, warm red brick, saturated
   clothes, peach/cream memory backgrounds, bright chart colours. No vignette (`window.TOON_FINISH = { grain: .015, vignette: 0 }`).
@@ -112,13 +114,29 @@ slide is not enough. For every data beat, first ask "what would this look like a
 - Sound: `biz/js/bizsound.js` replaces the history score on biz pages — bright marimba bed (moods `bright`, `soft`,
   `tense`, `none`) + UI foley (`pop, click, whoosh, swoosh, thud, stamp, paper, ding, cash, tick, type, buzz, boing,
   rise, mail`). Put a `swoosh` on every cut and a `pop` on each card entrance.
-- Page script order: `../houdini/js/toon.js`, `js/bizsound.js`, `js/bean.js`, `js/host.js`, `js/icons.js`,
+- Page script order: `../houdini/js/toon.js`, `js/bizsound.js`, `js/fonts.js`, `js/bean.js`, `js/host.js`, `js/icons.js`,
   `js/charts.js`, `js/kit.js`, `js/env-<slug>.js`, `js/<slug>.js`, `../houdini/js/player.js` (example: `biz/housing-1.html`).
 - Supplied assets go in `biz/assets/<video>/` with slug names; load them through `Show.images` and draw with `Kit.logo`.
   RAR archives: `apt-get install libarchive-tools`, then `bsdtar -xf`. Google Drive links are blocked here, so ask for a
   zip/rar in the chat or a GitHub upload instead.
 - Spot-check frames at exact times: `node tools/_at.mjs biz/<page>.html <dir> 12.5 40 …` (from `houdini/`).
 - Long scripts arrive as several voice files (e.g. cold open + setup); build one page per voice file and join at the end.
+
+## Music per topic (user question after the housing video)
+
+The housing video used one bright marimba bed with mood switches. From now on choose the bed per topic and say which in
+the plan (the user can override or send their own tracks): upbeat/bright for money-explainers and success stories,
+investigative/minor pulse for scandals, lawsuits and "how they quietly…" stories, soft/lo-fi for personal-finance and
+reflective endings, tense for crashes and turning points. Switch moods at chapter beats. Keep music ~−20 dB under the
+voice, and keep `Show.moods` cues on scene changes. Add new beds to `biz/js/bizsound.js` as named styles when a topic needs one.
+
+## Physics and reality check (user feedback, housing video)
+
+Before rendering, check every scene for things that break physical sense: feet on the ground (nothing floating unless it
+is a balloon or flying on purpose), ropes and strings attached at both ends, objects resting on a surface, things
+falling down not sideways, scale consistent between characters and props, characters holding props with a hand that
+reaches them, doors and gates the right size for the people, liquids/ice/clouds behaving as expected. Fix anything that
+would look "wrong" to a viewer even in a cartoon.
 
 ## Content rules
 
@@ -138,3 +156,4 @@ slide is not enough. For every data beat, first ask "what would this look like a
 - Deliver parts only (one mp4 per voice file); the user doesn't want a joined full video. Chat uploads cap at 30 MB.
 - Housing video feedback: the numbers and charts were right but the video felt like a lesson. Act stats out as scenes (see "Entertainment first, precise always").
 - Housing ending feedback: don't keep one scene and pop title cards over it; build a scene for each line and put the card inside it.
+- Housing video final feedback: all parts OK; some scenes broke the logic of physics/reality — run the physics check. Fonts switched to Fredoka + Nunito.

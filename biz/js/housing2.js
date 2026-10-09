@@ -353,5 +353,5 @@
   G.Show = { duration: 259.63, narration: '../biz/assets/audio/housing-02-ch1-2.mp3', shots, sfx: cuts.concat(pops, hits),
     moods: [{ t: 0, mood: 'bright' }, { t: 54.73, mood: 'soft' }, { t: 68.01, mood: 'bright' }, { t: 91.23, mood: 'soft' }, { t: 125.42, mood: 'tense' }, { t: 139.57, mood: 'soft' }, { t: 217.52, mood: 'bright' }, { t: 231.84, mood: 'soft' }, { t: 247.7, mood: 'tense' }],
     images: { redfin: 'assets/housing/redfin.png', jchs: 'assets/housing/harvard-jchs.webp', freddie: 'assets/housing/freddie-mac.jpg', zillow: 'assets/housing/zillow.webp', brookings: 'assets/housing/brooking.jpg', nar: 'assets/housing/nar.png' },
-    fonts: ['700 40px Caveat', '40px "Patrick Hand"'] };
+    fonts: G.BizFont.load };
 })(window);

@@ -14,7 +14,7 @@
  *   Charts.callout(ctx, o)   pointer + note            o = { x, y, tx, ty, text, lt, color }  (arrow from text box at x,y to target tx,ty) */
 (function (G) {
   'use strict';
-  const INK = '#1f1c1a', HAND = (w, px) => `${w} ${px}px Caveat, "Patrick Hand", cursive`, PRINT = px => `${px}px "Patrick Hand", Caveat, cursive`;
+  const INK = '#1f1c1a', HAND = G.BizFont.HAND, PRINT = G.BizFont.PRINT;
   const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k;
   const back = k => { k = clamp(k); const c = 1.4; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
   const out = k => 1 - Math.pow(1 - clamp(k), 3), inout = k => { k = clamp(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };

@@ -77,6 +77,17 @@ slide is not enough. For every data beat, first ask "what would this look like a
   prop reacting to the chart, or put the chart inside the world (a billboard, a phone screen, a newspaper).
 - **Rhythm**: never two plain slide shots in a row. Aim for at least half the shots being scenes or skits. The host
   shows up for reactions and transitions.
+- **One staged scene per line, not one scene with cards popping in.** When the narration moves to a new idea, the
+  scene changes to act it out (the camera moves, the set changes, the characters do something new). Cards are labels
+  inside the scene, never the main event. Example (housing ending): "isn't the age" → the buyer's ID stamped AGE: OK;
+  "price of the ticket" → the buyer at a theme-park ticket window; "3× to 5× income" → the clerk flips the board to 5×
+  while the buyer has only 3 paycheck bundles; "a decade not building" → a half-built ride with a calendar flipping 10
+  years; "half locked in" → riders strapped in golden cuffs, the exit chained; "rates went back up" → ice melts, then a
+  storm cloud with 7.28% lightning refreezes it; "who your parents are" → a bouncer at a velvet rope asking "Parents'
+  names?"; "the American Dream → an inheritance" → the sign over the house flips while a will gets someone in.
+- Turn every number into the thing it measures: price ÷ income = stacks of yearly paychecks; a response rate = envelopes
+  that come back; a share of homes = a street where some houses wear a top hat; a payment rise = a fatter bill and money
+  bags flying off; "opposite directions" = a seesaw; a record low = a playground slide; rates rising = a rocket.
 - Precision stays: exact figures and dates, source tags, our-math footnotes, no invented numbers. Funny about money,
   never about the dead or victims.
 
@@ -126,3 +137,4 @@ slide is not enough. For every data beat, first ask "what would this look like a
 - Logos: check the supplied file is the right organisation (e.g. "The Cato Corporation" ≠ the Cato Institute) and flag it.
 - Deliver parts only (one mp4 per voice file); the user doesn't want a joined full video. Chat uploads cap at 30 MB.
 - Housing video feedback: the numbers and charts were right but the video felt like a lesson. Act stats out as scenes (see "Entertainment first, precise always").
+- Housing ending feedback: don't keep one scene and pop title cards over it; build a scene for each line and put the card inside it.

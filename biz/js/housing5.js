@@ -275,21 +275,63 @@
     if (at(129.41) > 0 && away === 0) { txt(ctx, '40?', 600, 380, HAND(700, 80), '#9aa3ad'); K.cross(ctx, 600, 380, 90, clamp(at(129.6) / .4)); }
     if (away > 0) popAt(ctx, 900, 650, at(131.44), () => { K.card(ctx, 640, 615, 520, 70, '#1f1c1a', 16, 0); txt(ctx, '"I don\'t know if I ever will."', 900, 650, HAND(700, 38), '#fff'); });
   }
-  function k3(ctx, lt, dur, t) { // the price of the ticket: a theme-park ticket booth for a first home — 3×→5× income, under construction for a decade, riders locked in, rates spike just as it thawed
-    K.bg.sky(ctx); ground(ctx, '#9fd97f', 600); const T0 = 133.76, at = s => lt - (s - T0);
-    // the park gate
-    sh(ctx, c => c.roundRect(330, 120, 620, 90, 20), P.purple, 5); txt(ctx, 'FIRST-HOME PARK', 640, 166, PRINT(52), '#fff');
-    for (const x of [360, 920]) sh(ctx, c => c.rect(x - 18, 200, 36, 400), '#f3e2c4', 5);
-    // booth
-    sh(ctx, c => c.roundRect(500, 300, 280, 300, 12), P.red, 5); sh(ctx, c => c.roundRect(530, 340, 220, 120, 10), '#cfe9ff', 4);
-    popAt(ctx, 640, 400, at(136.17), () => { txt(ctx, 'TICKET', 640, 380, PRINT(30)); txt(ctx, at(138.9) > 0 ? '5× income' : '3× income', 640, 425, HAND(700, 46), at(138.9) > 0 ? P.red : P.green); });
-    if (at(138.9) > 0 && at(139.4) < 0) { K.strike(ctx, 560, 425, 720, 425, clamp(at(138.9) / .3), P.red, 6); }
-    // the queue
-    for (let i = 0; i < 4; i++) bean(ctx, 420 - i * 80, 650, .45, t + i, { skin: i === 0 ? B.SKIN : 'white', hair: ['short', 'bob', 'side', 'bun'][i], hairColor: '#3a2a1e', body: i === 0 ? P.teal : '#c4c8ce', face: { mouth: at(138.9) > 0 ? 'o' : 'flat', brows: at(138.9) > 0 ? 'worried' : 'calm', look: [1, -.3] } });
-    // signs pop up: under construction (a decade), locked riders, the rate spike
-    popAt(ctx, 1110, 300, at(141.76), () => { ctx.save(); ctx.translate(1110, 300); ctx.rotate(.05); sh(ctx, c => { c.moveTo(-120, 70); c.lineTo(0, -80); c.lineTo(120, 70); c.closePath(); }, P.orange, 5); txt(ctx, 'UNDER', 0, 0, PRINT(28)); txt(ctx, 'CONSTRUCTION', 0, 30, PRINT(20)); ctx.restore(); txt(ctx, 'a decade of not building', 1110, 410, HAND(700, 28), INK); });
-    popAt(ctx, 160, 300, at(144.64), () => { K.card(ctx, 40, 230, 240, 150, '#fff', 18); cuffs(ctx, 160, 290, .5, -.1); txt(ctx, 'half of mortgages', 160, 340, PRINT(20)); txt(ctx, 'locked under 4%', 160, 362, PRINT(20), P.orange); });
-    if (at(148.58) > 0) popAt(ctx, 1110, 520, at(148.58), () => { K.card(ctx, 990, 470, 240, 110, '#fff', 18); txt(ctx, 'just as it thawed…', 1110, 500, PRINT(20)); txt(ctx, '6.1% → 7.28%', 1110, 545, HAND(700, 38), P.red); });
+  // ---- ending: one staged scene per line ----
+  function booth(ctx, x, y, s, board, boardCol) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    sh(ctx, c => c.roundRect(-160, -320, 320, 320, 12), P.red, 5); sh(ctx, c => { c.moveTo(-190, -320); c.lineTo(0, -400); c.lineTo(190, -320); c.closePath(); }, P.yellow, 5);
+    sh(ctx, c => c.roundRect(-120, -280, 240, 120, 10), '#cfe9ff', 4); sh(ctx, c => c.rect(-170, -110, 340, 24), '#8a5a36', 4);
+    sh(ctx, c => c.roundRect(-110, -390, 220, 60, 8), '#1f1c1a', 3); txt(ctx, board, 0, -360, HAND(700, 38), boardCol || '#fff');
+    ctx.restore(); }
+  function paycheckBundle(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); sh(ctx, c => c.roundRect(-50, -18, 100, 36, 5), '#86cf6f', 3); sh(ctx, c => c.rect(-8, -18, 16, 36), '#f6c945', 0); txt(ctx, '1 yr', 30, 0, PRINT(14), '#1d5a2a'); ctx.restore(); }
+  function k3(ctx, lt, dur, t) { // what changed isn't the age — it's the price of the ticket: 3×→5× income · a decade of not building · half locked in · rates back up just as it thawed
+    const T0 = 133.76, at = s => lt - (s - T0);
+    const ok = { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.blue };
+    if (at(136.17) < 0) { // "isn't the age": the buyer's ID is checked — 34, fine
+      K.bg.studio(ctx, '#ffe1b3', '#fff6e8');
+      bean(ctx, 420, 660, 1.1, t, Object.assign({ face: { mouth: 'smile', brows: 'up', look: [.6, 0] }, armR: [1.4, -.5] }, ok));
+      popAt(ctx, 780, 330, at(133.9), () => { ctx.save(); ctx.translate(780, 330); ctx.rotate(-.05); sh(ctx, c => c.roundRect(-200, -120, 400, 240, 18), '#fff', 5); sh(ctx, c => c.roundRect(-200, -120, 400, 50, [18, 18, 0, 0]), P.blue, 5); txt(ctx, 'BUYER ID', 0, -95, PRINT(26), '#fff');
+        B.head(ctx, -110, 20, 50, { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', face: { mouth: 'smile' } }); txt(ctx, 'age: early 30s', 60, 0, HAND(700, 34)); txt(ctx, 'like a decade ago', 60, 50, PRINT(20), '#6b717a'); ctx.restore(); });
+      K.stamp(ctx, 'AGE: OK', 900, 460, at(134.9), { color: P.green, size: 48, rot: -.1 }); return; }
+    // the theme-park gate for a first home, used by every scene that follows
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 600);
+    const thaw = at(148.58), storm = at(150.0);
+    if (at(141.76) < 0) { // "price of the ticket" → "3× to 5× income": the buyer at the ticket window
+      sh(ctx, c => c.roundRect(200, 70, 880, 80, 20), P.purple, 5); txt(ctx, 'FIRST-HOME PARK', 640, 112, PRINT(48), '#fff');
+      const five = at(138.9) > 0, flip = at(138.9) > 0 && at(139.2) < 0;
+      booth(ctx, 820, 600, 1.15, five ? '5× income' : '3× income', five ? '#ff9d4d' : '#9fe07a');
+      bean(ctx, 820, 470, .5, t, { skin: 'white', hair: 'side', hairColor: '#3a2a1e', body: P.red, top: 'shirt', face: { mouth: five ? 'smirk' : 'smile', brows: five ? 'up' : 'calm', look: [-.8, 0] }, armL: five ? [1.8, -.5] : [.2, 0] });
+      const walk = clamp(at(136.3) / 1.2); bean(ctx, lerp(100, 520, out(walk)), 660, .85, t, Object.assign({ face: { mouth: five ? 'o' : 'smile', brows: five ? 'worried' : 'up', look: [.8, -.2] }, walk: walk < 1 ? t * 9 : undefined, armR: walk >= 1 ? [1.5, -.6] : undefined }, ok));
+      // 3 paycheck bundles on the counter; the clerk wants 5
+      if (at(138.4) > 0) for (let i = 0; i < 3; i++) popAt(ctx, 640 + i * 20, 470 - i * 30, at(138.4 + i * .15), () => paycheckBundle(ctx, 640 + i * 6, 470 - i * 30, 1));
+      if (at(139.6) > 0) for (let i = 0; i < 2; i++) { ctx.save(); ctx.globalAlpha = .45; ctx.setLineDash([8, 6]); sh(ctx, c => c.roundRect(600 + i * 6, 350 - i * 30, 100, 36, 5), null, 3); ctx.restore(); txt(ctx, '?', 652 + i * 6, 368 - i * 30, HAND(700, 30), P.red, 'center', clamp(at(139.6) / .3)); }
+      popAt(ctx, 300, 250, at(136.4), () => { K.card(ctx, 140, 210, 320, 80, '#fff', 16); txt(ctx, 'the price of the ticket', 300, 250, HAND(700, 36)); });
+      if (five) popAt(ctx, 300, 360, at(139.0), () => { K.card(ctx, 160, 320, 280, 80, P.red, 16); txt(ctx, 'was ~3×, now ~5×', 300, 360, HAND(700, 36), '#fff'); });
+      return; }
+    // past the gate: the ride (homes) — half-built for a decade, then riders locked in, then a thaw and a storm
+    sh(ctx, c => c.roundRect(200, 70, 880, 80, 20), P.purple, 5); txt(ctx, 'FIRST-HOME PARK', 640, 112, PRINT(48), '#fff');
+    if (at(144.64) < 0) { // "a decade not building": an unfinished coaster of houses, cobwebs, a calendar flipping 10 years
+      ctx.save(); ctx.strokeStyle = '#c98d4f'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(120, 560); ctx.bezierCurveTo(300, 200, 500, 200, 640, 420); ctx.stroke(); ctx.restore();
+      for (let i = 0; i < 7; i++) { const x = 160 + i * 70, y = 560 - Math.sin(i / 6 * Math.PI) * 260; Tn.line(ctx, [[x, y], [x, 600]], 6, '#c98d4f'); }
+      ctx.save(); ctx.setLineDash([16, 12]); ctx.strokeStyle = '#c98d4f'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(640, 420); ctx.bezierCurveTo(760, 600, 900, 300, 1100, 520); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.translate(900, 520); ctx.rotate(.05); sh(ctx, c => c.roundRect(-110, -40, 220, 80, 8), '#fff', 4); txt(ctx, 'CLOSED FOR', 0, -12, PRINT(24), P.red); txt(ctx, 'CONSTRUCTION', 0, 18, PRINT(20), P.red); ctx.restore();
+      ctx.save(); ctx.globalAlpha = .6; for (let i = 0; i < 5; i++) Tn.line(ctx, [[120, 200 + i * 10], [120 + 60, 200]], 2, '#8a8f96'); ctx.restore();
+      const yrs = Math.min(10, Math.floor(clamp(at(142.0) / 2.2) * 10)); popAt(ctx, 1110, 280, at(141.9), () => { K.card(ctx, 1010, 200, 200, 160, '#fff', 14); sh(ctx, c => c.roundRect(1010, 200, 200, 44, [14, 14, 0, 0]), P.red, 4); txt(ctx, 'YEARS WAITING', 1110, 222, PRINT(18), '#fff'); txt(ctx, String(yrs), 1110, 300, HAND(700, 72)); });
+      popAt(ctx, 380, 640, at(142.17), () => { K.card(ctx, 220, 610, 320, 60, P.yellow, 12); txt(ctx, 'a decade of not building', 380, 640, HAND(700, 30)); });
+      return; }
+    // the ride's cars: half the riders are cuffed in and never get off; the exit is chained
+    for (let i = 0; i < 4; i++) { const x = 220 + i * 230, locked = i % 2 === 0, cy = 520;
+      sh(ctx, c => c.roundRect(x - 90, cy - 50, 180, 90, 18), [P.blue, P.orange, P.green, P.pink][i], 5); for (const wx of [-50, 50]) sh(ctx, c => c.arc(x + wx, cy + 46, 16, 0, 7), INK, 0);
+      bean(ctx, x, cy - 10, .45, t + i, { skin: 'white', hair: ['side', 'bob', 'short', 'bun'][i], hairColor: '#3a2a1e', body: '#fff', face: { mouth: locked ? 'smirk' : 'smile', brows: 'calm' } });
+      if (locked) cuffs(ctx, x, cy - 30, .26, .1); }
+    sh(ctx, c => c.rect(1120, 300, 120, 300), '#c9ced6', 4); txt(ctx, 'EXIT', 1180, 330, PRINT(26), P.green); for (let i = 0; i < 4; i++) sh(ctx, c => c.ellipse(1150 + i * 22, 450, 14, 9, .5, 0, 7), null, 4, '#5d6166');
+    if (thaw < 0) { popAt(ctx, 640, 260, at(144.8), () => { K.card(ctx, 420, 220, 440, 80, '#fff', 16); txt(ctx, 'half of mortgages: under 4%', 640, 260, HAND(700, 36), P.orange); }); return; }
+    // "just as it thawed" — sun and drips; then the storm: 7.28% lightning, everything refreezes
+    if (storm < 0) { const k = clamp(thaw / 1); sh(ctx, c => c.arc(1100, 230, 70, 0, 7), P.yellow, 5); for (let i = 0; i < 10; i++) { ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(150 + i * 110, 480 + ((t * 2 + i * .3) % 1) * 60, 4, 7, 0, 0, 7); ctx.fill(); }
+      popAt(ctx, 640, 260, thaw, () => { K.card(ctx, 470, 220, 340, 80, '#fff', 16); txt(ctx, 'starting to thaw…', 640, 260, HAND(700, 38), P.blue); }); return; }
+    ctx.save(); ctx.fillStyle = 'rgba(40,50,70,' + (.35 * clamp(storm / .4)) + ')'; ctx.fillRect(0, 0, W, H); ctx.restore();
+    ctx.fillStyle = '#5d6673'; for (const [dx, dy, r] of [[0, 0, 70], [80, -24, 84], [160, 0, 66], [80, 20, 70]]) { ctx.beginPath(); ctx.arc(820 + dx, 230 + dy, r, 0, 7); ctx.fill(); }
+    if (Math.floor(storm * 6) % 3 === 0) sh(ctx, c => { c.moveTo(900, 280); c.lineTo(860, 380); c.lineTo(900, 380); c.lineTo(850, 480); c.lineTo(940, 360); c.lineTo(900, 360); c.lineTo(940, 280); c.closePath(); }, P.yellow, 3);
+    popAt(ctx, 560, 260, storm, () => { K.card(ctx, 380, 220, 360, 80, P.red, 16); txt(ctx, 'rates back up: 7.28%', 560, 260, HAND(700, 36), '#fff'); });
+    for (let i = 0; i < 4; i++) { const x = 220 + i * 230; sh(ctx, c => c.roundRect(x - 96, 460, 192, 110, 20), 'rgba(190,230,255,' + (.6 * clamp(storm / .8)) + ')', 3); }
   }
   function ladder(ctx, x0, y0, x1, y1) { const n = 12, dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy), nx = -dy / len * 34, ny = dx / len * 34;
     Tn.line(ctx, [[x0 - nx, y0 - ny], [x1 - nx, y1 - ny]], 7, '#8a5a36'); Tn.line(ctx, [[x0 + nx, y0 + ny], [x1 + nx, y1 + ny]], 7, '#8a5a36');
@@ -310,22 +352,29 @@
       Tn.line(ctx, [[topX + 5, topY - 80], [px + 30, py - 40]], 4, P.yellow);
       popAt(ctx, 1040, 420, at(157.25), () => { K.card(ctx, 900, 380, 280, 80, P.yellow, 16); txt(ctx, 'a boost from the top', 1040, 420, HAND(700, 36)); }); }
   }
-  function k5(ctx, lt, dur, t) { // when building wealth depends on who your parents are — not just a housing problem — the American Dream quietly turning into an inheritance
-    K.bg.cream(ctx); const T0 = 159.96, at = s => lt - (s - T0);
-    if (at(164.54) < 0) {
-      txt(ctx, 'how regular Americans build wealth', 640, 120, HAND(700, 46), INK, 'center', clamp(lt / .3));
-      K.house(ctx, 640, 470, 1.1);
-      if (at(162.55) > 0) { popAt(ctx, 640, 590, at(162.55), () => { K.card(ctx, 400, 550, 480, 84, P.purple, 18); txt(ctx, 'depends on your parents?', 640, 592, HAND(700, 44), '#fff'); }); }
-      return;
-    }
-    const m = clamp(at(167.99) / 1.0);
-    popAt(ctx, 640, 340, at(164.6), () => { ctx.save(); ctx.translate(640, 340); ctx.rotate(lerp(-.03, .03, m));
-      sh(ctx, c => c.roundRect(-330, -150, 660, 300, 24), lerp(0, 1, m) > .5 ? '#fff7d6' : '#fff', 6);
-      if (m < 1) { ctx.globalAlpha = 1 - m; txt(ctx, 'THE AMERICAN', 0, -50, PRINT(54), P.blue); txt(ctx, 'DREAM', 0, 30, HAND(700, 110), P.red); ctx.globalAlpha = 1; }
-      if (m > 0) { ctx.globalAlpha = m; txt(ctx, 'LAST WILL & TESTAMENT', 0, -70, PRINT(30), '#6b4a1d'); txt(ctx, 'an inheritance', 0, 20, HAND(700, 96), P.purple); ctx.fillStyle = '#d9c9a0'; ctx.fillRect(-200, 90, 400, 6); ctx.globalAlpha = 1; }
-      ctx.restore(); });
-    if (at(165.27) > 0 && at(166.36) < 0) txt(ctx, 'not just a housing problem', 640, 600, HAND(700, 44), P.red, 'center', clamp(at(165.27) / .3));
-    if (at(167.49) > 0) txt(ctx, 'quietly…', 640, 600, HAND(700, 44), '#6b717a', 'center', clamp(at(167.49) / .3));
+  function k5(ctx, lt, dur, t) { // when building wealth depends on who your parents are: a velvet rope with a bouncer checking "parents?" → not just housing → the American Dream sign flips to INHERITANCE
+    const T0 = 159.96, at = s => lt - (s - T0);
+    const zoom = at(164.54) > 0 && at(166.36) < 0 ? lerp(1, .72, out(clamp(at(164.54) / 1.0))) : (at(166.36) > 0 ? .72 : 1);
+    K.bg.sky(ctx); ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(zoom, zoom); ctx.translate(-W / 2, -H / 2);
+    ctx.fillStyle = '#9fd97f'; ctx.fillRect(-600, 600, W + 1200, 400); Tn.line(ctx, [[-600, 600], [W + 600, 600]], 4, INK); ctx.fillStyle = '#8fd0ff'; if (zoom < 1) { for (let i = -3; i < 8; i++) if (i < 1 || i > 4) K.house(ctx, 160 * i + 40, 600, .5, { wall: ['#ffcf7a', '#c8ecff', '#ffd3e0', '#d7f0c6'][(i + 8) % 4] }); }
+    // the club: a house behind a velvet rope
+    K.house(ctx, 820, 600, 1.4);
+    const dream = at(166.36) > 0, inh = at(167.99) > 0, flip = clamp(at(167.99) / .4), sx = Math.abs(Math.cos(flip * Math.PI));
+    ctx.save(); ctx.translate(820, 200); ctx.scale(sx, 1); sh(ctx, c => c.roundRect(-230, -50, 460, 100, 16), flip < .5 ? P.blue : P.purple, 5); txt(ctx, flip < .5 ? 'THE AMERICAN DREAM' : 'INHERITANCE', 0, 4, PRINT(40), '#fff'); ctx.restore();
+    for (const x of [560, 700]) { sh(ctx, c => c.rect(x - 8, 480, 16, 120), '#c9a54a', 3); sh(ctx, c => c.arc(x, 476, 12, 0, 7), '#c9a54a', 3); }
+    ctx.beginPath(); ctx.moveTo(560, 500); ctx.quadraticCurveTo(630, 560, 700, 500); ctx.lineWidth = 9; ctx.strokeStyle = '#b3243a'; ctx.stroke();
+    // the bouncer with a clipboard
+    bean(ctx, 620, 660, .8, t, { skin: 'white', hair: 'bald', body: '#1f1c1a', top: 'suit', tie: '#1f1c1a', glasses: true, face: { mouth: 'flat', brows: 'angry', look: [-.8, 0] }, armL: [1.5, -.6] });
+    sh(ctx, c => c.roundRect(520, 470, 50, 64, 5), '#c98d4f', 3); sh(ctx, c => c.rect(528, 482, 34, 44), '#fff', 2);
+    if (at(162.55) > 0) K.bubble(ctx, '"Parents\' names?"', 470, 300, 300, [590, 400], at(162.55), { size: 40 });
+    // regular Americans in line: one waves a family will and slips in, the rest wait
+    for (let i = 0; i < 3; i++) { const vip = i === 0 && inh, x = vip ? lerp(420, 820, out(clamp(at(168.3) / 1.4))) : 400 - i * 110;
+      bean(ctx, x, 660, .7, t + i, { skin: vip ? B.SKIN : 'white', hair: ['short', 'bob', 'side'][i], hairColor: '#3a2a1e', body: vip ? P.purple : ['#9aa0a6', P.teal, P.orange][i], face: { mouth: vip ? 'grin' : 'frown', brows: vip ? 'up' : 'worried', look: [1, -.2] }, armR: vip ? [2.4, .2] : undefined });
+      if (vip) { ctx.save(); ctx.translate(x + 50, 410); ctx.rotate(.2); sh(ctx, c => c.rect(-26, -34, 52, 68), '#fff3d1', 3); txt(ctx, 'WILL', 0, 0, PRINT(16), '#6b4a1d'); ctx.restore(); } }
+    ctx.restore();
+    popAt(ctx, 300, 80, at(160.3), () => { K.card(ctx, 70, 40, 460, 80, '#fff', 16); txt(ctx, 'how regular Americans build wealth', 300, 80, HAND(700, 34)); });
+    if (at(164.54) > 0 && at(166.36) < 0) popAt(ctx, 640, 640, at(164.6), () => { K.card(ctx, 380, 600, 520, 80, '#1f1c1a', 16, 0); txt(ctx, 'not just a housing problem', 640, 640, HAND(700, 44), '#fff'); });
+    if (at(167.49) > 0) popAt(ctx, 640, 660, at(167.49), () => { K.card(ctx, 480, 625, 320, 70, P.yellow, 14); txt(ctx, 'quietly…', 640, 660, HAND(700, 40)); });
   }
   function k6(ctx, lt, dur, t) { // disclaimer: education only, not financial advice, nobody knows where rates or prices go — now you know where to look
     K.bg.studio(ctx, '#bfe3ff', '#eef8ff'); const T0 = 170.15, at = s => lt - (s - T0);

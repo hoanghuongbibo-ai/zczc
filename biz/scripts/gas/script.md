@@ -253,7 +253,7 @@ Now here's the part where I give you our view. To be clear, this is our interpre
 
 **Three: rockets and feathers is a choice, not a law of physics.** The research suggests the slow drop happens mostly at the last step, the retail price. [S22] That's where more competition and price transparency could make the biggest difference, and it's one more reason to compare prices before you fill up.
 
-And here's what we'll be watching: whether the Gulf exports hold, whether the attacks stop, and whether that Justice Department investigation ever produces anything.
+And here's what we'll be watching: whether the Gulf exports hold, whether the attacks stop, and whether any of those investigations ever produce anything.
 
 Because the next time oil spikes, you now know exactly how the money moves.
 

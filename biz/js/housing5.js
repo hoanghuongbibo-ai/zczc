@@ -22,17 +22,55 @@
     K.bg.studio(ctx, '#ffd76a', '#fff3c9');
     host(ctx, 640, 700, 1.2, t, [[0, 'pointUp'], [2.0, 'presentBoth']], { mouth: 'flat', brows: 'up', look: [0, 0] });
   }
-  function h2(ctx, lt, dur, t) { // slow reveal: 24% of Gen Z & millennial buyers used family money for the down payment; 21% cash gifts; 11% inheritance
-    K.bg.white(ctx); const T0 = 3.48, at = s => lt - (s - T0);
-    K.logo(ctx, 'redfin', 1110, 80, 180, at(5.0), { pad: 8 });
-    popAt(ctx, 300, 80, at(3.6), () => { K.card(ctx, 180, 42, 240, 76, P.yellow, 16); txt(ctx, '2025 survey', 300, 80, HAND(700, 44)); });
-    // the slow reveal: a curtain slides off the number
-    const k = clamp(at(6.2) / 1.4);
-    if (at(6.43) > 0) Ch.counter(ctx, { x: 640, y: 290, value: 24, suffix: '%', lt: at(6.43), dur: 1.4, size: 220, color: P.purple });
-    if (k < 1) { ctx.save(); ctx.fillStyle = '#2f3a4d'; ctx.fillRect(360 + 560 * inout(k), 150, 560 * (1 - inout(k)), 280); ctx.restore(); }
-    if (at(8.0) > 0) { txt(ctx, 'of Gen Z & millennial homebuyers', 640, 460, HAND(700, 44), INK, 'center', clamp(at(8.0) / .3)); txt(ctx, 'used family money for the down payment', 640, 510, HAND(700, 44), INK, 'center', clamp(at(9.68) / .3)); }
-    popAt(ctx, 380, 620, at(12.56), () => { K.card(ctx, 220, 575, 320, 90, '#fff', 18); txt(ctx, '21%', 290, 620, HAND(700, 52), P.blue); txt(ctx, 'cash gifts', 430, 620, HAND(700, 36)); });
-    popAt(ctx, 900, 620, at(15.47), () => { K.card(ctx, 740, 575, 320, 90, '#fff', 18); txt(ctx, '11%', 810, 620, HAND(700, 52), P.orange); txt(ctx, 'inheritance', 950, 620, HAND(700, 36)); });
+  function briefcase(ctx, x, y, s, open, t) { // a valise of cash; open (0..1) swings the lid and lets bills fly
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    for (let i = 0; i < 9 && open > .3; i++) { const k = ((t * .9 + i * .23) % 1), bx = (i - 4) * 18 + Math.sin(i * 2.1) * 40 * k, by = -40 - k * 190, r = Math.sin(t * 3 + i) * .6;
+      ctx.save(); ctx.globalAlpha = 1 - k * .8; ctx.translate(bx, by); ctx.rotate(r); sh(ctx, c => c.roundRect(-26, -13, 52, 26, 4), '#86cf6f', 2.5); txt(ctx, '$', 0, 1, HAND(700, 22), '#1d5a2a'); ctx.restore(); }
+    sh(ctx, c => c.roundRect(-110, -70, 220, 140, 16), '#8a5a36', 5);
+    sh(ctx, c => c.roundRect(-34, -96, 68, 30, [12, 12, 0, 0]), null, 8);
+    if (open > .05) { ctx.save(); ctx.translate(0, -70); ctx.scale(1, 1 - open * 1.6); sh(ctx, c => c.roundRect(-110, -60, 220, 60, [16, 16, 0, 0]), '#a06b42', 5); ctx.restore(); for (let i = 0; i < 4; i++) sh(ctx, c => c.roundRect(-90 + i * 46, -84, 40, 22, 3), '#86cf6f', 2.5); }
+    for (const dx of [-70, 70]) sh(ctx, c => c.roundRect(dx - 10, -6, 20, 14, 3), P.yellow, 3);
+    ctx.restore();
+  }
+  function giftBox(ctx, x, y, s, open) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    sh(ctx, c => c.rect(-60, -50, 120, 100), P.pink, 4.5); sh(ctx, c => c.rect(-12, -50, 24, 100), P.yellow, 3);
+    ctx.save(); ctx.translate(0, -50 - open * 60); ctx.rotate(-open * .5); sh(ctx, c => c.rect(-68, -24, 136, 24), '#f7c0cc', 4.5); sh(ctx, c => c.rect(-12, -24, 24, 24), P.yellow, 3);
+    sh(ctx, c => c.ellipse(-22, -32, 22, 12, -.4, 0, 7), P.yellow, 3); sh(ctx, c => c.ellipse(22, -32, 22, 12, .4, 0, 7), P.yellow, 3); ctx.restore();
+    if (open > .5) for (let i = 0; i < 3; i++) { ctx.save(); ctx.translate(-30 + i * 30, -70 - open * 30); ctx.rotate(-.3 + i * .3); sh(ctx, c => c.roundRect(-24, -12, 48, 24, 4), '#86cf6f', 2.5); txt(ctx, '$', 0, 1, HAND(700, 20), '#1d5a2a'); ctx.restore(); }
+    ctx.restore(); }
+  function willScroll(ctx, x, y, s, k) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const h = 40 + 130 * out(k);
+    sh(ctx, c => c.rect(-70, -h / 2, 140, h), '#fff3d1', 4); for (const yy of [-h / 2, h / 2]) sh(ctx, c => c.roundRect(-82, yy - 12, 164, 24, 12), '#e6c98d', 4);
+    if (k > .6) { txt(ctx, 'Last Will', 0, -h / 2 + 32, HAND(700, 28), '#6b4a1d'); ctx.fillStyle = '#d9c9a0'; for (let i = 0; i < 3; i++) ctx.fillRect(-50, -h / 2 + 52 + i * 18, 100, 6); sh(ctx, c => c.arc(36, h / 2 - 34, 14, 0, 7), P.red, 3); }
+    ctx.restore(); }
+  function h2(ctx, lt, dur, t) { // skit: Gen Z + millennial buyers vs a $429,100 house — parents roll in a valise of cash (24% used family money), a gift box (21% cash gifts), a will (11% inheritance)
+    const T0 = 3.48, at = s => lt - (s - T0);
+    K.bg.sky(ctx); ground(ctx);
+    K.house(ctx, 1040, 600, 1.25);
+    popAt(ctx, 1040, 230, at(4.0), () => { ctx.save(); ctx.translate(1040, 230); ctx.rotate(.05); sh(ctx, c => c.roundRect(-110, -36, 220, 72, 10), '#fff', 4.5); txt(ctx, '$429,100', 0, 2, HAND(700, 46), P.red); ctx.restore(); });
+    // the two buyers walk in, then stare at the price
+    const walk = clamp(at(5.5) / 1.6), stare = at(9.0) > 0 && at(9.68) < 0;
+    const gx = lerp(-120, 560, out(walk)), mx = lerp(-260, 700, out(walk));
+    const happy = at(10.2) > 0;
+    bean(ctx, gx, 650, .85, t, { skin: B.SKIN, hair: 'side', hairColor: '#7a3fbf', body: P.yellow, face: { mouth: happy ? 'grin' : stare ? 'o' : 'flat', brows: happy ? 'up' : stare ? 'worried' : 'calm', look: [.8, -.2] }, walk: walk < 1 ? t * 9 : undefined, armR: happy ? [2.6, 0] : undefined });
+    bean(ctx, mx, 650, .9, t + 1, { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', glasses: true, body: P.teal, top: 'shirt', face: { mouth: happy ? 'grin' : stare ? 'o' : 'flat', brows: happy ? 'up' : stare ? 'worried' : 'calm', look: [.8, -.2] }, walk: walk < 1 ? t * 9 + 1 : undefined, armL: happy ? [2.6, 0] : undefined });
+    if (at(7.37) > 0) popAt(ctx, gx, 300, at(7.37), () => { K.card(ctx, gx - 60, 272, 120, 56, '#1f1c1a', 12, 0); txt(ctx, 'Gen Z', gx, 300, HAND(700, 34), '#fff'); });
+    if (at(8.16) > 0) popAt(ctx, mx, 300, at(8.16), () => { K.card(ctx, mx - 80, 272, 160, 56, '#1f1c1a', 12, 0); txt(ctx, 'Millennial', mx, 300, HAND(700, 34), '#fff'); });
+    if (stare) txt(ctx, '😰', 630, 230, PRINT(56), INK, 'center', clamp(at(9.0) / .2));
+    // Mom & Dad roll in with the valise of cash
+    const pk = clamp(at(9.5) / 1.0), px = lerp(-200, 260, out(pk));
+    if (pk > 0) { bean(ctx, px - 70, 660, .8, t, Object.assign({ face: { mouth: 'grin', brows: 'up', look: [.8, 0] }, walk: pk < 1 ? t * 9 : undefined }, PARENT(0))); bean(ctx, px + 50, 660, .76, t + 2, Object.assign({ face: { mouth: 'grin', brows: 'up', look: [.8, 0] }, walk: pk < 1 ? t * 9 + 2 : undefined }, PARENT(1)));
+      briefcase(ctx, px + 150, 600, .7, clamp(at(10.6) / .5), t); }
+    // the stat lands as a big tag on the scene
+    if (at(6.43) > 0) popAt(ctx, 330, 130, at(6.43), () => { ctx.save(); ctx.translate(330, 130); ctx.rotate(-.04); sh(ctx, c => c.roundRect(-250, -80, 500, 160, 22), '#fff', 5); ctx.restore(); });
+    if (at(6.43) > 0) Ch.counter(ctx, { x: 190, y: 125, value: 24, suffix: '%', lt: at(6.6), dur: 1.0, size: 110, color: P.purple });
+    if (at(9.68) > 0) { txt(ctx, 'used family money', 450, 105, HAND(700, 36), INK, 'center', clamp(at(9.68) / .3)); txt(ctx, 'for the down payment', 450, 150, HAND(700, 32), INK, 'center', clamp(at(10.9) / .3)); }
+    // 21% cash gifts: a gift box drops on Gen Z
+    if (at(12.56) > 0) { const k = clamp(at(12.56) / .5), gy = lerp(-80, 560, k * k); giftBox(ctx, 830, gy, .75, clamp(at(13.6) / .4)); }
+    if (at(13.0) > 0) popAt(ctx, 830, 440, at(13.0), () => { K.card(ctx, 730, 412, 200, 56, P.blue, 12); txt(ctx, '21% cash gifts', 830, 440, HAND(700, 30), '#fff'); });
+    // 11% inheritance: a will unrolls beside the millennial
+    if (at(15.47) > 0) { willScroll(ctx, 650, 195, .6, clamp(at(15.6) / .6)); popAt(ctx, 790, 195, at(15.8), () => { K.card(ctx, 690, 167, 200, 56, P.orange, 12); txt(ctx, '11% inheritance', 790, 195, HAND(700, 30), '#fff'); }); }
+    K.logo(ctx, 'redfin', 1150, 70, 150, at(3.7), { pad: 8 });
+    popAt(ctx, 1150, 150, at(4.4), () => { K.card(ctx, 1060, 126, 180, 50, P.yellow, 12); txt(ctx, '2025 survey', 1150, 151, HAND(700, 30)); });
     K.source(ctx, 'Source: Redfin survey via FOX 9, Jul 14, 2025', at(6.5));
   }
   function h3(ctx, lt, dur, t) { // still buying in their early thirties — but with help from Mom and Dad → "nepo-homebuyers"
@@ -191,9 +229,9 @@
   ];
   const shots = SH.map(([start, end, draw]) => ({ start, end, draw }));
   const cuts = SH.slice(1).map(([s]) => ({ t: s, type: 'swoosh', gain: .55 })).concat([1.7, 23.61, 36.18, 51.84, 69.93, 97.79, 124.77, 164.54].map(t => ({ t, type: 'swoosh', gain: .4 })));
-  const pops = [3.6, 5.0, 12.6, 15.5, 18.7, 21.9, 22.3, 23.8, 34.9, 36.5, 42.2, 45.1, 47.4, 51.9, 58.5, 61.2, 67.3, 70.0, 82.0, 84.3, 89.7, 90.8, 94.8, 98.2, 103.0, 105.0, 106.8, 108.2, 114.4, 123.5, 127.6, 129.4, 131.4, 136.2, 138.3, 141.8, 144.6, 148.6, 151.9, 157.3, 162.6, 164.6, 170.4, 179.0]
+  const pops = [3.7, 4.4, 7.4, 8.2, 13.0, 15.8, 18.7, 21.9, 22.3, 23.8, 34.9, 36.5, 42.2, 45.1, 47.4, 51.9, 58.5, 61.2, 67.3, 70.0, 82.0, 84.3, 89.7, 90.8, 94.8, 98.2, 103.0, 105.0, 106.8, 108.2, 114.4, 123.5, 127.6, 129.4, 131.4, 136.2, 138.3, 141.8, 144.6, 148.6, 151.9, 157.3, 162.6, 164.6, 170.4, 179.0]
     .map(t => ({ t, type: 'pop', gain: .5 }));
-  const hits = [[0, 'whoosh'], [6.43, 'rise'], [7.8, 'ding'], [22.3, 'cash'], [25.6, 'stamp'], [37.82, 'cash'], [44.57, 'buzz'], [56.64, 'tick'], [63.73, 'stamp'], [76.58, 'cash'], [80.26, 'thud'], [113.14, 'stamp'], [129.6, 'buzz'], [153.85, 'rise'], [167.99, 'paper'], [182.0, 'ding']]
+  const hits = [[0, 'whoosh'], [6.6, 'ding'], [9.5, 'whoosh'], [10.6, 'cash'], [12.9, 'thud'], [13.6, 'ding'], [15.6, 'paper'], [22.3, 'cash'], [25.6, 'stamp'], [37.82, 'cash'], [44.57, 'buzz'], [56.64, 'tick'], [63.73, 'stamp'], [76.58, 'cash'], [80.26, 'thud'], [113.14, 'stamp'], [129.6, 'buzz'], [153.85, 'rise'], [167.99, 'paper'], [182.0, 'ding']]
     .map(([t, type]) => ({ t, type, gain: .6 }));
   G.Show = { duration: 182.73, narration: '../biz/assets/audio/housing-05-ch7-end.mp3', shots, sfx: cuts.concat(pops, hits),
     moods: [{ t: 0, mood: 'bright' }, { t: 27.28, mood: 'soft' }, { t: 47.18, mood: 'tense' }, { t: 65.79, mood: 'soft' }, { t: 108.07, mood: 'soft' }, { t: 151.69, mood: 'tense' }, { t: 170.15, mood: 'bright' }],

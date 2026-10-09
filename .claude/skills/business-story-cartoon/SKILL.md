@@ -61,6 +61,25 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
   flat/smile/open/laugh/o/frown/scared/smirk. `walk` phase for walking.
 - Skits ([BIT]) use the host as a character in sets (props like a slide deck, a cheap-suit variant via colours).
 
+## Entertainment first, precise always (user feedback, housing video — LOCKED RULE)
+
+This is YouTube entertainment, not a lesson. The data must stay exact, but a stat shown as a bare number on a white
+slide is not enough. For every data beat, first ask "what would this look like as a tiny cartoon scene?":
+- **Act the stat out with characters.** Example from the user: "24% of Gen Z and millennial buyers used family money"
+  → a Gen Z and a Millennial character walk up to a house, stare at the price tag, then Mom & Dad roll in a briefcase
+  of cash. The 24% lands as a big tag inside the scene, and the 21% (gift box drops in) and 11% (a will unrolls) arrive
+  as props with labels. Same numbers, but it plays like a sketch.
+- **Turn numbers into props**: price tags on houses, a briefcase or gift box of cash, handcuffs for lock-in, ice for a
+  frozen market, a ladder for "steeper", a rocket or elevator for rates, a race for prices vs incomes, a seesaw for a debate.
+- **Put people in the shot**: the "You" character, families, buyers, sellers, investors with reactions (shock, sweat,
+  grin) and small gags. Keep one recurring character (e.g. "You") through the video so viewers follow a story.
+- **Keep charts for real comparisons and trends** (3+ values, a line over time), and even then add a character or a
+  prop reacting to the chart, or put the chart inside the world (a billboard, a phone screen, a newspaper).
+- **Rhythm**: never two plain slide shots in a row. Aim for at least half the shots being scenes or skits. The host
+  shows up for reactions and transitions.
+- Precision stays: exact figures and dates, source tags, our-math footnotes, no invented numbers. Funny about money,
+  never about the dead or victims.
+
 ## Icons and modern chart motion
 
 - `G.Icons` (`biz/js/icons.js`): the user's icon set as animatable vectors — barsUp, barsDown, lineUp, lineDown, pie,
@@ -106,3 +125,4 @@ white shirt, olive tie, black mitten hands, black stick legs). He must never sta
 - Check the voice file matches the script before building (the first housing upload was the funeral cold open).
 - Logos: check the supplied file is the right organisation (e.g. "The Cato Corporation" ≠ the Cato Institute) and flag it.
 - Deliver parts only (one mp4 per voice file); the user doesn't want a joined full video. Chat uploads cap at 30 MB.
+- Housing video feedback: the numbers and charts were right but the video felt like a lesson. Act stats out as scenes (see "Entertainment first, precise always").

@@ -35,11 +35,12 @@
   function tag(ctx, x, y, s, price, lt, o = {}) {
     if (lt <= 0) return; const sw = Math.sin(lt * 7) * Math.exp(-lt * 3) * .35 + (o.rot || 0), k = back(clamp(lt / .3));
     ctx.save(); ctx.translate(x, y); ctx.scale(s * k, s * k); ctx.rotate(sw);
+    ctx.font = HAND(700, o.size || 44); const tw = ctx.measureText(price).width, R = Math.max(58, tw / 2 + 14), L = -R - 34;   // body grows with the text; the hole sits left of it
     Tn.line(ctx, [[0, -40], [0, 0]], 3, INK);
-    sh(ctx, c => { c.moveTo(-58, 18); c.lineTo(-30, 0); c.lineTo(58, 0); c.lineTo(58, 64); c.lineTo(-30, 64); c.lineTo(-58, 46); c.closePath(); }, o.color || '#fff', 4.5);
-    sh(ctx, c => c.arc(-36, 32, 6, 0, 7), '#fff', 3);
-    txt(ctx, price, 10, 33, HAND(700, o.size || 44), o.ink || INK);
-    if (o.strike) K.strike(ctx, -20, 48, 52, 14, clamp(o.strike), P.red, 6);
+    sh(ctx, c => { c.moveTo(L, 18); c.lineTo(L + 28, 0); c.lineTo(R, 0); c.lineTo(R, 64); c.lineTo(L + 28, 64); c.lineTo(L, 46); c.closePath(); }, o.color || '#fff', 4.5);
+    sh(ctx, c => c.arc(L + 20, 32, 6, 0, 7), '#fff', 3);
+    txt(ctx, price, (L + 34 + R) / 2, 33, HAND(700, o.size || 44), o.ink || INK);
+    if (o.strike) K.strike(ctx, L + 36, 48, R - 6, 14, clamp(o.strike), P.red, 6);
     ctx.restore();
   }
   function eggs(ctx, x, y, s = 1, o = {}) {

@@ -327,13 +327,14 @@
   }
   function i27(ctx, lt, dur, t) { // "Your price isn't my price. And until the law catches up, the only way you'll know is if we compare notes." + end card
     const T0 = 221.0, at = s => lt - (s - T0), end = at(226.0) > 0;
+    if (at(226.5) > 0) { K.bg.color(ctx, '#1f1c1a'); txt(ctx, 'YOUR PRICE ISN\'T MY PRICE', 640, 260, HAND(700, 64), '#fff'); txt(ctx, 'Sources in the description', 640, 340, PRINT(30), P.yellow); txt(ctx, 'Educational only. Not legal or financial advice.', 640, 470, PRINT(28), '#fff', 'center', clamp(at(226.6) / .4)); return; }
     K.bg.color(ctx, '#ffd76a'); ctx.fillStyle = 'rgba(255,255,255,.18)'; for (let i = -4; i < 20; i++) { ctx.beginPath(); ctx.moveTo(i * 90 + lt * 30, 0); ctx.lineTo(i * 90 + 300 + lt * 30, H); ctx.lineTo(i * 90 + 340 + lt * 30, H); ctx.lineTo(i * 90 + 40 + lt * 30, 0); ctx.fill(); }
     popAt(ctx, 640, 150, at(221.0), () => { K.slam(ctx, 'YOUR PRICE', 640, 110, 1, 92, INK, { stroke: '#fff' }); K.slam(ctx, "ISN'T MY PRICE", 640, 205, 1, 92, P.red, { stroke: '#fff' }); });
     const y = bean(ctx, 300, 700, 1.0, t, Object.assign({}, Pr.YOU, { armR: [2.4, .3], face: { mouth: 'smile', brows: 'up', look: [.8, -.2] } }));
     const n = bean(ctx, 980, 700, 1.0, t, Object.assign({}, Pr.NEIGHBOUR, { armL: [2.4, .3], face: { mouth: 'smile', brows: 'up', look: [-.8, -.2] } }));
     Pr.tag(ctx, y.hands.R[0] + 10, y.hands.R[1] + 10, .9, '$4.79', at(221.2), { color: '#ffd6d0' }); Pr.tag(ctx, n.hands.L[0] - 10, n.hands.L[1] + 10, .9, '$3.99', at(221.4), { color: '#d8f5d0' });
     if (at(225.12) > 0 && !end) popAt(ctx, 640, 450, at(225.12), () => { K.card(ctx, 440, 410, 400, 80, '#fff', 16); txt(ctx, 'compare notes', 640, 450, HAND(700, 46)); });
-    if (end) { const k = clamp(at(226.0) / .5); ctx.fillStyle = `rgba(31,28,26,${.88 * k})`; ctx.fillRect(0, 0, W, H);
+    if (end) { const k = clamp(at(226.0) / .5); ctx.fillStyle = `rgba(31,28,26,${.97 * k})`; ctx.fillRect(0, 0, W, H);
       popAt(ctx, 640, 300, at(226.2), () => { txt(ctx, 'YOUR PRICE ISN\'T MY PRICE', 640, 260, HAND(700, 64), '#fff'); txt(ctx, 'Sources in the description', 640, 340, PRINT(30), P.yellow); });
       if (at(226.6) > 0) txt(ctx, 'Educational only. Not legal or financial advice.', 640, 470, PRINT(28), '#fff', 'center', clamp(at(226.6) / .4)); }
   }

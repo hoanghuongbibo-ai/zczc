@@ -8,6 +8,7 @@
   G.TOON_FINISH = { grain: .015, vignette: 0 };
   const host = K.host, money = v => '$' + Math.round(v).toLocaleString('en-US');
   const bean = (ctx, x, y, s, t, o) => B.person(ctx, x, y, s, Object.assign({ bob: Math.sin(t * 2.2 + x) * 2 }, o));
+  const YOU = { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.teal };
   const ground = (ctx, c = '#7ccf55', y = 590) => { ctx.fillStyle = c; ctx.fillRect(0, y, W, H - y); Tn.line(ctx, [[0, y], [W, y]], 4, INK); };
   function cuffs(ctx, x, y, s, rot = 0, col = '#f6c945') { // golden handcuffs
     ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
@@ -19,19 +20,21 @@
   function rateTag(ctx, x, y, text, col, lt) { popAt(ctx, x, y, lt, () => { ctx.save(); ctx.translate(x, y); ctx.rotate(-.06); sh(ctx, c => { c.moveTo(-70, -36); c.lineTo(60, -36); c.lineTo(90, 0); c.lineTo(60, 36); c.lineTo(-70, 36); c.closePath(); }, col, 4.5); txt(ctx, text, -6, 2, HAND(700, 50), '#fff'); ctx.restore(); }); }
 
   // ================= CHAPTER 3: THE GOLDEN HANDCUFFS =================
-  function d1(ctx, lt, dur, t) { // pandemic: rates fell to the lowest ever recorded — Jan 2021, Freddie Mac 30-yr average 2.65%
+  function d1(ctx, lt, dur, t) { // pandemic: rates slid to the lowest ever recorded — a playground slide down to 2.65% (Jan 2021, Freddie Mac)
     if (lt < 1.7) { K.chapterCard(ctx, lt, 3, 'The Golden Handcuffs', '#c9962b'); if (lt > .5) cuffs(ctx, 640, 545, .9 * back((lt - .5) / .4), -.08); return; }
-    K.bg.white(ctx); const at = s => lt - s;
-    txt(ctx, '30-year mortgage rate', 640, 70, HAND(700, 46), INK, 'center', clamp(at(1.8) / .3));
-    // a falling arrow down to the record low
-    const k = out(clamp(at(1.9) / 1.4));
-    ctx.save(); ctx.setLineDash([14, 10]); Tn.line(ctx, [[200, 170], [lerp(200, 760, k), lerp(170, 500, k)]], 8, P.green); ctx.restore();
-    if (k > .98) K.arrow(ctx, [720, 476], [770, 506], 1, P.green, 8);
-    txt(ctx, 'falling…', 330, 300, HAND(700, 40), P.green, 'center', clamp(at(2.2) / .3));
-    K.stamp(ctx, 'LOWEST EVER RECORDED', 560, 180, at(2.6), { color: P.green, size: 46, rot: .05 });
-    popAt(ctx, 960, 470, at(4.7), () => { K.card(ctx, 790, 380, 340, 190, '#fff', 22); txt(ctx, 'January 2021', 960, 420, HAND(700, 40)); });
-    if (at(9.23) > 0) Ch.counter(ctx, { x: 960, y: 505, value: 2.65, decimals: 2, suffix: '%', lt: at(9.23), dur: .9, size: 100, color: P.green });
-    K.logo(ctx, 'freddie', 960, 640, 300, at(7.0), { crop: [85, 90, 425, 110], pad: 8 });
+    K.bg.sky(ctx); ground(ctx, '#7ccf55', 620); const at = s => lt - s;
+    txt(ctx, '30-year mortgage rate', 640, 60, HAND(700, 44), INK, 'center', clamp(at(1.8) / .3));
+    // the slide
+    sh(ctx, c => c.rect(150, 200, 18, 420), '#9aa0a6', 3); sh(ctx, c => c.rect(250, 200, 18, 420), '#9aa0a6', 3); for (let y = 240; y < 620; y += 50) Tn.line(ctx, [[160, y], [258, y]], 5, '#9aa0a6');
+    sh(ctx, c => { c.moveTo(250, 200); c.bezierCurveTo(500, 220, 560, 560, 820, 590); c.lineTo(820, 620); c.bezierCurveTo(540, 600, 480, 260, 250, 236); c.closePath(); }, P.yellow, 5);
+    // you, sliding down
+    const k = clamp(at(2.0) / 2.6), e = k * k, sx = lerp(250, 800, e), sy = (() => { const u = e; return Math.pow(1 - u, 3) * 200 + 3 * Math.pow(1 - u, 2) * u * 220 + 3 * (1 - u) * u * u * 560 + u * u * u * 590; })();
+    bean(ctx, sx, sy + 10, .45, t, Object.assign({ face: { mouth: 'grin', brows: 'up' }, armR: [2.5, .1], armL: [2.5, .1], lean: -.3 * (1 - e) }, YOU));
+    txt(ctx, 'wheee…', sx + 60, sy - 140, HAND(700, 36), P.green, 'center', k > .05 && k < 1 ? 1 : 0);
+    K.stamp(ctx, 'LOWEST EVER RECORDED', 560, 150, at(2.6), { color: P.green, size: 44, rot: .05 });
+    popAt(ctx, 1040, 450, at(4.7), () => { K.card(ctx, 880, 360, 320, 190, '#fff', 22); txt(ctx, 'January 2021', 1040, 400, HAND(700, 40)); });
+    if (at(9.23) > 0) Ch.counter(ctx, { x: 1040, y: 485, value: 2.65, decimals: 2, suffix: '%', lt: at(9.23), dur: .9, size: 96, color: P.green });
+    K.logo(ctx, 'freddie', 1040, 620, 260, at(7.0), { crop: [85, 90, 425, 110], pad: 8 });
     K.source(ctx, 'Source: Freddie Mac, Jan 7, 2021', at(7.2));
   }
   function d2(ctx, lt, dur, t) { // by early 2022 about a quarter of mortgages were below 3% — congratulations, you won the lottery
@@ -50,17 +53,23 @@
     popAt(ctx, 640, 330, k, () => { ctx.save(); ctx.translate(640, 330); ctx.rotate(-.05); sh(ctx, c => c.roundRect(-330, -150, 660, 300, 20), '#fff7d6', 6); ctx.setLineDash([12, 10]); sh(ctx, c => c.roundRect(-300, -120, 600, 240, 14), null, 3); ctx.setLineDash([]);
       txt(ctx, 'YOU WON', 0, -50, HAND(700, 96), P.red); txt(ctx, 'a mortgage under 3%', 0, 50, HAND(700, 52)); ctx.restore(); });
   }
-  function d3(ctx, lt, dur, t) { // then inflation hit and rates shot up — today's rate is nearly triple the 2021 low
-    K.bg.white(ctx); const T0 = 20.87, at = s => lt - (s - T0);
-    const x0 = 230, y0 = 560, x1 = 1000, Y = v => y0 - v * 58;
-    Tn.line(ctx, [[x0 - 20, y0], [x1 + 80, y0]], 5, INK);
-    sh(ctx, c => c.arc(x0, Y(2.65), 12, 0, 7), P.green, 4); txt(ctx, '2.65%', x0, Y(2.65) + 50, HAND(700, 46), P.green); txt(ctx, 'Jan 2021', x0, y0 + 32, PRINT(26));
-    popAt(ctx, 440, 120, at(21.07), () => { K.card(ctx, 320, 82, 240, 76, P.red, 16); txt(ctx, 'inflation', 440, 120, HAND(700, 48), '#fff'); });
-    const k = clamp(at(22.9) / 1.0), e = inout(k), ex = lerp(x0, x1, e), ey = lerp(Y(2.65), Y(7.28), e) - Math.sin(e * Math.PI) * 40;
-    if (k > 0) { ctx.save(); ctx.setLineDash([14, 10]); ctx.beginPath(); for (let i = 0; i <= 30; i++) { const f = e * i / 30, px = lerp(x0, x1, f), py = lerp(Y(2.65), Y(7.28), f) - Math.sin(f * Math.PI) * 40; i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); } ctx.lineWidth = 8; ctx.strokeStyle = P.red; ctx.stroke(); ctx.restore();
-      I.draw(ctx, 'arrowUp', ex, ey - 10, 70, 1); }
-    if (at(24.29) > 0) { sh(ctx, c => c.arc(x1, Y(7.28), 12, 0, 7), P.red, 4); popAt(ctx, x1, Y(7.28) - 60, at(24.29), () => { K.card(ctx, x1 - 90, Y(7.28) - 100, 180, 76, P.red, 16); txt(ctx, '7.28%', x1, Y(7.28) - 62, HAND(700, 52), '#fff'); }); txt(ctx, 'Oct 1, 2026', x1, y0 + 32, PRINT(26)); }
-    if (at(26.36) > 0) popAt(ctx, 640, 640, at(26.36), () => { K.card(ctx, 440, 600, 400, 80, '#1f1c1a', 16, 0); txt(ctx, 'nearly triple (2.75×)', 640, 640, HAND(700, 44), '#fff'); });
+  function rocket(ctx, x, y, s, rot, flame, t) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s);
+    if (flame) { for (let i = 0; i < 3; i++) sh(ctx, c => c.ellipse(-90 - i * 30, 0, 40 - i * 8 + Math.sin(t * 30 + i) * 6, 20 - i * 4, 0, 0, 7), i % 2 ? P.yellow : P.orange, 0); txt(ctx, 'inflation', -150, 50, HAND(700, 26), P.red); }
+    sh(ctx, c => { c.moveTo(80, 0); c.quadraticCurveTo(40, -40, -60, -34); c.lineTo(-60, 34); c.quadraticCurveTo(40, 40, 80, 0); c.closePath(); }, '#fff', 5);
+    sh(ctx, c => c.arc(10, 0, 14, 0, 7), '#bfe6ff', 4); sh(ctx, c => { c.moveTo(-50, -30); c.lineTo(-80, -60); c.lineTo(-30, -32); c.closePath(); }, P.red, 4); sh(ctx, c => { c.moveTo(-50, 30); c.lineTo(-80, 60); c.lineTo(-30, 32); c.closePath(); }, P.red, 4);
+    txt(ctx, 'RATES', -20, 22, PRINT(14), INK); ctx.restore(); }
+  function d3(ctx, lt, dur, t) { // inflation hit and rates rocketed from 2.65% to today's 7.28% — nearly triple
+    K.bg.color(ctx, '#20264a'); const T0 = 20.87, at = s => lt - (s - T0);
+    for (let i = 0; i < 40; i++) { const r = Tn.rng(i * 17 + 3); ctx.fillStyle = 'rgba(255,255,255,' + (.3 + .5 * Math.abs(Math.sin(t + i))) + ')'; ctx.beginPath(); ctx.arc(r() * W, r() * H, 1.5 + r() * 2, 0, 7); ctx.fill(); }
+    const x0 = 230, y0 = 600, x1 = 1000, Y = v => y0 - v * 62;
+    Tn.line(ctx, [[x0 - 40, y0], [x1 + 100, y0]], 4, '#fff');
+    sh(ctx, c => c.arc(x0, Y(2.65), 12, 0, 7), P.green, 4); txt(ctx, '2.65%', x0, Y(2.65) + 50, HAND(700, 46), '#9df07a'); txt(ctx, 'Jan 2021', x0, y0 + 32, PRINT(26), '#fff');
+    popAt(ctx, 440, 110, at(21.07), () => { K.card(ctx, 320, 72, 240, 76, P.red, 16); txt(ctx, 'inflation hits', 440, 110, HAND(700, 44), '#fff'); });
+    const k = clamp(at(22.9) / 1.4), e = inout(k), px = f => lerp(x0, x1, f), py = f => lerp(Y(2.65), Y(7.28), f) - Math.sin(f * Math.PI) * 40;
+    if (k > 0) { ctx.save(); ctx.setLineDash([10, 10]); ctx.beginPath(); for (let i = 0; i <= 40; i++) { const f = e * i / 40; i ? ctx.lineTo(px(f), py(f)) : ctx.moveTo(px(f), py(f)); } ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.stroke(); ctx.restore();
+      const f2 = Math.min(1, e + .01), ang = Math.atan2(py(f2) - py(e), px(f2) - px(e)); rocket(ctx, px(e), py(e), .8, ang, k < 1, t); }
+    if (at(24.29) > 0) { popAt(ctx, x1, Y(7.28) - 90, at(24.29), () => { K.card(ctx, x1 - 90, Y(7.28) - 128, 180, 76, P.red, 16); txt(ctx, '7.28%', x1, Y(7.28) - 90, HAND(700, 52), '#fff'); }); txt(ctx, 'Oct 1, 2026', x1, y0 + 32, PRINT(26), '#fff'); }
+    if (at(26.36) > 0) popAt(ctx, 640, 660, at(26.36), () => { K.card(ctx, 440, 625, 400, 70, P.yellow, 16); txt(ctx, 'nearly triple (2.75×)', 640, 660, HAND(700, 42)); });
     K.source(ctx, 'Source: Freddie Mac PMMS', at(24.4));
   }
   const FAM = [['short', '#5a3b26', P.blue, 1], ['bob', '#3a2a1e', P.pink, 1], ['short', '#5a3b26', P.yellow, .6], ['bun', '#3a2a1e', P.green, .55]];
@@ -89,17 +98,22 @@
     for (let i = 0; i < (all ? 5 : 1); i++) { const x = all ? 140 + i * 250 : 640, s = all ? .75 : 1.5; popAt(ctx, x, 560, all ? at(45.7 + i * .1) : 1, () => { K.house(ctx, x, 600, s, { wall: ['#ffcf7a', '#c8ecff', '#ffd3e0', '#d7f0c6', '#ffe1a8'][i], roof: [P.red, P.blue, P.purple, P.green, P.orange][i] }); cuffs(ctx, x, 600 - 75 * s, .32 * s / .75 * (all ? 1 : .7), .1); }); }
     if (at(44.59) > 0) popAt(ctx, 640, 110, at(44.59), () => { K.card(ctx, 420, 66, 440, 90, '#1f1c1a', 18, 0); txt(ctx, all ? 'everybody stays' : 'you stay', 640, 112, HAND(700, 60), '#fff'); });
   }
-  function d5(ctx, lt, dur, t) { // the lock-in effect — FHFA measured it: each point the market rate sits above yours, the chance you sell drops 18.1%
-    K.bg.white(ctx); const T0 = 47.01, at = s => lt - (s - T0);
-    popAt(ctx, 640, 120, at(47.2), () => { K.card(ctx, 330, 60, 620, 120, P.yellow, 22); txt(ctx, 'the LOCK-IN effect', 640, 120, HAND(700, 72)); });
-    cuffs(ctx, 1080, 120, .7 * popAtK(at(48.0)), .2);
-    K.logo(ctx, 'fhfa', 190, 130, 190, at(49.5), { crop: [135, 28, 370, 370], pad: 8, round: 95 });
-    K.doc(ctx, 220, 450, 260, 260, 'FHFA Working Paper 24-03', ['—', 'lock-in effect', '—', 'Mar 2024'], at(53.05), { rot: -.05, titleSize: 30 });
-    popAt(ctx, 640, 440, at(54.37), () => { K.card(ctx, 500, 360, 280, 160, '#c8ecff', 20); txt(ctx, '+1 point', 640, 415, HAND(700, 58), P.blue); txt(ctx, 'market rate above yours', 640, 475, PRINT(20)); });
-    if (at(58.44) > 0) K.arrow(ctx, [790, 440], [880, 440], clamp(at(58.44) / .4), INK, 6);
-    popAt(ctx, 1040, 440, at(58.44), () => { K.card(ctx, 900, 340, 280, 200, '#fff', 20); txt(ctx, 'chance you sell', 1040, 380, PRINT(26)); });
-    if (at(60.24) > 0) Ch.counter(ctx, { x: 1040, y: 460, value: 18.1, decimals: 1, prefix: '−', suffix: '%', lt: at(60.24), dur: .8, size: 84, color: P.red });
-    K.source(ctx, 'Source: FHFA Working Paper 24-03, Mar 18, 2024', at(53.2));
+  function d5(ctx, lt, dur, t) { // the lock-in effect: FHFA measured it — every point the market rate sits above yours adds a lock; the chance you sell drops 18.1%
+    K.bg.cream(ctx); const T0 = 47.01, at = s => lt - (s - T0);
+    popAt(ctx, 640, 70, at(47.2), () => { K.card(ctx, 380, 28, 520, 84, P.yellow, 18); txt(ctx, 'the LOCK-IN effect', 640, 70, HAND(700, 60)); });
+    K.logo(ctx, 'fhfa', 1150, 90, 130, at(49.5), { crop: [135, 28, 370, 370], pad: 6, round: 65 });
+    // the front door with locks piling up
+    sh(ctx, c => c.rect(170, 180, 340, 460), '#ffcf7a', 5); sh(ctx, c => c.roundRect(250, 260, 180, 380, [14, 14, 0, 0]), '#4a7bd0', 5); ctx.fillStyle = P.yellow; ctx.beginPath(); ctx.arc(405, 460, 8, 0, 7); ctx.fill();
+    const locks = at(54.37) > 0 ? Math.min(3, 1 + Math.floor(at(54.37) / 1.4)) : 0;
+    for (let i = 0; i < locks; i++) { const ly = 330 + i * 90; popAt(ctx, 340, ly, at(54.37 + i * 1.4), () => { sh(ctx, c => c.arc(340, ly - 14, 20, Math.PI, 0), null, 7, '#5d6166'); sh(ctx, c => c.roundRect(310, ly - 14, 60, 50, 8), P.yellow, 4); sh(ctx, c => c.arc(340, ly + 8, 6, 0, 7), INK, 0); }); }
+    if (at(53.05) > 0) K.doc(ctx, 640, 470, 240, 230, 'FHFA Working Paper 24-03', ['—', 'lock-in effect', 'Mar 2024'], at(53.05), { rot: -.05, titleSize: 28 });
+    popAt(ctx, 640, 230, at(54.37), () => { K.card(ctx, 530, 190, 220, 80, '#c8ecff', 16); txt(ctx, '+1 point gap', 640, 230, HAND(700, 40), P.blue); });
+    // the "chance you sell" thermometer
+    sh(ctx, c => c.roundRect(980, 200, 80, 380, 40), '#fff', 5); const lvl = at(58.44) > 0 ? lerp(1, .819, out(clamp(at(58.44) / 1.2))) : 1;
+    ctx.save(); ctx.beginPath(); ctx.roundRect(984, 204, 72, 372, 36); ctx.clip(); ctx.fillStyle = P.green; ctx.fillRect(984, 576 - 372 * lvl * .9, 72, 372); ctx.restore();
+    txt(ctx, 'chance', 1020, 610, PRINT(24)); txt(ctx, 'you sell', 1020, 636, PRINT(24));
+    if (at(60.24) > 0) popAt(ctx, 880, 300, at(60.24), () => { K.card(ctx, 780, 255, 200, 90, P.red, 16); txt(ctx, '−18.1%', 880, 300, HAND(700, 56), '#fff'); });
+    K.source(ctx, 'Source: FHFA Working Paper 24-03, Mar 18, 2024 (per percentage point of rate gap)', at(53.2));
   }
   const popAtK = lt => lt <= 0 ? 0 : back(lt / .35);
   function d6(ctx, lt, dur, t) { // across the country: lock-in prevented about 1.33 million sales, mid-2022 to late 2023
@@ -111,7 +125,7 @@
     popAt(ctx, 640, 90, at(68.28), () => { K.card(ctx, 390, 50, 500, 80, P.yellow, 16); txt(ctx, 'mid-2022 → late 2023', 640, 90, HAND(700, 46)); });
     K.source(ctx, 'Source: FHFA Working Paper 24-03', at(64.5));
   }
-  function d7(ctx, lt, dur, t) { // the twist: higher rates should make houses cheaper (fewer buyers, lower prices) — FHFA: rates alone −3.3%, shrinking supply +5.7% — backfired
+  function d7(ctx, lt, dur, t) { // the twist: higher rates should make houses cheaper — FHFA: a tug-of-war on the price — rates pull it down 3.3%, shrinking supply pulls it up 5.7% — backfired
     const T0 = 72.64, at = s => lt - (s - T0);
     if (at(81.96) < 0) {
       K.bg.studio(ctx, '#d9ccff', '#f5f1ff');
@@ -122,34 +136,43 @@
       popAt(ctx, 1000, 470, at(80.24), () => { K.card(ctx, 880, 410, 240, 120, '#fff', 18); I.draw(ctx, 'arrowDown', 950, 470, 60, 1); txt(ctx, 'prices', 1050, 470, HAND(700, 40)); });
       return;
     }
-    K.bg.white(ctx);
-    txt(ctx, 'What actually happened to prices (FHFA)', 640, 70, HAND(700, 46), INK, 'center', clamp(at(82.0) / .3));
-    K.logo(ctx, 'fhfa', 1160, 80, 100, at(82.3), { crop: [135, 28, 370, 370], pad: 6, round: 50 });
-    const base = 400, sc = 40, bx = [380, 760], bw = 220;
-    Tn.line(ctx, [[160, base], [1120, base]], 5, INK); txt(ctx, '0', 140, base, PRINT(24), '#8a8f96', 'right');
-    const k1 = at(85.0) > 0 ? back(at(85.0) / .7) : 0, k2 = at(91.18) > 0 ? back(at(91.18) / .7) : 0;
-    txt(ctx, 'higher rates on their own', bx[0] + bw / 2, base - 40, HAND(700, 34), INK, 'center', clamp(at(84.92) / .3));
-    if (k1 > 0) { sh(ctx, c => c.roundRect(bx[0], base, bw, 3.3 * sc * k1, [0, 0, 12, 12]), P.blue); txt(ctx, '−' + (3.3 * clamp(out(at(87.3) / .6))).toFixed(1) + '%', bx[0] + bw / 2, base + 3.3 * sc * k1 + 40, HAND(700, 56), P.blue); }
-    txt(ctx, 'shrinking supply (lock-in)', bx[1] + bw / 2, base + 40, HAND(700, 34), INK, 'center', clamp(at(91.11) / .3));
-    if (k2 > 0) { sh(ctx, c => c.roundRect(bx[1], base - 5.7 * sc * k2, bw, 5.7 * sc * k2, [12, 12, 0, 0]), P.red); txt(ctx, '+' + (5.7 * clamp(out(at(93.1) / .6))).toFixed(1) + '%', bx[1] + bw / 2, base - 5.7 * sc * k2 - 36, HAND(700, 56), P.red); }
-    if (at(95.68) > 0) popAt(ctx, 1080, 560, at(95.68), () => { K.card(ctx, 960, 490, 240, 140, P.yellow, 18); txt(ctx, 'more than', 1080, 535, HAND(700, 38)); txt(ctx, 'canceled out', 1080, 585, HAND(700, 38)); });
-    K.stamp(ctx, 'BACKFIRED', 360, 230, at(100.04), { color: P.red, size: 60, rot: .1 });
-    K.source(ctx, 'Source: FHFA Working Paper 24-03', at(85));
+    // vertical tug-of-war: a price tag on a rope between a team pulling down and a team pulling up
+    K.bg.sky(ctx); ground(ctx, '#7ccf55', 640);
+    txt(ctx, 'What actually happened to prices (FHFA)', 520, 50, HAND(700, 42), INK, 'center', clamp(at(82.0) / .3));
+    K.logo(ctx, 'fhfa', 1180, 70, 90, at(82.3), { crop: [135, 28, 370, 370], pad: 6, round: 45 });
+    const down = at(84.92) > 0 ? out(clamp((at(85.6)) / 1.0)) * 3.3 : 0, up = at(91.11) > 0 ? out(clamp(at(91.8) / 1.2)) * 5.7 : 0, net = up - down, tagY = 360 - net * 30;
+    Tn.line(ctx, [[640, 90], [640, 640]], 6, '#c9a26b');
+    // the pulley at the top, and the up-team pulling a rope over it
+    sh(ctx, c => c.arc(640, 100, 26, 0, 7), '#9aa0a6', 4);
+    for (let y = 0; y <= 6; y += 2) { Tn.line(ctx, [[620, 360 + y * 30], [628, 360 + y * 30]], 3, '#8a8f96'); txt(ctx, (y ? '−' : '') + y + '%', 600, 360 + y * 30, PRINT(18), '#55606b', 'right'); if (y) { Tn.line(ctx, [[620, 360 - y * 30], [628, 360 - y * 30]], 3, '#8a8f96'); txt(ctx, '+' + y + '%', 600, 360 - y * 30, PRINT(18), '#55606b', 'right'); } }
+    popAt(ctx, 640, tagY, at(82.5), () => { ctx.save(); ctx.translate(640, tagY); sh(ctx, c => { c.moveTo(-70, -34); c.lineTo(50, -34); c.lineTo(80, 0); c.lineTo(50, 34); c.lineTo(-70, 34); c.closePath(); }, '#fff', 5); txt(ctx, 'PRICE', -6, 2, PRINT(26)); ctx.restore(); });
+    // team "higher rates" pulls down (left)
+    if (at(84.92) > 0) { for (let i = 0; i < 2; i++) bean(ctx, 380 - i * 90, 680, .55, t + i, { skin: 'white', hair: ['short', 'bob'][i], hairColor: '#3a2a1e', body: P.blue, lean: -.2, face: { mouth: 'flat', brows: 'angry', look: [1, -.3] }, armR: [1.6, -.3] }); Tn.line(ctx, [[420, 520], [610, tagY + 20]], 4, '#8a5a36');
+      popAt(ctx, 330, 300, at(84.92), () => { K.card(ctx, 190, 250, 280, 100, '#fff', 16); txt(ctx, 'higher rates alone', 330, 285, HAND(700, 30)); txt(ctx, '−' + down.toFixed(1) + '%', 330, 325, HAND(700, 40), P.blue); }); }
+    // team "shrinking supply" pulls up (right), rope over the pulley
+    if (at(91.11) > 0) { for (let i = 0; i < 3; i++) bean(ctx, 880 + i * 90, 680, .55, t + i + 3, { skin: 'white', hair: ['side', 'bun', 'short'][i], hairColor: '#3a2a1e', body: P.red, lean: .2, face: { mouth: 'flat', brows: 'angry', look: [-1, -.3] }, armL: [1.6, -.3] }); Tn.line(ctx, [[666, 100], [840, 520]], 4, '#8a5a36'); Tn.line(ctx, [[640, 74], [640, tagY - 34]], 4, '#8a5a36');
+      popAt(ctx, 960, 300, at(91.18), () => { K.card(ctx, 810, 250, 300, 100, '#fff', 16); txt(ctx, 'shrinking supply (lock-in)', 960, 285, HAND(700, 28)); txt(ctx, '+' + up.toFixed(1) + '%', 960, 325, HAND(700, 40), P.red); }); }
+    if (at(95.68) > 0) popAt(ctx, 960, 170, at(95.68), () => { K.card(ctx, 800, 135, 320, 70, P.yellow, 14); txt(ctx, 'more than canceled out', 960, 170, HAND(700, 32)); });
+    K.stamp(ctx, 'BACKFIRED', 330, 160, at(100.04), { color: P.red, size: 56, rot: -.1 });
+    K.source(ctx, 'Source: FHFA Working Paper 24-03 (two separate effects shown on one price)', at(85));
   }
-  function d8(ctx, lt, dur, t) { // how many are still in these handcuffs? end of 2025: 50.6% of mortgages below 4%, nearly 1 in 5 below 3%
-    K.bg.white(ctx); const T0 = 101.99, at = s => lt - (s - T0);
-    popAt(ctx, 640, 80, at(102.0), () => txt(ctx, 'Still in the handcuffs?', 640, 80, HAND(700, 56)));
-    cuffs(ctx, 1080, 90, .55 * popAtK(at(103.19)), -.15);
-    popAt(ctx, 300, 200, at(107.89), () => { K.card(ctx, 170, 160, 260, 80, P.yellow, 16); txt(ctx, 'end of 2025', 300, 200, HAND(700, 46)); });
-    if (at(110.0) > 0) Ch.donut(ctx, { x: 640, y: 420, r: 200, lt: at(110.0), thickness: 90, slices: [{ value: 19.7, color: P.orange }, { value: 50.6 - 19.7, color: P.yellow }, { value: 49.4, color: '#e3e7ec' }], centre: { value: 50.6, suffix: '%', decimals: 1, color: INK } });
-    popAt(ctx, 1060, 330, at(113.8), () => { K.card(ctx, 920, 280, 290, 100, '#fff', 18); sh(ctx, c => c.roundRect(940, 315, 30, 30, 6), P.yellow, 3); txt(ctx, 'below 4%: 50.6%', 1075, 330, HAND(700, 36)); });
-    popAt(ctx, 1060, 470, at(116.2), () => { K.card(ctx, 920, 420, 290, 100, '#fff', 18); sh(ctx, c => c.roundRect(940, 455, 30, 30, 6), P.orange, 3); txt(ctx, 'below 3%: 19.7%', 1075, 470, HAND(700, 36)); });
-    if (at(116.4) > 0) txt(ctx, '≈ 1 in 5', 1065, 545, HAND(700, 40), P.orange, 'center', clamp(at(116.4) / .3));
-    K.source(ctx, 'Source: FHFA National Mortgage Database via Wolf Street, Mar 27, 2026', at(104.6));
+  function d8(ctx, lt, dur, t) { // still in the handcuffs? end of 2025: about half of mortgages (50.6%) below 4% — nearly 1 in 5 (19.7%) below 3% — a street of 10 houses
+    K.bg.sky(ctx); ground(ctx, '#9fd97f', 560); const T0 = 101.99, at = s => lt - (s - T0);
+    popAt(ctx, 520, 60, at(102.0), () => txt(ctx, 'Still in the handcuffs?', 520, 60, HAND(700, 52)));
+    popAt(ctx, 1090, 60, at(107.89), () => { K.card(ctx, 960, 26, 260, 70, P.yellow, 14); txt(ctx, 'end of 2025', 1090, 61, HAND(700, 40)); });
+    for (let i = 0; i < 10; i++) { const x = 100 + (i % 5) * 270, y = i < 5 ? 330 : 560, lock4 = i < 5 && at(110.0 + i * .12) > 0, lock3 = (i === 0 || i === 2) && at(116.2) > 0;
+      K.house(ctx, x, y, .62, { wall: lock4 ? '#ffe1a8' : '#eef0f3', roof: lock4 ? (lock3 ? P.orange : P.yellow) : '#c4c8ce' });
+      if (lock4) cuffs(ctx, x, y - 60, .3, .1, lock3 ? '#f29b38' : '#f6c945'); }
+    if (at(111.98) > 0) popAt(ctx, 640, 150, at(111.98), () => { K.card(ctx, 470, 115, 340, 70, '#fff', 14); txt(ctx, 'below 4%: 50.6%', 640, 150, HAND(700, 40), '#b08a1a'); });
+    if (at(116.2) > 0) popAt(ctx, 640, 400, at(116.2), () => { K.card(ctx, 470, 368, 340, 64, '#fff', 14); txt(ctx, 'below 3%: 19.7% (≈1 in 5)', 640, 400, HAND(700, 30), P.orange); });
+    K.source(ctx, 'Source: FHFA National Mortgage Database via Wolf Street, Mar 27, 2026 (10 homes = 100%)', at(104.6));
   }
   function d9(ctx, lt, dur, t) { // the result: 2025 existing-home sales 4.06M, lowest since 1995 — median stay 11 years, also a record
     K.bg.cream(ctx); const T0 = 118.64, at = s => lt - (s - T0);
     if (at(130.16) < 0) {
+      K.bg.color(ctx, '#f3d9a6'); ctx.fillStyle = '#e8c27e'; ctx.fillRect(0, 560, W, 160); Tn.line(ctx, [[0, 560], [W, 560]], 4, INK);
+      K.house(ctx, 1060, 570, .8); ctx.save(); ctx.translate(1180, 570); Tn.line(ctx, [[0, 0], [0, -80]], 5, '#8a5a36'); sh(ctx, c => c.roundRect(-70, -128, 140, 50, 6), '#fff', 3.5); txt(ctx, 'OPEN HOUSE', 0, -103, PRINT(20), P.red); ctx.restore();
+      { const tw = ((lt * .25) % 1.2) - .1, tx = lerp(-80, 1360, tw), ty = 560 - Math.abs(Math.sin(lt * 4)) * 40; ctx.save(); ctx.translate(tx, ty - 30); ctx.rotate(lt * 5); ctx.strokeStyle = '#a07a3e'; ctx.lineWidth = 3; for (let i = 0; i < 7; i++) { ctx.beginPath(); ctx.arc(0, 0, 18 + i * 3, i, i + 3.5); ctx.stroke(); } ctx.restore(); }
       popAt(ctx, 640, 90, at(120.65), () => { K.card(ctx, 540, 50, 200, 80, P.yellow, 16); txt(ctx, '2025', 640, 90, HAND(700, 54)); });
       txt(ctx, 'existing homes sold', 640, 200, PRINT(40), INK, 'center', clamp(at(122.44) / .3));
       if (at(122.87) > 0) Ch.counter(ctx, { x: 640, y: 320, value: 4.06, decimals: 2, suffix: ' million', lt: at(122.87), dur: 1.2, size: 120, color: P.blue });
@@ -199,15 +222,22 @@
     K.stamp(ctx, 'NOT A PLOT', 900, 270, at(170.4), { color: '#7a8088', size: 60 });
     if (at(171.7) > 0) popAt(ctx, 900, 470, at(171.7), () => { K.card(ctx, 740, 410, 320, 120, P.green, 22); txt(ctx, "it's math", 900, 470, HAND(700, 66), '#fff'); });
   }
-  function e4(ctx, lt, dur, t) { // 54% of boomer homeowners have no mortgage — median monthly housing cost $612. For a house.
-    K.bg.white(ctx); const T0 = 172.95, at = s => lt - (s - T0);
-    K.logo(ctx, 'redfin', 640, 70, 170, at(173.0), { pad: 10 });
-    if (at(173.88) > 0) Ch.donut(ctx, { x: 330, y: 380, r: 170, lt: at(173.6), thickness: 76, slices: [{ value: 54, color: P.green, pop: true }, { value: 46, color: '#e3e7ec' }], centre: { value: 54, suffix: '%', color: INK } });
-    if (at(175.95) > 0) txt(ctx, 'of boomer owners: no mortgage', 330, 610, HAND(700, 38), INK, 'center', clamp(at(175.95) / .3));
-    bigHouse(ctx, 920, 470, .9, { wall: '#ffe1a8', roof: P.purple });
-    if (at(178.0) > 0) popAt(ctx, 920, 600, at(178.0), () => { ctx.save(); ctx.translate(920, 600); ctx.rotate(-.04); sh(ctx, c => { c.moveTo(-150, -50); c.lineTo(130, -50); c.lineTo(170, 0); c.lineTo(130, 50); c.lineTo(-150, 50); c.closePath(); }, P.yellow, 5); ctx.restore(); });
-    if (at(180.32) > 0) Ch.counter(ctx, { x: 905, y: 600, value: 612, prefix: '$', suffix: '/mo', lt: at(180.32), dur: .8, size: 68, color: INK });
-    if (at(178.0) > 0) txt(ctx, 'median monthly housing cost', 920, 690, PRINT(24), '#55606b', 'center', clamp(at(178.0) / .3));
+  function e4(ctx, lt, dur, t) { // 54% of boomer owners have no mortgage — PAID OFF — median monthly housing cost $612 (a bill on the fridge). For a house!
+    K.bg.cream(ctx); ground(ctx, '#e8d6b8', 620); const T0 = 172.95, at = s => lt - (s - T0);
+    K.logo(ctx, 'redfin', 1150, 60, 150, at(173.0), { pad: 8 });
+    // a roomy kitchen: the boomer couple relaxing with coffee
+    sh(ctx, c => c.rect(820, 260, 150, 360), '#e9eef2', 5); Tn.line(ctx, [[820, 400], [970, 400]], 4, INK); sh(ctx, c => c.rect(940, 300, 10, 60), '#9aa0a6', 2); sh(ctx, c => c.rect(940, 430, 10, 80), '#9aa0a6', 2);
+    bean(ctx, 520, 650, .8, t, { skin: 'white', hair: 'greyBun', body: P.purple, top: 'cardigan', face: { mouth: 'smile', brows: 'calm', eyes: .3 }, armR: [1.3, -.6] });
+    bean(ctx, 660, 650, .8, t + 1, { skin: 'white', hair: 'bald', glasses: true, body: '#7a8088', face: { mouth: 'smile', brows: 'calm' }, armL: [1.3, -.6] });
+    for (const [x, y] of [[588, 425], [600, 425]]) { sh(ctx, c => c.roundRect(x - 12, y - 14, 24, 28, 5), '#fff', 3); } ctx.save(); ctx.globalAlpha = .5; Tn.line(ctx, [[592, 405], [596 + Math.sin(t * 3) * 6, 380]], 3, '#9aa3ad'); ctx.restore();
+    // the mortgage, stamped PAID OFF
+    if (at(173.88) > 0) K.doc(ctx, 230, 330, 260, 300, 'MORTGAGE', ['—', '—', '—', '—'], at(173.88), { rot: -.06, titleSize: 44 });
+    K.stamp(ctx, 'PAID OFF', 230, 350, at(176.15), { color: P.green, size: 56, rot: -.15 });
+    if (at(173.88) > 0) popAt(ctx, 230, 560, at(174.2), () => { K.card(ctx, 70, 525, 320, 70, P.green, 14); txt(ctx, '54% of boomer owners', 230, 560, HAND(700, 34), '#fff'); });
+    // the bill on the fridge
+    if (at(178.0) > 0) popAt(ctx, 895, 330, at(178.0), () => { ctx.save(); ctx.translate(895, 330); ctx.rotate(.06); sh(ctx, c => c.rect(-60, -50, 120, 100), '#fff', 3.5); sh(ctx, c => c.arc(0, -50, 8, 0, 7), P.red, 2); txt(ctx, 'housing', 0, -24, PRINT(18)); txt(ctx, 'per month', 0, 30, PRINT(16), '#6b717a'); ctx.restore(); });
+    if (at(180.32) > 0) Ch.counter(ctx, { x: 895, y: 333, value: 612, prefix: '$', lt: at(180.32), dur: .8, size: 40, color: P.green });
+    if (at(178.0) > 0) txt(ctx, 'median monthly cost', 895, 650, PRINT(22), '#55606b', 'center', clamp(at(178.0) / .3));
     if (at(183.32) > 0) popAt(ctx, 1110, 200, at(183.32), () => { K.card(ctx, 990, 160, 240, 80, '#1f1c1a', 16, 0); txt(ctx, 'for a house!', 1110, 200, HAND(700, 44), '#fff'); });
     K.source(ctx, 'Source: Redfin, Jan 16, 2024 (2022 data)', at(174));
   }

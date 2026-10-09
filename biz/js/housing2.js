@@ -6,6 +6,7 @@
   const { P, HAND, PRINT, txt, sh, clamp, lerp, out, inout, back, popAt, tween } = K;
   const INK = K.INK, W = 1280, H = 720;
   G.TOON_FINISH = { grain: .015, vignette: 0 };
+  const ground = (ctx, c = '#7ccf55', y = 590) => { ctx.fillStyle = c; ctx.fillRect(0, y, W, H - y); Tn.line(ctx, [[0, y], [W, y]], 4, INK); };
   const host = K.host, money = v => '$' + Math.round(v).toLocaleString('en-US');
   const bean = (ctx, x, y, s, t, o) => B.person(ctx, x, y, s, Object.assign({ bob: Math.sin(t * 2.2 + x) * 2 }, o));
   const YOU = { skin: B.SKIN, hair: 'short', hairColor: '#5a3b26', body: P.teal, top: 'plain' };
@@ -51,17 +52,21 @@
     if (at(20.34) > 0) popAt(ctx, 1000, 470, at(20.34), () => { K.card(ctx, 880, 432, 240, 76, P.yellow, 14); txt(ctx, 'August 2026', 1000, 470, HAND(700, 42)); });
     K.source(ctx, 'Source: NAR via Mortgage News Daily, Sep 11, 2026', at(18));
   }
-  function a4(ctx, lt, dur, t) { // price-to-income: 1990s 3.2× → 2019 4.1× → 2024 5.0× → 2026 report "nearly five times"
-    K.bg.white(ctx); const T0 = 21.73, at = s => lt - (s - T0);
-    txt(ctx, 'Typical home price ÷ typical income', 640, 70, HAND(700, 46), INK, 'center', clamp(lt / .4));
-    K.logo(ctx, 'jchs', 1130, 150, 120, at(27.94));
-    const f = v => v.toFixed(1) + '×';
-    bars(ctx, { x: 170, y: 590, w: 820, h: 380, max: 5.6, lt0: at(22.3), data: [
-      { label: '1990s', v: 3.2, at: at(24.81), labelAt: at(22.37), color: P.green, fmt: f },
-      { label: '2019', v: 4.1, at: at(31.59), labelAt: at(30.37), color: P.orange, fmt: f },
-      { label: '2024', v: 5.0, at: at(34.57), labelAt: at(33.16), color: P.red, fmt: f }] });
-    if (at(38.08) > 0) popAt(ctx, 1110, 400, at(38.08), () => { K.card(ctx, 990, 320, 240, 170, P.yellow, 20); txt(ctx, '2026 report:', 1110, 360, PRINT(26)); txt(ctx, '"nearly 5×"', 1110, 420, HAND(700, 54), P.red); });
-    if (at(39.66) > 0) K.arrow(ctx, [985, 405], [900, 300], clamp(at(39.66) / .5), INK, 5);
+  function paycheckStack(ctx, x, base, years, k, col) { // each bundle = one year of typical income
+    const n = years * k; for (let i = 0; i < Math.ceil(n); i++) { const f = Math.min(1, n - i), y = base - i * 56; sh(ctx, c => c.roundRect(x - 70, y - 50 * f, 140, 50 * f, 6), i % 2 ? '#86cf6f' : '#73c25c', 3.5); if (f > .6) { sh(ctx, c => c.rect(x - 12, y - 50 * f, 24, 50 * f), '#f6c945', 0); txt(ctx, '1 yr', x + 42, y - 25 * f, PRINT(16), '#1d5a2a'); } } }
+  function a4(ctx, lt, dur, t) { // price ÷ income as stacks of yearly paychecks beside a house: 1990s 3.2 years → 2019 4.1 → 2024 5.0 → 2026 report "nearly five times"
+    K.bg.cream(ctx); ground(ctx, '#f0dcb8', 600); const T0 = 21.73, at = s => lt - (s - T0);
+    txt(ctx, 'How many years of the typical income buy the typical home?', 640, 60, HAND(700, 40), INK, 'center', clamp(lt / .4));
+    K.logo(ctx, 'jchs', 1180, 140, 100, at(27.94), { pad: 6 });
+    const cols = [['1990s', 3.2, 22.37, 24.81, P.green, .8], ['2019', 4.1, 30.37, 31.59, P.orange, .95], ['2024', 5.0, 33.16, 34.57, P.red, 1.1]];
+    cols.forEach(([label, v, la, va, col, hs], i) => { const cx = 230 + i * 330, k = at(va) > 0 ? out(clamp(at(va) / 1.0)) : 0;
+      if (at(la) <= 0) return;
+      popAt(ctx, cx - 60, 600, at(la), () => K.house(ctx, cx - 60, 600, .5 * hs));
+      txt(ctx, label, cx, 640, HAND(700, 40), INK, 'center', clamp(at(la) / .3));
+      txt(ctx, '=', cx + 12, 540, HAND(700, 50), INK, 'center', clamp(at(va) / .3));
+      paycheckStack(ctx, cx + 100, 600, v, k, col);
+      if (k > 0) popAt(ctx, cx + 100, 600 - v * 56 - 50, at(va + .3), () => { K.card(ctx, cx + 30, 600 - v * 56 - 84, 140, 64, col, 14); txt(ctx, v.toFixed(1) + '×', cx + 100, 600 - v * 56 - 52, HAND(700, 46), '#fff'); }); });
+    if (at(38.08) > 0) popAt(ctx, 1180, 470, at(38.08), () => { K.card(ctx, 1090, 400, 180, 140, P.yellow, 18); txt(ctx, '2026 report:', 1180, 440, PRINT(22)); txt(ctx, '"nearly 5×"', 1180, 492, HAND(700, 40), P.red); });
     K.source(ctx, 'Source: Harvard JCHS (Oct 2025 blog; State of the Nation\'s Housing 2026)', at(28));
   }
   function a5(ctx, lt, dur, t) { // in human terms: at the 1990s ratio your house would be about $280,000. Instead it's $429,100
@@ -75,27 +80,32 @@
     if (at(51.84) > 0) K.slam(ctx, '$429,100', 900, 215, at(51.84), 84, P.red);
     if (at(46.0) > 0) txt(ctx, '$87,599 × 3.2 ≈ $280,317 (our calculation)', 640, 690, PRINT(22), '#55606b', 'center', clamp(at(49.5) / .4));
   }
-  function race(ctx, y, label, pct, col, lt, icon) {
-    const x = 330, w = 760, k = lt > 0 ? out(lt / 1.2) : 0;
-    txt(ctx, label, x - 30, y, HAND(700, 44), INK, 'right', clamp((lt + 3) / .3));
-    sh(ctx, c => c.roundRect(x, y - 34, w, 68, 34), '#eef0f3', 4);
-    if (k > .02) sh(ctx, c => c.roundRect(x, y - 34, Math.max(68, w * pct / 50 * k), 68, 34), col, 4);
-    if (lt > 0) { txt(ctx, '+' + Math.round(pct * k) + '%', x + Math.max(68, w * pct / 50 * k) + 20, y, HAND(700, 52), col, 'left'); I.draw(ctx, icon, x + Math.max(68, w * pct / 50 * k) - 34, y, 50, 1); }
-  }
-  function a6(ctx, lt, dur, t) { // the stat that should make you mad: 2019–2024 prices +48%, incomes +22% — more than twice as fast
+  function runnerHouse(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); for (const sd of [-1, 1]) { const sw = Math.sin(t * 16 + sd) * 22; Tn.line(ctx, [[sd * 30, -10], [sd * 30 + sw, 40]], 8, INK); sh(ctx, c => c.ellipse(sd * 30 + sw + 10, 44, 16, 8, 0, 0, 7), INK, 0); } K.house(ctx, 0, 0, .55); ctx.fillStyle = INK; for (const ex of [-14, 14]) { ctx.beginPath(); ctx.ellipse(ex, -112, 5, 7, 0, 0, 7); ctx.fill(); } ctx.beginPath(); ctx.moveTo(-10, -96); ctx.quadraticCurveTo(0, -86, 10, -96); ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.stroke(); ctx.restore(); }
+  function runnerCheck(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); for (const sd of [-1, 1]) { const sw = Math.sin(t * 8 + sd) * 12; Tn.line(ctx, [[sd * 24, 0], [sd * 24 + sw, 40]], 7, INK); sh(ctx, c => c.ellipse(sd * 24 + sw + 8, 44, 14, 7, 0, 0, 7), INK, 0); }
+    sh(ctx, c => c.roundRect(-70, -90, 140, 90, 10), '#86cf6f', 4.5); sh(ctx, c => c.rect(-12, -90, 24, 90), '#f6c945', 0); txt(ctx, 'PAY', 40, -70, PRINT(20), '#1d5a2a');
+    ctx.fillStyle = INK; for (const ex of [-22, 22]) { ctx.beginPath(); ctx.ellipse(ex, -54, 5, 7, 0, 0, 7); ctx.fill(); } sh(ctx, c => c.ellipse(0, -30, 9, 11, 0, 0, 7), '#5a1f1f', 2.5);
+    for (let i = 0; i < 3; i++) { ctx.fillStyle = '#7fb6d9'; ctx.beginPath(); ctx.ellipse(-80 - i * 14, -80 + ((t * 2 + i * .3) % 1) * 40, 4, 7, 0, 0, 7); ctx.fill(); } ctx.restore(); }
+  function a6(ctx, lt, dur, t) { // the stat that should make you mad: 2019–2024 — a race: home prices +48% sprint ahead of incomes +22% — more than twice as fast
     const T0 = 54.73, at = s => lt - (s - T0);
     if (at(57.27) < 0) { K.bg.studio(ctx, '#ffb3a3', '#ffece6'); host(ctx, 640, 700, 1.2, t, [[T0, 'hips']], { mouth: 'flat', brows: 'angry', look: [0, 0] }); txt(ctx, '😤', 860, 220, PRINT(90), INK, 'center', clamp(at(56.1) / .3)); return; }
-    K.bg.white(ctx);
-    popAt(ctx, 640, 90, at(57.3), () => { K.card(ctx, 430, 52, 420, 76, P.yellow, 16); txt(ctx, '2019 → 2024', 640, 90, HAND(700, 48)); });
-    race(ctx, 300, 'Home prices', 48, P.red, at(60.51), 'arrowUp');
-    race(ctx, 460, 'Incomes', 22, P.blue, at(62.91), 'arrowUp');
-    if (at(66.22) > 0) popAt(ctx, 640, 610, at(66.22), () => { K.card(ctx, 360, 565, 560, 90, '#1f1c1a', 18, 0); txt(ctx, 'more than 2× as fast', 640, 610, HAND(700, 54), '#fff'); });
-    K.logo(ctx, 'jchs', 1170, 640, 90, at(59.46));
+    K.bg.sky(ctx); ground(ctx, '#7ccf55', 380);
+    ctx.fillStyle = '#d9714a'; ctx.fillRect(0, 400, W, 280); for (const y of [400, 540, 680]) Tn.line(ctx, [[0, y], [W, y]], 4, '#fff');
+    popAt(ctx, 640, 80, at(57.3), () => { K.card(ctx, 470, 42, 340, 76, P.yellow, 16); txt(ctx, 'race: 2019 → 2024', 640, 80, HAND(700, 44)); });
+    const X = pct => 140 + pct * 20;
+    for (let p = 0; p <= 50; p += 10) { txt(ctx, '+' + p + '%', X(p), 375, PRINT(20), '#2e6b26', 'center', clamp(at(57.6) / .3)); Tn.line(ctx, [[X(p), 400], [X(p), 410]], 3, '#fff'); }
+    const kh = at(60.51) > 0 ? out(clamp(at(60.51) / 2.0)) : 0, kp = at(62.91) > 0 ? out(clamp(at(62.91) / 2.0)) : 0;
+    runnerHouse(ctx, X(48 * kh), 520, 1, kh < 1 && kh > 0 ? t : 0); runnerCheck(ctx, X(22 * kp), 640, .9, kp < 1 && kp > 0 ? t : 0);
+    txt(ctx, 'home prices', 70, 490, HAND(700, 30), '#fff', 'left'); txt(ctx, 'incomes', 70, 630, HAND(700, 30), '#fff', 'left');
+    if (kh > 0) popAt(ctx, X(48 * kh) + 120, 460, at(60.8), () => { K.card(ctx, X(48 * kh) + 60, 432, 120, 56, P.red, 12); txt(ctx, '+' + Math.round(48 * kh) + '%', X(48 * kh) + 120, 460, HAND(700, 40), '#fff'); });
+    if (kp > 0) popAt(ctx, X(22 * kp) + 120, 600, at(63.2), () => { K.card(ctx, X(22 * kp) + 60, 572, 120, 56, P.blue, 12); txt(ctx, '+' + Math.round(22 * kp) + '%', X(22 * kp) + 120, 600, HAND(700, 40), '#fff'); });
+    if (at(66.22) > 0) popAt(ctx, 640, 200, at(66.22), () => { K.card(ctx, 380, 155, 520, 90, '#1f1c1a', 18, 0); txt(ctx, 'more than 2× as fast', 640, 200, HAND(700, 54), '#fff'); });
+    K.logo(ctx, 'jchs', 1180, 80, 90, at(59.46), { pad: 6 });
     K.source(ctx, 'Source: Harvard JCHS, Oct 6, 2025', at(60));
   }
-  function a7(ctx, lt, dur, t) { // Redfin: 30% of income, 15% down → need $109,796; you make $87,599; $22,197 short, every year
-    K.bg.white(ctx); const T0 = 68.01, at = s => lt - (s - T0);
+  function a7(ctx, lt, dur, t) { // Redfin's math (30% rule, 15% down): the bar is set at $109,796 — you jump to $87,599 — $22,197 short, every single year
+    const T0 = 68.01, at = s => lt - (s - T0);
     if (at(80.55) < 0) {
+      K.bg.white(ctx);
       host(ctx, 270, 700, 1.0, t, [[T0, 'think'], [71.7, 'presentL'], [75.1, 'count']], { mouth: 'flat', brows: 'up', look: [.6, -.2] });
       txt(ctx, 'Income needed to afford the typical home?', 790, 110, HAND(700, 44), INK, 'center', clamp(at(68.3) / .3));
       K.logo(ctx, 'redfin', 790, 240, 240, at(71.76));
@@ -104,31 +114,39 @@
       I.pop(ctx, 'calculator', 1180, 600, 120, at(74.0));
       return;
     }
-    const x = 280, w = 860, s = w / 120000;
-    popAt(ctx, 640, 70, at(80.6), () => txt(ctx, 'Income needed vs. income you have', 640, 70, HAND(700, 48)));
-    // needed
-    const k1 = at(80.9) > 0 ? out(at(80.9) / 1.4) : 0, k2 = at(83.91) > 0 ? out(at(83.91) / 1.2) : 0;
-    txt(ctx, 'needed', x - 24, 230, HAND(700, 44), INK, 'right', clamp(at(80.9) / .3));
-    if (k1 > 0) { sh(ctx, c => c.roundRect(x, 190, Math.max(20, 109796 * s * k1), 80, 14), P.green); txt(ctx, money(109796 * k1), x + 109796 * s * k1 - 20, 230, HAND(700, 52), '#fff', 'right'); }
-    txt(ctx, 'you make', x - 24, 380, HAND(700, 44), INK, 'right', clamp(at(83.91) / .3));
-    if (k2 > 0) { sh(ctx, c => c.roundRect(x, 340, Math.max(20, 87599 * s * k2), 80, 14), P.blue); txt(ctx, money(87599 * k2), x + 87599 * s * k2 - 20, 380, HAND(700, 52), '#fff', 'right'); }
+    // the high jump
+    K.bg.sky(ctx); ground(ctx, '#7ccf55', 620);
+    const base = 620, sc = 420 / 120000, Y = v => base - v * sc;
+    // the scale pole
+    sh(ctx, c => c.rect(150, Y(118000), 16, base - Y(118000)), '#fff', 3);
+    for (const v of [20000, 40000, 60000, 80000, 100000]) { Tn.line(ctx, [[150, Y(v)], [180, Y(v)]], 3, INK); txt(ctx, '$' + v / 1000 + 'k', 140, Y(v), PRINT(20), '#2e3a4f', 'right'); }
+    // the crossbar at $109,796
+    if (at(80.9) > 0) { const k = out(clamp(at(80.9) / .6)); sh(ctx, c => c.rect(860, Y(118000), 14, base - Y(118000)), '#fff', 3); Tn.line(ctx, [[lerp(867, 300, k), Y(109796)], [867, Y(109796)]], 8, P.red);
+      popAt(ctx, 1040, Y(109796), at(81.3), () => { K.card(ctx, 900, Y(109796) - 34, 280, 68, P.green, 14); txt(ctx, 'needed: $109,796', 1040, Y(109796), HAND(700, 34), '#fff'); }); }
+    // you jump — and peak at $87,599
+    const jump = at(83.91) > 0, ph = jump ? (at(83.91) * .9) % 1 : 0, hgt = jump ? Math.sin(ph * Math.PI) : 0, feet = base - hgt * (base - Y(87599) - 160);
+    bean(ctx, 660, feet, .55, t, Object.assign({ face: { mouth: hgt > .8 ? 'o' : 'flat', brows: 'worried', look: [0, -1] }, armR: [2.6, 0], armL: [2.6, 0] }, YOU));
+    if (jump) { ctx.save(); ctx.setLineDash([10, 8]); Tn.line(ctx, [[300, Y(87599)], [800, Y(87599)]], 4, P.blue); ctx.restore(); popAt(ctx, 1040, Y(87599), at(84.3), () => { K.card(ctx, 900, Y(87599) - 34, 280, 68, P.blue, 14); txt(ctx, 'you make: $87,599', 1040, Y(87599), HAND(700, 34), '#fff'); }); }
     // the gap
-    if (at(86.48) > 0) { const g0 = x + 87599 * s, g1 = x + 109796 * s, k = out(at(86.48) / .5);
-      ctx.save(); ctx.setLineDash([12, 8]); ctx.lineWidth = 5; ctx.strokeStyle = P.red; ctx.strokeRect(g0, 340, (g1 - g0) * k, 80); ctx.restore();
-      ctx.save(); ctx.globalAlpha = .25; ctx.fillStyle = P.red; ctx.fillRect(g0, 340, (g1 - g0) * k, 80); ctx.restore();
-      popAt(ctx, (g0 + g1) / 2, 520, at(86.6), () => { K.card(ctx, (g0 + g1) / 2 - 170, 470, 340, 100, P.red, 18); txt(ctx, money(22197) + ' short', (g0 + g1) / 2, 520, HAND(700, 56), '#fff'); });
-      K.arrow(ctx, [(g0 + g1) / 2, 468], [(g0 + g1) / 2, 428], clamp(at(86.8) / .3), P.red, 5); }
-    K.stamp(ctx, 'EVERY SINGLE YEAR', 470, 610, at(89.5), { color: P.red, rot: -.06, size: 50 });
+    if (at(86.48) > 0) { ctx.save(); ctx.globalAlpha = .22 * clamp(at(86.48) / .4); ctx.fillStyle = P.red; ctx.fillRect(300, Y(109796), 500, Y(87599) - Y(109796)); ctx.restore();
+      popAt(ctx, 420, (Y(109796) + Y(87599)) / 2, at(86.6), () => { K.card(ctx, 250, (Y(109796) + Y(87599)) / 2 - 30, 300, 60, P.red, 12); txt(ctx, '$22,197 short', 400, (Y(109796) + Y(87599)) / 2, HAND(700, 36), '#fff'); }); }
+    K.stamp(ctx, 'EVERY SINGLE YEAR', 640, 120, at(89.5), { color: P.red, rot: -.05, size: 48 });
     K.source(ctx, 'Source: Redfin, Aug 4, 2026 (June 2026 data; 30% rule, 15% down)', at(80.9));
   }
   function xu(ctx, x, y, s, t, face) { bean(ctx, x, y, s, t, { skin: '#f6d2b0', hair: 'short', hairColor: '#1d1b1a', body: '#a9c9ef', top: 'shirt', face: Object.assign({ mouth: 'smile', brows: 'calm' }, face), armR: [.3, .4] }); }
   function a8(ctx, lt, dur, t) { // to be fair, the gap shrank: over $28,000 two years ago. Yingqi Xu: "stabilized… but that doesn't mean homes are affordable"
     const T0 = 91.23, at = s => lt - (s - T0);
-    if (at(98.44) < 0) {
-      K.bg.white(ctx); txt(ctx, 'The gap, to be fair, got smaller', 640, 80, HAND(700, 48), INK, 'center', clamp(lt / .3));
-      Ch.bars(ctx, { x: 340, y: 580, w: 600, h: 360, lt: at(95.4), max: 32000, fmt: money, stagger: .5,
-        data: [{ label: 'June 2024', value: 28834, color: '#9fbbe6' }, { label: 'June 2026', value: 22197, color: P.red }] });
-      if (at(95.6) > 0) K.arrow(ctx, [560, 220], [760, 300], clamp(at(96.6) / .5), P.green, 6);
+    if (at(98.44) < 0) { // the affordability gap as a canyon that narrows
+      K.bg.sky(ctx); txt(ctx, 'The gap, to be fair, got smaller', 640, 70, HAND(700, 48), INK, 'center', clamp(lt / .3));
+      const g = at(95.49) > 0 ? lerp(28834, 22197, out(clamp(at(95.49) / 1.2))) : 28834, gw = g / 28834 * 520, cx = 640;
+      sh(ctx, c => { c.moveTo(0, 420); c.lineTo(cx - gw / 2, 420); c.lineTo(cx - gw / 2 + 40, H); c.lineTo(0, H); c.closePath(); }, '#c9a26b', 5);
+      sh(ctx, c => { c.moveTo(W, 420); c.lineTo(cx + gw / 2, 420); c.lineTo(cx + gw / 2 - 40, H); c.lineTo(W, H); c.closePath(); }, '#c9a26b', 5);
+      ctx.fillStyle = '#7ccf55'; ctx.fillRect(0, 410, cx - gw / 2, 14); ctx.fillRect(cx + gw / 2, 410, W, 14);
+      K.house(ctx, 1150, 412, .6);
+      bean(ctx, cx - gw / 2 - 60, 420, .55, t, Object.assign({ face: { mouth: 'flat', brows: 'worried', look: [1, .2] } }, YOU));
+      ctx.save(); ctx.setLineDash([12, 8]); Tn.line(ctx, [[cx - gw / 2, 470], [cx + gw / 2, 470]], 4, P.red); ctx.restore();
+      popAt(ctx, cx, 520, lt - .3, () => { K.card(ctx, cx - 130, 490, 260, 64, '#fff', 14); txt(ctx, '$' + Math.round(g).toLocaleString('en-US'), cx, 522, HAND(700, 44), P.red); });
+      popAt(ctx, cx, 600, lt - .3, () => { K.card(ctx, cx - 110, 580, 220, 44, P.yellow, 10); txt(ctx, at(95.49) > .6 ? 'June 2026' : 'June 2024', cx, 602, PRINT(22)); });
       K.source(ctx, 'Source: Redfin, Aug 4, 2026', at(95.5)); return;
     }
     K.bg.studio(ctx, '#c6ecd9', '#f1fbf5');
@@ -205,6 +223,9 @@
     for (let i = 0; i < pts.length; i++) { const [yr, v, s] = pts[i], k = at(s); txt(ctx, String(yr), X(yr), y0 + 30, PRINT(26), INK, 'center', clamp(k / .3));
       if (i > 0 && k > -1.2) { const [py, pv] = pts[i - 1], kk = clamp((k + 1.2) / 1.2), e = inout(kk); Tn.line(ctx, [[X(py), Y(pv)], [lerp(X(py), X(yr), e), lerp(Y(pv), Y(v), e)]], 8, i === 1 ? P.red : P.green); }
       if (k > 0) { sh(ctx, c => c.arc(X(yr), Y(v), 11 * back(k / .3), 0, 7), '#fff', 4); popAt(ctx, X(yr), Y(v) - 50, k, () => { K.card(ctx, X(yr) - 54, Y(v) - 82, 108, 60, i === 1 ? P.red : '#1f1c1a', 12, 0); txt(ctx, v.toFixed(1), X(yr), Y(v) - 52, HAND(700, 44), '#fff'); }); } }
+    { let hx = null, hy = null; for (let i = 1; i < pts.length; i++) { const k = at(pts[i][2]); if (k > -1.2) { const e = inout(clamp((k + 1.2) / 1.2)); hx = lerp(X(pts[i - 1][0]), X(pts[i][0]), e); hy = lerp(Y(pts[i - 1][1]), Y(pts[i][1]), e); } }
+      if (hx == null && at(143.21) > 0) { hx = X(2005); hy = Y(7.3); }
+      if (hx != null) { ctx.save(); ctx.translate(hx, hy - 18); sh(ctx, c => c.roundRect(-34, -24, 68, 30, 6), '#5d6166', 3.5); for (const wx of [-20, 20]) sh(ctx, c => c.arc(wx, 8, 8, 0, 7), INK, 0); ctx.restore(); B.head(ctx, hx, hy - 62, 22, { skin: 'white', face: { mouth: 'o', brows: 'up' } }); sh(ctx, c => { c.moveTo(hx - 22, hy - 72); c.quadraticCurveTo(hx, hy - 98, hx + 22, hy - 72); c.closePath(); }, P.yellow, 3); } }
     if (at(150.42) > 0) popAt(ctx, 560, 360, at(150.42), () => { K.card(ctx, 440, 320, 240, 80, P.yellow, 16); txt(ctx, '−74% in 4 years', 560, 360, HAND(700, 40), P.red); });
     if (at(153.99) > 0) txt(ctx, 'never really came back', 800, 540, HAND(700, 40), '#6b717a', 'center', clamp(at(153.99) / .3));
     if (at(160.81) > 0) { const xx = X(2024) + 40; K.arrow(ctx, [xx, Y(6.6) + 6], [xx, Y(4.3) - 6], clamp(at(160.81) / .4), P.purple, 4); popAt(ctx, xx - 250, Y(5.45), at(161.0), () => { K.card(ctx, xx - 340, Y(5.45) - 30, 180, 60, '#fff', 12); txt(ctx, '35% below', xx - 250, Y(5.45), HAND(700, 36), P.purple); }); }
@@ -268,13 +289,18 @@
   }
   function b7(ctx, lt, dur, t) { // one number that's hard to argue with: 2024 homeowner vacancy 0.95% — lowest on record — nothing for sale
     const T0 = 217.52, at = s => lt - (s - T0);
-    if (at(229.74) < 0) {
-      K.bg.white(ctx);
-      popAt(ctx, 640, 100, at(217.6), () => txt(ctx, 'one number that\'s hard to argue with', 640, 100, HAND(700, 48)));
-      popAt(ctx, 640, 200, at(220.6), () => { K.card(ctx, 540, 160, 200, 80, P.yellow, 14); txt(ctx, '2024', 640, 200, HAND(700, 54)); });
-      if (at(222.31) > 0) txt(ctx, 'homeowner vacancy rate', 640, 300, PRINT(40), INK, 'center', clamp(at(222.31) / .3));
-      if (at(223.8) > 0) Ch.counter(ctx, { x: 640, y: 430, value: .95, decimals: 2, suffix: '%', lt: at(223.8), dur: 1.0, size: 170, color: P.red });
-      K.stamp(ctx, 'LOWEST ON RECORD', 640, 590, at(228.34), { color: P.red, size: 54, rot: -.05 });
+    if (at(229.74) < 0) { // a store shelf of "homes for sale", almost bare
+      K.bg.color(ctx, '#f3efe6'); ground(ctx, '#d9d2c3', 640);
+      popAt(ctx, 640, 60, at(217.6), () => txt(ctx, 'one number that\'s hard to argue with', 640, 60, HAND(700, 44)));
+      sh(ctx, c => c.roundRect(200, 140, 880, 480, 12), '#fff', 5); sh(ctx, c => c.rect(200, 140, 880, 60), P.red, 5); txt(ctx, 'HOMES FOR SALE', 640, 172, PRINT(40), '#fff');
+      for (const y of [330, 470, 610]) sh(ctx, c => c.rect(210, y, 860, 14), '#b07a46', 3);
+      // one lonely little house on the shelf; dust and a cobweb everywhere else
+      K.house(ctx, 860, 470, .32, { wall: '#ffcf7a' });
+      ctx.save(); ctx.globalAlpha = .5; Tn.line(ctx, [[210, 210], [280, 210], [210, 280], [210, 210]], 2, '#8a8f96'); Tn.line(ctx, [[210, 230], [250, 210]], 2, '#8a8f96'); ctx.restore();
+      popAt(ctx, 640, 220, at(220.6), () => { K.card(ctx, 560, 230, 160, 60, P.yellow, 12); txt(ctx, '2024', 640, 260, HAND(700, 40)); });
+      if (at(222.31) > 0) txt(ctx, 'homeowner vacancy rate', 470, 400, PRINT(32), INK, 'center', clamp(at(222.31) / .3));
+      if (at(223.8) > 0) Ch.counter(ctx, { x: 470, y: 540, value: .95, decimals: 2, suffix: '%', lt: at(223.8), dur: 1.0, size: 110, color: P.red });
+      K.stamp(ctx, 'LOWEST ON RECORD', 640, 680, at(228.34), { color: P.red, size: 44, rot: -.04 });
       K.source(ctx, 'Source: St. Louis Fed, Apr 8, 2026', at(225.6)); return;
     }
     K.bg.sky(ctx); ctx.fillStyle = '#7ccf55'; ctx.fillRect(0, 590, W, 130); Tn.line(ctx, [[0, 590], [W, 590]], 4, INK);
@@ -282,15 +308,24 @@
       popAt(ctx, x + 90, 560, at(230.4 + i * .12), () => { ctx.save(); ctx.translate(x + 90, 600); Tn.line(ctx, [[0, 0], [0, -70]], 5, '#8a5a36'); sh(ctx, c => c.roundRect(-50, -110, 100, 44, 6), '#fff', 3.5); txt(ctx, 'SOLD', 0, -88, PRINT(26), P.red); ctx.restore(); }); }
     popAt(ctx, 640, 120, at(230.0), () => { K.card(ctx, 400, 78, 480, 84, '#fff', 18); txt(ctx, 'nothing for sale', 640, 120, HAND(700, 52)); });
   }
-  function b8(ctx, lt, dur, t) { // why didn't builders build more? four constraints
-    K.bg.white(ctx); const T0 = 231.84, at = s => lt - (s - T0);
-    popAt(ctx, 640, 70, at(231.9), () => txt(ctx, "Why didn't builders just build more?", 640, 70, HAND(700, 48)));
-    popAt(ctx, 160, 580, at(232.4), () => bean(ctx, 160, 640, .9, t, { skin: 'white', hair: 'none', body: P.orange, top: 'plain', face: { mouth: 'flat', brows: 'worried', look: [.8, -.3] } }));
-    if (at(232.4) > 0) { sh(ctx, c => { c.moveTo(105, 348); c.quadraticCurveTo(160, 283, 215, 348); c.closePath(); }, P.yellow, 4); sh(ctx, c => c.roundRect(95, 342, 130, 12, 6), P.yellow, 3.5); }
-    K.nameCard(ctx, 'St. Louis Fed', 'four constraints', 1100, 70, at(234.42));
-    const cards = [['Not enough construction workers', '👷', 237.1], ['Rising costs: land, materials, labor', '💸', 239.13], ['Zoning rules & slow permitting', '📋', 242.74], ['Too little buildable land near jobs', '📍', 244.83]];
-    cards.forEach(([label, emoji, s], i) => { const x = 380 + (i % 2) * 430, y = 230 + Math.floor(i / 2) * 230; popAt(ctx, x + 190, y + 90, at(s), () => { K.card(ctx, x, y, 390, 180, ['#ffe3de', '#fff1c6', '#e2efff', '#dff5e3'][i], 20); txt(ctx, String(i + 1), x + 40, y + 42, HAND(700, 54), P.red); txt(ctx, emoji, x + 330, y + 50, PRINT(54));
-      K.wrap(ctx, label, HAND(700, 38), 330).forEach((l, j) => txt(ctx, l, x + 195, y + 100 + j * 40, HAND(700, 38))); }); });
+  function b8(ctx, lt, dur, t) { // why didn't builders build more? an obstacle course: no crew, pricey materials & land, zoning red tape, no buildable land near the jobs
+    K.bg.sky(ctx); ground(ctx, '#c9b48a', 600); const T0 = 231.84, at = s => lt - (s - T0);
+    popAt(ctx, 520, 60, at(231.9), () => txt(ctx, "Why didn't builders just build more?", 520, 60, HAND(700, 46)));
+    K.nameCard(ctx, 'St. Louis Fed', 'four constraints', 1110, 60, at(234.42));
+    // the builder walks the course, stopping at each obstacle
+    const stops = [237.1, 239.13, 242.74, 244.83], xs = [260, 520, 780, 1040];
+    let bx = 90; stops.forEach((s, i) => { if (at(s) > 0) bx = lerp(i ? xs[i - 1] : 90, xs[i] - 120, out(clamp(at(s) / .7))); });
+    const moving = stops.some(s => at(s) > 0 && at(s) < .7);
+    bean(ctx, bx, 640, .62, t, { skin: 'white', hair: 'none', body: P.orange, face: { mouth: 'frown', brows: 'worried', look: [.8, -.2] }, walk: moving ? t * 10 : undefined });
+    sh(ctx, c => { c.moveTo(bx - 34, 640 - 238); c.quadraticCurveTo(bx, 640 - 282, bx + 34, 640 - 238); c.closePath(); }, P.yellow, 3.5);
+    // 1: no crew — empty hard hats on hooks
+    popAt(ctx, xs[0], 500, at(237.1), () => { sh(ctx, c => c.rect(xs[0] - 90, 380, 180, 12), '#8a5a36', 3); for (let i = 0; i < 3; i++) { const hx = xs[0] - 60 + i * 60; sh(ctx, c => { c.moveTo(hx - 24, 430); c.quadraticCurveTo(hx, 395, hx + 24, 430); c.closePath(); }, P.yellow, 3); } txt(ctx, 'no crew', xs[0], 480, HAND(700, 34), P.red); });
+    // 2: costs — a brick pile with a huge price tag
+    popAt(ctx, xs[1], 520, at(239.13), () => { for (let r = 0; r < 3; r++) for (let c2 = 0; c2 < 4 - r; c2++) sh(ctx, c => c.rect(xs[1] - 80 + c2 * 40 + r * 20, 570 - r * 24, 40, 24), '#c0583b', 2.5); ctx.save(); ctx.translate(xs[1] + 40, 440); ctx.rotate(.15); sh(ctx, c => c.roundRect(-60, -28, 120, 56, 8), '#fff', 4); txt(ctx, '$$$$', 0, 2, HAND(700, 36), P.red); ctx.restore(); txt(ctx, 'land · materials · labor', xs[1], 380, PRINT(20)); });
+    // 3: zoning — red tape across a gate
+    popAt(ctx, xs[2], 500, at(242.74), () => { sh(ctx, c => c.rect(xs[2] - 70, 420, 12, 180), '#9aa0a6', 3); sh(ctx, c => c.rect(xs[2] + 58, 420, 12, 180), '#9aa0a6', 3); for (let i = 0; i < 3; i++) { ctx.save(); ctx.translate(xs[2], 470 + i * 40); ctx.rotate((i % 2 ? -1 : 1) * .2); sh(ctx, c => c.rect(-80, -10, 160, 20), P.red, 2.5); txt(ctx, 'PERMIT?', 0, 1, PRINT(14), '#fff'); ctx.restore(); } txt(ctx, 'zoning & slow permits', xs[2], 390, PRINT(20)); });
+    // 4: no buildable land near jobs — the city far away, an empty lot sign
+    popAt(ctx, xs[3], 500, at(244.83), () => { for (let i = 0; i < 4; i++) sh(ctx, c => c.rect(xs[3] + 40 + i * 34, 300 - (i % 2) * 50, 30, 150 + (i % 2) * 50), '#9fb3cc', 3); txt(ctx, 'jobs', xs[3] + 100, 280, HAND(700, 28), '#2e3a4f'); ctx.save(); ctx.translate(xs[3] - 30, 600); Tn.line(ctx, [[0, 0], [0, -90]], 5, '#8a5a36'); sh(ctx, c => c.roundRect(-70, -140, 140, 56, 6), '#fff', 3.5); txt(ctx, 'NO LOTS', 0, -112, PRINT(24), P.red); ctx.restore(); txt(ctx, 'little land near jobs', xs[3], 660, PRINT(20)); });
     K.source(ctx, 'Source: St. Louis Fed, Apr 8, 2026', at(235.3));
   }
   function b9(ctx, lt, dur, t) { // that's the first thing that went wrong — but it doesn't explain why it got so much worse after 2022 → the second thing, one of the weirdest traps

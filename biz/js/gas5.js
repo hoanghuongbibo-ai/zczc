@@ -245,7 +245,7 @@
       for (let i = 0; i < 20; i++) { const x = 760 + (i % 10) * 42, y = 200 + Math.floor(i / 10) * 52; sh(ctx, c => c.roundRect(x, y, 34, 42, 6), i < n ? P.blue : '#fff', 3); }
       if (n >= 20) txt(ctx, '20', 1210, 252, HAND(700, 48), P.blue); }
     if (at(102.15) > 0) tagCard(ctx, 960, 370, 'House: passed ✓', at(102.15), { fill: '#dff3e2', size: 30 });
-    if (at(103.97) > 0) popAt(ctx, 960, 520, at(103.97), () => { K.card(ctx, 760, 450, 400, 140, '#1f1c1a', 18, 0); txt(ctx, 'Senate · Sep 24', 960, 482, PRINT(22), '#f6c945'); txt(ctx, at(108.14) > 0 ? '49 yes · 50 no' : '…', 960, 540, HAND(700, 52), '#fff'); });
+    if (at(103.97) > 0) popAt(ctx, 960, 520, at(103.97), () => { K.card(ctx, 760, 450, 400, 140, '#1f1c1a', 18, 0); txt(ctx, 'Senate · Sep 24', 960, 482, PRINT(22), '#f6c945'); txt(ctx, at(106.74) > 0 ? '49 yes · 50 no' : '…', 960, 540, HAND(700, 52), '#fff'); });
     if (at(107.7) > 0) K.stamp(ctx, 'FAILED BY 1', 960, 655, at(107.7), { color: P.red, size: 36, rot: -.08 });
     K.source(ctx, 'Source: AP (Sep 25, 2026)', at(98.5));
   }

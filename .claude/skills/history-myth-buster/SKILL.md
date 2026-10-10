@@ -19,28 +19,30 @@ log, check each one against the script line that says it, and flag anything miss
 or uncited. Never ask the user to sort text or data.
 
 Then reply with **one numbered asset order, most important first**, so the build runs smoothly and looks its best.
-Only list things the user can supply (files, photos, art, audio); everything I can draw myself stays off the list.
+**"Assets" means visual and research material only** — the user always supplies the script and the voice-over, so
+never list those (or the cold open, a sponsor decision, or other script questions) as asset items. An asset is any
+photo, image, painting, video clip, newspaper page, document scan, map, poster or other reference/source from the
+research that I can't make myself or that makes the shot accurate. Group and order them like this:
 
-1. **Voice-over** — the narration mp3 (one file per part). Say how many parts I'd split the script into and where.
-   Nothing gets timed until this arrives.
-2. **Main character art** — for a new series or a new lead: 2–4 reference images (portrait + full body if possible) to
-   rebuild as the posable cartoon, as was done for Houdini. Default if missing: I design one and send a character sheet
-   for approval.
-3. **Photos of named people** — every real person who appears on screen (acts, speaks, gets a portrait shot), in order
-   of screen time, with the exact spelling of the name. Say which ones I'll show as a silhouette or a name card instead
-   (mentioned only, private people, victims).
-4. **Period references for sets and props** — photos of the key places (buildings, streets, rooms, stages), the
-   signature objects (the device, weapon, vehicle, costume the story turns on) and era clothing, so sets and outfits
-   match the period instead of generic cartoon.
-5. **Documents to recreate** — letters, telegrams, newspaper front pages, posters, contracts, records the script
-   points at with `[DOCUMENT]`: a scan or photo of the real one, so I copy the layout and wording (with a made-up
-   masthead, per the style rules).
-6. **Maps** — only if a `[MAP]` needs a specific historical border or street plan; otherwise I draw it.
-7. **Nice to have** — the user's own music or sound cues, a thumbnail idea, a channel intro/outro or logo.
+1. **Key documents & newspapers** — every `[ARTIFACT]`/`[DOCUMENT]` and every quoted letter, diary, decree, treaty,
+   chronicle or front page the script leans on: a scan/photo of the real thing (layout, handwriting, seals, headlines),
+   so I recreate it faithfully (made-up masthead per the style rules). Name the exact item and edition/date.
+2. **Paintings, prints & old maps** named in the script or showing the period (artist + title), plus the edition the
+   user prefers. Public-domain items: say I can fetch them if the network allows.
+3. **Photos of people** — each real person on screen, in order of screen time, exact spelling; the portrait to base the
+   cartoon on. Say who becomes a silhouette / name card instead (mentioned only, living private people, victims).
+4. **Photos of places & objects** — the buildings, rooms, streets, vehicles, machines, costumes and signature props
+   the story turns on, as reference so sets and outfits match the period.
+5. **Video clips** — archival or news footage of the key events, mainly as motion reference for the animation (how
+   the water rose, how the gate swung, how the crowd moved); say if any could be shown as a framed insert and that
+   only rights-cleared footage can go on screen.
+6. **Data & charts sources** — the tables/graphs behind any number I'll chart (census tables, tide records, budgets),
+   when the source log only gives the headline figure.
 
 For each item: where it appears (chapter / script line), *needed* or *nice to have*, and the default I'll use if it
-doesn't come, so a missing item never blocks the build. Add up to three **"make it pop" ideas** for this script (a
-running counter, a recurring gag, a reveal shot, a cliffhanger end card). Finish with:
+doesn't come, so a missing item never blocks the build. Mark rights: public domain / user must own the rights.
+Add up to three **"make it pop" ideas** for this script (a running counter, a recurring gag, a reveal shot, a
+cliffhanger end card). Finish with:
 - one short line on what I'll build myself (cartoon cast, sets, diagrams, timelines, stamps, counters, maps, music, sfx),
 - the data / fact-check issues found in the source log, each with the line it affects and a suggested fix,
 - `[SHOT]` notes I'd add where the script has none, if a long passage would otherwise be static.
@@ -149,3 +151,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   hospital room, cemetery, grave) and override the date tag / caption.
 - The user asked for "precise, reasonable" motion and called an early generic attempt "amateur": every shot needs a
   motivated action on a word, not just a static picture with a push-in.
+- **Asset order = visual/research material only** (user feedback, Venice): the user always provides the script and the
+  voice-over, so the first asset order (which listed voice files, the cold open and a sponsor decision) missed the point.
+  List photos, paintings, video clips, newspapers, document scans, maps and data sources, each named exactly
+  (artist + title, paper + date, archive), with where it's used, needed / nice to have, rights, and a default.

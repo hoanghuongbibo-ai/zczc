@@ -68,3 +68,6 @@ Not used (wrong item):
 - Population chart — whole City of Venice incl. Mestre (1951 = 316,891, peak 363,062 in 1971), not the historic centre (~175,000) → I chart the historic-centre figures.
 - "Flood gates" — generic tunnel-gate infographic, not MOSE → I draw MOSE's hinged seabed flaps.
 Network: commons.wikimedia.org / upload.wikimedia.org are blocked by the environment's network policy, so I can't fetch PD scans myself.
+- piazzetta-dawn.webp (sent separately) — dawn on the Piazzetta and waterfront (Doge's Palace, the two columns, Marciana
+  library, gondola posts), not the main square with the basilica. Used for the dawn light/colour and the waterfront;
+  the basilica + horses come from san-marco-horse-copies.jpg and campanile-before-1902.jpg.

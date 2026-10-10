@@ -1,6 +1,6 @@
 ---
 name: history-myth-buster
-description: Make a "history / myth buster cartoon video" for the user's history channel — the flat explainer-cartoon style of the Houdini series (houdini/). Use when the user sends a narration mp3 + script (with [SCENE]/[MAP]/[DOCUMENT]/[TITLE CARD]/[DIAGRAM] notes) and asks for the next video or part in this style, or asks to change/improve this style.
+description: Make a "history / myth buster cartoon video" for the user's history channel — the flat explainer-cartoon style of the Houdini series (houdini/). Use when the user sends a script + source log (reply first with the ordered asset list), a narration mp3 + script (with [SCENE]/[MAP]/[DOCUMENT]/[TITLE CARD]/[DIAGRAM] notes) and asks for the next video or part in this style, or asks to change/improve this style.
 ---
 
 # History / Myth Buster cartoon video
@@ -11,9 +11,46 @@ bottom-right, slow push-ins, hard cuts, stamps / counters / newspaper slams, blu
 characters. Pure JavaScript canvas, deterministic `renderAt(t)`, rendered to MP4 with Playwright + ffmpeg.
 Before building, look at a few shots of the reference (`node tools/_stills.mjs part5.html <dir> 0.75`) to match the bar.
 
+## Step 0 — when the user sends the SCRIPT + SOURCE LOG: read it all, then send the asset order (agreed rule)
+
+The user sends the full script with its source log, usually before the voice-over. Read the whole script and the whole
+log before replying. **All research and data work is mine:** pull every date, place, number, name and quote from the
+log, check each one against the script line that says it, and flag anything missing, mismatched, myth-vs-fact unclear
+or uncited. Never ask the user to sort text or data.
+
+Then reply with **one numbered asset order, most important first**, so the build runs smoothly and looks its best.
+Only list things the user can supply (files, photos, art, audio); everything I can draw myself stays off the list.
+
+1. **Voice-over** — the narration mp3 (one file per part). Say how many parts I'd split the script into and where.
+   Nothing gets timed until this arrives.
+2. **Main character art** — for a new series or a new lead: 2–4 reference images (portrait + full body if possible) to
+   rebuild as the posable cartoon, as was done for Houdini. Default if missing: I design one and send a character sheet
+   for approval.
+3. **Photos of named people** — every real person who appears on screen (acts, speaks, gets a portrait shot), in order
+   of screen time, with the exact spelling of the name. Say which ones I'll show as a silhouette or a name card instead
+   (mentioned only, private people, victims).
+4. **Period references for sets and props** — photos of the key places (buildings, streets, rooms, stages), the
+   signature objects (the device, weapon, vehicle, costume the story turns on) and era clothing, so sets and outfits
+   match the period instead of generic cartoon.
+5. **Documents to recreate** — letters, telegrams, newspaper front pages, posters, contracts, records the script
+   points at with `[DOCUMENT]`: a scan or photo of the real one, so I copy the layout and wording (with a made-up
+   masthead, per the style rules).
+6. **Maps** — only if a `[MAP]` needs a specific historical border or street plan; otherwise I draw it.
+7. **Nice to have** — the user's own music or sound cues, a thumbnail idea, a channel intro/outro or logo.
+
+For each item: where it appears (chapter / script line), *needed* or *nice to have*, and the default I'll use if it
+doesn't come, so a missing item never blocks the build. Add up to three **"make it pop" ideas** for this script (a
+running counter, a recurring gag, a reveal shot, a cliffhanger end card). Finish with:
+- one short line on what I'll build myself (cartoon cast, sets, diagrams, timelines, stamps, counters, maps, music, sfx),
+- the data / fact-check issues found in the source log, each with the line it affects and a suggested fix,
+- `[SHOT]` notes I'd add where the script has none, if a long passage would otherwise be static.
+
+Then wait for the assets + voice-over (or "run"). When they come, go to the protocol below.
+
 ## The working protocol (agreed with the user — follow it every time)
 
-1. **Intake.** Copy the voice into the episode's `assets/` folder. Transcribe and align the narration to the word
+1. **Intake.** (After Step 0's asset order, when the user sends a script + source log first.) Put supplied assets in
+   the episode's `assets/` folder (`img/` for photos and references, slug names). Copy the voice into the episode's `assets/` folder. Transcribe and align the narration to the word
    (see *Voice alignment*). Every cut, stamp, sound effect and acting beat lands on a spoken word.
 2. **Plan.** Write `PLAN-<part>.md`: a shot table (anchor phrase → shot → motion beat), new cast, defaults chosen,
    and anything in the script the recording leaves out (say so — e.g. a line the narrator skipped).

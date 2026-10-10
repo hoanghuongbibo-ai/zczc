@@ -49,3 +49,22 @@ Default if missing: I draw my own version.
 32. Video: 1966 flood newsreel
 33. Video: traditional pile driving with a hand rammer
 34. Video: 2019 floods, checkpoint crowds
+
+## Received 2026-10-10 (Asset.7z, 14 files) — review
+Kept in `assets/img/`:
+- dandolo-dore.jpg — Doré, *Dandolo preaching the crusade*: crowd/setting ref; Dandolo's face too small → I design the face.
+- manin.jpg — Manin portrait (corno + ermine): good.
+- canaletto-arsenal.jpg — #11: good (1292 px, fine for a framed shot).
+- gros-napoleon-1796.jpg — #19: good (small, reference only).
+- debarbari-detail.jpg — #12: only a detail crop (433 px); the shot needs the whole view → I redraw the full panorama in its style.
+- campanile-before-1902.jpg — not a newspaper: a photo of the tower before the collapse. Useful for the tower shape.
+- campanile-collapse-1902.jpg — the famous "tower falling in dust" picture (widely considered a retouched montage): reference for the collapse beat.
+- san-marco-horse-copies.jpg — horse copies on the facade: good (not the square at dawn).
+- horses-originals.jpg — #25: good.
+- nyt-1966-11-07-ref.jpg — NYT International Ed., Paris, 7 Nov 1966, "St. Mark's afloat" (Alamy watermark): layout ref only; on screen it gets a made-up masthead.
+Not used (wrong item):
+- Priuli diary — a 19th-c. English handwritten diary, not Priuli → I draw an Italian 1500s diary page.
+- "Wooden piles" — generic modern pile-types infographic (steel, bored) → I draw the Venetian timber piles.
+- Population chart — whole City of Venice incl. Mestre (1951 = 316,891, peak 363,062 in 1971), not the historic centre (~175,000) → I chart the historic-centre figures.
+- "Flood gates" — generic tunnel-gate infographic, not MOSE → I draw MOSE's hinged seabed flaps.
+Network: commons.wikimedia.org / upload.wikimedia.org are blocked by the environment's network policy, so I can't fetch PD scans myself.

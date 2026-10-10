@@ -163,3 +163,8 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Name the place and scope on every asset item** (user feedback, Venice): "1951 census for the old city" and "city
   figures on tourist beds" left the user asking "of which city?". Write "Venice historic centre only (the islands, not
   Mestre / the mainland)", plus years and the institution that publishes it.
+- **Check every supplied asset against what was asked** (Venice): of 14 files, 4 were the wrong thing (a 19th-c. English
+  diary for Priuli, a generic modern pile infographic, a whole-municipality chart instead of the historic centre, a
+  generic tunnel-gate infographic for MOSE). Open each file, say kept / not used and why, save the kept ones in
+  `assets/img/` with slug names, log it in the episode's `ASSETS.md`, and give the default for each gap. Wikimedia is
+  blocked by this environment's network policy unless the user allows it, so PD scans must come from the user.

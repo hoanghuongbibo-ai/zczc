@@ -37,11 +37,47 @@
   function sparkle(ctx, x, y, k, s = 1) { if (k <= 0 || k > 1) return; const r = 26 * s * Math.sin(Math.PI * k);
     ctx.save(); ctx.translate(x, y); ctx.rotate(k * 1.2); shape(ctx, '#fff6c8', 3, poly([[0, -r], [r * .25, -r * .25], [r, 0], [r * .25, r * .25], [0, r], [-r * .25, r * .25], [-r, 0], [-r * .25, -r * .25]])); ctx.restore(); }
 
+
+  // ---------- depth kit: bright desk, distant layers, foreground framing ----------
+  const vig = (ctx, x, y, a) => FX.vignette(ctx, x, y, a * .3);
+  function deskBg(ctx, t) { // warm, well-lit writing desk that every map and document sits on
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    shape(ctx, '#b5835a', 0, rect(0, 0, W, H));
+    for (let y = -20; y < H; y += 64) { shape(ctx, y % 128 ? '#bd8b61' : '#ad7b52', 0, rect(0, y, W, 62)); line(ctx, [[0, y + 62], [W, y + 62]], 2, 'rgba(70,40,20,.35)');
+      for (let x = (y * 7) % 300; x < W; x += 300) { ctx.save(); ctx.globalAlpha = .18; line(ctx, [[x, y + 20], [x + 120, y + 26], [x + 200, y + 18]], 2, '#6a4026'); ctx.restore(); } }
+    glow(ctx, 640, 330, 700, 'rgba(255,236,190,.35)');
+    // props around the edges: scroll, inkwell + quill, coins, magnifier, candle
+    shape(ctx, '#efe2c0', 4, rect(-40, 600, 260, 60, 28)); shape(ctx, '#d9c8a0', 4, ellipse(220, 630, 18, 30));
+    shape(ctx, '#2a2a3a', 4, rect(1150, 560, 70, 70, 10)); shape(ctx, '#3a3a4e', 4, ellipse(1185, 560, 35, 10)); line(ctx, [[1185, 560], [1250, 420]], 5, '#3a2a1a'); shape(ctx, '#f4efe2', 3, smooth([[1238, 450], [1262, 400], [1250, 396], [1232, 440]]));
+    for (const [x, y] of [[1090, 680], [1118, 668], [1104, 700]]) { shape(ctx, '#e8c14a', 3.5, ellipse(x, y, 20, 12)); shape(ctx, '#d0a838', 0, ellipse(x, y - 2, 12, 6)); }
+    shape(ctx, null, 7, circle(70, 90, 44)); line(ctx, [[100, 122], [150, 180]], 12, '#6e4a2c'); ctx.save(); ctx.globalAlpha = .25; shape(ctx, '#cfe8f0', 0, circle(70, 90, 40)); ctx.restore();
+    shape(ctx, '#efe6d0', 4, rect(1190, 70, 40, 90, 4)); const fl = 1 + Math.sin(t * 11) * .06; glow(ctx, 1210, 50, 160 * fl, 'rgba(255,200,120,.45)'); shape(ctx, '#ffd27a', 3, smooth([[1210, 70], [1201, 52], [1210, 26], [1219, 52]]));
+    ctx.restore();
+  }
+  function clouds(ctx, t, ys = [120, 170], a = .85) { for (let i = 0; i < 6; i++) { const x = ((i * 290 + t * (8 + i * 2)) % 1900) - 300, y = ys[i % ys.length] + (i % 3) * 30, w = 120 + (i % 3) * 50;
+    ctx.save(); ctx.globalAlpha = a; shape(ctx, '#fffaf0', 3, smooth([[x - w / 2, y], [x - w / 4, y - w * .22], [x + w / 8, y - w * .3], [x + w / 2, y - w * .1], [x + w / 2 + 10, y + 6], [x, y + 12]])); ctx.restore(); } }
+  function birds(ctx, t, n = 4, y0 = 170) { for (let i = 0; i < n; i++) { const x = ((i * 230 + t * 40) % 1700) - 200, y = y0 + Math.sin(t * .8 + i) * 20 + i * 18, f = Math.sin(t * 8 + i * 2) * 8;
+    line(ctx, [[x - 14, y - f], [x, y], [x + 14, y - f]], 3, '#3a3a40'); } }
+  function farLayer(ctx, y, t, o = {}) { // distant mainland hills + islands with huts, softened by haze
+    T.blurred(ctx, 1.2, () => {
+      shape(ctx, o.hill || '#a9c3a8', 0, c => { c.moveTo(-400, y); for (let x = -400; x <= 2000; x += 120) c.quadraticCurveTo(x + 60, y - 40 - ((x * 13) % 30), x + 120, y); c.lineTo(2000, y + 40); c.lineTo(-400, y + 40); c.closePath(); });
+      for (const [x, s] of o.islands || [[90, .5], [360, .35], [1180, .45], [1420, .3]]) { shape(ctx, '#9a9a72', 2, ellipse(x, y + 12, 70 * s * 2, 7)); hut(ctx, x, y + 10, s * .5); }
+    });
+    ctx.save(); ctx.globalAlpha = .25; shape(ctx, '#f6f1e2', 0, rect(-400, y - 120, 2400, 160)); ctx.restore();
+  }
+  function reedsFG(ctx, t, side = 'both', y = 720) { // blurred reeds framing the bottom corners
+    T.blurred(ctx, 2.5, () => { for (const sd of side === 'both' ? [-1, 1] : [side]) for (let i = 0; i < (sd > 0 ? 3 : 9); i++) {
+      const x0 = sd < 0 ? -20 + i * 18 : W + 20 - i * 18, h = 150 + (i * 37) % 120, sw = Math.sin(t * 1.3 + i) * 8;
+      line(ctx, [[x0, y + 20], [x0 + sw * .5 + sd * -6, y - h * .6], [x0 + sw + sd * -14, y - h]], 9, i % 2 ? '#5a6a2a' : '#6f7f34');
+      if (i % 3 === 0) shape(ctx, '#7a5a34', 2, ellipse(x0 + sw + sd * -14, y - h - 14, 7, 22)); } });
+  }
+  function sunGlow(ctx, x, y, r = 380) { glow(ctx, x, y, r, 'rgba(255,240,200,.55)'); }
   // ---------- s1: chapter card — "JOB ONE … A WALL", the lagoon puts on its first hat ----------
   function s1(ctx, lt, dur, t) {
-    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#24365a'], [.55, '#c98a4a'], [1, '#f2c26a']]), 0, rect(0, 0, W, H));
+    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#5a8ec0'], [.55, '#f0b070'], [1, '#ffd88a']]), 0, rect(0, 0, W, H));
     glow(ctx, 640, 520, 520, 'rgba(255,214,140,.35)');
     for (const [x, y, w] of [[180, 150, 160], [1010, 110, 200], [760, 210, 120]]) shape(ctx, 'rgba(255,240,225,.55)', 0, smooth([[x - w / 2, y], [x - w / 4, y - 22], [x + w / 6, y - 30], [x + w / 2, y], [x, y + 10]]));
+    birds(ctx, t, 4, 200); farLayer(ctx, 548, t, { hill: '#c9a07a' });
     const fall = since(t, 'wall') - .05, drop = FX.dropBounce(fall, 520, .3), landed = fall > .33;
     const look = fall < -.25 ? [0, .1] : landed ? (fall > 1 ? [0, .15] : [0, -.9]) : [0, -.9];
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.04), 640, 420);
@@ -50,7 +86,8 @@
     ctx.restore();
     strip(ctx, 'JOB ONE', 640, 120, lt - A.job);
     strip(ctx, 'A WALL', 640, 222, since(t, 'wall'), { px: 46, color: RED, rot: .02 });
-    FX.vignette(ctx, 640, 380, .45);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .45);
   }
 
   // ---------- s2: [MAP] northeastern Italy in the 500s — Roman towns inland, the lagoon on the coast ----------
@@ -61,7 +98,7 @@
     shape(ctx, '#efe2c2', 3, rect(-16, -14, 32, 18)); shape(ctx, '#c2553e', 3, poly([[-22, -14], [0, -30], [22, -14]])); for (const xx of [-9, 0, 9]) line(ctx, [[xx, -12], [xx, 2]], 2.5); ctx.restore(); }
   function s2(ctx, lt, dur, t) { italyMap(ctx, lt, dur, t, {}); }
   function italyMap(ctx, lt, dur, t, o) {
-    FX.darkBg(ctx, '#2c2723');
+    deskBg(ctx, t);
     const z = lerp(1, 1.12, ease.inOut(clamp(lt / dur))); ctx.save(); cam(ctx, z, lerp(640, 655, ease.inOut(clamp(lt / dur))), lerp(360, 390, ease.inOut(clamp(lt / dur))));
     ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(MX + 10, MY + 12, 1100, 600);
     ctx.save(); ctx.translate(MX, MY);
@@ -91,7 +128,7 @@
     if (oh > 0) { const s = FX.settle(clamp(oh / .3)); ctx.save(); ctx.translate(735, 440); ctx.scale(s, s); ctx.rotate(.1); FX.bigText(ctx, '?', 0, 0, 92, { color: GOLD }); ctx.restore(); }
     if (an > .4) { ctx.globalAlpha = clamp((an - .4) / .25); txt(ctx, 'THE LAGOON', 470, 520, FX.DISPLAY(24), '#1f4b58'); line(ctx, [[505, 505], [540, 470]], 3, '#1f4b58'); ctx.globalAlpha = 1; }
     ctx.restore(); ctx.restore();
-    FX.vignette(ctx, 640, 380, .5);
+    vig(ctx, 640, 380, .5);
     FX.dateTag(ctx, o.tag || 'NORTHEASTERN ITALY, c. AD 500');
   }
 
@@ -111,7 +148,7 @@
     ctx.restore();
   }
   function scriptorium(ctx) {
-    shape(ctx, '#b49a78', 0, rect(-200, -200, 1700, 1100));
+    shape(ctx, '#d8bf98', 0, rect(-200, -200, 1700, 1100));
     const r = rng(4); for (let y = -200; y < 640; y += 44) for (let x = -200 + ((y / 44) % 2) * 40; x < 1500; x += 80) shape(ctx, `rgba(90,66,44,${.08 + r() * .08})`, 0, rect(x + 2, y + 2, 76, 40, 3));
     // arched window looking out on the lagoon
     const win = c => { c.moveTo(860, 470); c.lineTo(860, 240); c.arc(970, 240, 110, Math.PI, 0); c.lineTo(1080, 470); c.closePath(); };
@@ -120,7 +157,16 @@
     shape(ctx, grad(ctx, 0, 130, 0, 470, [[0, '#9cc8dc'], [1, '#f2d9a6']]), 0, rect(840, 120, 260, 360));
     shape(ctx, V.WATER, 0, rect(840, 400, 260, 80)); shape(ctx, '#a99a6a', 3, ellipse(930, 402, 60, 10)); shape(ctx, '#a99a6a', 3, ellipse(1050, 410, 40, 8));
     ctx.restore(); shape(ctx, null, 6, win); line(ctx, [[970, 130], [970, 470]], 6); shape(ctx, '#d6bf96', 5, rect(830, 470, 280, 26, 3));
-    shape(ctx, '#6e4a2c', 0, rect(-200, 640, 1700, 300)); line(ctx, [[-200, 640], [1500, 640]], 4, 'rgba(0,0,0,.45)');
+    shape(ctx, '#8a5e3a', 0, rect(-200, 640, 1700, 300)); line(ctx, [[-200, 640], [1500, 640]], 4, 'rgba(0,0,0,.45)');
+    // bookshelf on the left wall, crammed with chronicles and scrolls
+    shape(ctx, '#6e4a2c', 5, rect(40, 180, 300, 460, 4));
+    const rb = rng(7); for (let sh = 0; sh < 4; sh++) { const y = 200 + sh * 110; shape(ctx, '#5a3a22', 0, rect(52, y + 92, 276, 10));
+      let x = 58; while (x < 310) { const w = 14 + rb() * 16, h = 60 + rb() * 28; if (rb() < .2) { shape(ctx, '#efe2c0', 3, ellipse(x + 20, y + 84, 22, 8)); x += 44; continue; }
+        shape(ctx, ['#8a2a24', '#2f4f6a', '#4a6a3a', '#a8782a', '#5a3a6a'][Math.floor(rb() * 5)], 3, rect(x, y + 92 - h, w, h, 2)); line(ctx, [[x + 3, y + 92 - h + 10], [x + w - 3, y + 92 - h + 10]], 2, '#e8c14a'); x += w + 2; } }
+    // a shaft of light from the window across the floor
+    T.shaft(ctx, [[870, 300], [1070, 300], [900, 700], [560, 700]], 'rgba(255,240,200,.9)', .22, [970, 300], [730, 700]);
+    // hanging oil lamp
+    line(ctx, [[640, -200], [640, 90]], 3); shape(ctx, '#c9a14a', 4, ellipse(640, 104, 36, 14)); glow(ctx, 660, 90, 200, 'rgba(255,210,130,.4)'); shape(ctx, '#ffd27a', 2.5, smooth([[660, 100], [654, 86], [660, 66], [666, 86]]));
   }
   function s3(ctx, lt, dur, t) {
     const op = clamp((since(t, 'tells') - .05) / .45), td = since(t, 'tidy');
@@ -133,7 +179,7 @@
     book(ctx, X, Y - 770 * S + 40, op, bump, ['THE STORY OF', 'VENICE']);
     if (td > 0) [[X - 160, Y - 400], [X + 165, Y - 360], [X + 120, Y - 470], [X - 120, Y - 300]].forEach(([x, y], i) => sparkle(ctx, x, y, (td - .1 - i * .09) / .55, 1.1));
     ctx.restore();
-    FX.vignette(ctx, 600, 380, .45);
+    vig(ctx, 600, 380, .45);
     FX.caption(ctx, "VENICE'S OFFICIAL STORY", lt, .9);
   }
 
@@ -145,6 +191,7 @@
     const sk = ease.inOut(clamp((since(t, 'noon1') + .15) / .9)), sx = lerp(1040, 900, sk), sy = lerp(520, 150, sk);
     glow(ctx, sx, sy, 260, 'rgba(255,250,220,.6)'); shape(ctx, '#fff2b0', 4, circle(sx, sy, 58));
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2 + t * .2; line(ctx, [[sx + Math.cos(a) * 74, sy + Math.sin(a) * 74], [sx + Math.cos(a) * 96, sy + Math.sin(a) * 96]], 5, '#fff2b0'); }
+    clouds(ctx, t, [230, 290], .7); birds(ctx, t, 3, 260); farLayer(ctx, 556, t, { hill: '#d9b878', islands: [[160, .5], [520, .35]] });
     // lagoon water and an empty island waiting for its city
     shape(ctx, V.WATER, 4, c => { c.moveTo(-100, 560); for (let x = -100; x <= 1400; x += 50) c.lineTo(x, 560 + Math.sin(x * .02 + t * 1.5) * 6); c.lineTo(1400, 900); c.lineTo(-100, 900); c.closePath(); });
     shape(ctx, '#b9a46e', 4, smooth([[700, 572], [780, 536], [940, 528], [1080, 544], [1140, 574], [920, 590]]));
@@ -165,14 +212,26 @@
       txt(ctx, 'VENICE', x, y - 76, FX.DISPLAY(32), '#5a5040'); txt(ctx, 'FOUNDED', x, y - 44, FX.FONT(700, 18), '#5a5040'); }
     ctx.restore();
     FX.dateTag(ctx, 'THE LEGEND');
-    FX.vignette(ctx, 640, 380, .35);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .35);
   }
 
   // ---------- s5: "Noon. Exactly." — the clock snaps to twelve; the chronicler is very sure; LEGEND ----------
+
+  function arcade(ctx, t) { // Venetian arcade with sky through the arches
+    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#8fd0ec'], [1, '#fbe6be']]), 0, rect(600, -100, 1000, 900)); clouds(ctx, t, [140, 220], .9);
+    ctx.save(); ctx.beginPath(); ctx.rect(600, -100, 1000, 900);
+    for (let i = 0; i < 4; i++) { const x = 700 + i * 190; ctx.moveTo(x, 640); ctx.lineTo(x, 260); ctx.arc(x + 70, 260, 70, Math.PI, 0); ctx.lineTo(x + 140, 640); ctx.closePath(); }
+    ctx.fillStyle = '#ead6ac'; ctx.fill('evenodd'); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); ctx.restore();
+    for (let i = 0; i < 4; i++) { const x = 700 + i * 190; shape(ctx, '#d8c094', 4, c => { c.arc(x + 70, 260, 84, Math.PI, 0); c.arc(x + 70, 260, 70, 0, Math.PI, true); c.closePath(); }); }
+    shape(ctx, '#cdb487', 5, rect(600, 640, 1000, 30)); shape(ctx, '#b89c70', 0, rect(600, 670, 1000, 60));
+    for (const [x, ph] of [[760, 0], [1010, 1.4], [1300, 2.2]]) { const pk = Math.max(0, Math.sin(t * 2 + ph)) * 6; ctx.save(); ctx.translate(x, 640); shape(ctx, '#9aa0aa', 3.5, ellipse(0, -16, 22, 14)); shape(ctx, '#8a909a', 3.5, circle(18, -30 + pk * .3, 9)); shape(ctx, '#e8a83a', 2, poly([[26, -30 + pk * .3], [34, -28 + pk * .3], [26, -26 + pk * .3]])); ctx.restore(); }
+  }
   function s5(ctx, lt, dur, t) {
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#f3d79a'], [1, '#d9a85e']]), 0, rect(0, 0, W, H));
     glow(ctx, 470, 330, 420, 'rgba(255,245,210,.45)');
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.05), 640, 370);
+    arcade(ctx, t);
     // bell tower face with a swinging bell above
     const cx = 470, cy = 360, R = 190;
     shape(ctx, '#c9b089', 5, rect(cx - 250, cy - 330, 500, 820, 6)); shape(ctx, '#b39870', 0, rect(cx - 250, cy - 330, 500, 40));
@@ -201,13 +260,13 @@
     if (ex > 0 && ex < 1.6) { ctx.globalAlpha = clamp(ex / .2) * clamp((1.6 - ex) / .3); FX.bigText(ctx, '12:00', 770, 150, 56, { color: GOLD }); ctx.globalAlpha = 1; }
     ctx.restore();
     FX.stamp(ctx, 'LEGEND', 470, 380, st, { color: RED, size: 78, rot: -.14 });
-    FX.vignette(ctx, 640, 380, .4);
+    vig(ctx, 640, 380, .4);
     FX.dateTag(ctx, 'THE LEGEND');
   }
 
 
   // ======================= the rest of Job one =======================
-  const sceneSky = (ctx, top = '#9cc8dc', bot = '#f2d9a6') => shape(ctx, grad(ctx, 0, 0, 0, H, [[0, top], [1, bot]]), 0, rect(-400, -300, 2400, 1400));
+  const sceneSky = (ctx, top = '#8fd0ec', bot = '#f6e4b8', hz, t = 0) => { shape(ctx, grad(ctx, 0, -300, 0, H, [[0, top], [1, bot]]), 0, rect(-400, -300, 2400, 1400)); sunGlow(ctx, 1000, 150, 440); clouds(ctx, t); birds(ctx, t, 3, 140); if (hz) farLayer(ctx, hz, t); };
   const water = (ctx, y, t, x0 = -400, x1 = 2400, col = V.WATER) => shape(ctx, col, 4, c => { c.moveTo(x0, y); for (let x = x0; x <= x1; x += 40) c.lineTo(x, y + Math.sin(x * .02 + t * 1.5) * 5); c.lineTo(x1, 1400); c.lineTo(x0, 1400); c.closePath(); });
   const walk = (ph, amp = 1) => ({ feet: { L: [-30 + Math.sin(ph) * 70 * amp, -40 - Math.max(0, Math.cos(ph)) * 34 * amp], R: [30 - Math.sin(ph) * 70 * amp, -40 - Math.max(0, -Math.cos(ph)) * 34 * amp] },
     hands: { L: [-130 - Math.sin(ph) * 60 * amp, -470], R: [130 + Math.sin(ph) * 60 * amp, -470] } });
@@ -250,39 +309,40 @@
     if (!ghost) shape(ctx, '#4a3420', 3, c => { c.moveTo(-14, 0); c.lineTo(-14, -30); c.arc(0, -30, 14, Math.PI, 0); c.lineTo(14, 0); c.closePath(); });
     ctx.restore(); }
   function s6(ctx, lt, dur, t) {
-    FX.darkBg(ctx, '#2c2723');
+    deskBg(ctx, t);
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.04), 640, 390);
-    shape(ctx, PAPER, 4, rect(100, 430, 1080, 40, 4));
-    for (let yr = 400; yr <= 1200; yr += 100) { const x = YX(yr); line(ctx, [[x, 430], [x, 470]], 3); txt(ctx, String(yr), x, 498, FX.FONT(700, 20), '#efe6d0'); }
+    ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fillRect(78, 168, 1130, 430); shape(ctx, '#f3e8cc', 4, rect(70, 160, 1130, 430, 6));
+    shape(ctx, '#e2cfa4', 4, rect(100, 430, 1080, 40, 4));
+    for (let yr = 400; yr <= 1200; yr += 100) { const x = YX(yr); line(ctx, [[x, 430], [x, 470]], 3); txt(ctx, String(yr), x, 498, FX.FONT(700, 20), INK); }
     // the legend at 421: the founding stone
     ctx.save(); ctx.translate(YX(421), 420); shape(ctx, '#d8d0bd', 4, rect(-60, -80, 120, 80, 4)); txt(ctx, 'VENICE', 0, -50, FX.DISPLAY(22), '#5a5040'); txt(ctx, '421', 0, -24, FX.FONT(700, 16), '#5a5040'); ctx.restore();
-    txt(ctx, 'THE LEGEND', YX(421), 540, FX.FONT(700, 18), GOLD);
+    txt(ctx, 'THE LEGEND', YX(421), 540, FX.FONT(700, 18), '#7a2a24');
     // the chronicles land in the 11th century
     const ch = since(t, 'chronicles');
     if (ch > 0) { const s = slam(ch); ctx.save(); ctx.translate(YX(1050), 360); ctx.scale(s, s); ctx.rotate(-.05);
       shape(ctx, '#efe2c0', 4, rect(-60, -50, 120, 100, 3)); for (const yy of [-50, 50]) shape(ctx, '#c9b48a', 4, ellipse(0, yy, 66, 12));
       for (let i = 0; i < 4; i++) line(ctx, [[-40, -24 + i * 16], [40 - (i % 2) * 18, -24 + i * 16]], 3, 'rgba(70,64,58,.5)'); ctx.restore();
-      ctx.globalAlpha = clamp((ch - .2) / .3); txt(ctx, 'CHRONICLES', YX(1050), 540, FX.FONT(700, 18), GOLD); txt(ctx, '11th CENTURY', YX(1050), 562, FX.FONT(600, 14), '#efe6d0'); ctx.globalAlpha = 1; }
+      ctx.globalAlpha = clamp((ch - .2) / .3); txt(ctx, 'CHRONICLES', YX(1050), 540, FX.FONT(700, 18), '#7a2a24'); txt(ctx, '11th CENTURY', YX(1050), 562, FX.FONT(600, 14), INK); ctx.globalAlpha = 1; }
     // the 600-year gap
     const gp = since(t, 'more');
     if (gp > 0) { const k = ease.inOut(clamp(gp / 1.2)), x0 = YX(421) + 70, x1 = lerp(x0, YX(1050) - 70, k);
-      ctx.save(); ctx.setLineDash([14, 10]); line(ctx, [[x0, 300], [x1, 300]], 5, '#efe6d0'); ctx.restore();
-      if (k > .98) shape(ctx, '#efe6d0', 0, poly([[x1 + 18, 300], [x1 - 4, 288], [x1 - 4, 312]]));
+      ctx.save(); ctx.setLineDash([14, 10]); line(ctx, [[x0, 300], [x1, 300]], 5, '#7a2a24'); ctx.restore();
+      if (k > .98) shape(ctx, INK, 0, poly([[x1 + 18, 300], [x1 - 4, 288], [x1 - 4, 312]]));
       const lk = since(t, 'later'); if (lk > 0) { const s = FX.settle(clamp(lk / .3)); ctx.save(); ctx.translate((x0 + YX(1050) - 70) / 2, 250); ctx.scale(s, s); FX.bigText(ctx, '600+ YEARS LATER', 0, 0, 44, { color: GOLD }); ctx.restore(); } }
     // the church in the story didn't exist until the 1100s
     const cg = since(t, 'church');
     if (cg > 0) { ctx.globalAlpha = clamp(cg / .3); churchIcon(ctx, YX(421) + 4, 330, .6, true); ctx.globalAlpha = 1; txt(ctx, '?', YX(421) + 60, 230, FX.DISPLAY(50), RED); }
     const bu = since(t, 'built');
     if (bu > 0) { const rise = ease.out(clamp(bu / .6)); ctx.save(); ctx.beginPath(); ctx.rect(YX(1150) - 100, 0, 200, 430); ctx.clip(); churchIcon(ctx, YX(1150), 430 + (1 - rise) * 200, .9); ctx.restore(); }
-    const el = since(t, 'eleven'); if (el > 0) { ctx.globalAlpha = clamp(el / .25); txt(ctx, 'CHURCH BUILT', YX(1150), 540, FX.FONT(700, 18), GOLD); txt(ctx, '1100s', YX(1150), 562, FX.FONT(600, 14), '#efe6d0'); ctx.globalAlpha = 1; }
+    const el = since(t, 'eleven'); if (el > 0) { ctx.globalAlpha = clamp(el / .25); txt(ctx, 'CHURCH BUILT', YX(1150), 540, FX.FONT(700, 18), '#7a2a24'); txt(ctx, '1100s', YX(1150), 562, FX.FONT(600, 14), INK); ctx.globalAlpha = 1; }
     ctx.restore();
-    FX.vignette(ctx, 640, 380, .5);
+    vig(ctx, 640, 380, .5);
     FX.dateTag(ctx, 'WHERE THE LEGEND COMES FROM');
   }
 
   // ---------- s7: the real evidence is a letter ----------
   function s7(ctx, lt, dur, t) {
-    FX.darkBg(ctx, '#2f2a26');
+    deskBg(ctx, t);
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.06), 640, 370);
     const sl = FX.approach(t, A.real, 1400, 640, .14), cr = since(t, 'letter');
     ctx.save(); ctx.translate(sl, 380); ctx.rotate(-.04);
@@ -295,13 +355,13 @@
     ctx.restore();
     ctx.restore();
     FX.caption(ctx, 'THE REAL EVIDENCE: A LETTER', lt, .3);
-    FX.vignette(ctx, 640, 380, .45);
+    vig(ctx, 640, 380, .45);
   }
 
   // ---------- s8: c. 537 — Cassiodorus, a Roman official in Ravenna, writes to the people of the lagoon ----------
   function mosaicWall(ctx) {
-    shape(ctx, '#1f4a44', 0, rect(-300, -300, 2000, 1000));
-    const r = rng(11); for (let y = -300; y < 640; y += 16) for (let x = -300; x < 1700; x += 16) { const v = r(); if (v < .5) continue; ctx.fillStyle = v < .7 ? 'rgba(232,193,74,.22)' : v < .85 ? 'rgba(40,110,100,.5)' : 'rgba(255,255,255,.06)'; ctx.fillRect(x + 1, y + 1, 14, 14); }
+    shape(ctx, '#3a8478', 0, rect(-300, -300, 2000, 1000));
+    const r = rng(11); for (let y = -300; y < 640; y += 16) for (let x = -300; x < 1700; x += 16) { const v = r(); if (v < .5) continue; ctx.fillStyle = v < .7 ? 'rgba(240,200,80,.35)' : v < .85 ? 'rgba(60,150,130,.6)' : 'rgba(255,255,255,.14)'; ctx.fillRect(x + 1, y + 1, 14, 14); }
     for (const x of [140, 1140]) { shape(ctx, '#e9dcc0', 5, rect(x - 30, 100, 60, 540)); shape(ctx, '#c9a14a', 4, rect(x - 44, 80, 88, 26, 3)); }
     shape(ctx, null, 0, c => c);
     for (let i = 0; i < 5; i++) { const x = 300 + i * 170; ctx.save(); ctx.globalAlpha = .5; shape(ctx, '#e8c14a', 3, circle(x, 140, 18)); ctx.restore(); }
@@ -311,6 +371,8 @@
   function s8(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.02, 1.1), 600, 400);
     mosaicWall(ctx);
+    for (const x of [300, 900]) { const fl = 1 + Math.sin(t * 9 + x) * .06; line(ctx, [[x, 0], [x, 150]], 3); shape(ctx, '#c9a14a', 4, ellipse(x, 170, 40, 16)); glow(ctx, x + 30, 150, 220 * fl, 'rgba(255,210,130,.45)'); shape(ctx, '#ffd27a', 2.5, smooth([[x + 30, 166], [x + 24, 152], [x + 30, 132], [x + 36, 152]])); }
+    for (let i = 0; i < 5; i++) shape(ctx, ['#e9dcc0', '#d8c8a0', '#efe2c0'][i % 3], 3.5, ellipse(980 + (i % 3) * 30, 600 - Math.floor(i / 3) * 26, 60, 14));
     const wr = since(t, 'writes'), writing = wr > 0, X = 560, Y = 690, S = .4;
     const qx = writing ? Math.sin(wr * 14) * 28 : 0;
     fig(ctx, X, Y, S, P('cassiodorus', 'roman', { hands: { L: [-90, -560], R: [70 + qx, -560 + Math.abs(Math.sin(wr * 7)) * (writing ? 12 : 0)] }, handShape: { R: 'fist' }, lean: .08,
@@ -323,7 +385,7 @@
     ctx.restore();
     card(ctx, [['CASSIODORUS', FX.DISPLAY(30)], ['ROMAN OFFICIAL, RAVENNA', FX.FONT(600, 18)]], 1000, 220, since(t, 'cass') - .1, 380);
     const lg = since(t, 'lagoon1'); if (lg > 0) { const s = slam(lg); ctx.save(); ctx.translate(980, 470); ctx.scale(s, s); ctx.rotate(-.03); FX.paperDoc(ctx, 0, 0, 380, 120, { lines: 0, draw: c => { txt(c, 'TO THE PEOPLE', 0, -18, FX.DISPLAY(28)); txt(c, 'OF THE LAGOON', 0, 18, FX.DISPLAY(28)); } }); ctx.restore(); }
-    FX.vignette(ctx, 640, 380, .45);
+    vig(ctx, 640, 380, .45);
     FX.dateTag(ctx, 'RAVENNA, c. AD 537');
   }
 
@@ -335,18 +397,21 @@
     rows.forEach(([s, k, f, col], i) => { if (k <= 0) return; ctx.globalAlpha = clamp(k / .25); txt(ctx, s, -w / 2 + 34 + (1 - ease.out(clamp(k / .3))) * 20, -h / 2 + 118 + i * 44, f || FX.FONT(700, 24), col || INK, 'left'); ctx.globalAlpha = 1; });
     ctx.restore(); }
   function s9(ctx, lt, dur, t) {
-    FX.darkBg(ctx, '#2c2723');
+    deskBg(ctx, t);
     const push = since(t, 'describes'), z = push > 0 ? lerp(1, 1.18, ease.inOut(clamp(push / 1.2))) : 1;
     ctx.save(); cam(ctx, z, push > 0 ? lerp(640, 470, ease.inOut(clamp(push / 1.2))) : 640, push > 0 ? lerp(370, 420, ease.inOut(clamp(push / 1.2))) : 370);
     letterCard(ctx, 400, 370, [['WANTED, SHIPPED:', since(t, 'wants'), FX.FONT(700, 20), '#7a2a24'], ['• WINE', since(t, 'wine')], ['• OIL', since(t, 'oil')], ['', -1], ['HOW THEY LIVE:', since(t, 'describes'), FX.FONT(700, 20), '#7a2a24']]);
     // the boat on the lagoon, loading the order
+    ctx.fillStyle = 'rgba(0,0,0,.3)'; ctx.fillRect(712, 168, 520, 470); shape(ctx, '#f3e8cc', 4, rect(700, 156, 520, 470, 6));
+    ctx.save(); ctx.beginPath(); ctx.rect(716, 172, 488, 438); ctx.clip(); shape(ctx, grad(ctx, 0, 172, 0, 520, [[0, '#8fd0ec'], [1, '#fbe6be']]), 0, rect(716, 172, 488, 438)); clouds(ctx, t, [240, 280], .9); farLayer(ctx, 516, t, { islands: [[800, .4], [1120, .35]] });
     shape(ctx, V.WATER, 4, c => { c.moveTo(700, 520); for (let x = 700; x <= 1220; x += 30) c.lineTo(x, 520 + Math.sin(x * .03 + t * 1.6) * 5); c.lineTo(1220, 640); c.lineTo(700, 640); c.closePath(); });
     const bob = Math.sin(t * 1.6) * 4;
     boat(ctx, 960, 524 + bob, 1.2, Math.sin(t * 1.3) * .02, c => {
       [['wine', -40, '#7a1f2a'], ['oil', 40, '#c9a14a']].forEach(([k, dx, col]) => { const d = since(t, k); if (d <= 0) return; const h = FX.dropBounce(d, 360, .25); amphora(c, dx, -76 - h, 1, col); }); });
-    [['wine', 920, 'WINE'], ['oil', 1010, 'OIL']].forEach(([k, x, s]) => { const d = since(t, k); if (d > .4) { ctx.globalAlpha = clamp((d - .4) / .2); txt(ctx, s, x, 600, FX.FONT(700, 18), '#efe6d0'); ctx.globalAlpha = 1; } });
     ctx.restore();
-    FX.vignette(ctx, 640, 380, .45);
+    [['wine', 920, 'WINE'], ['oil', 1010, 'OIL']].forEach(([k, x, s]) => { const d = since(t, k); if (d > .4) { ctx.globalAlpha = clamp((d - .4) / .2); txt(ctx, s, x, 650, FX.FONT(700, 20), INK); ctx.globalAlpha = 1; } });
+    ctx.restore();
+    vig(ctx, 640, 380, .45);
     FX.dateTag(ctx, 'THE LETTER, c. AD 537');
   }
 
@@ -360,7 +425,7 @@
     shape(ctx, '#6f7a3a', 4, rect(x - w / 2 - 6, y - 78, w + 12, 18, 6)); }
   function s10(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.06), 640, 380);
-    sceneSky(ctx); for (const [x, y] of [[200, 140], [980, 110]]) shape(ctx, 'rgba(255,255,255,.7)', 0, smooth([[x - 80, y], [x - 30, y - 26], [x + 40, y - 30], [x + 90, y], [x, y + 12]]));
+    sceneSky(ctx, undefined, undefined, 515, t); for (const [x, y] of []) shape(ctx, 'rgba(255,255,255,.7)', 0, smooth([[x - 80, y], [x - 30, y - 26], [x + 40, y - 30], [x + 90, y], [x, y + 12]]));
     water(ctx, 520, t);
     const wv = clamp((since(t, 'woven') + .1) / 1.2);
     wattleIsland(ctx, 520, 540, 560, wv, t);
@@ -377,14 +442,15 @@
       shape(ctx, null, 4, circle(ring[0], ring[1], 9)); }
     ctx.restore();
     if (t < A.boats) FX.caption(ctx, 'GROUND HELD TOGETHER WITH WOVEN BRANCHES', lt, .9); else FX.caption(ctx, 'BOATS TIED TO THE WALLS, LIKE ANIMALS', since(t, 'boats'), .7);
-    FX.vignette(ctx, 640, 380, .35);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .35);
     FX.dateTag(ctx, 'THE LAGOON, c. AD 537');
   }
 
   // ---------- s11: rich and poor eat the same fish ----------
   function s11(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.05), 640, 380);
-    sceneSky(ctx, '#a8d0e0', '#f4e0b4'); water(ctx, 560, t); shape(ctx, '#b9a46e', 4, smooth([[120, 600], [300, 520], [980, 520], [1160, 600], [640, 640]]));
+    sceneSky(ctx, '#92d2ee', '#f8e6bc', 555, t); water(ctx, 560, t); shape(ctx, '#b9a46e', 4, smooth([[120, 600], [300, 520], [980, 520], [1160, 600], [640, 640]]));
     const sm = since(t, 'same'), up = k => ease.out(clamp(k / .3));
     const lift = up(sm);
     fig(ctx, 420, 600, .33, P('elder', 'tunicElder', { hands: { L: [-130, -470], R: [lerp(150, 240, lift), lerp(-470, -900, lift)] }, handShape: { R: 'fist' }, face: { brows: 'up', mouth: 'smile', look: [.5, -.2], eyes: blink(t, 46.6) }, breathe: breathe(t) }));
@@ -394,13 +460,14 @@
     ctx.restore();
     strip(ctx, 'RICH', 420, 110, since(t, 'rich'), { px: 34 }); strip(ctx, 'POOR', 860, 110, since(t, 'poor'), { px: 34 });
     FX.caption(ctx, 'EVERYONE EATS THE SAME FISH', since(t, 'same'), .3);
-    FX.vignette(ctx, 640, 380, .35);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .35);
   }
 
   // ---------- s12: they sell one thing — salt ----------
   function s12(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.06), 640, 400);
-    sceneSky(ctx, '#a8d0e0', '#f6e6c0'); shape(ctx, '#b9a46e', 0, rect(-200, 420, 1700, 400));
+    sceneSky(ctx, '#92d2ee', '#fbecc6', 420, t); shape(ctx, '#b9a46e', 0, rect(-200, 420, 1700, 400));
     for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { const x = 140 + c * 250 + r * 30, y = 450 + r * 80; shape(ctx, '#cfe3e6', 4, poly([[x, y], [x + 220, y], [x + 230, y + 62], [x - 10, y + 62]])); ctx.save(); ctx.globalAlpha = .7; for (let i = 0; i < 5; i++) shape(ctx, '#fff', 0, circle(x + 30 + i * 40, y + 30 + (i % 2) * 10, 5)); ctx.restore(); }
     // she rakes the crystals into a heap
     const rk = Math.sin(t * 3) * .5 + .5;
@@ -413,7 +480,7 @@
     ctx.restore();
     const on = since(t, 'one'); if (on > 0) { const s = FX.settle(clamp(on / .3)); ctx.save(); ctx.translate(250, 200); ctx.scale(s, s); FX.bigText(ctx, '1 EXPORT', 0, 0, 60, { color: GOLD }); ctx.restore(); }
     FX.caption(ctx, 'THEY SELL ONE THING: SALT', since(t, 'salt'), .2);
-    FX.vignette(ctx, 640, 380, .35);
+    vig(ctx, 640, 380, .35);
   }
 
   // ---------- s13: "after the manner of water-fowl" (Hodgkin's wording) ----------
@@ -423,7 +490,7 @@
     const wa = flying ? Math.sin(flap) * .9 : .1; ctx.save(); ctx.translate(-6, -8); ctx.rotate(-wa); shape(ctx, '#a8865a', 3.5, ellipse(-14, -8, 22, 10, -.3)); ctx.restore(); ctx.restore(); }
   function s13(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.05), 640, 400);
-    sceneSky(ctx, '#f0c89a', '#f6e2b8'); water(ctx, 540, t);
+    sceneSky(ctx, '#f6c48c', '#fbe6be', 535, t); water(ctx, 540, t);
     for (const [x, s] of [[230, .8], [560, 1], [930, .85]]) { shape(ctx, '#8a7a52', 4, ellipse(x, 548, 150 * s, 26 * s)); hut(ctx, x, 540, s); }
     for (const [x, y] of [[360, 540], [760, 546], [1100, 548]]) { shape(ctx, '#a8865a', 3, ellipse(x, y + 4, 30, 9)); }                  // nests on the mud
     const wf = since(t, 'waterfowl') - .3;
@@ -434,13 +501,14 @@
       ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.fillRect(-440 + 8, -110 + 10, 880, 220); shape(ctx, '#f1e6c8', 4, rect(-440, -110, 880, 220, 3));
       txt(ctx, '“…after the manner', 0, -42, `italic 700 46px Georgia, serif`); txt(ctx, 'of water-fowl.”', 0, 14, `italic 700 46px Georgia, serif`);
       txt(ctx, 'CASSIODORUS, VARIAE 12.24 · TRANS. T. HODGKIN, 1886', 0, 74, FX.FONT(700, 16), '#7a2a24'); ctx.restore(); }
-    FX.vignette(ctx, 640, 380, .4);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .4);
   }
 
   // ---------- s14: so there are already people here ----------
   function s14(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.08), 640, 420);
-    sceneSky(ctx, '#d8a070', '#f4d49a'); glow(ctx, 900, 420, 400, 'rgba(255,220,150,.4)'); water(ctx, 500, t);
+    sceneSky(ctx, '#f0a868', '#fadca0', 495, t); glow(ctx, 900, 420, 400, 'rgba(255,220,150,.4)'); water(ctx, 500, t);
     const isl = [[180, 520, .55], [430, 540, .7], [700, 516, .5], [960, 536, .65], [1180, 520, .5]];
     for (const [x, y, s] of isl) { shape(ctx, '#8a7a52', 4, ellipse(x, y + 8, 170 * s, 28 * s)); hut(ctx, x, y, s); }
     for (const [x, ph] of [[430, 0], [960, 2]]) for (let i = 0; i < 3; i++) { const k = ((t * .4 + i / 3 + ph) % 1); ctx.save(); ctx.globalAlpha = .4 * (1 - k); shape(ctx, '#efe6d0', 0, circle(x + 10 + Math.sin(k * 5) * 10, 430 - k * 160, 10 + k * 18)); ctx.restore(); }
@@ -450,13 +518,14 @@
     ctx.restore();
     const h = since(t, 'here'); if (h > 0) { const y = 330 - FX.dropBounce(h, 260, .3); ctx.save(); ctx.translate(640, y); shape(ctx, RED, 4, c => { c.moveTo(0, 0); c.bezierCurveTo(-34, -40, -30, -80, 0, -80); c.bezierCurveTo(30, -80, 34, -40, 0, 0); }); shape(ctx, '#fff', 3, circle(0, -54, 11)); ctx.restore(); }
     strip(ctx, 'PEOPLE ALREADY LIVE HERE', 640, 120, since(t, 'already') - .1, { px: 40 });
-    FX.vignette(ctx, 640, 380, .4);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .4);
     FX.dateTag(ctx, 'THE LAGOON, c. AD 537');
   }
 
   // ---------- s15–s16: the mainland gets worse; 568, the Lombards cross the Alps ----------
-  function storm(ctx, k, t) { if (k <= 0) return; ctx.save(); ctx.globalAlpha = .55 * k;
-    shape(ctx, '#2a2a34', 0, c => { c.moveTo(0, 0); c.lineTo(1100, 0); c.lineTo(1100, 150); c.lineTo(840, 300); c.lineTo(700, 330); c.lineTo(600, 330); c.lineTo(500, 450); c.lineTo(420, 600); c.lineTo(0, 600); c.closePath(); }); ctx.restore();
+  function storm(ctx, k, t) { if (k <= 0) return; ctx.save(); ctx.globalAlpha = .3 * k;
+    shape(ctx, '#4a4a5c', 0, c => { c.moveTo(0, 0); c.lineTo(1100, 0); c.lineTo(1100, 150); c.lineTo(840, 300); c.lineTo(700, 330); c.lineTo(600, 330); c.lineTo(500, 450); c.lineTo(420, 600); c.lineTo(0, 600); c.closePath(); }); ctx.restore();
     for (let i = 0; i < 4; i++) { const x = 120 + i * 220 + Math.sin(t * .5 + i) * 10, y = 170 + (i % 2) * 90; ctx.save(); ctx.globalAlpha = k; shape(ctx, '#8a8a9c', 3.5, smooth([[x - 70, y], [x - 40, y - 34], [x + 10, y - 44], [x + 60, y - 26], [x + 74, y + 4], [x, y + 14]])); ctx.restore(); } }
   function s15(ctx, lt, dur, t) { italyMap(ctx, lt, dur, t, { townK: () => 1, tag: 'THE MAINLAND, 500s', over: c => storm(c, clamp((since(t, 'mainland') + .2) / 1.4), t) }); }
   function s16(ctx, lt, dur, t) {
@@ -474,7 +543,7 @@
   function s17(ctx, lt, dur, t) {
     const fx = T.keys(t, [[A.towns, 520], [A.whole, 620], [A.good + .6, 1500]]);
     ctx.save(); cam(ctx, 1, fx, 380);
-    sceneSky(ctx, '#7a5a5a', '#e8a868'); glow(ctx, 400, 480, 600, 'rgba(255,120,40,.25)');
+    sceneSky(ctx, '#c4866a', '#f6c084', 0, t); glow(ctx, 400, 480, 600, 'rgba(255,120,40,.25)');
     shape(ctx, '#9a8a5a', 4, c => { c.moveTo(-400, 470); c.quadraticCurveTo(300, 420, 900, 470); c.quadraticCurveTo(1300, 500, 1340, 600); c.lineTo(1340, 1000); c.lineTo(-400, 1000); c.closePath(); });
     [[100, 'fall'], [330, 'one2'], [560, 'after'], [800, 'another']].forEach(([x, k]) => romanTown(ctx, x, 480, .8, t, since(t, k)));
     water(ctx, 600, t, 1300, 2400); for (let x = 1300; x < 2300; x += 46) { line(ctx, [[x, 600], [x - 8, 520 - (x % 3) * 14]], 4, '#6f7a3a'); }
@@ -490,14 +559,14 @@
       if (h === 'elder') { shape(ctx, '#c9b48a', 3.5, ellipse(Math.min(x, 1760) - 34, y - 150, 26, 20)); } });
     ctx.restore();
     FX.caption(ctx, t < A.whole ? 'THE OLD ROMAN TOWNS FALL' : 'WHOLE COMMUNITIES MOVE INTO THE MARSH', t < A.whole ? lt : since(t, 'whole'), .3);
-    FX.vignette(ctx, 640, 380, .45);
+    vig(ctx, 640, 380, .45);
     FX.dateTag(ctx, 'AFTER 568');
   }
 
   // ---------- s18: why a marsh? because of what it does to an army ----------
   function s18(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.08), 640, 420);
-    sceneSky(ctx, '#a8b8c0', '#e8d6a8');
+    sceneSky(ctx, '#a8d0e4', '#f2e4bc', 515, t);
     shape(ctx, '#9a8a5a', 4, c => { c.moveTo(-200, 520); c.lineTo(480, 520); c.quadraticCurveTo(520, 560, 540, 1000); c.lineTo(-200, 1000); c.closePath(); });
     const bc = since(t, 'because'), x = bc > 0 ? Math.min(250 + bc * 230, 690) : 250, sink = clamp((x - 520) / 170) * 150;
     const struggle = sink > 0 ? Math.sin(t * 7) * .08 : 0;
@@ -508,7 +577,8 @@
     ctx.restore();
     strip(ctx, 'WHY A MARSH?', 640, 120, since(t, 'why'), { px: 52 });
     if (since(t, 'army1') > 0) FX.caption(ctx, 'ARMIES SINK IN THE MUD', since(t, 'army1'), .1);
-    FX.vignette(ctx, 640, 380, .4);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .4);
   }
 
   // ---------- s19: [MAP] the lagoon, 810 — Pepin takes the outer islands; the arrow stalls at the shallows ----------
@@ -517,7 +587,7 @@
   const lidoY = x => { for (let i = 0; i < LIDO.length - 1; i++) if (x <= LIDO[i + 1][0]) return lerp(LIDO[i][1], LIDO[i + 1][1], (x - LIDO[i][0]) / (LIDO[i + 1][0] - LIDO[i][0])); return 100; };
   const PLACES = { chioggia: [270, 500], pellestrina: [470, 412], malamocco: [600, 340], rivo: [560, 230], torcello: [800, 130] };
   function lagoonMap(ctx, lt, dur, t, o) {
-    FX.darkBg(ctx, '#2c2723');
+    deskBg(ctx, t);
     ctx.save(); const zz = o.zoom ? o.zoom(lt) : FX.push(lt, dur, 1, 1.06), fk = o.zoom ? clamp((zz - 1) / .6) : 0; cam(ctx, zz, lerp(640, 650, fk), lerp(380, 300, fk));
     ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(MX + 10, MY + 12, 1100, 600);
     ctx.save(); ctx.translate(MX, MY); shape(ctx, '#e8dcb8', 4, rect(0, 0, 1100, 600, 4));
@@ -537,7 +607,7 @@
     txt(ctx, 'MAINLAND', 180, 120, FX.FONT(700, 20), '#4a5a3a'); txt(ctx, 'ADRIATIC SEA', 880, 470, `italic 600 24px Georgia, serif`, '#2f5d6b');
     if (o.inner) o.inner(ctx);
     ctx.restore(); if (o.over) o.over(ctx); ctx.restore(); ctx.restore();
-    FX.vignette(ctx, 640, 380, .5);
+    vig(ctx, 640, 380, .5);
     FX.dateTag(ctx, o.tag || 'THE LAGOON, AD 810');
   }
   function flag(ctx, x, y, k, col = '#2f4f8a') { if (k <= 0) return; const s = FX.settle(clamp(k / .3)); ctx.save(); ctx.translate(x, y); ctx.scale(s, s); line(ctx, [[0, 0], [0, -46]], 4); shape(ctx, col, 3, poly([[0, -46], [30, -38], [0, -28]])); ctx.restore(); }
@@ -564,7 +634,7 @@
     const mid = since(t, 'middle'), pl = since(t, 'pulls');
     const fx = T.keys(t, [[A.his, 560], [A.middle - .3, 600], [A.middle + .6, 760], [A.pulls + .2, 620]]);
     ctx.save(); cam(ctx, 1.02, fx, 380);
-    sceneSky(ctx, '#a8b8c8', '#efdcb0');
+    sceneSky(ctx, '#a8d0e8', '#f6e6be', 415, t);
     shape(ctx, '#b9dde2', 0, rect(-300, 420, 2000, 200)); for (const [x, s] of [[1050, 1], [1150, .7], [1240, .8]]) { shape(ctx, '#a99a6a', 3, ellipse(x, 430, 60 * s, 8)); hut(ctx, x, 428, .3 * s); }
     shape(ctx, '#8a7a52', 0, rect(-300, 470, 2000, 600));
     for (const [x, y, w] of [[300, 520, 120], [700, 560, 180], [1000, 500, 140], [520, 640, 160], [1200, 600, 200]]) shape(ctx, '#9fc4cc', 3, ellipse(x, y, w, 14));
@@ -579,7 +649,8 @@
       face: { brows: turned ? 'strain' : 'strain', mouth: turned ? 'o' : 'flat', look: turned ? [-.6, 0] : mid > 0 ? [.9, -.2] : [.6, .2], eyes: blink(t, A.his + 1.1) }, breathe: breathe(t) }), { mirror: turned });
     ctx.restore();
     FX.caption(ctx, pl > 0 ? 'HE PULLS BACK' : "HIS ARMY CAN'T CROSS THE SHALLOWS", pl > 0 ? pl : lt, .3);
-    FX.vignette(ctx, 640, 380, .4);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .4);
     FX.dateTag(ctx, 'AD 810');
   }
 
@@ -602,13 +673,14 @@
     card(ctx, [['LATER VENETIAN WRITERS', FX.FONT(700, 22)]], 980, 130, since(t, 'venetian') - .2, 390);
     FX.stamp(ctx, 'NEUTRAL?', 1000, 300, nt, { color: RED, size: 40, rot: .1 });
     FX.stamp(ctx, 'OUTCOME: FRANKS WITHDRAW', 1000, 500, since(t, 'doubt') - .1, { color: '#2f7a46', size: 34, rot: -.06 });
-    FX.vignette(ctx, 640, 380, .45);
+    vig(ctx, 640, 380, .45);
   }
 
   // ---------- s22: the lagoon has its first job — it's a wall ----------
   function s22(ctx, lt, dur, t) {
-    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#2f4a6a'], [.6, '#9ab0b8'], [1, '#e8d6a8']]), 0, rect(0, 0, W, H));
+    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#7ab4dc'], [.6, '#cfe2e6'], [1, '#f6e4b8']]), 0, rect(0, 0, W, H));
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.05), 640, 420);
+    sunGlow(ctx, 1000, 160); clouds(ctx, t); birds(ctx, t, 4, 180); farLayer(ctx, 540, t);
     const wl = since(t, 'wall2');
     // battlements rise out of the waves along the whole water line
     if (wl > 0) { const rise = FX.settle(clamp(wl / .45)) * 90; for (let x = -100; x < 1400; x += 120) { shape(ctx, '#b8ad96', 4.5, rect(x, 560 - rise, 80, rise + 20)); for (let y = 560 - rise + 26; y < 580; y += 26) line(ctx, [[x, y], [x + 80, y]], 2.5, 'rgba(29,26,23,.3)'); } }
@@ -617,7 +689,8 @@
       FX.paperDoc(ctx, 0, 0, 230, 120, { lines: 0, draw: c => { txt(c, 'JOB #1', 0, -18, FX.DISPLAY(40)); txt(c, 'WALL', 0, 26, FX.DISPLAY(34), RED); } }); ctx.restore(); }
     ctx.restore();
     strip(ctx, "IT'S A WALL", 640, 110, wl, { px: 56, color: RED });
-    FX.vignette(ctx, 640, 380, .4);
+    reedsFG(ctx, t);
+    vig(ctx, 640, 380, .4);
   }
 
   // ---------- s23: the leaders move the capital behind it, to Rivo Alto — the Rialto ----------

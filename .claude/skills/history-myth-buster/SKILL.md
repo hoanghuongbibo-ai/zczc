@@ -86,6 +86,15 @@ Then wait for the assets + voice-over (or "run"). When they come, go to the prot
 - **No copying** of reference footage, real logos or mastheads. Newspapers get made-up names; a real paper named in
   narration goes in a caption, not as a fake masthead. Real people who are only mentioned can be a silhouette.
 
+- **Bright, vivid, full frames (user feedback, Venice Job one — LOCKED).** The first Venice render was "too dark" and
+  too simple. Default now: `window.TOON_FINISH = { grain: .02, vignette: .2 }` on the page; per-shot vignettes at
+  ~0.3× (`vig` in `venice/js/job-one.js`); maps, documents and timelines sit on a bright desk (`deskBg`, with props at
+  the edges) instead of `FX.darkBg`; outdoor shots use `sceneSky(ctx, top, bot, horizonY, t)` = sun glow + drifting
+  clouds + birds + a hazy distant shore with islands (`farLayer`), plus blurred foreground reeds (`reedsFG`); interiors
+  get furniture, lamps and light shafts (`scriptorium`, `mosaicWall`, `arcade`). No empty background areas: every
+  shot needs a foreground, a middle ground and a background. Final pass: `ffmpeg -vf
+  "eq=brightness=0.025:contrast=1.04:saturation=1.22"`.
+
 ## Motion rules (locked)
 
 - Every move has a story reason and believable physics: use `FX.settle`, `FX.ring`, `FX.pendulum`, `FX.dropBounce`,

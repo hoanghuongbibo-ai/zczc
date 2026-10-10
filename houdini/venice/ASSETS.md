@@ -11,7 +11,7 @@ Default if missing: I draw my own version.
 19. Gros, *Bonaparte at the Pont d'Arcole* (1796) — Job four
 20. Ludovico Manin portrait — Job four
 26. Bell tower rubble photos, July 1902 — Job two
-35. 1951 census (old city) + yearly resident count — population chart
+35. Venice historic centre only (centro storico — the islands, not Mestre / the mainland): 1951 census (~175,000) + yearly resident count to 2025 (47,995, Venessia.com / Comune di Venezia) — population chart
 36. Tourist beds vs residents (city data) — Job five
 
 ## Needed · R (6)

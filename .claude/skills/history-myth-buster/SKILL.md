@@ -172,3 +172,10 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   `chronicler` who tells the "official" legend, and `Venice.lagoon` — the water as a character that wears a hat per job,
   `Venice.hats.helmet` for job one). Export with paths relative to `houdini/` (`venice/…`); `tools/_at.mjs` takes paths
   relative to the repo root (`houdini/venice/…`). Mirrored figures: `face.look` x is flipped too (+x = screen-left).
+- **Venice Job one** (`venice/job-one.html`, `js/job-one.js`, 23 shots, 108.6 s): reusable pieces there — `italyMap`
+  (c. 500 map with town/overlay hooks), `lagoonMap` (lagoon with lidi, inlets, shallows, Rivo Alto; `PLACES`),
+  `arrowPath`, `flag`, `hut`, `boat`, `amphora`, `fish`, `flames`, `warrior` (silhouette with spear + shield), `walk`
+  (walk-cycle feet/hands), `card`, `scriptorium`, `mosaicWall`. More cast in `cast-venice.js`: `cassiodorus`/`roman`,
+  `fisher`/`tunicPoor`, `elder`/`tunicElder`, `villagerW`/`dressPlain`, `pepin`/`king`. A recording that already has
+  word times from `asr.py` and matches the script can skip the aligner: write the anchors straight into the show file.
+- A cloak/`front` layer drawn over the arms hides the hands — keep it to one shoulder when the hands must act.

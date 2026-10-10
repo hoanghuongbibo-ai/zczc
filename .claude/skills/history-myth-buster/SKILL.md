@@ -39,8 +39,11 @@ research that I can't make myself or that makes the shot accurate. Group and ord
 6. **Data & charts sources** — the tables/graphs behind any number I'll chart (census tables, tide records, budgets),
    when the source log only gives the headline figure.
 
-For each item: where it appears (chapter / script line), *needed* or *nice to have*, and the default I'll use if it
-doesn't come, so a missing item never blocks the build. Mark rights: public domain / user must own the rights.
+For each item: where it appears (chapter / script line) and the default I'll use if it doesn't come, so a missing item
+never blocks the build. **Deliver the list filtered into 4 boxes (user's format): Needed · PD, Needed · R, Nice · PD,
+Nice · R** (PD = public domain, I can fetch it; R = shown on screen only if the user owns the rights — fine to send as
+drawing reference either way). Keep one running number per item so the user can reply "sending 1, 11, 24".
+Data / facts for charts count as PD (I redraw them). Within each box, keep the category order above.
 Add up to three **"make it pop" ideas** for this script (a running counter, a recurring gag, a reveal shot, a
 cliffhanger end card). Finish with:
 - one short line on what I'll build myself (cartoon cast, sets, diagrams, timelines, stamps, counters, maps, music, sfx),

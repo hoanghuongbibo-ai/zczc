@@ -1,59 +1,51 @@
-# Venice — asset order v2 (visual & research material)
+# Venice — asset order v3 (filtered: Needed/Nice × PD/R)
 
-N = needed · n = nice to have · PD = public domain (I can try to fetch) · R = you must own the rights to show it.
-Default in brackets = what I use if it doesn't come.
+PD = public domain, I can try to fetch it. R = on screen only if you own the rights; fine to send as drawing reference.
+Default if missing: I draw my own version.
 
-## 1. Key documents & newspapers
-1. N — Front page, 5 Nov 1966, the Venice flood (e.g. Il Gazzettino / Corriere della Sera). Job five. R for real pages; I recreate the layout with a made-up masthead. [generic 1960s front page]
-2. N — Front page, 14–15 July 1902, St Mark's bell tower collapse. Job two. PD. [generic 1902 page]
-3. n — Hodgkin 1886 *The Letters of Cassiodorus*, page with Variae 12.24. Job one, for the typeset look. PD. [Victorian book page]
-4. n — Treaty of Venice 1201 (fleet contract) text/facsimile. The bill, for the invoice prop. [invented contract layout]
-5. n — Byzantine chrysobull / gold seal of Alexios I. Job three. [generic gold-seal charter]
-6. n — Priuli's *I Diarii*, manuscript or 1912/1921 printed page. The letter. [diary page in my hand-lettering]
-7. n — Senate decree of 29 Mar 1516 (Ghetto). The filter. [decree on parchment, wording from source 15]
-8. n — Great Council abdication decree, 12 May 1797. Job four. [printed proclamation]
-9. n — Front pages, 3–4 Oct 2020, first MOSE raise. Job five. R. [modern front page]
-10. n — 2024 day-tripper fee ticket / QR and checkpoint sign. Job five. [designed ticket]
+## Needed · PD (9)
+2. Front page 14–15 July 1902, bell tower collapse — Job two
+11. Canaletto, *The Entrance to the Arsenal* (c. 1732) — Job three [ARTIFACT]
+12. Jacopo de' Barbari, *View of Venice* (1500) — The letter [ARTIFACT]
+18. Dandolo portrait (e.g. Doré engraving) — The bill
+19. Gros, *Bonaparte at the Pont d'Arcole* (1796) — Job four
+20. Ludovico Manin portrait — Job four
+26. Bell tower rubble photos, July 1902 — Job two
+35. 1951 census (old city) + yearly resident count — population chart
+36. Tourist beds vs residents (city data) — Job five
 
-## 2. Paintings, prints & old maps
-11. N — Canaletto, *The Entrance to the Arsenal* (c. 1732). Job three [ARTIFACT]. PD. [I fetch; else redraw]
-12. N — Jacopo de' Barbari, *View of Venice* (1500). The letter [ARTIFACT]. PD. [I fetch; else redraw]
-13. n — Gentile Bellini, *Procession in St Mark's Square* (1496): horses on the facade. The bill / close. PD.
-14. n — Francesco Guardi, *Il Ridotto*. Job four. PD.
-15. n — Delacroix, *Entry of the Crusaders into Constantinople* (1840) or Palma il Giovane's 1204 canvas: tone ref for the still frames. PD.
-16. n — Sabbadino lagoon map (1556) or another early lagoon map: island shapes for the 810 map. PD.
-17. n — 1846 lithograph of the lagoon rail bridge. Job four. PD.
+## Needed · R (6)
+1. Front page 5 Nov 1966, flood (Il Gazzettino / Corriere) — Job five
+24. St Mark's front with horse copies + square at dawn — recurring
+25. The four original horses, St Mark's museum — The bill / close
+27. Wooden foundation piles (digs / samples) — Job two cross-section
+28. Flood gates raised + builders' cut-away diagram — Job five
+31. Video: flood gates rising, Oct 2020 — Job five motion
 
-## 3. Portraits (to base the cartoons on), by screen time
-18. N — Enrico Dandolo (e.g. Doré engraving, Tintoretto school portraits). [elderly doge design, blind eyes, corno hat]
-19. N — Napoleon at 27 (Gros, *Bonaparte at the Pont d'Arcole*, 1796). [young-general design]
-20. N — Ludovico Manin (Castelli portrait). [last-doge design]
-21. n — Cassiodorus (Codex Amiatinus "Ezra" scribe, often linked to him). [Roman official design]
-22. n — Pepin of Italy (Carolingian miniature). [Frankish king design]
-23. n — Alexios I Komnenos (Vatican miniature). [Byzantine emperor design]
-24. — Priuli: no known portrait → I design a patrician banker. Robert C. Davis: living, so name card + book cover only.
+## Nice · PD (16)
+3. Hodgkin 1886, Variae 12.24 page — Job one
+4. 1201 Treaty of Venice text — The bill (invoice prop)
+6. Priuli, *I Diarii* page (manuscript or 1912 edition) — The letter
+7. Ghetto decree, 29 Mar 1516 — The filter
+8. Great Council decree, 12 May 1797 — Job four
+13. Gentile Bellini, *Procession in St Mark's Square* (1496) — horses
+14. Guardi, *Il Ridotto* — Job four
+15. Delacroix, *Entry of the Crusaders into Constantinople* (1840) — 1204 mood
+16. Sabbadino lagoon map (1556) — 810 map
+17. 1846 print of the railway bridge — Job four
+21. Cassiodorus ("Ezra" page, Codex Amiatinus) — Job one
+22. Pepin of Italy portrait — Job one
+23. Alexios I portrait — Job three
+37. List of flood-gate closures 2020–2025 — closure counter
+38. Highest-tides table (Venice tide office) — 1966 graph
+39. Source for "20–30 million visitors" — Job five
 
-## 4. Photos of places & objects
-25. N — San Marco facade with the horse copies + the square at dawn (recurring: cold open, 1204, close).
-26. N — The four original horses in the Museo di San Marco.
-27. N — Campanile rubble, July 1902 (PD) and the rebuilt tower.
-28. N — Venetian foundation piles: excavation photos / pile samples (Torelli paper, BBC piece): cross-section reference.
-29. N — MOSE gates raised (and a cut-away diagram from the consortium): Job five.
-30. n — Rialto Bridge, Salute, Arsenal gate today, Ghetto Nuovo campo + gate hinges, Lazzaretto Vecchio/Nuovo aerials, Ponte della Libertà aerial, Punta della Salute tide gauge, acqua alta walkways, fee turnstiles, crowds.
-31. n — Costume/props: 1200s Venetian galley + horse transport, crusader knight c. 1200 (Maciejowski Bible), corno ducale, Byzantine regalia, 6th-c. Lombard warrior, 1797 French uniform, bauta mask + tabarro, salt pans.
-
-## 5. Video clips (motion reference; on screen only if R)
-32. N — MOSE gates rising (Consorzio Venezia Nuova, Oct 2020): how the gates swing up.
-33. n — 1966 flood newsreel (RAI / Istituto Luce): how the surge moved.
-34. n — Traditional pile driving with the hand rammer (battipali): rhythm for the hammer beats.
-35. n — Acqua alta 2019 / crowd footage at the fee checkpoints.
-
-## 6. Data sources for charts
-36. N — 1951 census for the historic centre (≈174,808) + Venessia.com resident series: population chart, and backs the 175,000 line.
-37. N — Tourist beds vs residents (Comune di Venezia / OCIO data): backs that line.
-38. n — MOSE closure log 2020–2025 (each raise): closure counter.
-39. n — Punta della Salute highest-tides table (Centro Maree): 1966 tide graph.
-40. n — Visitor count source behind "20–30 million".
-
-Built by me: cast, sets, all maps, cross-section, counters, invoice, quarantine calendar, charts, gate diagram, music, sfx.
-Make-it-pop ideas and fact-check notes: unchanged from the first reply (lagoon-with-job-hats, horses' passport, growing invoice; horses 1977, 175,000 source, unsourced visitor/bed lines, "about six hundred years", tons vs tonnes).
+## Nice · R (8)
+5. Byzantine gold seal of Alexios I (museum photo) — Job three
+9. Front pages 3–4 Oct 2020, first gate raise — Job five
+10. 2024 day-tripper ticket + checkpoint sign — Job five
+29. Today's Rialto, Salute, Arsenal gate, Ghetto square, quarantine islands, rail bridge, tide gauge, flood walkways, checkpoints, crowds
+30. Costume/props: 1200s galley + horse ship, crusader c. 1200 (Maciejowski Bible is PD), doge's hat, Byzantine dress, Lombard warrior, 1797 French uniform, Carnival mask + cloak, salt pans
+32. Video: 1966 flood newsreel
+33. Video: traditional pile driving with a hand rammer
+34. Video: 2019 floods, checkpoint crowds

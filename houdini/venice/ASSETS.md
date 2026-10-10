@@ -11,8 +11,8 @@ Default if missing: I draw my own version.
 19. Gros, *Bonaparte at the Pont d'Arcole* (1796) — Job four
 20. Ludovico Manin portrait — Job four
 26. Bell tower rubble photos, July 1902 — Job two
-35. Venice historic centre only (centro storico — the islands, not Mestre / the mainland): 1951 census (~175,000) + yearly resident count to 2025 (47,995, Venessia.com / Comune di Venezia) — population chart
-36. Tourist beds vs residents (city data) — Job five
+35. Venice historic centre only (centro storico — the islands, not Mestre / the mainland): 1951 census figure (~175,000) + yearly resident count up to 2025 (47,995; Venessia.com count from city records) — population chart (Job five)
+36. Venice historic centre only (centro storico — the islands, not Mestre / the mainland): number of tourist beds (hotels + short-term rentals) vs number of residents, same year — City of Venice (Comune di Venezia) tourism data or OCIO Venezia — backs "the old city now has more tourist beds than residents" (Job five)
 
 ## Needed · R (6)
 1. Front page 5 Nov 1966, flood (Il Gazzettino / Corriere) — Job five
@@ -36,9 +36,9 @@ Default if missing: I draw my own version.
 21. Cassiodorus ("Ezra" page, Codex Amiatinus) — Job one
 22. Pepin of Italy portrait — Job one
 23. Alexios I portrait — Job three
-37. List of flood-gate closures 2020–2025 — closure counter
-38. Highest-tides table (Venice tide office) — 1966 graph
-39. Source for "20–30 million visitors" — Job five
+37. Venice lagoon flood gates (MOSE, at the three lagoon inlets): list of every closure, Oct 2020 – 2025 — closure counter (Job five)
+38. Venice tide gauge at Punta della Salute: table of the highest tides ever recorded (Venice city tide office, Centro Maree) — 1966 graph (Job five)
+39. Venice (historic centre, where the 2024 day-tripper fee applies): the source behind "20–30 million visitors a year" — Job five
 
 ## Nice · R (8)
 5. Byzantine gold seal of Alexios I (museum photo) — Job three

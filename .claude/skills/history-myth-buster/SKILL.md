@@ -43,7 +43,9 @@ For each item: where it appears (chapter / script line) and the default I'll use
 never blocks the build. **Deliver the list filtered into 4 boxes (user's format): Needed · PD, Needed · R, Nice · PD,
 Nice · R** (PD = public domain, I can fetch it; R = shown on screen only if the user owns the rights — fine to send as
 drawing reference either way). Keep one running number per item so the user can reply "sending 1, 11, 24".
-Data / facts for charts count as PD (I redraw them). Within each box, keep the category order above.
+Data / facts for charts count as PD (I redraw them). **Every item names its exact place and scope** (which city,
+which part of it, which years, which institution) — e.g. "Venice historic centre only, not Mestre / the mainland" —
+so the user never has to ask "of which city?". Within each box, keep the category order above.
 Add up to three **"make it pop" ideas** for this script (a running counter, a recurring gag, a reveal shot, a
 cliffhanger end card). Finish with:
 - one short line on what I'll build myself (cartoon cast, sets, diagrams, timelines, stamps, counters, maps, music, sfx),
@@ -158,3 +160,6 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   voice-over, so the first asset order (which listed voice files, the cold open and a sponsor decision) missed the point.
   List photos, paintings, video clips, newspapers, document scans, maps and data sources, each named exactly
   (artist + title, paper + date, archive), with where it's used, needed / nice to have, rights, and a default.
+- **Name the place and scope on every asset item** (user feedback, Venice): "1951 census for the old city" and "city
+  figures on tourist beds" left the user asking "of which city?". Write "Venice historic centre only (the islands, not
+  Mestre / the mainland)", plus years and the institution that publishes it.

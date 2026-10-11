@@ -254,7 +254,7 @@
     for (let i = 0; i < 3; i++) shape(ctx, '#e8b84a', 3.5, c => { const px = 920 + i * 140; c.moveTo(px - 40, 620); c.lineTo(px - 40, 470); c.arc(px, 470, 40, Math.PI, 0); c.lineTo(px + 40, 620); c.closePath(); });
     shape(ctx, grad(ctx, 0, 620, 0, 720, [[0, '#c8b8a0'], [1, '#a8987e']]), 0, rect(-200, 620, 1700, 200));
     belltower(ctx, 600, 620, .9, cl > 0 ? ease.in(clamp(cl / 1.1)) : 0, t);
-    if (cl > .2) { const k = clamp((cl - .2) / 2); for (let i = 0; i < 9; i++) { const a = Math.PI * (1 + i / 8), d = 120 + k * 260; ctx.save(); ctx.globalAlpha = .75 * (1 - k * .5); shape(ctx, '#e8dcc8', 3, circle(600 + Math.cos(a) * d * .9, 600 + Math.sin(a) * d * .5 - k * 80, 60 + k * 70)); ctx.restore(); } }
+    if (cl > .2) { const k = clamp((cl - .2) / 2); for (let i = 0; i < 9; i++) { const a = Math.PI * (1 + i / 8), d = 120 + k * 260; ctx.save(); ctx.globalAlpha = .7 * (1 - k * .5); ctx.filter = 'blur(3px)'; shape(ctx, '#ece2d0', 0, circle(600 + Math.cos(a) * d * .9, 600 + Math.sin(a) * d * .5 - k * 80, 60 + k * 70)); ctx.restore(); } }
     for (const [x, ph] of [[300, 0], [420, 1.2], [780, 2]]) { const fly = cl > 0 ? clamp(cl / .8) : 0; ctx.save(); ctx.translate(x + fly * 200, 640 - fly * 300); shape(ctx, '#9aa0aa', 3, ellipse(0, -14, 20, 12)); shape(ctx, '#8a909a', 3, circle(16, -26, 8)); ctx.restore(); }
     ctx.restore();
     if (yr > 0) { const s = slam(yr); ctx.save(); ctx.translate(1010, 300); ctx.rotate(.05); ctx.scale(s, s);
@@ -341,10 +341,14 @@
     farShore(ctx, 470, t);
     salute(ctx, 860, 520, .78);
     waterBand(ctx, 520, t); for (let i = 0; i < 5; i++) { ctx.save(); ctx.globalAlpha = .35; shape(ctx, '#fff6dc', 0, ellipse(760 + i * 40, 560 + i * 18, 70 - i * 8, 5)); ctx.restore(); }
-    // the clerk of the 1600s with his ledger, tallying
+    // the clerk of the 1600s with his ledger, tallying — on a stone quay
+    shape(ctx, '#d8ccb4', 4.5, rect(-200, 520, 760, 260)); for (let x = -200; x < 560; x += 70) line(ctx, [[x, 524], [x, 780]], 2, 'rgba(70,58,46,.3)'); shape(ctx, '#c8baa0', 4, rect(-200, 520, 760, 14));
     const X = 300, Y = 640, S = .34, wr = Math.sin(t * 14) * 18, writing = t > A.record && t < A.somebody;
-    shape(ctx, '#6e4a2c', 5, rect(130, Y - 270, 360, 30, 4)); shape(ctx, '#5a3a22', 5, rect(150, Y - 240, 320, 240));
     fig(ctx, X, Y, S, P('chronicler', 'habit', { hands: { L: [-60, -800], R: [140 + (writing ? wr : 0), -810] }, handShape: { R: 'fist' }, lean: .05, face: { brows: 'strain', mouth: 'flat', look: [.5, .9], eyes: blink(t, 56.0, 59.0) }, breathe: breathe(t) }));
+    shape(ctx, '#6e4a2c', 5, rect(130, Y - 270, 360, 30, 4)); shape(ctx, '#5a3a22', 5, rect(150, Y - 240, 320, 240));
+    for (const px of [170, 320]) shape(ctx, '#6a4630', 3.5, rect(px, Y - 220, 130, 190, 6));
+    for (let i = 0; i < 4; i++) shape(ctx, ['#8a2a24', '#2f4f6a', '#4a6a3a', '#a8782a'][i], 3.5, rect(140 + (i % 2) * 6, Y - 300 - i * 16, 110, 16, 3));
+    shape(ctx, '#efe6d0', 3.5, rect(452, Y - 330, 18, 60, 3)); const fl = 1 + Math.sin(t * 11) * .06; glow(ctx, 461, Y - 344, 90 * fl, 'rgba(255,200,120,.5)'); shape(ctx, '#ffd27a', 2.5, smooth([[461, Y - 330], [455, Y - 342], [461, Y - 360], [467, Y - 342]]));
     shape(ctx, '#f4ecd6', 3.5, poly([[180, Y - 286], [420, Y - 286], [430, Y - 270], [170, Y - 270]])); line(ctx, [[300, Y - 286], [300, Y - 270]], 2.5);
     if (writing) { const hx = X + (140 + wr) * S, hy = Y - 810 * S; line(ctx, [[hx, hy], [hx + 26, hy - 60]], 4, '#3a2a1a'); }
     ctx.restore();

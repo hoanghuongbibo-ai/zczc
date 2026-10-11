@@ -214,3 +214,6 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Enemies "bouncing off" a defence must stay on the water or ground.** A figure thrown up in an arc reads as floating in the sky. Use boats rocking backwards, a splash ring and a fade.
 - **Check the contact sheet at two points in each shot (0.45 and 0.8)**: one shows the build-up state, the other the finished state. Labels above growing bars need to clear the title strip at full height.
 - `_stills.mjs` needs its output directory to exist (`mkdir -p` first).
+- **Closing part = callbacks, not new imagery.** Return to the cold-open set (reuse its `square()` with `lift/marsh/pave` run backwards so the city "arrives" again), pay off each job hat on the mascot in order, and bring back the early quoted figure (Cassiodorus) beside the image he described. End with one quiet tone-shift shot (night, one lit window, music `silence`) before the bright subscribe shot.
+- **Keyframe fractions must use fixed anchors** (`A.marble − A.later`), never two `since()` values subtracted: their difference is a negative constant, which froze the square empty.
+- Hats on the lagoon mascot: the life ring needs to sit higher (y − 30) or it covers the eyes; keep the mascot's eyes above y ≈ 680 in every frame.

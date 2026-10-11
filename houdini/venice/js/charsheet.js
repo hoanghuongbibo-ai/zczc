@@ -1,6 +1,6 @@
 (function (G) {
   const T = G.Toon, FX = G.FX;
-  const cast = [['chronicler', 'habit'], ['cassiodorus', 'roman'], ['fisher', 'tunicPoor'], ['elder', 'tunicElder'], ['villagerW', 'dressPlain'], ['pepin', 'king']];
+  const cast = [['dandolo', 'doge'], ['knight', 'crusader'], ['prince', 'princeRobe'], ['merchant', 'merchantRobe'], ['emperor', 'byzantine'], ['kingFR', 'frenchRoyal']];
   G.Show = { duration: 2, narration: 'venice/assets/audio/narration-job-one.mp3', sfx: [], moods: [], fonts: ['700 20px Fredoka', '40px "Luckiest Guy"'],
     shots: [{ start: 0, end: 2, draw(ctx) { FX.darkBg(ctx, '#3a342e');
       cast.forEach(([h, o], i) => { FX.fig(ctx, 110 + i * 212, 690, .4, { head: h, outfit: o, hands: { L: [-150, -470], R: [150, -470] }, feet: { L: [-60, -40], R: [60, -40] }, face: { mouth: 'smile', brows: 'calm' } });

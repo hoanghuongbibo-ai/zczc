@@ -203,3 +203,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   the frame; MED, ADRI, BLACK, ISL and the Venice→Constantinople LANE are reusable for later parts (Portuguese route,
   quarantine, 1204). User-supplied PD paintings go on screen in a gilt frame with a label, then cross-fade into the cartoon
   version (`e11`, `Show.images`).
+- **Tone shifts in the script ([MUSIC: out], "nothing playful")** (Venice, The bill/1204): switch the mood to
+  `silence`, stop bounces/stamps/gags, use slow `still()` push-ins, cross-faded tableaux, silhouettes for victims and
+  a light warm grain; no gore. Keep the image bright enough (dusky orange, not dark). Return to normal motion only where
+  the script brings the music back. Balance scales: the heavier pan must sink (check the sign of the tilt on a still).

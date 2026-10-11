@@ -207,3 +207,6 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   `silence`, stop bounces/stamps/gags, use slow `still()` push-ins, cross-faded tableaux, silhouettes for victims and
   a light warm grain; no gore. Keep the image bright enough (dusky orange, not dark). Return to normal motion only where
   the script brings the music back. Balance scales: the heavier pan must sink (check the sign of the tilt on a still).
+- **World map (Europe–Africa–India)** in `venice/js/the-letter.js`: `WL([lon, lat])`, `AFR`/`EUR` reuse the accurate
+  Mediterranean points from `job-three.js` MED (land polygons must extend past the frame edge, or the top reads as sea),
+  `NEW_ROUTE` (Lisbon → Cape → Calicut), `OLD_ROUTE` (Calicut → Red Sea → Alexandria → Venice), `caravel()`.

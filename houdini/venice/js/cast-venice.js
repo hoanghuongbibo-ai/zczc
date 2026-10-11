@@ -299,5 +299,24 @@
       front: (c, J) => { const R = p => rot(p, J.P, J.lean); part(c, poly([R([-24, -900]), R([24, -900]), R([24, -560]), R([-24, -560])]), '#c0303e', 3.5); part(c, poly([R([-110, -800]), R([110, -800]), R([110, -750]), R([-110, -750])]), '#c0303e', 3.5); stroke(c, [R([-170, -620]), R([170, -620])], 10, '#6a4a2a'); } }),
     princeRobe: Object.assign(tunic('#2f6aa8', '#e8c14a', '#eab48c', '#2a2a3a', 66, -200), { front: (c, J) => { const R = p => rot(p, J.P, J.lean); stroke(c, [R([0, -950]), R([0, -220])], 14, '#e8c14a'); } }),
   });
+
+  // ---------- The letter cast ----------
+  // Girolamo Priuli: a Venetian banker — clean-shaven, careful eyes, the black patrician cap.
+  function priuli(ctx, f = {}) {
+    face(ctx, f, {
+      skin: '#efc29e', ear: [362, 330], cheek: [[214, 366], [310, 368]],
+      face: [[188, 216], [318, 208], [348, 266], [352, 342], [326, 414], [282, 446], [240, 450], [206, 434], [188, 398], [174, 336], [172, 276]],
+      hair: c => { part(c, smooth(L([[166, 336], [162, 266], [190, 246], [200, 300], [194, 340]])), '#4a3424', 4); part(c, smooth(L([[364, 336], [368, 266], [340, 246], [332, 300], [338, 340]])), '#4a3424', 4);
+        part(c, smooth(L([[156, 262], [162, 184], [230, 146], [302, 146], [368, 184], [376, 262], [330, 248], [266, 240], [200, 248]])), '#1f1c22', 4.5); stroke(c, L([[168, 252], [366, 252]]), 6, '#3a3640'); },
+      eyes: [[222, 310, 18, 18], [292, 314, 19, 19]], pupil: 7,
+      brows: browSet([[202, 280], [222, 272], [242, 280]], [[272, 284], [292, 276], [312, 284]]), browW: 7, browC: '#4a3424',
+      nose: [[258, 320], [246, 360], [266, 364]], mouth: [260, 404, 15],
+    });
+  }
+  Object.assign(C.HEADS, { priuli });
+  Object.assign(C.OUTFITS, {
+    patrician: Object.assign(tunic('#26222a', '#8a5a3a', '#efc29e', '#1f1c22', 72, -60), {
+      front: (c, J) => { const R = p => rot(p, J.P, J.lean); part(c, poly([R([60, -960]), R([110, -950]), R([70, -300]), R([20, -300])]), '#a8322a', 3.5); part(c, smooth([R([-80, -968]), R([0, -930]), R([80, -968]), R([70, -1000]), R([0, -980]), R([-70, -1000])]), '#8a5a3a', 3.5); } }),
+  });
   G.Venice = Object.assign(G.Venice || {}, { lagoon, hats, WATER, WATER_D, FOAM });
 })(window);

@@ -86,6 +86,26 @@
       T.shape(ctx, '#a7aeb6', 5, c => { c.moveTo(x - 92, y + 22); c.bezierCurveTo(x - 92, y - 70, x + 92, y - 70, x + 92, y + 22); c.closePath(); });
       T.line(ctx, [[x, y - 44], [x, y + 18]], 5, '#6f767e'); T.shape(ctx, 'rgba(255,255,255,.35)', 0, T.ellipse(x - 40, y - 18, 16, 26, -.5));
     },
+    hardhat(ctx, x, y) { const T = G.Toon; // job two: a builder's hard hat
+      T.shape(ctx, '#f2b632', 5, c => { c.ellipse(x, y + 26, 140, 22, 0, 0, Math.PI * 2); });
+      T.shape(ctx, '#f6c945', 5, c => { c.moveTo(x - 96, y + 24); c.bezierCurveTo(x - 96, y - 80, x + 96, y - 80, x + 96, y + 24); c.closePath(); });
+      T.shape(ctx, '#e0a422', 4, c => c.roundRect(x - 16, y - 58, 32, 80, 10)); T.shape(ctx, 'rgba(255,255,255,.4)', 0, T.ellipse(x - 50, y - 16, 14, 24, -.5));
+    },
+    captain(ctx, x, y) { const T = G.Toon; // job three: a ship captain's cap
+      T.shape(ctx, '#1f2f4f', 5, c => { c.moveTo(x - 110, y + 28); c.quadraticCurveTo(x, y + 60, x + 30, y + 30); c.lineTo(x - 110, y + 28); c.closePath(); });
+      T.shape(ctx, '#f4efe2', 5, c => { c.moveTo(x - 100, y + 20); c.lineTo(x - 120, y - 40); c.quadraticCurveTo(x, y - 80, x + 120, y - 40); c.lineTo(x + 100, y + 20); c.closePath(); });
+      T.shape(ctx, '#1f2f4f', 4, c => c.rect(x - 100, y - 4, 200, 26)); T.shape(ctx, '#e8c14a', 3.5, T.circle(x, y + 8, 14));
+    },
+    mask(ctx, x, y) { const T = G.Toon; // job four: a Carnival mask
+      T.shape(ctx, '#f4efe2', 5, c => { c.moveTo(x - 120, y); c.quadraticCurveTo(x - 110, y - 50, x - 40, y - 46); c.quadraticCurveTo(x, y - 30, x + 40, y - 46); c.quadraticCurveTo(x + 110, y - 50, x + 120, y); c.quadraticCurveTo(x + 60, y + 50, x, y + 20); c.quadraticCurveTo(x - 60, y + 50, x - 120, y); c.closePath(); });
+      for (const d of [-1, 1]) T.shape(ctx, '#1d1a17', 0, T.ellipse(x + d * 52, y - 8, 24, 12, d * .2));
+      T.shape(ctx, '#c0303e', 3.5, c => { c.moveTo(x + 90, y - 30); c.quadraticCurveTo(x + 150, y - 120, x + 120, y - 160); c.quadraticCurveTo(x + 110, y - 90, x + 70, y - 40); c.closePath(); });
+      for (let i = -3; i <= 3; i++) T.shape(ctx, '#e8c14a', 0, T.circle(x + i * 22, y - 36 + Math.abs(i) * 3, 5));
+    },
+    lifering(ctx, x, y) { const T = G.Toon; // job five: a life ring
+      T.shape(ctx, '#f4efe2', 5, c => { c.arc(x, y - 10, 80, 0, Math.PI * 2); c.arc(x, y - 10, 38, 0, Math.PI * 2, true); });
+      for (let i = 0; i < 4; i++) T.shape(ctx, '#d8402e', 4, c => { const a0 = i * Math.PI / 2 + .3, a1 = a0 + .7; c.arc(x, y - 10, 80, a0, a1); c.arc(x, y - 10, 38, a1, a0, true); c.closePath(); });
+    },
   };
 
   // ---------- more cast ----------

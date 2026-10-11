@@ -210,3 +210,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **World map (Europe–Africa–India)** in `venice/js/the-letter.js`: `WL([lon, lat])`, `AFR`/`EUR` reuse the accurate
   Mediterranean points from `job-three.js` MED (land polygons must extend past the frame edge, or the top reads as sea),
   `NEW_ROUTE` (Lisbon → Cape → Calicut), `OLD_ROUTE` (Calicut → Red Sea → Alexandria → Venice), `caravel()`.
+- **Glyphs the display font lacks render as junk** (e.g. `€` came out as `<`). Spell currencies out ("6 BILLION EUROS") or check the font's coverage on a still before rendering.
+- **Enemies "bouncing off" a defence must stay on the water or ground.** A figure thrown up in an arc reads as floating in the sky. Use boats rocking backwards, a splash ring and a fade.
+- **Check the contact sheet at two points in each shot (0.45 and 0.8)**: one shows the build-up state, the other the finished state. Labels above growing bars need to clear the title strip at full height.
+- `_stills.mjs` needs its output directory to exist (`mkdir -p` first).

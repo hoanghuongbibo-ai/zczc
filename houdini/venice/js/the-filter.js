@@ -241,7 +241,7 @@
     txt(ctx, 'MAINLAND', 160, 470, FX.DISPLAY(22), '#4a6a4a'); txt(ctx, 'THE SEA', 1120, 470, FX.DISPLAY(22), '#2f5d6b');
     V.lagoon(ctx, 640, 690, 640, t, { look: dr > 0 ? [.9, -.1] : [-.9, -.1], eyes: blink(t, 17.6), mouth: 'flat', hat: (c, x, y) => V.hats.helmet(c, x, y) });
     // the shield the lagoon holds up swings from facing the land to facing the sea
-    const sw = dr > -.2 ? ease.inOut(clamp((dr + .2) / .8)) : 0, ang = lerp(Math.PI, 0, sw), sx = 640 + Math.cos(ang) * 330, sy = 470;
+    const sw = dr > -.9 ? ease.inOut(clamp((dr + .9) / .8)) : 0, ang = lerp(Math.PI, 0, sw), sx = 640 + Math.cos(ang) * 330, sy = 470;
     if (oj > 0) { const k = pop(oj); ctx.save(); ctx.translate(sx, sy); ctx.scale(k, k); shape(ctx, '#b8ad96', 5, c => { c.moveTo(-60, -80); c.lineTo(60, -80); c.lineTo(60, 10); c.quadraticCurveTo(0, 90, -60, 10); c.closePath(); }); for (let i = 0; i < 3; i++) shape(ctx, '#b8ad96', 3, rect(-60 + i * 46, -100, 28, 22)); ctx.restore();
       shape(ctx, RED, 4, poly([[sx + (sw > .5 ? 80 : -80), sy - 10], [sx + (sw > .5 ? 60 : -60), sy - 30], [sx + (sw > .5 ? 60 : -60), sy + 10]])); }
     ctx.restore();

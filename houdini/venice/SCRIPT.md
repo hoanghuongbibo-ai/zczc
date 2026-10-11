@@ -1,7 +1,20 @@
 # Venice — "Same water. New job." (script as received, 2026-10-10)
 
-The cold open (and script sections 1–4) were not included in this send. Sections 5–7 (cast sheet, refrains,
-sponsor bridges, source log) follow the script below.
+Sections 5–7 (cast sheet, refrains, sponsor bridges, source log) follow the script below. The cold open arrived
+separately on 2026-10-11 (about 215 words, ~1:20; full script ~2,500 words, 14–15 min, no skits in this mode).
+
+## Cold open
+[VISUAL: St. Mark's Square at dawn, empty, wet stone]
+[MUSIC: quiet, one sustained note]
+It's six in the morning, and you're standing in the middle of St. Mark's Square. For about an hour, Venice is quiet. There's marble under your shoes and gold mosaic over your head. Above the church door, four bronze horses. Remember those horses.
+[VISUAL: the ground peels away in layers: stone pavement, packed mud, buried forest of timber, lagoon water]
+Now look down. Under the stone there's mud. And hammered into that mud, packed tight, are tree trunks. Millions of them, under the whole city. Venice is a stone city standing on a buried forest, in the middle of a lagoon, about two and a half miles from dry land.
+[VISUAL: Venice fades back 1,500 years into an empty salt marsh — reeds, wet mud, shallow tidal water]
+So peel it back. The marble, the churches, the forest underneath. Go back fifteen hundred years and stand in this exact spot. You're ankle-deep in a salt marsh. Reeds. Mud. A tide that covers the ground twice a day. Nobody would pick this.
+And for centuries, this swamp was one of the richest cities in Europe. Today it's something stranger. It has more beds for tourists than people who live here.
+So how did a place nobody wanted turn into a place everybody wants? And why are its own people leaving?
+The answer is the water. Over fifteen hundred years, the same lagoon gets five different jobs.
+[ON-SCREEN TEXT: The ENTIRE History of Venice]
 
 ## Job one: a wall
 [MAP: northeastern Italy in the 500s. Roman towns on the mainland, the lagoon along the coast]

@@ -188,3 +188,13 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   `fisher`/`tunicPoor`, `elder`/`tunicElder`, `villagerW`/`dressPlain`, `pepin`/`king`. A recording that already has
   word times from `asr.py` and matches the script can skip the aligner: write the anchors straight into the show file.
 - A cloak/`front` layer drawn over the arms hides the hands — keep it to one shoulder when the hands must act.
+- **One voice file for the whole script** (Venice): cut each part from it with ffmpeg and prepend a 2 s silent
+  chapter pause (`anullsrc` + `concat`) for the paper chapter card, since the narrator doesn't read chapter titles.
+  Anchors = full-recording word time − (cut start − 2.0).
+- **Re-timing a finished part to a new take**: `venice/js/warp.js` (`warpShow(show, pairs, narration, duration)`)
+  draws each new-time frame at the old time through word-matched pairs (difflib on the two `asr.py` transcripts), so
+  no shot code changes (`job-one-full.html`, `warp-job-one.js`).
+- **No repeated imagery across parts** (user requirement): if a later part revisits a subject already shown (piles),
+  change the angle — top-down grid, colour blueprint, construction team, "x-ray" under a landmark — never the same
+  cross-section twice. Also check people stand on something solid (the Salute clerk was first drawn in the water) and
+  that desks/lecterns sit in front of the person using them.

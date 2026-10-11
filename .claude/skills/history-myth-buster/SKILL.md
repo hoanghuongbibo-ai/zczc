@@ -198,3 +198,8 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   change the angle — top-down grid, colour blueprint, construction team, "x-ray" under a landmark — never the same
   cross-section twice. Also check people stand on something solid (the Salute clerk was first drawn in the water) and
   that desks/lecterns sit in front of the person using them.
+- **Maps of real coastlines: trace them from longitude/latitude**, not by eye (Venice Job three: the hand-placed
+  Mediterranean didn't read as Italy/Greece). `LL([lon, lat])` in `venice/js/job-three.js` maps lon −6..36 / lat 46..30 to
+  the frame; MED, ADRI, BLACK, ISL and the Venice→Constantinople LANE are reusable for later parts (Portuguese route,
+  quarantine, 1204). User-supplied PD paintings go on screen in a gilt frame with a label, then cross-fade into the cartoon
+  version (`e11`, `Show.images`).

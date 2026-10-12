@@ -221,3 +221,10 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   The fixed camera is `nyc/js/corner.js`: `G.NYC.corner(ctx, t, {m, freeze, light, grey, crowd, empty, sky})` draws Wall St at Broad looking east (Federal Hall portico on the left, the harbor in the slot at the far end). `m` runs 0 → 1 to sink the city into the 1609 hill, creek and marsh. Reuse it for every era (add era layers as options, don't make new angles). `G.NYC.harbor()` is the mascot: the Venice lagoon with a hue shift (load `../venice/js/cast-venice.js`).
   The obituary counter: a black-bordered "NEW YORK IS FINISHED" notice plus a "COUNT: n" box, which stays off in Beat 8.
 - Cutting a part's audio with apad: put `-t` on the INPUT side, or the pad gets truncated (this bit me twice).
+- **User feedback (NYC cold open): "the initial image is too simple; add more details so viewers can visualize the setting."** An establishing set must name its place through real, recognisable landmarks and street life, not just generic boxes:
+  - the actual buildings: Federal Hall's portico, pediment and Washington statue; the Stock Exchange's columns and giant flag;
+  - ground-floor shops with signs, a subway entrance with green globes, security bollards, lamp posts, a steam stack, a food cart;
+  - varied commuters (skin tones, hair, hats, phones, coffee) with shadows; taxis, a truck and a bike courier;
+  - the far view (river, boats, the opposite shore, a plane);
+  - a small "YOU ARE HERE" map on the first shot.
+  The same density goes for the past-era version of the set (canoe, herons, oyster beds, rock outcrops, smoke from a hearth).

@@ -153,7 +153,7 @@
     ctx.restore(); }
   function skyline(ctx, base, sc, t, col = '#2f4a6a', o = {}) { // a Manhattan skyline silhouette, sc grows it
     const B = [[-560, 90, 180], [-470, 70, 260], [-400, 80, 210], [-320, 60, 380], [-250, 90, 300], [-150, 70, 520], [-70, 60, 340], [0, 80, 440], [90, 70, 300], [170, 60, 600], [240, 90, 380], [340, 70, 280], [420, 80, 330], [510, 90, 220]];
-    for (const [dx, w, h] of B) { const hh = h * sc; shape(ctx, col, 3.5, rect(640 + dx, base - hh, w, hh)); if (o.windows) for (let y = base - hh + 16; y < base - 14; y += 26) for (let x = 640 + dx + 10; x < 640 + dx + w - 12; x += 20) shape(ctx, (x * 7 + y) % 3 ? 'rgba(255,220,140,.75)' : 'rgba(255,255,255,.2)', 0, rect(x, y, 9, 12)); }
+    B.forEach(([dx, w, h], bi) => { const hh = h * sc; shape(ctx, o.colors ? o.colors[bi % o.colors.length] : col, 3.5, rect(640 + dx, base - hh, w, hh)); if (o.colors) shape(ctx, 'rgba(255,190,110,.25)', 0, rect(640 + dx + w * .6, base - hh, w * .4, hh)); if (o.windows) for (let y = base - hh + 16; y < base - 14; y += 26) for (let x = 640 + dx + 10; x < 640 + dx + w - 12; x += 20) shape(ctx, (x * 7 + y) % 3 ? 'rgba(255,220,140,.85)' : 'rgba(60,80,110,.45)', 0, rect(x, y, 9, 12)); });
     // the Empire State spire on the tallest
     const hh = 600 * sc; line(ctx, [[640 + 200, base - hh], [640 + 200, base - hh - 70 * sc]], 5, col); }
 
@@ -163,7 +163,7 @@
     FX.dateTag(ctx, 'LOWER MANHATTAN · TODAY');
     N.whereMap(ctx, 1100, 560, since(t, 'manhattan'), t);
     if (since(t, 'wall') > 0) { const k = since(t, 'wall'); glow(ctx, 1100, 205, 120 * pop(k), 'rgba(255,255,200,.5)'); }
-    if (since(t, 'broad') > -.2) tag(ctx, 'WALL STREET, AT BROAD', 640, 640, since(t, 'broad') + .2, 26);
+    if (since(t, 'broad') > -.2) tag(ctx, 'WALL STREET, AT BROAD', 640, 110, since(t, 'broad') + .2, 26);
     vig(ctx);
   }
 
@@ -174,7 +174,7 @@
     shape(ctx, grad(ctx, 0, 0, 0, 300, [[0, '#cfd6dc'], [1, '#b8c0c8']]), 0, rect(-200, -200, 1700, 500));
     for (let i = 0; i < 9; i++) { const x = -120 + i * 170, col = ['#e8b08a', '#cfc6b8', '#9fb0c0', '#d8c0a0'][i % 4]; shape(ctx, col, 4, rect(x, 40, 170, 262)); shape(ctx, '#3a5a7a', 3.5, rect(x + 18, 150, 134, 110, 4)); shape(ctx, 'rgba(255,255,255,.25)', 0, poly([[x + 30, 150], [x + 70, 150], [x + 40, 260], [x + 18, 260]]));
       shape(ctx, ['#c8322a', '#2f7a46', '#2f5a8a'][i % 3], 3, poly([[x + 8, 110], [x + 162, 110], [x + 150, 140], [x + 20, 140]])); for (let w = 0; w < 3; w++) shape(ctx, '#5a7894', 2.5, rect(x + 22 + w * 48, 56, 32, 36)); }
-    for (let i = 0; i < 8; i++) { const x = ((i * 190 - t * 120) % 1600) + 1400; N.person(ctx, (x % 1600) - 160, 300, 1.4, ['#3a4a6a', '#6a3a3a', '#2f2f3a', '#7a6a4a'][i % 4], { step: Math.sin(t * 7 + i), bag: i % 2 }); }
+    for (let i = 0; i < 7; i++) { const x = ((i * 230 - t * 110) % 1610) + 1610; if (Math.abs((x % 1610) - 160 - 640) < 90) continue; N.walker(ctx, (x % 1610) - 160, 300, .5, t, i * 3 + 1); }
     // the pavement, then the earth, then the subway tunnel with a train
     shape(ctx, '#d6d0c4', 4, rect(-200, 300, 1700, 44)); for (let i = 0; i < 16; i++) line(ctx, [[-120 + i * 100, 300], [-120 + i * 100, 344]], 2, 'rgba(90,80,70,.35)');
     shape(ctx, grad(ctx, 0, 344, 0, 720, [[0, '#9a7a56'], [1, '#6e5238']]), 0, rect(-200, 344, 1700, 500));
@@ -220,6 +220,7 @@
       shape(ctx, col, 4.5, poly([P(r0, -w0), P(r1, -w1), P(r1, w1), P(r0, w0)]));
       for (let f = 1; f < 9; f++) { const r = lerp(r0, r1, f / 9), w = lerp(w0, w1, f / 9); line(ctx, [P(r, -w), P(r, w)], 2, 'rgba(40,50,60,.3)'); for (let c = -2; c <= 2; c++) shape(ctx, (f + c + i) % 4 ? '#5a7894' : '#9ac0dc', 0, circle(...P(lerp(r, lerp(r0, r1, (f + .5) / 9), .5), c * w / 3), 9 - f * .6)); } });
     ctx.restore();
+    glow(ctx, 640, 360, 300, 'rgba(255,220,150,.35)'); for (let i = 0; i < 3; i++) N.pigeon(ctx, 400 + ((t * 60 + i * 200) % 500), 300 + i * 50, .7, t, i);
     if (bl > 0) tag(ctx, 'MOST OF THE SKY: GONE', 640, 640, since(t, 'sky'), 26);
     vig(ctx);
   }
@@ -342,7 +343,7 @@
     const bg = since(t, 'bigger'), cm = since(t, 'came');
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#6ab8ea'], [.7, '#ffd8a0'], [1, '#ffeac0']]), 0, rect(0, 0, W, H)); glow(ctx, 640, 520, 520, 'rgba(255,240,190,.6)'); clouds(ctx, t, [70, 120], .9);
     const sc = cm > -.2 ? lerp(.35, 1.05, FX.settle(clamp((cm + .2) / 1.1))) : .35;
-    ctx.save(); skyline(ctx, 600, sc * .7, t, '#8aa0bc'); ctx.translate(40, 0); skyline(ctx, 600, sc, t, '#3a5a80', { windows: true }); ctx.restore(); waterBand(ctx, 600, t);
+    ctx.save(); skyline(ctx, 600, sc * .7, t, '#8aa0bc'); ctx.translate(40, 0); skyline(ctx, 600, sc, t, '#3a5a80', { windows: true, colors: ['#e8b08a', '#a9b6c4', '#f0d29a', '#9fb0c0', '#d8c0a0', '#c8a0b8'] }); ctx.restore(); waterBand(ctx, 600, t);
     { const lx = 150, ly = 640; shape(ctx, '#7aa890', 3.5, rect(lx - 26, ly - 70, 52, 70)); shape(ctx, '#8ab8a0', 3.5, c => { c.moveTo(lx - 16, ly - 70); c.lineTo(lx - 12, ly - 150); c.lineTo(lx + 12, ly - 150); c.lineTo(lx + 16, ly - 70); c.closePath(); });
       shape(ctx, '#8ab8a0', 3, circle(lx, ly - 162, 12)); for (let i = -2; i <= 2; i++) line(ctx, [[lx, ly - 172], [lx + i * 8, ly - 186]], 3, '#8ab8a0'); line(ctx, [[lx + 10, ly - 146], [lx + 22, ly - 196]], 6, '#8ab8a0'); shape(ctx, '#f6c945', 2.5, ellipse(lx + 23, ly - 204, 6, 9)); glow(ctx, lx + 23, ly - 204, 24, 'rgba(255,220,120,.6)'); }
     for (let i = 0; i < 3; i++) { const bx = ((i * 420 + t * 30) % 1500) - 100, by = 660 + i * 18; shape(ctx, i % 2 ? '#f2a03a' : '#f4efe2', 3, poly([[bx - 50, by - 16], [bx + 50, by - 16], [bx + 40, by], [bx - 40, by]])); shape(ctx, '#f4efe2', 2.5, rect(bx - 20, by - 30, 40, 14, 3)); }

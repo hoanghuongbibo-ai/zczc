@@ -35,6 +35,63 @@
     if (o.phone) { shape(ctx, '#2a2a30', 2, rect(-4, -78, 8, 12, 2)); glow(ctx, 0, -76, 14, 'rgba(160,210,255,.5)'); }
     ctx.restore(); }
 
+  // a lively modern pedestrian, walking toward the camera: faces, hair, coats, bags, coffee, cameras (foreground cast)
+  const COAT = ['#2f4a7a', '#c8322a', '#3a8a5a', '#e8a83a', '#7a4a8a', '#2f2f3a', '#e86a4a', '#4a8ac8', '#8a5a34', '#d84a7a'], PANTS = ['#2a2a34', '#3a4a6a', '#5a4a3a', '#1d1a17', '#6a7a8a'];
+  function walker(ctx, x, y, s, t, v, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
+    const ph = t * 6.5 + v * 1.7, sw = o.still ? 0 : Math.sin(ph), bob = o.still ? 0 : -Math.abs(Math.cos(ph)) * 5, skin = SKIN[v % 6], hair = HAIR[(v * 5 + 1) % 6], coat = COAT[v % COAT.length], pants = PANTS[(v * 3) % 5];
+    const cam = o.cam ?? v % 6 === 2, cup = v % 5 === 1, pack = v % 4 === 1, brief = v % 7 === 4 && !cam;
+    shape(ctx, 'rgba(40,30,60,.22)', 0, ellipse(0, 18, 58, 20));
+    ctx.translate(0, bob);
+    for (const d of [-1, 1]) { const lift = Math.max(0, d * sw) * 16; line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 26, INK); line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 19, pants); shape(ctx, d > 0 ? '#f4efe6' : '#3a2a20', 3.5, ellipse(d * 19, -8 - lift, 19, 10)); }
+    if (pack) shape(ctx, '#e8642a', 4, rect(-44, -246, 88, 100, 16));
+    shape(ctx, coat, 4.5, c => { c.moveTo(-38, -236); c.quadraticCurveTo(-46, -246, -30, -254); c.lineTo(30, -254); c.quadraticCurveTo(46, -246, 38, -236); c.lineTo(36, -122); c.quadraticCurveTo(0, -112, -36, -122); c.closePath(); });
+    shape(ctx, v % 3 ? '#f4efe6' : '#cfe0f0', 3, poly([[-14, -254], [14, -254], [0, -222]])); if (v % 3 === 0) shape(ctx, v % 2 ? '#c8322a' : '#2f5a8a', 2.5, poly([[-5, -246], [5, -246], [7, -180], [0, -170], [-7, -180]])); else line(ctx, [[0, -222], [0, -126]], 2.5, 'rgba(0,0,0,.3)');
+    if (pack) { line(ctx, [[-24, -252], [-26, -170]], 7, '#b84a20'); line(ctx, [[24, -252], [26, -170]], 7, '#b84a20'); }
+    // arms: swing with the walk, or both raised holding a camera to the eye
+    if (cam) { for (const d of [-1, 1]) { line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 18, INK); line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 12, coat); }
+    } else for (const d of [-1, 1]) { const hx = d * 50, hy = -150 + d * sw * 18; line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 18, INK); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 12, coat); shape(ctx, skin, 3, circle(hx, hy + 4, 10));
+      if (d > 0 && cup) { shape(ctx, '#f4efe2', 3, poly([[hx - 9, hy - 20], [hx + 9, hy - 20], [hx + 7, hy + 6], [hx - 7, hy + 6]])); shape(ctx, '#2f7a46', 0, rect(hx - 8, hy - 10, 16, 6)); shape(ctx, '#6a4a2a', 2, rect(hx - 10, hy - 24, 20, 6, 2)); }
+      if (d < 0 && brief) shape(ctx, '#5a3a20', 3.5, rect(hx - 22, hy + 8, 44, 32, 4)); }
+    // head
+    shape(ctx, skin, 3.5, rect(-9, -272, 18, 18)); shape(ctx, skin, 4, circle(-34, -300, 9)); shape(ctx, skin, 4, circle(34, -300, 9));
+    const hs = v % 6;
+    if (hs === 1) for (const d of [-1, 1]) shape(ctx, hair, 4, ellipse(d * 34, -282, 13, 36));
+    shape(ctx, skin, 4.5, circle(0, -302, 36));
+    if (hs === 0 || hs === 1) shape(ctx, hair, 4, c => { c.moveTo(-36, -304); c.quadraticCurveTo(-38, -344, 0, -342); c.quadraticCurveTo(38, -344, 36, -304); c.quadraticCurveTo(14, -328, -36, -304); c.closePath(); });
+    if (hs === 2) { shape(ctx, hair, 4, c => { c.moveTo(-36, -306); c.quadraticCurveTo(-36, -342, 0, -340); c.quadraticCurveTo(36, -342, 36, -306); c.quadraticCurveTo(0, -322, -36, -306); c.closePath(); }); shape(ctx, hair, 4, circle(0, -350, 14)); }
+    if (hs === 3) { shape(ctx, COAT[(v + 3) % COAT.length], 4, c => { c.moveTo(-37, -310); c.quadraticCurveTo(-36, -346, 0, -346); c.quadraticCurveTo(36, -346, 37, -310); c.closePath(); }); shape(ctx, COAT[(v + 3) % COAT.length], 3.5, ellipse(14, -310, 32, 8)); }
+    if (hs === 4) for (let i = 0; i < 7; i++) shape(ctx, hair, 3, circle(-30 + i * 10, -330 - Math.sin(i / 6 * Math.PI) * 10, 13));
+    if (hs === 5) { shape(ctx, '#9a9a9a', 3, ellipse(-30, -312, 9, 14)); shape(ctx, '#9a9a9a', 3, ellipse(30, -312, 9, 14)); }
+    // face
+    if (cam) { shape(ctx, '#2a2a30', 4, rect(-30, -312, 60, 34, 6)); shape(ctx, '#5a6a7a', 3, circle(0, -295, 12)); shape(ctx, '#9ac0dc', 0, circle(-3, -298, 4)); shape(ctx, '#2a2a30', 2, rect(14, -320, 12, 8, 2)); line(ctx, [[-10, -268], [0, -264], [10, -268]], 3);
+      if ((t * 1.2 + v) % 3 < .12) glow(ctx, 0, -300, 60, 'rgba(255,255,255,.8)'); }
+    else { for (const d of [-1, 1]) { shape(ctx, '#fff', 2.5, ellipse(d * 13, -300, 8, 9)); shape(ctx, INK, 0, circle(d * 13 + 1, -298, 4.5)); shape(ctx, '#fff', 0, circle(d * 13 + 2.5, -300, 1.5)); line(ctx, [[d * 6, -316], [d * 20, -318 + (v % 2) * 2]], 3); }
+      if (v % 7 === 3) { ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = INK; for (const d of [-1, 1]) { ctx.beginPath(); ctx.arc(d * 13, -300, 12, 0, 7); ctx.stroke(); } line(ctx, [[-1, -300], [1, -300]], 3); ctx.restore(); }
+      line(ctx, [[0, -296], [-3, -286], [2, -284]], 2.5, 'rgba(60,30,20,.6)'); shape(ctx, '#7a2a2a', 2.5, c => { c.moveTo(-11, -276); c.quadraticCurveTo(0, -264, 11, -276); c.closePath(); });
+      shape(ctx, 'rgba(240,120,110,.35)', 0, ellipse(-22, -284, 7, 4)); shape(ctx, 'rgba(240,120,110,.35)', 0, ellipse(22, -284, 7, 4)); }
+    ctx.restore(); }
+  function pigeon(ctx, x, y, s, t, ph) { const f = Math.sin(t * 14 + ph); ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    shape(ctx, '#c8ccd4', 3, ellipse(0, 0, 18, 9)); shape(ctx, '#e8ecf0', 3, c => { c.moveTo(-4, -2); c.quadraticCurveTo(-22, -26 * f - 6, -40, -18 * f); c.quadraticCurveTo(-20, -2, -4, 4); c.closePath(); }); shape(ctx, '#e8ecf0', 3, c => { c.moveTo(4, -2); c.quadraticCurveTo(22, -26 * f - 6, 40, -18 * f); c.quadraticCurveTo(20, -2, 4, 4); c.closePath(); });
+    shape(ctx, '#9aa0aa', 2.5, circle(16, -4, 7)); shape(ctx, '#e8a83a', 0, poly([[22, -5], [28, -3], [22, -1]])); ctx.restore(); }
+  function planter(ctx, s, side, t, i) { const x = VX + side * 500 * s, y = PY(760, s); ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    shape(ctx, '#8a6a4a', 3.5, poly([[-34, -50], [34, -50], [28, 0], [-28, 0]])); line(ctx, [[0, -50], [0, -150]], 7, '#5a3a20'); const sw = Math.sin(t + i) * 3;
+    for (const [dx, dy, r, c] of [[-24, -160, 34, '#4f8f3a'], [22, -164, 36, '#3f7f34'], [0, -196, 40, '#5f9f44'], [-6, -176, 26, '#6aaa4c']]) shape(ctx, c, 3, circle(dx + sw, dy, r));
+    shape(ctx, 'rgba(255,230,150,.3)', 0, ellipse(10 + sw, -210, 16, 10)); for (let k = 0; k < 4; k++) shape(ctx, ['#e05a5a', '#f6c945', '#f4efe2', '#e87a9a'][k], 0, circle(-20 + k * 13, -54, 6)); ctx.restore(); }
+  function sedan(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); shape(ctx, 'rgba(0,0,0,.25)', 0, ellipse(0, 6, 120, 14));
+    shape(ctx, '#d8b878', 4.5, c => { c.moveTo(-120, -10); c.lineTo(-118, -60); c.lineTo(-70, -66); c.lineTo(-40, -112); c.lineTo(50, -112); c.lineTo(84, -66); c.lineTo(118, -60); c.lineTo(120, -10); c.closePath(); });
+    shape(ctx, '#9ac8e0', 3, poly([[-32, -104], [-4, -104], [-4, -70], [-58, -70]])); shape(ctx, '#9ac8e0', 3, poly([[4, -104], [44, -104], [70, -70], [4, -70]])); shape(ctx, '#e04a3a', 2, rect(110, -54, 10, 16, 2));
+    shape(ctx, '#2a2a30', 4, circle(-72, -10, 24)); shape(ctx, '#2a2a30', 4, circle(72, -10, 24)); shape(ctx, '#9a9aa0', 0, circle(-72, -10, 9)); shape(ctx, '#9a9aa0', 0, circle(72, -10, 9)); ctx.restore(); }
+  function wisp(ctx, x, y, s, t, k) { for (let i = 0; i < 3; i++) { const p = (t * .3 + i / 3 + k) % 1; ctx.save(); ctx.globalAlpha = .7 * Math.sin(Math.PI * p); ctx.lineWidth = 6 * s; ctx.strokeStyle = '#fff'; ctx.lineCap = 'round';
+    ctx.beginPath(); const yy = y - p * 140 * s; ctx.moveTo(x, yy); ctx.bezierCurveTo(x + 22 * s, yy - 20 * s, x - 22 * s, yy - 40 * s, x + 6 * s, yy - 60 * s); ctx.stroke(); ctx.restore(); } }
+  function fedFlags(ctx, t) { for (const [bx, by] of [[30, 250], [120, 300]]) { const tx = bx + 120, ty = by - 120; line(ctx, [[bx, by], [tx, ty]], 6, '#c8c0b0'); shape(ctx, GOLDC, 2, circle(tx, ty, 6));
+    // the flag hangs from the pole's outer half and ripples
+    const P0 = [lerp(bx, tx, .35), lerp(by, ty, .35)], P1 = [tx - 4, ty + 4], H2 = 70;
+    for (let r = 0; r < 7; r++) { const y0 = r * H2 / 7, y1 = (r + 1) * H2 / 7, w = k => Math.sin(t * 4 + k * 3) * 5;
+      shape(ctx, r % 2 ? '#fff' : '#c8322a', 0, poly([[P0[0], P0[1] + y0 + w(0)], [P1[0], P1[1] + y0 + w(1)], [P1[0], P1[1] + y1 + w(1)], [P0[0], P0[1] + y1 + w(0)]])); }
+    shape(ctx, '#2a3a7a', 0, poly([[P0[0], P0[1] + Math.sin(t * 4) * 5], [lerp(P0[0], P1[0], .45), lerp(P0[1], P1[1], .45) + Math.sin(t * 4 + 1.3) * 5], [lerp(P0[0], P1[0], .45), lerp(P0[1], P1[1], .45) + 40 + Math.sin(t * 4 + 1.3) * 5], [P0[0], P0[1] + 40 + Math.sin(t * 4) * 5]]));
+    ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.beginPath(); ctx.moveTo(P0[0], P0[1] + Math.sin(t * 4) * 5); ctx.lineTo(P1[0], P1[1] + Math.sin(t * 4 + 3) * 5); ctx.lineTo(P1[0], P1[1] + H2 + Math.sin(t * 4 + 3) * 5); ctx.lineTo(P0[0], P0[1] + H2 + Math.sin(t * 4) * 5); ctx.closePath(); ctx.stroke(); ctx.restore(); } }
+  const GOLDC = '#f6c945';
+
   // ---------------- the 1609 landscape (always drawn underneath; the city covers it today) ----------------
   function oak(ctx, x, y, s, t, i) { const sw = Math.sin(t * .9 + i) * 3 * s;
     shape(ctx, '#5a3a20', 3, poly([[x - 7 * s, y], [x - 4 * s, y - 60 * s], [x + 4 * s, y - 60 * s], [x + 7 * s, y]])); line(ctx, [[x, y - 40 * s], [x - 16 * s, y - 62 * s]], 4 * s, '#5a3a20');
@@ -88,12 +145,12 @@
       for (let Y = gy - 190; Y > top; Y -= 70) line(ctx, [[Xs(s0), PY(Y, s0)], [Xs(s1), PY(Y, s1)]], 2, 'rgba(40,70,100,.45)');
       shape(ctx, 'rgba(255,255,255,.35)', 0, poly([[Xs(lerp(s0, s1, .2)), PY(top, lerp(s0, s1, .2))], [Xs(lerp(s0, s1, .35)), PY(top, lerp(s0, s1, .35))], [Xs(lerp(s0, s1, .55)), PY(gy - 150, lerp(s0, s1, .55))], [Xs(lerp(s0, s1, .4)), PY(gy - 150, lerp(s0, s1, .4))]]));
     } else if (kind !== 'fed') {
-      const fl = Math.floor((gy - 200 - top) / 110);
-      for (let f = 0; f < fl; f++) { const Y = gy - 200 - f * 110; line(ctx, [[Xs(s0), PY(Y, s0)], [Xs(s1), PY(Y, s1)]], f % 3 === 0 ? 5 : 2, f % 3 === 0 ? 'rgba(90,70,50,.35)' : 'rgba(40,50,60,.22)'); }
+      const fl = Math.floor((gy - 200 - top) / 90);
+      for (let f = 0; f < fl; f++) { const Y = gy - 200 - f * 90; line(ctx, [[Xs(s0), PY(Y, s0)], [Xs(s1), PY(Y, s1)]], f % 3 === 0 ? 5 : 2, f % 3 === 0 ? 'rgba(90,70,50,.35)' : 'rgba(40,50,60,.22)'); }
       for (let k = 0; k < n; k++) { const sa = lerp(s0, s1, (k + .22) / n), sb = lerp(s0, s1, (k + .7) / n);
         if (kind === 'deco' && k % 2 === 0) shape(ctx, 'rgba(255,255,255,.18)', 0, fq(side, lerp(s0, s1, k / n), lerp(s0, s1, (k + .15) / n), top, gy - 150));   // art-deco piers
-        for (let f = 0; f < fl; f++) { const Y0 = gy - 270 - f * 110, Y1 = Y0 + 66, lit = o.lit ? (k + f) % 5 === 0 : (k * 3 + f) % 7 === 0;
-          shape(ctx, lit ? '#ffd27a' : (k + f) % 4 ? '#5a7894' : '#86acc8', 0, fq(side, sa, sb, Y0, Y1));
+        for (let f = 0; f < fl; f++) { const Y0 = gy - 262 - f * 90, Y1 = Y0 + 54, lit = o.lit ? (k + f) % 5 === 0 : (k * 5 + f * 3 + idx) % 4 === 0;
+          shape(ctx, lit ? '#ffcf6a' : (k + f) % 4 ? '#4f6f92' : '#86acc8', 0, fq(side, sa, sb, Y0, Y1)); if (lit) shape(ctx, '#fff0b8', 0, fq(side, lerp(sa, sb, .25), lerp(sa, sb, .75), Y0 + 10, Y1 - 12));
           if (kind === 'stone') { shape(ctx, 'rgba(255,255,255,.35)', 0, fq(side, sa - .004, sb + .004, Y1, Y1 + 6)); if (f % 2) shape(ctx, 'rgba(90,70,50,.3)', 0, fq(side, sa, sb, Y0 - 12, Y0)); }
           shape(ctx, 'rgba(255,255,255,.25)', 0, fq(side, sa, lerp(sa, sb, .3), Y0, Y1)); } }
       // the cornice line at the top and a darker stone base
@@ -106,6 +163,7 @@
         shape(ctx, '#3a5a7a', 2.5, fq(side, sa, sb, gy - 130, gy - 10)); shape(ctx, 'rgba(255,230,170,.35)', 0, fq(side, sa, lerp(sa, sb, .5), gy - 120, gy - 20));
         shape(ctx, k % 2 ? sh[1] : '#f4efe2', 2.5, fq(side, sa, sb, gy - 162, gy - 134)); }
       const sm = (s0 + s1) / 2; ctx.save(); ctx.translate(Xs(sm), PY(gy - 186, sm)); const sc = sm * 1.1; ctx.scale(sc, sc); shape(ctx, sh[1], 3, rect(-60, -16, 120, 30, 4)); txt(ctx, sh[0], 0, 0, 18); ctx.restore(); }
+    shape(ctx, grad(ctx, Xs(s0), 0, Xs(s1), 0, side < 0 ? [[0, 'rgba(70,50,140,.22)'], [1, 'rgba(255,190,110,.28)']] : [[0, 'rgba(255,170,90,.16)'], [1, 'rgba(255,225,160,.34)']]), 0, fq(side, s0, s1, top, gy));
     ctx.restore();
     if (kind === 'fed') federalHall(ctx, o);
     if (kind === 'nyse') nyse(ctx, s0, s1, o);
@@ -188,8 +246,8 @@
     const m = o.m || 0, cityA = 1 - ease.inOut(clamp(m * 1.25)), sink = ease.in(clamp(m)) * 700, tf = o.freeze != null ? Math.min(t, o.freeze) : t;
     const light = o.light || 0; o.tf = tf;
     // the sky, whole (most of it hidden by towers today); the morning sun rises over the East River, straight down the street
-    shape(ctx, grad(ctx, 0, -100, 0, 380, [[0, light ? '#f0a86a' : '#5fb2e8'], [.7, light ? '#ffd9a0' : '#b8e2f4'], [1, '#ffeec8']]), 0, rect(-200, -200, 1700, 600));
-    glow(ctx, VX, 300, 360, 'rgba(255,240,200,.55)');
+    shape(ctx, grad(ctx, 0, -100, 0, 360, [[0, light ? '#f0a86a' : '#3f9ee6'], [.45, light ? '#ffc890' : '#9fd6f2'], [.8, '#ffe0a8'], [1, '#ffc27a']]), 0, rect(-200, -200, 1700, 600));
+    glow(ctx, VX, 318, 420, 'rgba(255,236,180,.7)'); glow(ctx, VX, 322, 120, 'rgba(255,250,220,.9)');
     for (let i = 0; i < 3; i++) { const x = ((i * 260 + t * 6) % 900) + 180; shape(ctx, '#fff8ee', 2.5, smooth([[x - 50, 150 + i * 30], [x - 20, 130 + i * 30], [x + 20, 126 + i * 30], [x + 50, 146 + i * 30], [x, 158 + i * 30]])); }
     if (o.sky) o.sky(ctx);
     land1609(ctx, t, o);
@@ -207,7 +265,11 @@
       // morning light down the street
       ctx.save(); ctx.globalAlpha = .22; shape(ctx, '#fff2c8', 0, poly([[VX - 60, PY(760, END)], [VX + 60, PY(760, END)], [VX + 420, 760], [VX - 420, 760]])); ctx.restore();
       RIGHT.slice(1).forEach((b, i) => facade(ctx, 1, ...b, o, i + 1)); LEFT.slice(2).forEach((b, i) => facade(ctx, -1, ...b, o, i + 2)); facade(ctx, -1, ...LEFT[0], o, 0); facade(ctx, -1, ...LEFT[1], o, 1); facade(ctx, 1, ...RIGHT[0], o, 0);
+      ctx.save(); ctx.globalAlpha = .3; shape(ctx, grad(ctx, 0, PY(760, END), 0, 760, [[0, '#fff2c0'], [1, 'rgba(255,200,120,0)']]), 0, poly([[VX - 40, PY(760, END)], [VX + 40, PY(760, END)], [VX + 300, 760], [VX - 300, 760]])); ctx.restore();
+      shape(ctx, 'rgba(255,240,190,.75)', 0, poly([[VX - 70, PY(760, END) - 26], [VX + 70, PY(760, END) - 26], [VX + 14, PY(760, END)], [VX - 14, PY(760, END)]]));
       bollards(ctx, -1); bollards(ctx, 1);
+      [.74, .5, .36, .27].forEach((s2, i) => { planter(ctx, s2, -1, tf, i); planter(ctx, s2, 1, tf, i + 4); });
+      for (const [s2, u, k] of [[.7, -150, 0], [.42, 180, .4], [.95, 120, .7]]) wisp(ctx, VX + u * s2, PY(760, s2), s2 * 1.4, tf, k);
       for (const s of [.8, .5, .32, .22]) { lampPost(ctx, VX - 475 * s, PY(760, s), s, -1); lampPost(ctx, VX + 475 * s, PY(760, s), s, 1); }
       steam(ctx, .55, 60, tf);
       subwayEntrance(ctx, .42, -1); cart(ctx, .5, 1, tf);
@@ -221,6 +283,10 @@
         for (let i = 0; i < Math.round(34 * cr); i++) { const side = i % 2 ? -1 : 1, dir = i % 3 ? 1 : -1, p = ((tf * (.045 + (i % 4) * .012) * dir + i * .137) % 1 + 1) % 1, s = lerp(.2, 1.05, p);
           const x = VX + side * (520 + (i % 3) * 60 + (i % 5) * 14) * s; if (side < 0 && s > .78) continue; ppl.push([s, x, i, side]); }
         ppl.sort((a, b) => a[0] - b[0]).forEach(([s, x, i]) => person(ctx, x, PY(760, s) - 12 * s, s * 1.5, cols[i % cols.length], { v: i, step: Math.sin(tf * 7 + i), bag: i % 4 === 0, cup: i % 5 === 1, phone: i % 7 === 3, shadow: true })); }
+      if (!o.empty) { sedan(ctx, 1000, 735, .78); for (let i = 0; i < 4; i++) { const p = ((tf * .07 + i * .27) % 1); pigeon(ctx, lerp(380, 900, p) + i * 30, 200 + i * 36 + Math.sin(tf * 2 + i) * 14, .45 + i * .06, tf, i); } }
+      fedFlags(ctx, tf);
+      if (!o.empty && o.fg !== false) { const FGW = [[-80, 790, 1, .82, 0], [150, 800, 1, .9, 2], [300, 770, -1, .74, 5], [470, 800, 1, .8, 9], [820, 790, -1, .84, 1], [990, 780, 1, .78, 6], [1180, 800, -1, .88, 3], [1320, 770, 1, .74, 7], [660, 820, 1, .7, 11]];
+        FGW.map(([x0, y0, d, sc, v]) => [x0 + d * ((tf * 18 + v * 37) % 140) - d * 70, y0 + Math.sin(v) * 6, sc, v]).sort((a, b) => a[1] - b[1]).forEach(([x2, y2, sc, v]) => walker(ctx, x2, y2, sc, tf, v)); }
       ctx.restore(); }
     if (o.grey) { ctx.save(); ctx.globalAlpha = o.grey * .5; shape(ctx, '#8a8a90', 0, rect(0, 0, W, H)); ctx.restore(); }
     if (cityA > 0) streetSign(ctx, 1150, cityA);
@@ -240,5 +306,5 @@
   // the Harbor — the one character who never leaves (a cousin of the Venice lagoon, in New York harbor green-blue)
   function harbor(ctx, x, y, w, t, o = {}) { ctx.save(); ctx.filter = 'hue-rotate(-14deg) saturate(1.15)'; G.Venice.lagoon(ctx, x, y, w, t, o); ctx.restore(); }
 
-  G.NYC = Object.assign(G.NYC || {}, { corner, land1609, person, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
+  G.NYC = Object.assign(G.NYC || {}, { corner, land1609, person, walker, pigeon, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
 })(window);

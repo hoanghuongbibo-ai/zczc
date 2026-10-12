@@ -23,17 +23,25 @@ const { duration, narration } = await page.evaluate(() => {
 });
 
 const frames = Math.round(duration * fps);
-for (let f = 0; f < frames; f++) {
-  const b64 = await page.evaluate(t => { window.renderAt(t); return document.getElementById('stage').toDataURL('image/png').split(',')[1]; }, f / fps);
-  fs.writeFileSync(path.join(tmp, `f${String(f).padStart(5, '0')}.png`), Buffer.from(b64, 'base64'));
-  if (f % 60 === 0) process.stdout.write(`frame ${f}/${frames}\n`);
+// WORKERS=n renders frames in n parallel browser contexts (one renderer process each); frames are saved as high-quality JPEG then
+const WORKERS = +(process.env.WORKERS || 1), EXT = WORKERS > 1 ? 'jpg' : 'png';
+async function work(pg, w) {
+  for (let f = w; f < frames; f += WORKERS) {
+    const b64 = await pg.evaluate(([t, jpg]) => { window.renderAt(t); return document.getElementById('stage').toDataURL(jpg ? 'image/jpeg' : 'image/png', .95).split(',')[1]; }, [f / fps, EXT === 'jpg']);
+    fs.writeFileSync(path.join(tmp, `f${String(f).padStart(5, '0')}.${EXT}`), Buffer.from(b64, 'base64'));
+    if (f % 120 === w) process.stdout.write(`frame ${f}/${frames}\n`);
+  }
 }
+const pages = [page];
+for (let w = 1; w < WORKERS; w++) { const ctx2 = await browser.newContext({ viewport: { width: 1280, height: 720 } }); const pg = await ctx2.newPage();
+  await pg.goto(pathToFileURL(path.join(root, page_)).href + '?t=0'); await pg.waitForFunction(() => window.READY === true); pages.push(pg); }
+await Promise.all(pages.map((pg, w) => work(pg, w)));
 const pcm = Buffer.from(await page.evaluate(() => window.renderSoundtrack()), 'base64');
 fs.writeFileSync(path.join(tmp, 'music.raw'), pcm);
 await browser.close();
 
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error',
-  '-framerate', String(fps), '-i', path.join(tmp, 'f%05d.png'),
+  '-framerate', String(fps), '-i', path.join(tmp, `f%05d.${EXT}`),
   '-f', 's16le', '-ar', '44100', '-ac', '1', '-i', path.join(tmp, 'music.raw'),
   '-i', path.join(root, narration),
   '-filter_complex', '[1:a][2:a]amix=inputs=2:duration=first:normalize=0,volume=-1.5dB,alimiter=limit=0.89[a]',

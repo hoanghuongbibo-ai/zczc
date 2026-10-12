@@ -233,3 +233,4 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   - flags, planters with small trees and flowers, pigeons in flight, curly steam wisps, a parked car;
   - a front row of BIG pedestrians with real faces (eyes, brows, smile, blush), hair styles, caps and glasses, coffee cups, phones, tourist cameras and backpacks.
   Use `G.NYC.walker(ctx, x, y, s, t, v)` for anyone close to camera; keep the bean `person()` only for the far crowd.
+- **Before a long render, run `node tools/_scan.mjs <page>`.** It renders every frame and reports exceptions in a couple of minutes. Common cause: a canvas `ellipse`/`arc` radius that reaches 0 or tiny negatives while something animates in, so clamp radii with `Math.max(.5, r)`. Render with `WORKERS=4 node tools/export-video.mjs …`, which is about 4× faster.

@@ -245,3 +245,4 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   - a building on water with no land under it;
   - the mascot pushed below the frame;
   - labels hidden behind hats.
+- **User preference (NYC Beat 3): after a round of fixes, the user preferred the FIRST render.** Lesson: when the user flags one or two problems, fix only those and keep the rest of the look. Don't restyle shots they didn't mention. The first Beat 3 is the official one (`nyc-spark.mp4`, code `the-spark.js`); the fixed pass is kept as `nyc-spark-alt-fixed.mp4` / `the-spark-alt-fixed.js`.

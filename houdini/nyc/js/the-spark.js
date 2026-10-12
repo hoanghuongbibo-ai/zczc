@@ -169,9 +169,8 @@
   // ---------- s1: chapter card; in the 1620s a company shows up — not a king, not a church ----------
   function s1(ctx, lt, dur, t) {
     const kg = since(t, 'king'), ch = since(t, 'church');
-    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#f0a030'], [.6, '#e0602a'], [1, '#a8322a']]), 0, rect(0, 0, W, H)); glow(ctx, 640, 380, 360, 'rgba(255,214,120,.45)');
-    for (let i = 0; i < 3; i++) ship(ctx, 200 + i * 440 + Math.sin(t * .3 + i) * 20, 700, .5, t, 'nl'); shape(ctx, 'rgba(60,20,20,.35)', 0, rect(0, 680, W, 60));
-    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + t * .05; ctx.save(); ctx.globalAlpha = .08; shape(ctx, '#fff', 0, poly([[640, 360], [640 + Math.cos(a) * 1200, 360 + Math.sin(a) * 1200], [640 + Math.cos(a + .1) * 1200, 360 + Math.sin(a + .1) * 1200]])); ctx.restore(); }
+    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#ffd890'], [1, '#f0a868']]), 0, rect(0, 0, W, H)); glow(ctx, 640, 360, 520, 'rgba(255,248,220,.6)');
+    for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2 + t * .05; ctx.save(); ctx.globalAlpha = .12; shape(ctx, '#fff', 0, poly([[640, 360], [640 + Math.cos(a) * 1200, 360 + Math.sin(a) * 1200], [640 + Math.cos(a + .1) * 1200, 360 + Math.sin(a + .1) * 1200]])); ctx.restore(); }
     const card = clamp(1 - Math.max(0, lt - 1.9) / .3);
     if (card > 0) { ctx.save(); ctx.globalAlpha = card; strip(ctx, 'BEAT 3', 640, 230, lt - .05, { px: 30 }); strip(ctx, 'THE SPARK', 640, 330, lt - .4, { px: 64, color: ORANGE, rot: .02 }); ctx.restore(); }
     if (lt > 2.1) { strip(ctx, '1620s', 640, 110, since(t, 'twenties') + .2, { px: 40 });
@@ -264,9 +263,9 @@
     const sx = since(t, 'sixty'), sc = since(t, 'schagen');
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#5a4030'], [1, '#3a2820']]), 0, rect(0, 0, W, H)); glow(ctx, 470, 360, 460, 'rgba(255,220,160,.35)');
     const im = IMG().schagen, zoom = sx > -.8 ? ease.inOut(clamp((sx + .8) / 1.2)) : 0;
-    ctx.save(); ctx.translate(lerp(470, 640, zoom), lerp(370, 760, zoom)); ctx.scale(lerp(1, 2.6, zoom), lerp(1, 2.6, zoom)); ctx.translate(-470, -370);
+    ctx.save(); ctx.translate(lerp(470, 640, zoom), lerp(370, 560, zoom)); ctx.scale(lerp(1, 2.6, zoom), lerp(1, 2.6, zoom)); ctx.translate(-470, -370);
     frame(ctx, im, 470, 370, 380, 580, lt + .5, null);
-    if (sx > -.3) { const k = clamp((sx + .3) / .5); ctx.save(); ctx.globalAlpha = .45 * k; shape(ctx, '#ffe85a', 0, rect(470 - 190 + 380 * .14, 370 - 290 + 580 * .228, 380 * .7 * k, 580 * .078)); ctx.restore(); }
+    if (sx > -.3) { const k = clamp((sx + .3) / .5); ctx.save(); ctx.globalAlpha = .45 * k; shape(ctx, '#ffe85a', 0, rect(470 - 190 + 380 * .14, 370 - 290 + 580 * .228, 380 * .7 * k, 580 * .056)); ctx.restore(); }
     ctx.restore();
     // the writer at work: a Dutch official with a quill (no portrait survives)
     if (zoom < .5) { ctx.save(); ctx.globalAlpha = 1 - zoom * 2; dutchman(ctx, 1000, 760, .74, t, 2, { still: true, reach: true }); line(ctx, [[1050, 470], [1090, 410]], 4, '#f4efe2'); ctx.restore(); }
@@ -300,7 +299,7 @@
     // a dusty 1800s ledger
     shape(ctx, 'rgba(0,0,0,.3)', 0, rect(190, 130, 920, 520)); shape(ctx, '#3a2a20', 5, rect(180, 120, 920, 520, 10)); shape(ctx, '#f0e2c0', 3, rect(200, 140, 430, 480)); shape(ctx, '#f0e2c0', 3, rect(650, 140, 430, 480)); line(ctx, [[640, 140], [640, 620]], 4, '#5a4030');
     for (let i = 0; i < 10; i++) { line(ctx, [[220, 190 + i * 42], [610, 190 + i * 42]], 1.5, 'rgba(120,90,60,.3)'); line(ctx, [[670, 190 + i * 42], [1060, 190 + i * 42]], 1.5, 'rgba(120,90,60,.3)'); }
-    if (lt > .2) { ctx.save(); ctx.globalAlpha = clamp((lt - .2) / .5); txt(ctx, '60 guilders', 420, 260, 'italic 600 40px Georgia', '#3a2a20'); txt(ctx, '=', 420, 330, FX.DISPLAY(48), '#3a2a20'); txt(ctx, '$24', 420, 410, 'italic 700 72px Georgia', '#8a2a20'); ctx.restore(); }
+    if (cv > -.3) { ctx.save(); ctx.globalAlpha = clamp((cv + .3) / .5); txt(ctx, '60 guilders', 420, 260, 'italic 600 40px Georgia', '#3a2a20'); txt(ctx, '=', 420, 330, FX.DISPLAY(48), '#3a2a20'); txt(ctx, '$24', 420, 410, 'italic 700 72px Georgia', '#8a2a20'); ctx.restore(); }
     if (ei > -.2) { const s = pop(ei + .2); ctx.save(); ctx.translate(860, 300); ctx.rotate(.04); ctx.scale(s, s); shape(ctx, '#e8d8b0', 4, rect(-120, -80, 240, 160, 6)); txt(ctx, 'CONVERTED', 0, -34, FX.FONT(800, 18), '#5a4a38'); txt(ctx, 'IN THE', 0, 0, FX.FONT(700, 18), '#5a4a38'); txt(ctx, '1800s', 0, 44, FX.DISPLAY(48), '#8a2a20'); ctx.restore(); }
     // cobwebs and dust settle on it
     ctx.save(); ctx.globalAlpha = .6 * clamp(lt / 3); ctx.lineWidth = 2; ctx.strokeStyle = '#f4f0e8'; for (let r = 30; r < 150; r += 30) { ctx.beginPath(); ctx.arc(180, 120, r, 0, Math.PI / 2); ctx.stroke(); } for (let a = 0; a <= 6; a++) line(ctx, [[180, 120], [180 + Math.cos(a / 6 * Math.PI / 2) * 150, 120 + Math.sin(a / 6 * Math.PI / 2) * 150]], 2, '#f4f0e8'); ctx.restore();
@@ -316,12 +315,12 @@
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#e8f4ec'], [1, '#c8e4d4']]), 0, rect(0, 0, W, H));
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.04), 640, 400);
     line(ctx, [[200, 600], [1080, 600]], 5);
-    const h1 = 24 * .38, h2 = th > -.3 ? lerp(160, 320, FX.settle(clamp((th + .3) / .8))) : 160 * ease.out(clamp((lt - .2) / 1.5));
+    const h1 = 24 * .38, h2 = th > -.3 ? FX.settle(clamp((th + .3) / .8)) * 320 : (md > 0 ? 40 * clamp(md / 1) : 0);
     shape(ctx, '#a8b8a8', 4, rect(330, 600 - h1, 160, h1)); txt(ctx, '$24', 410, 600 - h1 - 30, FX.DISPLAY(40), '#5a6a5a'); txt(ctx, 'THE 1800s FIGURE', 410, 640, FX.FONT(700, 18), '#5a6a5a');
     shape(ctx, GREEN, 4, rect(790, 600 - h2, 160, h2)); for (let y = 600 - 24; y > 600 - h2; y -= 26) shape(ctx, GOLD, 2.5, ellipse(870, y, 60, 10));
-    txt(ctx, th > 0 ? '≈ $1,000' : '?', 870, 600 - h2 - 34, FX.DISPLAY(46), GREEN); txt(ctx, 'ONE MODERN CALCULATION', 870, 640, FX.FONT(700, 18), GREEN);
+    if (th > 0) txt(ctx, '≈ $1,000', 870, 600 - h2 - 34, FX.DISPLAY(46), GREEN); txt(ctx, 'ONE MODERN CALCULATION', 870, 640, FX.FONT(700, 18), GREEN);
     ctx.restore();
-    strip(ctx, '60 GUILDERS IN TODAY\'S MONEY', 640, 92, lt, { px: 32 });
+    strip(ctx, '60 GUILDERS IN TODAY\'S MONEY', 640, 92, md + .2, { px: 32 });
     vig(ctx);
   }
 
@@ -333,12 +332,12 @@
     if (kL > 0) { const s = pop(kL); ctx.save(); ctx.translate(320, 330); ctx.scale(s, s); shape(ctx, '#fff', 4.5, ellipse(0, -40, 230, 160)); for (const [x, y, r] of [[-170, 110, 22], [-210, 160, 12]]) shape(ctx, '#fff', 4, circle(x, y, r));
       for (let i = 0; i < 9; i++) shape(ctx, '#a87a4a', 2.5, rect(-150 + i * 34, -30, 14, 70)); line(ctx, [[-160, -10], [150, -10]], 6, '#a87a4a'); line(ctx, [[-160, 24], [150, 24]], 6, '#a87a4a');
       shape(ctx, '#f4ead4', 3, rect(-60, -150, 120, 90, 3)); for (let i = 0; i < 4; i++) line(ctx, [[-44, -130 + i * 16], [44, -130 + i * 16]], 2, '#8a7a6a'); shape(ctx, '#a8322a', 2, circle(36, -78, 10)); shape(ctx, GOLD, 3, rect(120, -80, 44, 36, 6)); ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.beginPath(); ctx.arc(142, -80, 16, Math.PI, 0); ctx.stroke();
-      ctx.restore(); dutchman(ctx, 120, 760, .55, t, 0, { still: true }); txt(ctx, 'THE DUTCH: "OURS, FOR GOOD"', 320, 560, FX.DISPLAY(28), '#2f4a8a'); }
+      ctx.restore(); dutchman(ctx, 250, 760, .55, t, 0, { still: true }); txt(ctx, 'THE DUTCH: "OURS, FOR GOOD"', 320, 560, FX.DISPLAY(28), '#2f4a8a'); }
     // the Lenape side: people and land shared through the seasons
     if (kR > 0) { const s = pop(kR); ctx.save(); ctx.translate(960, 330); ctx.scale(s, s); shape(ctx, '#fff', 4.5, ellipse(0, -40, 230, 160)); for (const [x, y, r] of [[170, 110, 22], [210, 160, 12]]) shape(ctx, '#fff', 4, circle(x, y, r));
       shape(ctx, '#8ab868', 3, ellipse(0, 20, 150, 50)); for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + t * .4; shape(ctx, ['#7fba5a', '#f6c945', '#e8742a', '#cfe0f0'][i], 2.5, circle(Math.cos(a) * 120, -60 + Math.sin(a) * 50, 18)); }
       shape(ctx, '#2f4a8a', 3, rect(-60, -40, 26, 50, 8)); shape(ctx, '#a87648', 3, rect(30, -40, 26, 50, 8)); shape(ctx, '#f0c8a0', 3, circle(-47, -54, 13)); shape(ctx, '#a06a44', 3, circle(43, -54, 13)); line(ctx, [[-34, -20], [30, -20]], 7, '#e8b890');
-      ctx.restore(); lenape(ctx, 1180, 760, .55, t, 1, { still: true }); txt(ctx, 'THE LENAPE: LIKELY "SHARED USE"', 960, 560, FX.DISPLAY(28), '#8a4a2a'); }
+      ctx.restore(); lenape(ctx, 1060, 760, .55, t, 1, { still: true }); txt(ctx, 'THE LENAPE: LIKELY "SHARED USE"', 960, 560, FX.DISPLAY(28), '#8a4a2a'); }
   }
   function s10(ctx, lt, dur, t) { ctx.save(); cam(ctx, lerp(1.08, 1.0, ease.inOut(clamp(lt / dur))), 420, 380); deals(ctx, t, lt - .1, 0); ctx.restore();
     strip(ctx, 'NOT THE SAME DEAL', 640, 92, since(t, 'same') + .1, { px: 38, color: RED }); if (lt < 1.2) strip(ctx, 'MANY HISTORIANS THINK…', 640, 92, lt, { px: 34 }); vig(ctx); }
@@ -462,7 +461,7 @@
     for (let i = 0; i < 30; i++) line(ctx, [[30 + i * 22, 352], [30 + i * 22, 320]], 5, '#7a5430'); tag(ctx, 'THE WALL (FACING INLAND)', 330, 296, since(t, 'never'), 16);
     // the four English warships come in from the sea
     for (let i = 0; i < 4; i++) { const k = fw > -.6 ? ease.out(clamp((fw + .6 - i * .25) / 2.4)) : 0; ship(ctx, lerp(1500 + i * 120, 760 + i * 130, k), 520 + i * 40, .42 + i * .04, t, 'en'); }
-    harbor(ctx, 220, 790, 440, t, { look: [.9, -.3], eyes: blink(t, 116.0), mouth: dm > 0 ? 'o' : 'smile' });
+    harbor(ctx, 200, 860, 420, t, { look: [.9, -.3], eyes: blink(t, 116.0), mouth: dm > 0 ? 'o' : 'smile' });
     ctx.restore();
     FX.dateTag(ctx, 'NEW AMSTERDAM · 1664');
     if (since(t, 'job') > 0) strip(ctx, 'THE WALL NEVER DOES ITS JOB', 640, 100, since(t, 'job'), { px: 34, color: RED });
@@ -475,10 +474,10 @@
     const fg = since(t, 'fight'), tp = since(t, 'townspeople');
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.04), 640, 420); dutchCorner(ctx, t, { wall: 1 });
     ctx.restore();
-    stuyvesant(ctx, 260, 760, .9, t, { still: true, reach: fg > 0, sword: fg <= 0 });
+    stuyvesant(ctx, 260, 760, .9, t, { still: true, reach: fg > 0 });
     if (fg > 0) { const a = Math.sin(t * 8) * .3; ctx.save(); ctx.translate(330, 420); ctx.rotate(-.8 + a); line(ctx, [[0, 0], [0, -150]], 8, '#d8d8e0'); shape(ctx, '#c8a040', 2.5, rect(-14, -6, 28, 10)); ctx.restore(); }
     if (tp > -.2) for (let i = 0; i < 5; i++) { const k = clamp((tp + .2 - i * .1) / .4); if (k <= 0) continue; dutchman(ctx, 640 + i * 120, 780 + (i % 2) * 14, .62, t, i, { still: true }); }
-    if (tp > .4) { line(ctx, [[770, 530], [770, 600]], 5, '#5a3a20'); shape(ctx, '#f4ead4', 3.5, rect(700, 440, 150, 96, 4)); for (let i = 0; i < 4; i++) line(ctx, [[714, 458 + i * 16], [836, 458 + i * 16]], 2, '#8a7a6a'); txt(ctx, 'PLEASE, NO FIGHT', 775, 522, FX.FONT(800, 12), RED); }
+    if (tp > .4) { shape(ctx, '#f4ead4', 3.5, rect(700, 380, 150, 90, 4)); for (let i = 0; i < 4; i++) line(ctx, [[714, 398 + i * 16], [836, 398 + i * 16]], 2, '#8a7a6a'); txt(ctx, 'PLEASE DON\'T', 775, 456, FX.FONT(800, 13), RED); }
     const P = [['property', 'PROPERTY', 'house'], ['trade', 'TRADE', 'coin'], ['religion', 'RELIGION', 'church']];
     P.forEach(([k, l, ic], i) => { const kk = since(t, k); if (kk <= -.2) return; const s = pop(kk + .2); ctx.save(); ctx.translate(620 + i * 210, 160); ctx.scale(s, s); shape(ctx, PAPER, 4, rect(-90, -70, 180, 140, 10));
       if (ic === 'house') { shape(ctx, '#c8643a', 3, rect(-30, -20, 60, 44)); shape(ctx, '#8a3a2a', 3, poly([[-38, -20], [0, -50], [38, -20]])); }
@@ -495,7 +494,7 @@
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.0, 1.05), 640, 380);
     sky(ctx, t, '#6ab0e0', '#fde0b0'); waterBand(ctx, 520, t, -600, 2200, '#3a98b8');
     // the fort's flagpole: Dutch colours down, English colours up
-    shape(ctx, '#8ab868', 4, c => { c.moveTo(-100, 540); c.quadraticCurveTo(640, 420, 1400, 540); c.lineTo(1400, 560); c.lineTo(-100, 560); c.closePath(); }); shape(ctx, '#a8946a', 4, poly([[300, 520], [400, 440], [880, 440], [980, 520]])); shape(ctx, '#c8b48a', 3.5, rect(520, 380, 240, 70)); shape(ctx, '#b85a3a', 3.5, poly([[510, 380], [640, 330], [770, 380]]));
+    shape(ctx, '#a8946a', 4, poly([[300, 520], [400, 440], [880, 440], [980, 520]])); shape(ctx, '#c8b48a', 3.5, rect(520, 380, 240, 70)); shape(ctx, '#b85a3a', 3.5, poly([[510, 380], [640, 330], [770, 380]]));
     line(ctx, [[640, 330], [640, 80]], 7, '#5a3a20');
     const down = ch > 0 ? ease.inOut(clamp(ch / 1.0)) : 0, up = ch > 1.0 ? ease.inOut(clamp((ch - 1.0) / 1.0)) : 0, w = Math.sin(t * 4) * 4;
     { const y = lerp(90, 300, down); ctx.save(); ctx.globalAlpha = 1 - down * .6; for (let i = 0; i < 3; i++) shape(ctx, ['#e8742a', '#f4efe6', '#2f4a8a'][i], 0, poly([[644, y + i * 18], [760, y + i * 18 + w], [760, y + i * 18 + 18 + w], [644, y + i * 18 + 18]])); ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.strokeRect(644, y, 116, 54); ctx.restore(); }
@@ -521,8 +520,8 @@
     { const x = 120, y = 120, w = Math.sin(t * 4) * 4; line(ctx, [[x, y], [x, 420]], 6, '#5a3a20'); shape(ctx, '#fff', 3, poly([[x + 4, y], [x + 110, y + w], [x + 110, y + 56 + w], [x + 4, y + 56]])); shape(ctx, RED, 0, rect(x + 50, y + 2, 12, 52)); shape(ctx, RED, 0, rect(x + 6, y + 22, 102, 12)); }
     ctx.restore();
     // a rooster crows
-    if (mo > -.6) { const k = clamp((mo + .6) / .4); ctx.save(); ctx.translate(900, 520); ctx.scale(k, k); shape(ctx, '#e8742a', 3, ellipse(0, 0, 30, 22)); shape(ctx, '#2f3a2a', 3, poly([[-26, -6], [-56, -30], [-46, 10]])); shape(ctx, '#e8742a', 3, circle(24, -24, 14)); shape(ctx, RED, 0, poly([[18, -38], [26, -48], [32, -36]])); shape(ctx, GOLD, 0, poly([[36, -24], [50, -20], [36, -16]])); ctx.restore();
-      ctx.save(); ctx.globalAlpha = k; txt(ctx, 'COCK-A-DOODLE-DOO!', 900, 440, FX.DISPLAY(24), '#5a3a20'); ctx.restore(); }
+    if (mo > -.6) { const k = clamp((mo + .6) / .4); ctx.save(); ctx.translate(1100, 520); ctx.scale(k, k); shape(ctx, '#e8742a', 3, ellipse(0, 0, 30, 22)); shape(ctx, '#2f3a2a', 3, poly([[-26, -6], [-56, -30], [-46, 10]])); shape(ctx, '#e8742a', 3, circle(24, -24, 14)); shape(ctx, RED, 0, poly([[18, -38], [26, -48], [32, -36]])); shape(ctx, GOLD, 0, poly([[36, -24], [50, -20], [36, -16]])); ctx.restore();
+      ctx.save(); ctx.globalAlpha = k; txt(ctx, 'COCK-A-DOODLE-DOO!', 1080, 450, FX.DISPLAY(22), '#5a3a20'); ctx.restore(); }
     FX.dateTag(ctx, 'NEW YORK · THE NEXT MORNING');
     if (sw > -.2) strip(ctx, 'SWITCHED COUNTRIES…', 560, 110, sw + .2, { px: 34 });
     if (since(t, 'work') > 0) strip(ctx, '…BACK TO WORK', 640, 210, since(t, 'work'), { px: 34, color: GREEN, rot: .02 });
@@ -542,7 +541,7 @@
       if (f === 'en') { shape(ctx, '#fff', 0, poly([[x + 4, y], [x + 130, y + w], [x + 130, y + 60 + w], [x + 4, y + 60]])); shape(ctx, RED, 0, rect(x + 58, y, 14, 60)); shape(ctx, RED, 0, rect(x + 4, y + 24, 126, 12)); }
       if (f === 'us') { for (let k = 0; k < 7; k++) shape(ctx, k % 2 ? '#fff' : RED, 0, poly([[x + 4, y + k * 9], [x + 130, y + k * 9 + w], [x + 130, y + k * 9 + 9 + w], [x + 4, y + k * 9 + 9]])); shape(ctx, '#2a3a7a', 0, rect(x + 4, y, 52, 34)); }
       ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.strokeRect(x + 4, y, 126, 60); }
-    harbor(ctx, 520, 700, 560, t, { look: [.5, -.4], eyes: blink(t, 145.0, 148.2), mouth: 'smile' });
+    harbor(ctx, 520, 760, 560, t, { look: [.5, -.4], eyes: blink(t, 145.0, 148.2), mouth: 'smile' });
     ctx.restore();
     if (fl > -.2 && hb < 0) strip(ctx, 'NEVER BUILT AROUND A FLAG', 520, 100, fl + .2, { px: 34 });
     if (hb > -.2) strip(ctx, 'BUILT AROUND A HARBOR', 520, 100, hb + .2, { px: 40, color: '#2f6a9a' });

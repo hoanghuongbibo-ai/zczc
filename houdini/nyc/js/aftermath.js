@@ -142,7 +142,7 @@
 
   const { harbor, walker, corner, dutchCorner, land1609, immigrant } = N;
   const fade = (k, d = .8) => clamp(k / d);
-  const quiet = (ctx, s, x, y, k, px = 34, col = CREAM) => { if (k <= 0) return; ctx.save(); ctx.globalAlpha = fade(k); txt(ctx, s, x, y, FX.DISPLAY(px), col); ctx.restore(); };
+  const quiet = (ctx, s, x, y, k, px = 34, col = CREAM) => { if (k <= 0) return; ctx.save(); ctx.globalAlpha = fade(k); ctx.font = FX.DISPLAY(px); const w = ctx.measureText(s).width + px * 1.4; if (col === CREAM || col === '#ffb88a' || col === '#d8d0c0' || col === '#b8b0a0') shape(ctx, 'rgba(14,16,24,.55)', 0, rect(x - w / 2, y - px * .85, w, px * 1.7, px * .5)); txt(ctx, s, x, y, FX.DISPLAY(px), col); ctx.restore(); };
   const still = (ctx, lt, dur, z1 = 1.06, fx = 640, fy = 380) => cam(ctx, lerp(1, z1, ease.sine(clamp(lt / dur))), fx, fy);
   const dim = (ctx, a) => { ctx.save(); ctx.globalAlpha = a; shape(ctx, '#0e1018', 0, rect(-400, -300, 2100, 1300)); ctx.restore(); };
 
@@ -155,7 +155,7 @@
 
   // ---------- k2: September 11th 2001 — a short walk from the corner where this video began (held shot, no aircraft) ----------
   function k2(ctx, lt, dur, t) {
-    ctx.save(); still(ctx, lt, dur, 1.08, 640, 360); corner(ctx, t, { freeze: A.sept, crowd: .7 });
+    ctx.save(); still(ctx, lt, dur, 1.08, 640, 360); corner(ctx, t, { freeze: A.sept, crowd: .7, fg: false });
     // a pale haze drifts in over the rooftops; the light goes grey
     const hz = clamp((lt - 1.5) / 6); ctx.save(); ctx.globalAlpha = .55 * hz; shape(ctx, grad(ctx, 0, -200, 0, 500, [[0, '#c8c4bc'], [1, 'rgba(200,196,188,0)']]), 0, rect(-400, -300, 2100, 800)); ctx.restore();
     ctx.restore(); dim(ctx, .25 + .2 * hz);
@@ -199,9 +199,9 @@
     for (let i = 0; i < 8; i++) { const x = i < 4 ? 20 + i * 150 : 1020 + (i - 4) * 70, h = 160 + (i * 41) % 120; if (x > 820 && x < 1040) continue; shape(ctx, ['#c8b8a0', '#a9b6c4', '#d8c8b0', '#b8c4d0'][i % 4], 3, rect(x, 420 - h, i < 4 ? 140 : 64, h)); for (let y = 420 - h + 16; y < 410; y += 24) line(ctx, [[x + 10, y], [x + (i < 4 ? 130 : 54), y]], 4, 'rgba(60,80,110,.35)'); }
     shape(ctx, '#c8c4b8', 0, rect(-200, 420, 1700, 400));
     // the pool: a square void, water falling on all sides, names cut in the bronze parapet
-    shape(ctx, '#3a3a40', 4, poly([[300, 470], [980, 470], [1100, 640], [180, 640]])); shape(ctx, '#2a2a30', 0, poly([[340, 490], [940, 490], [1040, 620], [240, 620]]));
+    shape(ctx, '#6a6a72', 4, poly([[300, 470], [980, 470], [1100, 640], [180, 640]])); shape(ctx, grad(ctx, 0, 490, 0, 620, [[0, '#9aa4b0'], [1, '#4a5260']]), 0, poly([[340, 490], [940, 490], [1040, 620], [240, 620]]));
     for (let i = 0; i < 70; i++) { const p = i / 70, x = lerp(345, 935, p), yy = (t * 40 + i * 7) % 18; line(ctx, [[x, 492], [x, 520 + yy * .2]], 2, 'rgba(230,240,248,.8)'); }
-    shape(ctx, '#1a1a20', 0, poly([[540, 540], [740, 540], [770, 590], [510, 590]])); for (let i = 0; i < 20; i++) { const x = lerp(545, 735, i / 20); line(ctx, [[x, 542], [x, 560]], 1.5, 'rgba(230,240,248,.6)'); }
+    shape(ctx, '#14161c', 3, poly([[540, 540], [740, 540], [770, 590], [510, 590]])); for (let i = 0; i < 20; i++) { const x = lerp(545, 735, i / 20); line(ctx, [[x, 542], [x, 560]], 1.5, 'rgba(230,240,248,.6)'); }
     shape(ctx, '#6a5a3a', 3, poly([[300, 470], [980, 470], [990, 458], [290, 458]])); for (let i = 0; i < 40; i++) line(ctx, [[310 + i * 17, 462], [322 + i * 17, 462]], 1.5, '#c8b070');
     // trees and people: visitors, a parent with a child, neighbors walking a dog
     for (let i = 0; i < 9; i++) { const x = 60 + i * 150 + (i % 2) * 30, y = 700 - (i % 2) * 40; line(ctx, [[x, y], [x, y - 60]], 7, '#5a3a20'); shape(ctx, i % 2 ? '#5f9f4c' : '#4f8f3a', 3, circle(x, y - 90, 40)); }
@@ -275,7 +275,7 @@
 
   // ---------- k13: the comebacks are real — never free, never shared evenly ----------
   function k13(ctx, lt, dur, t) {
-    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#d8d4cc'], [1, '#b8b4ac']]), 0, rect(0, 0, W, H));
+    shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#d8d4cc'], [1, '#b8b4ac']]), 0, rect(0, 0, W, H)); ctx.save(); ctx.globalAlpha = .35; for (let i = 0; i < 16; i++) { const x = 20 + i * 80, h = 140 + (i * 53) % 220; shape(ctx, '#9aa0aa', 2, rect(x, 560 - h, 70, h)); } ctx.restore();
     const tl = clamp((since(t, 'evenly') + .3) / 1.2) * .16; shape(ctx, '#7a6a5a', 3, poly([[610, 640], [670, 640], [640, 590]]));
     ctx.save(); ctx.translate(640, 590); ctx.rotate(tl); line(ctx, [[-420, 0], [420, 0]], 10, '#5a4a3a');
     for (let i = 0; i < 4; i++) walker(ctx, -380 + i * 60, 0, .3, t, i * 2 + 1, { still: true, cam: false }); for (let i = 0; i < 2; i++) walker(ctx, 260 + i * 80, 0, .3, t, i * 5 + 3, { still: true, cam: false });

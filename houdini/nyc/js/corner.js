@@ -38,23 +38,23 @@
   // a lively modern pedestrian, walking toward the camera: faces, hair, coats, bags, coffee, cameras (foreground cast)
   const COAT = ['#2f4a7a', '#c8322a', '#3a8a5a', '#e8a83a', '#7a4a8a', '#2f2f3a', '#e86a4a', '#4a8ac8', '#8a5a34', '#d84a7a'], PANTS = ['#2a2a34', '#3a4a6a', '#5a4a3a', '#1d1a17', '#6a7a8a'];
   function walker(ctx, x, y, s, t, v, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
-    const ph = t * 6.5 + v * 1.7, sw = o.still ? 0 : Math.sin(ph), bob = o.still ? 0 : -Math.abs(Math.cos(ph)) * 5, skin = SKIN[v % 6], hair = HAIR[(v * 5 + 1) % 6], coat = COAT[v % COAT.length], pants = PANTS[(v * 3) % 5];
-    const cam = o.cam ?? v % 6 === 2, cup = v % 5 === 1, pack = v % 4 === 1, brief = v % 7 === 4 && !cam;
+    const ph = t * 6.5 + v * 1.7, sw = o.still ? 0 : Math.sin(ph), bob = o.still ? 0 : -Math.abs(Math.cos(ph)) * 5, skin = o.skin || SKIN[v % 6], hair = o.hair || HAIR[(v * 5 + 1) % 6], coat = o.coat || COAT[v % COAT.length], pants = o.pants || PANTS[(v * 3) % 5];
+    const cam = !o.plain && (o.cam ?? v % 6 === 2), cup = !o.plain && v % 5 === 1, pack = !o.plain && v % 4 === 1, brief = !o.plain && v % 7 === 4 && !cam;
     shape(ctx, 'rgba(40,30,60,.22)', 0, ellipse(0, 18, 58, 20));
     ctx.translate(0, bob);
-    for (const d of [-1, 1]) { const lift = Math.max(0, d * sw) * 16; line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 26, INK); line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 19, pants); shape(ctx, d > 0 ? '#f4efe6' : '#3a2a20', 3.5, ellipse(d * 19, -8 - lift, 19, 10)); }
+    for (const d of [-1, 1]) { const lift = Math.max(0, d * sw) * 16; line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 26, INK); line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 19, pants); shape(ctx, o.shoe || (d > 0 ? '#f4efe6' : '#3a2a20'), 3.5, ellipse(d * 19, -8 - lift, 19, 10)); }
     if (pack) shape(ctx, '#e8642a', 4, rect(-44, -246, 88, 100, 16));
     shape(ctx, coat, 4.5, c => { c.moveTo(-38, -236); c.quadraticCurveTo(-46, -246, -30, -254); c.lineTo(30, -254); c.quadraticCurveTo(46, -246, 38, -236); c.lineTo(36, -122); c.quadraticCurveTo(0, -112, -36, -122); c.closePath(); });
-    shape(ctx, v % 3 ? '#f4efe6' : '#cfe0f0', 3, poly([[-14, -254], [14, -254], [0, -222]])); if (v % 3 === 0) shape(ctx, v % 2 ? '#c8322a' : '#2f5a8a', 2.5, poly([[-5, -246], [5, -246], [7, -180], [0, -170], [-7, -180]])); else line(ctx, [[0, -222], [0, -126]], 2.5, 'rgba(0,0,0,.3)');
+    if (o.plain) { for (let i = 0; i < 7; i++) line(ctx, [[-34 + i * 11, -124], [-35 + i * 11, -108]], 3, coat); if (o.beads) for (let i = 0; i < 9; i++) shape(ctx, i % 2 ? '#f4efe6' : '#5a8ac0', 1.5, circle(-20 + i * 5, -246 + Math.abs(i - 4) * 3, 3)); } else { shape(ctx, v % 3 ? '#f4efe6' : '#cfe0f0', 3, poly([[-14, -254], [14, -254], [0, -222]])); } if (!o.plain && v % 3 === 0) shape(ctx, v % 2 ? '#c8322a' : '#2f5a8a', 2.5, poly([[-5, -246], [5, -246], [7, -180], [0, -170], [-7, -180]])); else if (!o.plain) line(ctx, [[0, -222], [0, -126]], 2.5, 'rgba(0,0,0,.3)');
     if (pack) { line(ctx, [[-24, -252], [-26, -170]], 7, '#b84a20'); line(ctx, [[24, -252], [26, -170]], 7, '#b84a20'); }
     // arms: swing with the walk, or both raised holding a camera to the eye
     if (cam) { for (const d of [-1, 1]) { line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 18, INK); line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 12, coat); }
-    } else for (const d of [-1, 1]) { const hx = d * 50, hy = -150 + d * sw * 18; line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 18, INK); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 12, coat); shape(ctx, skin, 3, circle(hx, hy + 4, 10));
+    } else for (const d of [-1, 1]) { const hx = d * 50 + (o.reach && d > 0 ? 30 : 0), hy = -150 + d * sw * 18 - (o.reach && d > 0 ? 90 : 0); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 18, INK); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 12, coat); shape(ctx, skin, 3, circle(hx, hy + 4, 10));
       if (d > 0 && cup) { shape(ctx, '#f4efe2', 3, poly([[hx - 9, hy - 20], [hx + 9, hy - 20], [hx + 7, hy + 6], [hx - 7, hy + 6]])); shape(ctx, '#2f7a46', 0, rect(hx - 8, hy - 10, 16, 6)); shape(ctx, '#6a4a2a', 2, rect(hx - 10, hy - 24, 20, 6, 2)); }
       if (d < 0 && brief) shape(ctx, '#5a3a20', 3.5, rect(hx - 22, hy + 8, 44, 32, 4)); }
     // head
     shape(ctx, skin, 3.5, rect(-9, -272, 18, 18)); shape(ctx, skin, 4, circle(-34, -300, 9)); shape(ctx, skin, 4, circle(34, -300, 9));
-    const hs = v % 6;
+    const hs = o.hs ?? v % 6;
     if (hs === 1) for (const d of [-1, 1]) shape(ctx, hair, 4, ellipse(d * 34, -282, 13, 36));
     shape(ctx, skin, 4.5, circle(0, -302, 36));
     if (hs === 0 || hs === 1) shape(ctx, hair, 4, c => { c.moveTo(-36, -304); c.quadraticCurveTo(-38, -344, 0, -342); c.quadraticCurveTo(38, -344, 36, -304); c.quadraticCurveTo(14, -328, -36, -304); c.closePath(); });

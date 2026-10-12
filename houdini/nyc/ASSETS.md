@@ -73,3 +73,29 @@ The cartoon cast (Stuyvesant, Schagen, Clinton, Annie Moore, Ford, Brink, Lenape
 - **A.** Beat 6 (the twist) is two static ideas. I'll make it a balance scale: the harbor on one side and a queue of newcomers on the other, with both draining out at "stop at once".
 - **B.** In Beat 7, the 1975 corner is grey with "closed" signs, and a ledger of bills grows taller than the people standing in it.
 - **C. Beat 8 tone shift.** I recommend against drawing burning towers or aircraft. Instead: a held, quiet shot of the corner at 8:46 with the light changing and dust in the air, then cut to the memorial pools and the Tribute in Light. The 1977 looting also stays in silhouette with no faces.
+
+## Received 2026-10-12 (Asset.zip: 19 images + 1 PDF) → `assets/img/`, `assets/docs/`
+| # | File | Verdict |
+|---|---|---|
+| 1 | schagen-letter-1626.jpg | Good, PD. Low resolution (554×845), so I'll recreate it as a paper prop with the real handwriting style and a close-up of "60 guilders". |
+| 2 | docs/ford-speech-1975-10-29.pdf | Good. Confirms the final wording: "I say the people of this country will not be stampeded; they will not panic when a few desperate New York politicians and bankers try to scare the mortgage payments out of them". A later page says "as I said at the National Press Club on October 29", which confirms the venue. |
+| 3 | british-hq-map-1782.jpg, british-hq-vs-aerial-ref.jpg | Good, PD. Low resolution, so used only as drawing reference for the 1609 shoreline and hills. |
+| 4 | castello-plan-full / fort / canal / wall.jpg | Excellent, PD (1916 redraft of the 1660 plan). Framed painting that cross-fades to the cartoon. The wall crop is the actual wall line at today's Wall Street; the canal crop shows the Heere Gracht, which is today's Broad Street (the "creek under the pavement"). |
+| 5 | fire-1835-painting.jpg | Excellent, PD. The fire seen from across the East River with watchers on the shore, which matches the script line exactly. Framed painting that cross-fades to cartoon. |
+| 6 | stuyvesant-c1660.jpg | Good, PD. Cartoon reference: skullcap, breastplate, sash. |
+| 7 | ford-official.jpg | Good, PD (US government work). |
+| 8 | ellis-island-pens.jpg, ellis-island-1902.jpg | Good, PD. The pens are the Great Hall registry. The 1902 photo is construction rubble, so it is mood reference only. |
+| 9 | esb-worker-hine.jpg | Excellent, PD (Lewis Hine, 1930–31). Reference for the riveter silhouette on the "410 days" shot. |
+| 14 | daily-news-1975-10-30-ref.jpg | Good, layout reference only (R). I'll recreate it with a made-up masthead and the real headline words. |
+| 15 | mannahatta-1609-ref.jpg | Reference only (R, WCS). It is a satellite image with Manhattan tinted; I'll draw my own 1609 map from #3. |
+| 22 | erie-canal-map-britannica-ref.jpg | © Britannica 2008, so NOT public domain and not shown on screen. I'll draw the canal map myself from latitude/longitude. |
+| 25 | clinton-morse.jpg | Good, PD. Small (195×259), but enough for the cartoon. |
+| 26 | washington-stuart.jpg | Good, PD. |
+| 28 | leslies-1887-ship-rail-statue.jpg | This is NOT the Edison film. It is the Frank Leslie's engraving "Welcome to the land of freedom" (1887), with immigrants at a ship's rail passing the Statue of Liberty. PD, and it is the perfect reference for the script's "put yourself at that rail" shot. |
+
+Fact-check updates:
+- **Washington quote (#18):** confirmed. Letter to John Hancock, 22 Sep 1776, written from Harlem Heights: the fire "continued to burn pretty rapidly till after Sun rise the next morning". The 23 Sep letter to Gov. Trumbull has nearly the same wording. On screen I'll label it "Letter to Congress (John Hancock), 22 Sept 1776".
+- **Ford venue:** the National Press Club, confirmed by the Ford Library PDF.
+- **"800+ in one day":** still open. The only figure that can be checked is New York STATE's 799 (9 Apr 2020). Need the NYC Health Department data (#13), or use the fallback wording.
+
+Still missing (defaults apply): 10–13 data tables (my network can't reach census.gov or nyc.gov, so I'll use the published figures quoted in the script), 16 the corner photo, 17 Lenape reference, and 19–21, 23–24, 27, 29–36.

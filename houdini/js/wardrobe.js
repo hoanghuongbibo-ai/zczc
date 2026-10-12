@@ -6,7 +6,7 @@
  * (Greek key hem, knit texture, seigaiha waves, tweed, pleated linen), so close-ups stay rich. */
 (function (G) {
   'use strict';
-  const Gd = G.Guide, { path, seg, curve, bodyPath, garment, lerp, clamp, INK, LW } = Gd.kit, O = Gd.OUTFITS, H = Gd.HATS, LEGS = Gd.LEGS, FEET = Gd.FEET, SKIN = '#ffffff';
+  const Gd = G.Guide, { path, seg, curve, bodyPath, garment, lerp, clamp, LW } = Gd.kit, O = Gd.OUTFITS, H = Gd.HATS, LEGS = Gd.LEGS, FEET = Gd.FEET;
   const PI = Math.PI, TAU = PI * 2;
   const clip = (ctx, shp, fn) => { ctx.save(); ctx.beginPath(); shp(ctx); ctx.clip(); fn(); ctx.restore(); };
   const tube = (ctx, a, b, w, col) => { seg(ctx, [a, b], w + 10); seg(ctx, [a, b], w, col); };
@@ -37,15 +37,15 @@
   };
   FEET.sandals = (ctx, g) => {
     const { sd, ank, lift, toe } = g, fx = ank[0] + toe + sd * 5, fy = -12 - lift, strap = '#7a4a2a';
-    path(ctx, c => c.ellipse(fx, fy, 28, 12, 0, 0, TAU), SKIN, 4); seg(ctx, [[fx - 28, fy + 11], [fx + 28, fy + 11]], 6, '#5a3b24');
+    path(ctx, c => c.ellipse(fx, fy, 28, 12, 0, 0, TAU), Gd.C.face, 4); seg(ctx, [[fx - 28, fy + 11], [fx + 28, fy + 11]], 6, '#5a3b24');
     for (const dx of [-10, 6]) seg(ctx, [[fx + dx, fy - 10], [fx + dx + 6, fy + 8]], 4, strap);
     for (let i = 0; i < 4; i++) { const y = -32 - i * 14 - lift; seg(ctx, [[ank[0] - 12, y + 3], [ank[0] + 12, y - 3]], 4.5, strap); }
     seg(ctx, [[ank[0] - 12, -32 - lift], [ank[0] - 12, -76 - lift]], 3, strap);
   };
   FEET.geta = (ctx, g) => {   // white tabi socks on raised wooden clogs
     const { sd, ank, lift, toe } = g, fx = ank[0] + toe + sd * 5, fy = -26 - lift;
-    seg(ctx, [[ank[0], -40 - lift], [ank[0], fy]], 30); seg(ctx, [[ank[0], -40 - lift], [ank[0], fy]], 21, SKIN);
-    path(ctx, c => c.ellipse(fx, fy, 27, 11, 0, 0, TAU), SKIN, 4);
+    seg(ctx, [[ank[0], -40 - lift], [ank[0], fy]], 30); seg(ctx, [[ank[0], -40 - lift], [ank[0], fy]], 21, '#f7f4ee');
+    path(ctx, c => c.ellipse(fx, fy, 27, 11, 0, 0, TAU), '#f7f4ee', 4);
     path(ctx, c => c.roundRect(fx - 30, fy + 8, 60, 8, 2), '#c79a5c', 3.5);
     for (const dx of [-18, 12]) path(ctx, c => c.rect(fx + dx - 4, fy + 16, 10, 9), '#a87a42', 3);
     seg(ctx, [[fx + sd * 8, fy + 4], [fx - 6, fy - 8], [fx - sd * 16, fy + 4]], 3.5, '#9b2f2a');
@@ -92,7 +92,7 @@
       seg(ctx, [[vx, top + 8], [vx, top + 46]], 3.5); for (let i = 0; i < 3; i++) { const y = top + 16 + i * 10; seg(ctx, [[vx - 7, y], [vx + 7, y + 6]], 2.2, '#d9c7a0'); seg(ctx, [[vx + 7, y], [vx - 7, y + 6]], 2.2, '#d9c7a0'); }
       // leather belt, brass buckle, hanging tail, pouch on the hip
       path(ctx, c => c.rect(-70 * nar, -206, 140 * nar, 17), '#5a3b24', 3.5);
-      path(ctx, c => c.roundRect(vx - 22, -211, 22, 27, 4), null, 0); ctx.lineWidth = 9; ctx.strokeStyle = INK; ctx.strokeRect(vx - 21, -210, 20, 25); ctx.lineWidth = 5; ctx.strokeStyle = '#d0a548'; ctx.strokeRect(vx - 21, -210, 20, 25);
+      path(ctx, c => c.roundRect(vx - 22, -211, 22, 27, 4), null, 0); ctx.lineWidth = 9; ctx.strokeStyle = Gd.kit.INK; ctx.strokeRect(vx - 21, -210, 20, 25); ctx.lineWidth = 5; ctx.strokeStyle = '#d0a548'; ctx.strokeRect(vx - 21, -210, 20, 25);
       seg(ctx, [[vx - 11, -198], [vx + 4, -198]], 3);
       tube(ctx, [vx + 6, -190], [vx + 10, -146], 10, '#5a3b24');
       const px = 38 * nar + vx * .3; path(ctx, c => c.roundRect(px, -192, 38, 40, 8), '#7a5233', 3.5); path(ctx, c => { c.moveTo(px - 2, -192); c.lineTo(px + 40, -192); c.lineTo(px + 38, -170); c.quadraticCurveTo(px + 19, -162, px, -170); c.closePath(); }, '#62402a', 3.5); path(ctx, c => c.arc(px + 19, -170, 4, 0, TAU), '#d0a548', 2);
@@ -143,13 +143,13 @@
     hat: 'nemes', arm: { bare: true, armlet: '#d9a93a' }, legs: { kind: 'bare' }, feet: 'sandals',
     torso(ctx, B) {
       const { top, nar, vx } = B;
-      garment(ctx, B, bodyPath(B, -186, .96), SKIN, 'rgba(60,50,80,.12)');
+      garment(ctx, B, bodyPath(B, -186, .96), Gd.C.face, 'rgba(60,50,80,.12)');
       if (!B.back) {
         curve(ctx, [vx - 34, top + 64], [vx - 16, top + 76], [vx - 2, top + 66], 2.5, 'rgba(0,0,0,.3)'); curve(ctx, [vx + 34, top + 64], [vx + 16, top + 76], [vx + 2, top + 66], 2.5, 'rgba(0,0,0,.3)');
         ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.arc(vx, -214, 2.5, 0, TAU); ctx.fill();
         // broad collar (wesekh): gold, turquoise, red and lapis rows of beads
         const cx = vx * .5, cy = top - 14, rows = ['#d9a93a', '#2fa39b', '#b8432f', '#2f4f9a', '#d9a93a'];
-        ctx.lineCap = 'butt'; ctx.beginPath(); ctx.arc(cx, cy, 58, .1 * PI, .9 * PI); ctx.lineWidth = 64; ctx.strokeStyle = INK; ctx.stroke();
+        ctx.lineCap = 'butt'; ctx.beginPath(); ctx.arc(cx, cy, 58, .1 * PI, .9 * PI); ctx.lineWidth = 64; ctx.strokeStyle = Gd.kit.INK; ctx.stroke();
         rows.forEach((col, i) => { ctx.beginPath(); ctx.arc(cx, cy, 32 + i * 12.5, .11 * PI, .89 * PI); ctx.lineWidth = 10.5; ctx.strokeStyle = col; ctx.stroke(); });
         ctx.fillStyle = 'rgba(255,255,255,.35)'; for (let a = .14; a < .88; a += .045) { ctx.beginPath(); ctx.arc(cx + Math.cos(a * PI) * 82, cy + Math.sin(a * PI) * 82, 2.4, 0, TAU); ctx.fill(); }
         ctx.lineCap = 'round';
@@ -169,11 +169,11 @@
       const { top, nar, vx } = B;
       garment(ctx, B, bodyPath(B, -150, 1.02), '#cdb47c', 'rgba(70,50,10,.25)');
       if (B.back) return;
-      path(ctx, c => { c.moveTo(vx - 18, top - 4); c.lineTo(vx + 18, top - 4); c.lineTo(vx, top + 34); c.closePath(); }, SKIN, 3.5);
+      path(ctx, c => { c.moveTo(vx - 18, top - 4); c.lineTo(vx + 18, top - 4); c.lineTo(vx, top + 34); c.closePath(); }, Gd.C.face, 3.5);
       for (const sd of [-1, 1]) path(ctx, c => { c.moveTo(vx + sd * 8, top - 8); c.lineTo(vx + sd * 34, top - 6); c.lineTo(vx + sd * 22, top + 26); c.closePath(); }, '#bea36a', 3.5);
       seg(ctx, [[vx, top + 34], [vx, -160]], 3); for (let i = 0; i < 4; i++) path(ctx, c => c.arc(vx + 5, top + 50 + i * 26, 3.5, 0, TAU), '#8a7448', 2);
       for (const sd of [-1, 1]) { const px = vx + sd * 34; path(ctx, c => c.roundRect(px - 15, top + 52, 30, 32, 3), '#c4aa70', 3); path(ctx, c => { c.moveTo(px - 17, top + 50); c.lineTo(px + 17, top + 50); c.lineTo(px + 15, top + 62); c.lineTo(px - 15, top + 62); c.closePath(); }, '#b39a60', 3); }
-      path(ctx, c => c.rect(-68 * nar, -168, 136 * nar, 15), '#5a3b24', 3.5); ctx.lineWidth = 8; ctx.strokeStyle = INK; ctx.strokeRect(vx - 10, -171, 20, 21); ctx.lineWidth = 4.5; ctx.strokeStyle = '#c9c2b0'; ctx.strokeRect(vx - 10, -171, 20, 21);
+      path(ctx, c => c.rect(-68 * nar, -168, 136 * nar, 15), '#5a3b24', 3.5); ctx.lineWidth = 8; ctx.strokeStyle = Gd.kit.INK; ctx.strokeRect(vx - 10, -171, 20, 21); ctx.lineWidth = 4.5; ctx.strokeStyle = '#c9c2b0'; ctx.strokeRect(vx - 10, -171, 20, 21);
     },
   };
 
@@ -212,7 +212,7 @@
   H.hood = { under: true, hideTufts: true, draw(ctx, hc) {   // medieval hood with a shoulder cape and a face opening
     const fx = Math.sin(hc.yaw) * 30, col = '#6b5139';
     const shp = c => { c.moveTo(-122, 20); c.bezierCurveTo(-130, -110, -40, -132, 0, -128); c.bezierCurveTo(60, -130, 132, -100, 122, 20); c.lineTo(132, 120); c.lineTo(-132, 120); c.closePath(); c.moveTo(fx + 80, 14); c.ellipse(fx, 14, 80, 82, 0, 0, TAU, true); };
-    ctx.beginPath(); shp(ctx); ctx.fillStyle = col; ctx.fill('evenodd'); ctx.lineWidth = LW; ctx.strokeStyle = INK; ctx.stroke();
+    ctx.beginPath(); shp(ctx); ctx.fillStyle = col; ctx.fill('evenodd'); ctx.lineWidth = LW; ctx.strokeStyle = Gd.kit.INK; ctx.stroke();
     ctx.save(); ctx.beginPath(); shp(ctx); ctx.clip('evenodd'); ctx.fillStyle = 'rgba(0,0,0,.22)'; ctx.beginPath(); ctx.ellipse(fx, 10, 98, 100, 0, 0, TAU); ctx.ellipse(fx, 14, 80, 82, 0, 0, TAU, true); ctx.fill('evenodd'); ctx.restore();
     for (const s of [-1, 1]) curve(ctx, [s * 104, -30], [s * 116, 40], [s * 110, 112], 3, 'rgba(0,0,0,.3)');
   } };

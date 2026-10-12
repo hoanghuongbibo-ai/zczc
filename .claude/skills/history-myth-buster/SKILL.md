@@ -110,7 +110,21 @@ Every shot must feel deep and lit, not flat paper:
   fog, swaying lanterns (`FX.pendulum`), lamp glows with floor reflections.
 - Materials get texture: cloth folds, knit, tweed, pleats, wood grain, brick courses — never a bare flat fill on a hero prop.
 
-## SKIT FORMAT (user reference clip 2026-10-12; demo `out/skit-demo.mp4`, `skit-demo.html`, `js/skitdemo.js`)
+## SKIT FORMAT — PAINTED LOOK v2 is the default (user's repainted frames, 2026-10-12)
+
+Template: `skit2.html` + `js/skit2.js` → `out/skit2-demo.mp4`. The user repainted my skit frames and asked for videos
+"based on images like these, lively and fresh". So for skits:
+- `Guide.setTheme('warm')`: peach skin, dark-brown hair, warm brown ink (`'ink'` = the original B&W sheet look).
+- Painted sets: sunset sky (blue → peach → gold) + slowly turning god rays, pink/purple clouds that drift, layered
+  warm hills with lit ridges, leafy trees (layered leaf clumps, 4 greens) and colourful flower bushes that **sway in the
+  wind**, grass + cattails swaying, vase balustrade, perspective stone floor with a light pool, moulded door + fluted
+  columns + light beams with dust, a detailed Colosseum (tiers, pilasters, keystones, stone texture).
+- **Alive in every shot**: parallax camera drift (layers at 0.12 / 0.3 / 0.6 / 1 / 1.4), birds flapping across, warm
+  light motes, a crowd of ~230 people (skin/hair/clothes variety) streaming out of the arches with walking bob and
+  a few waving, mouths that flap while each subtitle types on (`talking()`), bouncy walk + hop-to-stop, gestures on
+  the line, hair-tuft springs, blinks on the beat.
+
+## SKIT FORMAT (user reference clip 2026-10-12; first demo `out/skit-demo.mp4`, `skit-demo.html`, `js/skitdemo.js`)
 
 A dialogue-driven alternative to the narrated explainer, modelled on the user's reference (a painterly myth-comedy
 clip). Use it when the script has dialogue lines / characters talking. Its language:
@@ -142,6 +156,7 @@ clip). Use it when the script has dialogue lines / characters talking. Its langu
 | `js/show4.js`, `js/show5.js` | more set pieces to copy: maps + routes, trains, stage, dressing room, couch punch, thermometer, appendix diagram, code decoder, balance scale, marquee |
 | `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
 | `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
+| `js/skit2.js` | SKIT v2 (default): painted warm look, swaying foliage, drifting clouds, birds, crowd, parallax, talking mouths |
 | `js/skitdemo.js`, `js/skitcast.js` | SKIT format: painter kit, OTS blur, name-tab subtitles, Myth Card insert; supporting cast (Marcus) |
 | `js/wardrobedemo.js` | parallax era sets (study, Rome, medieval, Edo, London), spin + costume puff, stage line-up |
 | `js/rig.js` | puppet rig of the user's Houdini art (suit portrait, hospital bed) |
@@ -208,4 +223,6 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Skit format (user, 2026-10-12):** the user wants videos in the style of their reference clip (painterly dialogue
   skits) but with a unique touch and Theo as the lead; content comes later. Demo approved as the template: build new
   skits from `js/skitdemo.js` (sets, OTS, deadpan beats, name-tab subtitles, Myth Card).
+- **Painted look (user, 2026-10-12):** the user sent repaints of the skit frames (warm skin, brown hair, lush sunset
+  sets, big crowd) and wants videos like those, lively and fresh → skit2.js is the template; keep everything moving.
 

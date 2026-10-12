@@ -21,8 +21,8 @@
  *        thumbsUp, hips, crossed, magnify, facepalm, bow. */
 (function (G) {
   'use strict';
-  const INK = '#1b1917', LW = 5;
-  const C = { face: '#ffffff', hair: '#18181b', hairHi: '#4b4e59', hairRim: '#2c2d33', suit: '#34363d', suitShade: '#26272d', suitHi: '#50535c',
+  let INK = '#1b1917'; const LW = 5;
+  const C = { face: '#ffffff', faceHi: '#ffffff', faceMid: '#fdfcfe', faceEdge: '#dcd8e4', noseFill: '#fbf8fb', hair: '#18181b', hairHi: '#4b4e59', hairRim: '#2c2d33', suit: '#34363d', suitShade: '#26272d', suitHi: '#50535c',
     shirt: '#ffffff', tie: '#d8433a', tieDark: '#a52f28', cheek: 'rgba(240,128,118,.32)', mouth: '#4e1a1a', tongue: '#e46f67',
     shoe: '#141416', brass: '#c9993c', glass: 'rgba(170,215,245,.38)' };
   const lerp = (a, b, k) => a + (b - a) * k, clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
@@ -190,7 +190,7 @@
     const facePath = bald ? (c => c.rect(-300, -300, 600, 600)) : c => { through(c, fr); c.lineTo(fr[fr.length - 1][0] + 300, fr[fr.length - 1][1]); c.lineTo(400, 300); c.lineTo(-400, 300); c.lineTo(fr[0][0] - 300, fr[0][1]); c.closePath(); };
     // face fill with real volume: a soft radial falloff toward the shade side
     const gr = ctx.createRadialGradient(-shadeSide * 34 + sx(0) * .4, -20, 10, -shadeSide * 10, 0, 150);
-    gr.addColorStop(0, '#ffffff'); gr.addColorStop(.55, '#fdfcfe'); gr.addColorStop(1, '#dcd8e4');
+    gr.addColorStop(0, C.faceHi); gr.addColorStop(.55, C.faceMid); gr.addColorStop(1, C.faceEdge);
     ctx.beginPath(); facePath(ctx); ctx.fillStyle = gr; ctx.fill();
     // the fringe casts a thin shadow on the forehead
     if (!bald) { ctx.save(); ctx.translate(shadeSide * 3, 8); ctx.beginPath(); through(ctx, fr); ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(60,50,80,.13)'; ctx.stroke(); ctx.restore();
@@ -235,7 +235,7 @@
       curve(ctx, [xi, yi], [(xi + xo) / 2, (yi + yo) / 2 + arch], [xo, yo], LK.brow || 7.5, LK.browCol || INK);
     }
     const nd = yaw < -.05 ? -1 : 1, nx = sx(0) * .86 + Math.sin(yaw) * 8;
-    if (LK.nose === 'big') path(ctx, c => c.ellipse(nx + nd * 6, 26, 15, 13, 0, 0, Math.PI * 2), '#fbf8fb', 4);
+    if (LK.nose === 'big') path(ctx, c => c.ellipse(nx + nd * 6, 26, 15, 13, 0, 0, Math.PI * 2), C.noseFill, 4);
     else { ctx.beginPath(); ctx.moveTo(nx + nd * 1, 16); ctx.quadraticCurveTo(nx + nd * 12, 28, nx - nd * 1, 33); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.lineCap = 'round'; ctx.stroke(); }
     if (f.blush) for (const s of [-1, 1]) { const v = vis(s * .7); if (v < .3) continue; const bx = sx(s * .7); ctx.fillStyle = 'rgba(235,90,95,.35)'; ctx.beginPath(); ctx.ellipse(bx, 40, 20 * v, 11, 0, 0, Math.PI * 2); ctx.fill(); for (const dx of [-8, 0, 8]) seg(ctx, [[bx + dx * v + 4, 34], [bx + dx * v - 3, 46]], 2.5, '#d9545a'); }
     if (f.sweat) { const sx2 = sx(.85), sy = -12 + ((t * .5) % 1) * 22; path(ctx, c => { c.moveTo(sx2, sy - 28); c.quadraticCurveTo(sx2 + 17, sy + 2, sx2, sy + 9); c.quadraticCurveTo(sx2 - 17, sy + 2, sx2, sy - 28); c.closePath(); }, '#bfe3f7', 4); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(sx2 - 4, sy - 4, 3, 6, -.3, 0, Math.PI * 2); ctx.fill(); }
@@ -387,11 +387,17 @@
     ctx.restore();
   }
 
+  // colour themes: 'ink' = the original black-and-white sheet; 'warm' = the user's painted look (peach skin, brown hair, brown ink)
+  const THEMES = {
+    ink: { ink: '#1b1917', face: '#ffffff', faceHi: '#ffffff', faceMid: '#fdfcfe', faceEdge: '#dcd8e4', noseFill: '#fbf8fb', hair: '#18181b', hairHi: '#4b4e59', cheek: 'rgba(240,128,118,.32)' },
+    warm: { ink: '#3a2519', face: '#fcd8bd', faceHi: '#fee6d3', faceMid: '#fbd4b6', faceEdge: '#e7a585', noseFill: '#f9cdb0', hair: '#3d2416', hairHi: '#7d5034', cheek: 'rgba(238,104,96,.42)' },
+  };
+  function setTheme(name) { const th = THEMES[name] || THEMES.ink; INK = th.ink; for (const k of Object.keys(th)) if (k !== 'ink') C[k] = th[k]; }
   function talk(t, env = G.ENV, from = -1e9, to = 1e9) {
     if (!env || t < from || t > to) return 0;
     const i = t * env.fps, a = env.v[Math.floor(i)] || 0, b = env.v[Math.floor(i) + 1] || 0, v = a + (b - a) * (i % 1);
     return clamp((v - .12) * 1.6);
   }
   G.Guide = { draw, drawRaw, pose, blendPose, talk, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
-    kit: { path, seg, curve, through, union, bodyPath, garment, lerp, clamp, INK, LW }, name: 'Theo' };
+    kit: { path, seg, curve, through, union, bodyPath, garment, lerp, clamp, get INK() { return INK; }, LW }, setTheme, THEMES, name: 'Theo' };
 })(window);

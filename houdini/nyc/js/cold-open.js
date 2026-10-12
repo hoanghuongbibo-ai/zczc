@@ -350,7 +350,6 @@
     const nk = clamp(1 - Math.max(0, cm) / .6); if (nk > 0) { ctx.save(); ctx.globalAlpha = nk; notice(ctx, 640, 330, lt + 1, 0); ctx.restore(); }
     if (bg > 0) { const s = pop(bg); ctx.save(); ctx.translate(640, 120); ctx.rotate(-.03); ctx.scale(s, s); FX.bigText(ctx, 'CAME BACK BIGGER', 0, 0, 66, { color: GOLD }); ctx.restore();
       ctx.save(); ctx.translate(1110, 240); ctx.scale(s, s); line(ctx, [[0, 120], [0, -60]], 22, INK); line(ctx, [[0, 120], [0, -60]], 13, GREEN); shape(ctx, GREEN, 5, poly([[-40, -40], [0, -100], [40, -40]])); ctx.restore(); }
-    if (cm < .4) { ctx.save(); ctx.globalAlpha = nk; shape(ctx, '#1d1a17', 0, rect(1000, 600, 220, 60, 8)); txt(ctx, 'COUNT: 0', 1110, 630, FX.DISPLAY(32), GOLD); ctx.restore(); }
     vig(ctx);
   }
 

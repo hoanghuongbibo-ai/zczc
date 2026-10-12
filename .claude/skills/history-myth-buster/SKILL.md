@@ -237,3 +237,11 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Check the FIRST frame of every shot as well as the middle and end.** A shot whose content is keyed to a word several seconds in sits empty until then (the NYC "deals" shot was blank for 3.7 s). Start the set dressing at `lt ≈ 0` and key only the reveals to words.
 - `cam(ctx, z, fx, fy)` centres fx on screen, so a background must reach `fx − 640/z` on the left. Draw backgrounds as `rect(-500, -300, 2300, 1300)`, never `0..W`.
 - **New York sets so far** (`nyc/js/corner.js`): `corner()` (today), `dutchCorner(ctx, t, {wall, grey})` (1650s: palisade along the left, stepped-gable houses, the Heere Gracht canal on the right), `walker()` options (Dutch collar, tall hat, skullcap, sash, peg leg, sword, plain clothes with beads for Lenape), `sil()` silhouettes for tone shifts.
+- **User feedback (NYC Beat 3): "the first image is too washed out; some images along the way have errors."** Before sending, review the FINISHED MP4 at one frame every 3 s (`ffmpeg -vf "fps=1/3,scale=400:-1,tile=6x9"`), not only the stills. Things that slipped through:
+  - title cards built on a pale glow (use saturated two- or three-stop gradients and keep glows ≤ .45 alpha);
+  - zooms that miss the highlighted line of a document (compute the target: screen = T + (line − centre) × zoom);
+  - a prop held by nobody (a petition in mid-air);
+  - a figure with a sword at the hip AND a raised sword;
+  - a building on water with no land under it;
+  - the mascot pushed below the frame;
+  - labels hidden behind hats.

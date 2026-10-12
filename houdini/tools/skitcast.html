@@ -1,0 +1,23 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }
+@font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); }</style>
+<canvas id="c" width="2000" height="1200"></canvas>
+<script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="../js/skitcast.js"></script>
+<script>
+const c = document.getElementById('c'), g = c.getContext('2d'), D = Guide.draw;
+const label = (t, x, y, size = 26) => { g.font = `700 ${size}px Fredoka`; g.fillStyle = '#2b2622'; g.textAlign = 'center'; g.fillText(t, x, y); };
+const clip = (x, y, w, h, fn) => { g.save(); g.beginPath(); g.roundRect(x, y, w, h, 14); g.clip(); fn(); g.restore(); };
+Promise.all([document.fonts.load('700 30px Fredoka'), document.fonts.load('40px "Luckiest Guy"')]).then(() => {
+  g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 2000, 1200);
+  g.font = '56px "Luckiest Guy"'; g.fillStyle = '#1b1917'; g.textAlign = 'left'; g.fillText('SKIT CAST', 50, 80);
+  g.font = '700 28px Fredoka'; g.fillStyle = '#5b5248'; g.fillText('Theo (Rome outfit) + Marcus, an original Roman senator. Deadpan lids, blush and sweat for comic beats.', 380, 76);
+  D(g, 230, 700, 1, { t: 0, outfit: 'roman', face: { mouth: 'grin', brows: 'up' }, turn: .3, noBlink: true }); label('Theo', 230, 740);
+  D(g, 560, 700, 1, Object.assign({ t: 0, face: { eyes: 'half', mouth: 'flat' }, turn: -.3, noBlink: true }, Cast.marcus)); label('Marcus', 560, 740);
+  D(g, 880, 700, 1, Object.assign({ t: 0, back: true }, Cast.marcus)); label('Marcus back', 880, 740);
+  const ex = [['Theo: nervous', { outfit: 'roman', face: { mouth: 'grin', brows: 'worried', blush: true, sweat: true } }], ['Theo: deadpan', { outfit: 'roman', face: { eyes: 'half', mouth: 'flat' } }],
+    ['Marcus: deadpan', Object.assign({ face: { eyes: 'half', mouth: 'flat', look: [-.4, 0] } }, Cast.marcus)], ['Marcus: "really?"', Object.assign({ face: { eyes: 'half', brows: 'skeptic', mouth: 'smirk' } }, Cast.marcus)],
+    ['Marcus: shocked', Object.assign({ face: { eyes: 'wide', brows: 'up', mouth: 'shock' } }, Cast.marcus)], ['Marcus: smug', Object.assign({ face: { eyes: 'happy', brows: 'sly', mouth: 'smile' } }, Cast.marcus)]];
+  ex.forEach(([n, o], i) => { const x = 1130 + (i % 3) * 290, y = 140 + Math.floor(i / 3) * 420; clip(x - 130, y, 260, 300, () => { g.fillStyle = '#f6f0e3'; g.fillRect(x - 130, y, 260, 300); D(g, x, y + 560, 1, Object.assign({ t: 0, noBlink: true, light: { cast: 0, contact: 0 } }, o)); }); label(n, x, y + 334, 24); });
+  window.DONE = true;
+});
+</script>

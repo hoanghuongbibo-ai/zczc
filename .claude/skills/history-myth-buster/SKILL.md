@@ -110,6 +110,26 @@ Every shot must feel deep and lit, not flat paper:
   fog, swaying lanterns (`FX.pendulum`), lamp glows with floor reflections.
 - Materials get texture: cloth folds, knit, tweed, pleats, wood grain, brick courses — never a bare flat fill on a hero prop.
 
+## SKIT FORMAT (user reference clip 2026-10-12; demo `out/skit-demo.mp4`, `skit-demo.html`, `js/skitdemo.js`)
+
+A dialogue-driven alternative to the narrated explainer, modelled on the user's reference (a painterly myth-comedy
+clip). Use it when the script has dialogue lines / characters talking. Its language:
+- **Painterly golden-hour sets**: gradient skies with a sun glow and soft clouds, layered outlined mountains with a lit
+  face, stone/marble with gradient columns, diagonal **sun wedges** (blurred light polygons) across walls and floors,
+  flowering bushes, grass tufts, blurred foreground foliage/planters. Painter kit in skitdemo.js: `sky, cloud,
+  mountains, bush, grass, tree, column, lightWedge`, cached as layers (`layer(key, blur, fn)`).
+- **Staging**: wide establishing shot → two-shot → **over-the-shoulder with the foreground figure heavily blurred**
+  (`ctx.filter = 'blur(9px)'` around `Guide.draw`) → deadpan close-ups over a blurred background. Hard cuts, slow push-ins.
+- **Comedy timing**: slow head turns (back view → ¾), long silent beats, heavy-lidded deadpan (`eyes: 'half'`), one
+  slow blink, then the line; embarrassed reactions with `blush` + `sweat`.
+- **Our own touch** (not the reference's): Theo in the era outfit; subtitles as a coloured **name tab** (Theo red,
+  each cast member their own colour in `NAMES`) over a **cream paper strip** with a quick type-on (`sub()`); the
+  **MYTH CARD** insert (paper card on a desk: MYTH line, a mini diagram that animates, the fact lines, BUSTED stamp,
+  Theo pointing from the side) at the myth → fact moment.
+- Supporting cast lives in `js/skitcast.js` (`Cast.marcus`: original portly Roman senator — bald dome, grey fringe,
+  big nose, toga with purple stripes). New cast = `{ outfit, hat, look: { hair: 'mop'|'bald'|'curly', hairCol, nose,
+  width, chin, brow, browCol } }`; sheet `out/skit-cast.png` (`tools/skitcast.html`). Never copy the reference's characters.
+
 ## Toolkit (all in `houdini/`)
 
 | File | What it gives you |
@@ -122,6 +142,7 @@ Every shot must feel deep and lit, not flat paper:
 | `js/show4.js`, `js/show5.js` | more set pieces to copy: maps + routes, trains, stage, dressing room, couch punch, thermometer, appendix diagram, code decoder, balance scale, marquee |
 | `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
 | `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
+| `js/skitdemo.js`, `js/skitcast.js` | SKIT format: painter kit, OTS blur, name-tab subtitles, Myth Card insert; supporting cast (Marcus) |
 | `js/wardrobedemo.js` | parallax era sets (study, Rome, medieval, Edo, London), spin + costume puff, stage line-up |
 | `js/rig.js` | puppet rig of the user's Houdini art (suit portrait, hospital bed) |
 | `js/props.js` | handcuffs, chains, watch, glass, car, etc. |
@@ -184,4 +205,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Theo v2 (user feedback, 2026-10-12):** no single curl/stray strand — the hair is a full rounded mop like the
   reference (curly only if the whole style is curly); outfits change with the script and hats fit the setting; the
   visuals must be rich with a "4D" depth feel (depth pass on characters, parallax layered sets, atmosphere).
+- **Skit format (user, 2026-10-12):** the user wants videos in the style of their reference clip (painterly dialogue
+  skits) but with a unique touch and Theo as the lead; content comes later. Demo approved as the template: build new
+  skits from `js/skitdemo.js` (sets, OTS, deadpan beats, name-tab subtitles, Myth Card).
 

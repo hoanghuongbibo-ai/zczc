@@ -177,6 +177,21 @@
     },
   };
 
+
+  O.toga = {   // Roman citizen / senator: tunic with the broad purple stripes + a white wool toga over the left shoulder
+    hat: null, arm: { short: true, sleeve: '#f1ece0', w: 32 }, legs: { kind: 'bare' }, feet: 'sandals',
+    torso(ctx, B) {
+      const { top, nar, vx } = B, P = '#6b3a8e';
+      garment(ctx, B, bodyPath(B, -96, 1.2), '#f1ece0', 'rgba(110,90,60,.2)', c2 => { for (const sd of [-1, 1]) { c2.fillStyle = P; c2.fillRect(vx + sd * 30 - 8, top, 16, 260); } });
+      const drape = c => { c.moveTo(-72 * nar, -150); c.quadraticCurveTo(-10, -190, vx + 26, top + 2); c.quadraticCurveTo(64 * nar, top - 8, 70 * nar, top + 24); c.quadraticCurveTo(84 * nar, -150, 80 * nar, -84); c.quadraticCurveTo(20, -70, -50 * nar, -118); c.closePath(); };
+      garment(ctx, B, drape, '#f8f4ea', 'rgba(110,90,60,.22)', c2 => { for (let k = 0; k < 5; k++) curve(c2, [-50 + k * 22, -130 + k * 4], [k * 22, -190 - k * 18], [vx + 40 + k * 8, top + 30 + k * 26], 2.6, 'rgba(120,100,70,.45)'); });
+      if (B.back) return;
+      curve(ctx, [-72 * nar, -146], [-10, -184], [vx + 26, top + 6], 9, P);                         // purple border along the toga's edge
+      for (const dy of [0, 9]) curve(ctx, [-44, -176 + dy], [-22, -158 + dy], [0, -176 + dy], 2.5, 'rgba(120,100,70,.55)');   // the umbo: folds bunched at the waist
+      curve(ctx, [vx - 22, top - 2], [vx, top + 12], [vx + 20, top - 2], 4);
+    },
+  };
+
   // ---------------- hats (head-local: skull centre 0,0, R 100; hc = { yaw, hx, back, t, sx }) ----------------
   H.laurel = { draw(ctx, hc) {   // a wreath of paired leaves around the brow
     for (let i = -7; i <= 7; i++) {

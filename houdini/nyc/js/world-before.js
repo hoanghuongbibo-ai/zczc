@@ -211,7 +211,7 @@
     // the island in profile, hill after hill, each popping up on "many hills"
     const hs = [[120, 90], [260, 130], [400, 100], [520, 160], [660, 120], [790, 180], [930, 140], [1070, 110], [1190, 150]];
     ctx.save(); ctx.beginPath(); ctx.rect(-200, -200, 1800, 724); ctx.clip();
-    hs.forEach(([x, h], i) => { const k = hl > -.4 ? FX.settle(clamp((hl + .4 - i * .07) / .4)) : .35; shape(ctx, i % 2 ? '#6aa84c' : '#76b456', 4, ellipse(x, 524, 130, Math.max(10, h * k))); shape(ctx, 'rgba(255,255,255,.14)', 0, ellipse(x - 30, 524 - h * k * .6, 26, h * k * .2)); });
+    hs.forEach(([x, h], i) => { const k = hl > -.4 ? FX.settle(clamp((hl + .4 - i * .07) / .4)) : .35; shape(ctx, i % 2 ? '#6aa84c' : '#76b456', 4, ellipse(x, 524, 130, Math.max(10, h * k))); shape(ctx, 'rgba(255,255,255,.14)', 0, ellipse(x - 30, 524 - h * k * .6, 26, Math.max(.5, h * k * .2))); });
     ctx.restore(); shape(ctx, '#6aa84c', 4, rect(-60, 516, 1400, 14));
     hs.forEach(([x, h], i) => { const k = hl > -.4 ? FX.settle(clamp((hl + .4 - i * .07) / .4)) : .35; for (let j = 0; j < 3; j++) shape(ctx, j % 2 ? '#3f7f3a' : '#4f9a44', 3, circle(x - 26 + j * 26, 520 - h * k + 6 + (j % 2) * 8, 18)); });
     ctx.restore();

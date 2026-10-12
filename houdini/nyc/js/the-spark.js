@@ -326,7 +326,7 @@
 
   // ---------- s10/s11: two sides, two different deals; the Lenape side was never written down ----------
   function deals(ctx, t, kL, kR, foc) {
-    shape(ctx, grad(ctx, 0, 0, W, 0, [[0, '#e8d8b8'], [.5, '#f4ead4'], [1, '#d8e4c0']]), 0, rect(-100, -100, 1500, 900));
+    shape(ctx, grad(ctx, 0, 0, W, 0, [[0, '#e8d8b8'], [.5, '#f4ead4'], [1, '#d8e4c0']]), 0, rect(-500, -300, 2300, 1300));
     line(ctx, [[640, 40], [640, 700]], 4, 'rgba(90,70,50,.3)');
     // the Dutch side: a deed, a fence, a lock — "theirs for good"
     if (kL > 0) { const s = pop(kL); ctx.save(); ctx.translate(320, 330); ctx.scale(s, s); shape(ctx, '#fff', 4.5, ellipse(0, -40, 230, 160)); for (const [x, y, r] of [[-170, 110, 22], [-210, 160, 12]]) shape(ctx, '#fff', 4, circle(x, y, r));
@@ -339,8 +339,8 @@
       shape(ctx, '#2f4a8a', 3, rect(-60, -40, 26, 50, 8)); shape(ctx, '#a87648', 3, rect(30, -40, 26, 50, 8)); shape(ctx, '#f0c8a0', 3, circle(-47, -54, 13)); shape(ctx, '#a06a44', 3, circle(43, -54, 13)); line(ctx, [[-34, -20], [30, -20]], 7, '#e8b890');
       ctx.restore(); lenape(ctx, 1060, 760, .55, t, 1, { still: true }); txt(ctx, 'THE LENAPE: LIKELY "SHARED USE"', 960, 560, FX.DISPLAY(28), '#8a4a2a'); }
   }
-  function s10(ctx, lt, dur, t) { ctx.save(); cam(ctx, lerp(1.08, 1.0, ease.inOut(clamp(lt / dur))), 420, 380); deals(ctx, t, since(t, 'dutch2') + .3, 0); ctx.restore();
-    strip(ctx, 'NOT THE SAME DEAL', 640, 92, since(t, 'same') + .1, { px: 38, color: RED }); vig(ctx); }
+  function s10(ctx, lt, dur, t) { ctx.save(); cam(ctx, lerp(1.08, 1.0, ease.inOut(clamp(lt / dur))), 420, 380); deals(ctx, t, lt - .1, 0); ctx.restore();
+    strip(ctx, 'NOT THE SAME DEAL', 640, 92, since(t, 'same') + .1, { px: 38, color: RED }); if (lt < 1.2) strip(ctx, 'MANY HISTORIANS THINK…', 640, 92, lt, { px: 34 }); vig(ctx); }
   function s11(ctx, lt, dur, t) {
     const inf = since(t, 'inference'), nb = since(t, 'nobody');
     ctx.save(); cam(ctx, 1.0, 640, 380); deals(ctx, t, 1, since(t, 'lenape') + .3); ctx.restore();

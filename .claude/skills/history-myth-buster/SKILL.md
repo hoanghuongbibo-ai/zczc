@@ -11,6 +11,27 @@ bottom-right, slow push-ins, hard cuts, stamps / counters / newspaper slams, blu
 characters. Pure JavaScript canvas, deterministic `renderAt(t)`, rendered to MP4 with Playwright + ffmpeg.
 Before building, look at a few shots of the reference (`node tools/_stills.mjs part5.html <dir> 0.75`) to match the bar.
 
+## Step 0 — SCRIPT + SOURCE LOG arrive: read everything, then send the ASSET LIST (agreed rule)
+
+The user sends the full script together with its source log (research notes / sources). Before building anything,
+read the whole script and the whole log. **All data work is mine:** pull every date, number, name, place and quote from
+the log, check each against the script line that says it, and flag anything missing, mismatched or doubtful (with the
+log's own wording). Never ask the user to filter text or data. Then reply with one asset list so the build runs smoothly:
+1. **Needed from the user** (visual assets only they can supply) — for each item: where it appears (chapter / line),
+   *needed* or *nice to have*, and the default if it doesn't come:
+   - **Photos / portraits of real named people** who appear on screen (to draw them as cartoon cast in the house style;
+     say which ones become silhouettes or name cards instead — people only mentioned, private individuals, victims);
+   - **Reference images of key real objects / places / documents** whose exact look matters (a building, a ship, a
+     poster, a letter, an artefact). Default: an original flat drawing from public descriptions;
+   - **Character art** if a new recurring character is wanted (default: I design one and send a sheet for approval);
+   - **The voice-over mp3** (if not sent yet) — everything is timed to it.
+2. **What I'll build myself** (one short line): sets, maps + routes, timelines, documents/newspapers with made-up
+   mastheads, stamps, counters, diagrams, Theo's acting beats, score + foley.
+3. **Engagement plan** (3–5 bullets): the cold-open hook, where Theo appears on camera (open, myth → fact reveals,
+   sign-off), the recurring "MYTH / BUSTED" or "FACT ✓" beats, and any shot the script's notes imply that needs a decision.
+4. **Data issues** found in the log, and script lines that will need a [MAP]/[DOCUMENT]/[DIAGRAM] even though unmarked.
+Then wait for the assets + voice (or "run").
+
 ## The working protocol (agreed with the user — follow it every time)
 
 1. **Intake.** Copy the voice into the episode's `assets/` folder. Transcribe and align the narration to the word
@@ -50,6 +71,25 @@ Before building, look at a few shots of the reference (`node tools/_stills.mjs p
 - Props work like the real thing: locks on hasps, lids lowered by people or hinged correctly, ropes where something
   hangs, papers stamped on the right line, map pins on land not in lakes.
 
+## THEO — the channel guide / myth-buster (approved design target; user brief 2026-10-12)
+
+`G.Guide` in `houdini/js/guide.js` — an original character built from the user's brief sheet (round white face, black
+hair, dark suit + tie, black-and-white ink look) but with his own identity: a springy **question-mark curl** on top
+(his signature; kick it with `curl: Guide.curlRing(lt - tMove)` after every big move), glossy oval eyes with highlights,
+thick acting brows, pink cheeks, **red tie + red pocket square** (his only colour), white one-outline hands, chunky
+round shoes, a brass **magnifying glass** prop. Sheet: `out/guide-sheet.png` (`tools/guidesheet.html`, snapped with
+`node tools/_snap.mjs <abs path> out/guide-sheet.png 2400 2200`). Demo: `out/guide-demo.mp4` (`guide-demo.html`, `js/guidedemo.js`).
+- `Guide.draw(ctx, x, y, s, { t, pose, turn, back, face, talk, walk, lean, headTilt, curl, prop, mirror })`, feet at
+  (x, y), s = 1 → ~560 px tall. `turn` −1…1 gives the ¾ views (features slide on the head sphere, far ear and far arm
+  tuck behind); `back: true` for the back view. Change `turn` with an ease, never a snap, and kick the curl when he turns.
+- Poses (`Guide.pose(t, [[t0,'idle'], [t1,'wave'], …])`, eased with a small overshoot): idle, present, presentL,
+  presentBoth, pointUp, pointSide, pointSideL, wave, think, shrug, cheer, thumbsUp, hips, crossed, magnify (+ `prop:
+  'magnifier'`), facepalm. Faces: eyes open/wide/happy/closed/squint/wink; brows neutral/up/worried/angry/skeptic/sly;
+  mouth grin/smile/open/o/shock/flat/frown/smirk/grit. Auto breathing + blinks; `talk: Guide.talk(t)` lip-syncs to an
+  envelope from `biz/tools/envelope.py` when he speaks on camera.
+- Use him as the on-screen guide: cold open, myth statement (investigate with the magnifier), the reveal (BUSTED / FACT
+  stamp + his reaction), and the sign-off. He stays out of period scenes unless the script asks for a host moment.
+
 ## Toolkit (all in `houdini/`)
 
 | File | What it gives you |
@@ -60,6 +100,7 @@ Before building, look at a few shots of the reference (`node tools/_stills.mjs p
 | `js/cast2.js … cast5.js` | supporting cast (doctor, nurse, mediums, Doyle, Jean, Margery, committee, Rose, Bey, Bess, Ford, Hardeen…). `cast3.js` exports `Chars.castFace` + `Chars.browSet` for building new heads |
 | `js/show3.js` | `G.Part3A.lib`: chapter, frame, label, parlour, suite, seanceRoom, newspaper, slam, bubble, ghostIcon, cross, tick, ring, scribble |
 | `js/show4.js`, `js/show5.js` | more set pieces to copy: maps + routes, trains, stage, dressing room, couch punch, thermometer, appendix diagram, code decoder, balance scale, marquee |
+| `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, curl spring, magnifier |
 | `js/rig.js` | puppet rig of the user's Houdini art (suit portrait, hospital bed) |
 | `js/props.js` | handcuffs, chains, watch, glass, car, etc. |
 | `js/sound.js` | synthesised score (`moods`: still / tense / mystery / silence / under) + foley `sfx`: click, clang, rattle, whoosh, hit, swell, paper, splash, bubbles, ratchet, creak, scratch, thud, press, slide, wind, boom, window |
@@ -112,3 +153,10 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   hospital room, cemetery, grave) and override the date tag / caption.
 - The user asked for "precise, reasonable" motion and called an early generic attempt "amateur": every shot needs a
   motivated action on a word, not just a static picture with a push-in.
+- **Asset list first (user, 2026-10-12):** whenever a script + source log arrive, reply with the asset list (Step 0)
+  before building — needed / nice-to-have visuals from the user, what I build, the engagement plan, data issues.
+- **New character from a brief image:** treat the image as a brief, not a template — keep the requested look (here:
+  white face, black hair, dark suit, ink style) and add an original signature (silhouette feature, one accent colour,
+  a prop) so the character is recognisable and not a copy. Show a turnaround + poses + expressions sheet and a short
+  demo clip before using him in an episode.
+

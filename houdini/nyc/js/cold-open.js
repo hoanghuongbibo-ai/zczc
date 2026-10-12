@@ -161,6 +161,7 @@
   function c1(ctx, lt, dur, t) {
     ctx.save(); cam(ctx, FX.push(lt, dur, 1.06, 1.0), 640, 380); corner(ctx, t, {}); ctx.restore();
     FX.dateTag(ctx, 'LOWER MANHATTAN · TODAY');
+    N.whereMap(ctx, 1100, 560, since(t, 'manhattan'), t);
     if (since(t, 'wall') > 0) { const k = since(t, 'wall'); glow(ctx, 1100, 205, 120 * pop(k), 'rgba(255,255,200,.5)'); }
     if (since(t, 'broad') > -.2) tag(ctx, 'WALL STREET, AT BROAD', 640, 640, since(t, 'broad') + .2, 26);
     vig(ctx);
@@ -296,6 +297,11 @@
     const an = since(t, 'announced'), sx = since(t, 'six');
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#8fd0ec'], [1, '#f7e6c0']]), 0, rect(0, 0, W, H)); clouds(ctx, t, [80, 130], .8);
     ctx.save(); cam(ctx, FX.push(lt, dur, 1, 1.04), 640, 420);
+    for (let i = 0; i < 34; i++) { const x = -40 + i * 40, k = clamp((x - 200) / 900), h = lerp(40, 260, k * k) * (.6 + ((i * 37) % 10) / 20);
+      if (k < .35) { shape(ctx, i % 2 ? '#5f9f4c' : '#4f8f44', 3, circle(x, 470 - 30 - (i % 3) * 8, 34)); line(ctx, [[x, 470], [x, 450]], 6, '#5a3a20'); }
+      else if (k < .55) { shape(ctx, '#c8a888', 3, rect(x - 16, 470 - 50, 32, 50)); shape(ctx, '#a8503a', 3, poly([[x - 20, 420], [x, 396], [x + 20, 420]])); }
+      else { shape(ctx, ['#a9b6c4', '#d8c0a0', '#9fb0c0', '#e8b08a'][i % 4], 3, rect(x - 18, 470 - h, 36, h)); for (let y = 470 - h + 12; y < 460; y += 22) line(ctx, [[x - 10, y], [x + 10, y]], 4, 'rgba(60,80,110,.4)'); } }
+    shape(ctx, grad(ctx, 0, 470, 0, 720, [[0, '#d8c8a0'], [1, '#c0a878']]), 3, rect(-60, 470, 1400, 300));
     // the timeline: the hillside at the left end, the sidewalk at the right end
     line(ctx, [[150, 520], [1130, 520]], 14, INK); line(ctx, [[150, 520], [1130, 520]], 8, '#f6c945');
     shape(ctx, '#5f9f4c', 4, c => { c.moveTo(40, 560); c.quadraticCurveTo(110, 420, 200, 560); c.closePath(); }); shape(ctx, '#3f7f3a', 3, ellipse(110, 440, 24, 30)); txt(ctx, '1609', 120, 600, FX.DISPLAY(30));
@@ -336,7 +342,10 @@
     const bg = since(t, 'bigger'), cm = since(t, 'came');
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#6ab8ea'], [.7, '#ffd8a0'], [1, '#ffeac0']]), 0, rect(0, 0, W, H)); glow(ctx, 640, 520, 520, 'rgba(255,240,190,.6)'); clouds(ctx, t, [70, 120], .9);
     const sc = cm > -.2 ? lerp(.35, 1.05, FX.settle(clamp((cm + .2) / 1.1))) : .35;
-    ctx.save(); skyline(ctx, 600, sc, t, '#3a5a80', { windows: true }); ctx.restore(); waterBand(ctx, 600, t);
+    ctx.save(); skyline(ctx, 600, sc * .7, t, '#8aa0bc'); ctx.translate(40, 0); skyline(ctx, 600, sc, t, '#3a5a80', { windows: true }); ctx.restore(); waterBand(ctx, 600, t);
+    { const lx = 150, ly = 640; shape(ctx, '#7aa890', 3.5, rect(lx - 26, ly - 70, 52, 70)); shape(ctx, '#8ab8a0', 3.5, c => { c.moveTo(lx - 16, ly - 70); c.lineTo(lx - 12, ly - 150); c.lineTo(lx + 12, ly - 150); c.lineTo(lx + 16, ly - 70); c.closePath(); });
+      shape(ctx, '#8ab8a0', 3, circle(lx, ly - 162, 12)); for (let i = -2; i <= 2; i++) line(ctx, [[lx, ly - 172], [lx + i * 8, ly - 186]], 3, '#8ab8a0'); line(ctx, [[lx + 10, ly - 146], [lx + 22, ly - 196]], 6, '#8ab8a0'); shape(ctx, '#f6c945', 2.5, ellipse(lx + 23, ly - 204, 6, 9)); glow(ctx, lx + 23, ly - 204, 24, 'rgba(255,220,120,.6)'); }
+    for (let i = 0; i < 3; i++) { const bx = ((i * 420 + t * 30) % 1500) - 100, by = 660 + i * 18; shape(ctx, i % 2 ? '#f2a03a' : '#f4efe2', 3, poly([[bx - 50, by - 16], [bx + 50, by - 16], [bx + 40, by], [bx - 40, by]])); shape(ctx, '#f4efe2', 2.5, rect(bx - 20, by - 30, 40, 14, 3)); }
     const nk = clamp(1 - Math.max(0, cm) / .6); if (nk > 0) { ctx.save(); ctx.globalAlpha = nk; notice(ctx, 640, 330, lt + 1, 0); ctx.restore(); }
     if (bg > 0) { const s = pop(bg); ctx.save(); ctx.translate(640, 120); ctx.rotate(-.03); ctx.scale(s, s); FX.bigText(ctx, 'CAME BACK BIGGER', 0, 0, 66, { color: GOLD }); ctx.restore();
       ctx.save(); ctx.translate(1110, 240); ctx.scale(s, s); line(ctx, [[0, 120], [0, -60]], 22, INK); line(ctx, [[0, 120], [0, -60]], 13, GREEN); shape(ctx, GREEN, 5, poly([[-40, -40], [0, -100], [40, -40]])); ctx.restore(); }

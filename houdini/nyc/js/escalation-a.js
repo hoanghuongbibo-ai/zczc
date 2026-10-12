@@ -322,7 +322,7 @@
     const cl = since(t, 'clinton'), dt = since(t, 'ditch'), fw = since(t, 'forty'), fd = since(t, 'four2');
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#8ad0ec'], [1, '#f4e6c4']]), 0, rect(0, 0, W, H)); clouds(ctx, t, [80, 130]);
     // the canal in cross-section: towpath, water, a packet boat, a mule
-    const sk = dt > -.4 ? FX.settle(clamp((dt + .4) / .6)) : 0;
+    const sk = FX.settle(clamp((lt - .1) / .6));
     ctx.save(); ctx.translate(760, 470); ctx.scale(1, Math.max(.02, sk));
     shape(ctx, '#7aa858', 4, poly([[-560, -60], [-300, -60], [-260, 120], [260, 120], [300, -60], [560, -60], [560, 260], [-560, 260]]));
     shape(ctx, '#4aa6c2', 4, poly([[-292, -30], [292, -30], [256, 112], [-256, 112]])); for (let i = 0; i < 5; i++) line(ctx, [[-200 + i * 90, -14], [-160 + i * 90, -14]], 3, 'rgba(255,255,255,.6)');

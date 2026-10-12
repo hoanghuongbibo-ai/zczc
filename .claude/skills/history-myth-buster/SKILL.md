@@ -228,3 +228,8 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   - the far view (river, boats, the opposite shore, a plane);
   - a small "YOU ARE HERE" map on the first shot.
   The same density goes for the past-era version of the set (canoe, herons, oyster beds, rock outcrops, smoke from a hearth).
+- **User reference image for the NYC look (2026-10-12): "lively and fresh".** This is the bar for every street set:
+  - golden-hour light down the street: a sun glow at the vanishing point; the shade side tinted cool violet and the sun side warm gold; about one window in four lit warm;
+  - flags, planters with small trees and flowers, pigeons in flight, curly steam wisps, a parked car;
+  - a front row of BIG pedestrians with real faces (eyes, brows, smile, blush), hair styles, caps and glasses, coffee cups, phones, tourist cameras and backpacks.
+  Use `G.NYC.walker(ctx, x, y, s, t, v)` for anyone close to camera; keep the bean `person()` only for the far crowd.

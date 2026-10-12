@@ -42,11 +42,15 @@
     const cam = !o.plain && (o.cam ?? v % 6 === 2), cup = !o.plain && v % 5 === 1, pack = !o.plain && v % 4 === 1, brief = !o.plain && v % 7 === 4 && !cam;
     shape(ctx, 'rgba(40,30,60,.22)', 0, ellipse(0, 18, 58, 20));
     ctx.translate(0, bob);
-    for (const d of [-1, 1]) { const lift = Math.max(0, d * sw) * 16; line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 26, INK); line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 19, pants); shape(ctx, o.shoe || (d > 0 ? '#f4efe6' : '#3a2a20'), 3.5, ellipse(d * 19, -8 - lift, 19, 10)); }
+    for (const d of [-1, 1]) { const lift = Math.max(0, d * sw) * 16; if (o.peg && d > 0) { line(ctx, [[15, -128], [16, -70]], 26, INK); line(ctx, [[15, -128], [16, -70]], 19, pants); line(ctx, [[16, -74], [18, -4 - lift]], 12, INK); line(ctx, [[16, -74], [18, -4 - lift]], 7, '#a87a4a'); continue; }
+      line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 26, INK); line(ctx, [[d * 15, -128], [d * 17, -14 - lift]], 19, pants); shape(ctx, o.shoe || (d > 0 ? '#f4efe6' : '#3a2a20'), 3.5, ellipse(d * 19, -8 - lift, 19, 10)); }
     if (pack) shape(ctx, '#e8642a', 4, rect(-44, -246, 88, 100, 16));
     shape(ctx, coat, 4.5, c => { c.moveTo(-38, -236); c.quadraticCurveTo(-46, -246, -30, -254); c.lineTo(30, -254); c.quadraticCurveTo(46, -246, 38, -236); c.lineTo(36, -122); c.quadraticCurveTo(0, -112, -36, -122); c.closePath(); });
     if (o.plain) { for (let i = 0; i < 7; i++) line(ctx, [[-34 + i * 11, -124], [-35 + i * 11, -108]], 3, coat); if (o.beads) for (let i = 0; i < 9; i++) shape(ctx, i % 2 ? '#f4efe6' : '#5a8ac0', 1.5, circle(-20 + i * 5, -246 + Math.abs(i - 4) * 3, 3)); } else { shape(ctx, v % 3 ? '#f4efe6' : '#cfe0f0', 3, poly([[-14, -254], [14, -254], [0, -222]])); } if (!o.plain && v % 3 === 0) shape(ctx, v % 2 ? '#c8322a' : '#2f5a8a', 2.5, poly([[-5, -246], [5, -246], [7, -180], [0, -170], [-7, -180]])); else if (!o.plain) line(ctx, [[0, -222], [0, -126]], 2.5, 'rgba(0,0,0,.3)');
     if (pack) { line(ctx, [[-24, -252], [-26, -170]], 7, '#b84a20'); line(ctx, [[24, -252], [26, -170]], 7, '#b84a20'); }
+    if (o.sash) line(ctx, [[-34, -240], [34, -150]], 12, o.sash);
+    if (o.collar) shape(ctx, '#f8f4ea', 3.5, c => { c.moveTo(-40, -258); c.quadraticCurveTo(0, -222, 40, -258); c.lineTo(32, -270); c.lineTo(-32, -270); c.closePath(); });
+    if (o.sword) { line(ctx, [[-30, -140], [-70, -40]], 6, '#c8c8d0'); shape(ctx, '#c8a040', 2.5, rect(-36, -150, 14, 10, 2)); }
     // arms: swing with the walk, or both raised holding a camera to the eye
     if (cam) { for (const d of [-1, 1]) { line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 18, INK); line(ctx, [[d * 36, -240], [d * 34, -200], [d * 16, -282]], 12, coat); }
     } else for (const d of [-1, 1]) { const hx = d * 50 + (o.reach && d > 0 ? 30 : 0), hy = -150 + d * sw * 18 - (o.reach && d > 0 ? 90 : 0); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 18, INK); line(ctx, [[d * 36, -240], [d * 46, -196], [hx, hy]], 12, coat); shape(ctx, skin, 3, circle(hx, hy + 4, 10));
@@ -61,6 +65,8 @@
     if (hs === 2) { shape(ctx, hair, 4, c => { c.moveTo(-36, -306); c.quadraticCurveTo(-36, -342, 0, -340); c.quadraticCurveTo(36, -342, 36, -306); c.quadraticCurveTo(0, -322, -36, -306); c.closePath(); }); shape(ctx, hair, 4, circle(0, -350, 14)); }
     if (hs === 3) { shape(ctx, COAT[(v + 3) % COAT.length], 4, c => { c.moveTo(-37, -310); c.quadraticCurveTo(-36, -346, 0, -346); c.quadraticCurveTo(36, -346, 37, -310); c.closePath(); }); shape(ctx, COAT[(v + 3) % COAT.length], 3.5, ellipse(14, -310, 32, 8)); }
     if (hs === 4) for (let i = 0; i < 7; i++) shape(ctx, hair, 3, circle(-30 + i * 10, -330 - Math.sin(i / 6 * Math.PI) * 10, 13));
+    if (o.tallhat) { shape(ctx, '#1d1a17', 4, ellipse(0, -330, 54, 10)); shape(ctx, '#1d1a17', 4, poly([[-28, -330], [-24, -392], [24, -392], [28, -330]])); shape(ctx, '#c8a040', 2, rect(-10, -344, 20, 12, 2)); }
+    if (o.skullcap) shape(ctx, '#1d1a17', 3, c => { c.moveTo(-30, -322); c.quadraticCurveTo(0, -352, 30, -322); c.closePath(); });
     if (hs === 5) { shape(ctx, '#9a9a9a', 3, ellipse(-30, -312, 9, 14)); shape(ctx, '#9a9a9a', 3, ellipse(30, -312, 9, 14)); }
     // face
     if (cam) { shape(ctx, '#2a2a30', 4, rect(-30, -312, 60, 34, 6)); shape(ctx, '#5a6a7a', 3, circle(0, -295, 12)); shape(ctx, '#9ac0dc', 0, circle(-3, -298, 4)); shape(ctx, '#2a2a30', 2, rect(14, -320, 12, 8, 2)); line(ctx, [[-10, -268], [0, -264], [10, -268]], 3);
@@ -292,6 +298,40 @@
     if (cityA > 0) streetSign(ctx, 1150, cityA);
   }
 
+  function dutchHouse(ctx, s0, s1, top, col, side) { const Xs = X(side); shape(ctx, col, 4, fq(side, s0, s1, top, 760));
+    const sm = (s0 + s1) / 2, steps = 4; shape(ctx, col, 4, c => { c.moveTo(Xs(s0), PY(top, s0)); for (let i = 1; i <= steps; i++) { const sa = lerp(s0, sm, i / (steps + 1)); c.lineTo(Xs(lerp(s0, sm, (i - 1) / (steps + 1))), PY(top - i * 34, sa)); c.lineTo(Xs(sa), PY(top - i * 34, sa)); }
+      c.lineTo(Xs(sm), PY(top - (steps + 1) * 34, sm)); for (let i = steps; i >= 1; i--) { const sb = lerp(s1, sm, i / (steps + 1)); c.lineTo(Xs(sb), PY(top - i * 34, sb)); c.lineTo(Xs(lerp(s1, sm, (i - 1) / (steps + 1))), PY(top - i * 34, sb)); } c.lineTo(Xs(s1), PY(top, s1)); c.closePath(); });
+    for (let f = 0; f < 3; f++) for (let k = 0; k < 2; k++) { const sa = lerp(s0, s1, .2 + k * .45), sb = sa - (s0 - s1) * .2, Y0 = 380 + f * 120 - (top < 200 ? 0 : 0); if (Y0 + 70 > 760) continue; shape(ctx, '#3a5a7a', 2.5, fq(side, sa, sb, Y0, Y0 + 70)); line(ctx, [[Xs((sa + sb) / 2), PY(Y0, (sa + sb) / 2)], [Xs((sa + sb) / 2), PY(Y0 + 70, (sa + sb) / 2)]], 1.5, '#f4efe6'); }
+    shape(ctx, '#5a3a20', 2.5, fq(side, lerp(s0, s1, .4), lerp(s0, s1, .6), 640, 760)); for (let y = top + 20; y < 760; y += 40) line(ctx, [[Xs(s0), PY(y, s0)], [Xs(s1), PY(y, s1)]], 1.2, 'rgba(90,40,20,.25)'); }
+  function dutchCorner(ctx, t, o = {}) {
+    const wall = o.wall ?? 1, grey = o.grey || 0;
+    shape(ctx, grad(ctx, 0, -100, 0, 380, [[0, '#5aaee8'], [.7, '#bfe4f4'], [1, '#ffeec8']]), 0, rect(-500, -500, 2300, 900)); glow(ctx, VX, 310, 360, 'rgba(255,240,200,.55)');
+    for (let i = 0; i < 4; i++) { const x = ((i * 300 + t * 6) % 1400) - 60; shape(ctx, '#fff8ee', 2.5, smooth([[x - 60, 120 + i * 24], [x - 20, 98 + i * 24], [x + 30, 96 + i * 24], [x + 60, 116 + i * 24], [x, 130 + i * 24]])); }
+    // the East River at the end of the street with a Dutch ship, and the far shore
+    T.blurred(ctx, 1, () => shape(ctx, '#86b47e', 0, c => { c.moveTo(-100, 330); for (let x = -100; x <= 1400; x += 110) c.quadraticCurveTo(x + 55, 304 - (x * 7 % 20), x + 110, 330); c.lineTo(1400, 345); c.lineTo(-100, 345); c.closePath(); }));
+    shape(ctx, grad(ctx, 0, 335, 0, 420, [[0, '#5fb6cc'], [1, '#3e94b4']]), 0, rect(-100, 335, 1500, 90));
+    { const sx = 720 + Math.sin(t * .2) * 20; shape(ctx, '#7a4a2a', 2.5, poly([[sx - 34, 350], [sx + 34, 350], [sx + 26, 360], [sx - 26, 360]])); line(ctx, [[sx, 350], [sx, 300]], 2.5, '#5a3a20'); shape(ctx, '#f4efe2', 1.5, poly([[sx + 2, 304], [sx + 24, 312], [sx + 24, 340], [sx + 2, 344]])); shape(ctx, '#f2a03a', 0, rect(sx - 1, 296, 12, 6)); }
+    // ground everywhere below the horizon; outside the wall (left) open fields and orchards
+    shape(ctx, grad(ctx, 0, 340, 0, 760, [[0, '#a8b878'], [1, '#7f9a52']]), 0, rect(-500, 340, 2300, 800));
+    for (let i = 0; i < 22; i++) { const x = -40 + (i * 61) % 600, y = 360 + (i * 37) % 120, s2 = .5 + (y - 360) / 200; shape(ctx, '#5a3a20', 2, rect(x - 3 * s2, y - 4, 6 * s2, 16 * s2)); shape(ctx, i % 3 ? '#4f8f3a' : '#6aa84c', 2.5, circle(x, y - 10 * s2, 14 * s2)); }
+    // the muddy street with puddles and cart ruts
+    shape(ctx, grad(ctx, 0, PY(760, END), 0, 760, [[0, '#b89a6a'], [1, '#8a6a42']]), 0, gq(END, 1.1, -740, 740));
+    for (let i = 0; i < 14; i++) { const s2 = lerp(.2, 1, (i * 37 % 14) / 14), u = ((i * 211) % 900) - 450; shape(ctx, 'rgba(150,190,200,.6)', 2, ellipse(VX + u * s2, PY(760, s2), 50 * s2, 9 * s2)); }
+    for (const u of [-90, 90]) line(ctx, [[VX + u * END, PY(760, END)], [VX + u * 1.1, 760]], 3, 'rgba(90,60,30,.35)');
+    // right: stepped-gable houses; the Heere Gracht canal runs down the right-hand side (today's Broad Street)
+    [[1.25, .95, 180, '#b85a3a'], [.95, .74, 240, '#e8a06a'], [.74, .6, 260, '#c8743a'], [.6, .48, 300, '#c8643a'], [.48, .38, 340, '#e8b07a'], [.38, .3, 280, '#b85a3a'], [.3, .22, 320, '#d89a6a'], [.22, .15, 300, '#c8743a']].forEach(([s0, s1, top, col]) => dutchHouse(ctx, s0, s1, top, col, 1));
+    { const s0 = 1.1, s1 = .6; shape(ctx, grad(ctx, 0, PY(760, s1), 0, 760, [[0, '#6fb8c8'], [1, '#3e94b4']]), 3.5, poly([[VX + 360 * s1, PY(760, s1)], [VX + 740 * s1, PY(760, s1)], [VX + 740 * s0, 800], [VX + 360 * s0, 800]]));
+      for (let i = 0; i < 6; i++) line(ctx, [[VX + (420 + i * 50) * .8, PY(760, .8) + i * 6], [VX + (446 + i * 50) * .8, PY(760, .8) + i * 6]], 2.5, 'rgba(255,255,255,.6)');
+      shape(ctx, '#7a4a2a', 3, poly([[1080, 690], [1240, 690], [1220, 716], [1100, 716]])); line(ctx, [[1160, 690], [1160, 600]], 4, '#5a3a20'); for (let i = 0; i < 3; i++) shape(ctx, '#8a5a34', 2, rect(1110 + i * 34, 670, 26, 20, 3)); }
+    // a windmill far down the right
+    { const wx = RX(.2) - 30, wy = PY(760, .2); shape(ctx, '#d8c8a8', 3, poly([[wx - 14, wy], [wx + 14, wy], [wx + 9, wy - 60], [wx - 9, wy - 60]])); for (let k = 0; k < 4; k++) { const a = t * 1.2 + k * Math.PI / 2; line(ctx, [[wx, wy - 60], [wx + Math.cos(a) * 44, wy - 60 + Math.sin(a) * 44]], 5, '#7a5434'); } }
+    // left: the wooden palisade wall along the north side of the street, built from the river end toward us
+    for (let k = 0; k < 60; k++) { const s2 = lerp(1.05, END, k / 59), kk = 1 - k / 59; if (kk > wall + .02) continue; const x = LX(s2) + 260 * s2, y = PY(760, s2), h = 300 * s2 * (kk > wall - .05 ? clamp((wall - kk + .05) / .05) : 1);
+      shape(ctx, k % 2 ? '#8a6038' : '#7a5430', 2.5 * s2 + .5, c => { c.moveTo(x - 12 * s2, y); c.lineTo(x - 12 * s2, y - h); c.lineTo(x, y - h - 18 * s2); c.lineTo(x + 12 * s2, y - h); c.lineTo(x + 12 * s2, y); c.closePath(); }); }
+    if (wall > .05) line(ctx, [[LX(1.05) + 260, PY(760, 1.05) - 200], [LX(lerp(1.05, END, 1 - wall)) + 260 * lerp(1.05, END, 1 - wall), PY(760, lerp(1.05, END, 1 - wall)) - 200 * lerp(1.05, END, 1 - wall)]], 6, '#5a3a20');
+    if (grey) { ctx.save(); ctx.globalAlpha = grey; shape(ctx, 'rgba(70,70,90,.45)', 0, rect(-500, -500, 2300, 1800)); ctx.restore(); }
+  }
+
   // where you are: a small map of the southern tip of Manhattan with Wall St, Broad St and a pin at the corner
   function whereMap(ctx, x, y, k, t) { if (k <= 0) return; const s = FX.settle(clamp(k / .4)); ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(.03);
     shape(ctx, 'rgba(0,0,0,.3)', 0, rect(-124, -104, 256, 216, 8)); shape(ctx, '#fbf6ea', 4.5, rect(-130, -110, 256, 216, 8)); ctx.save(); ctx.beginPath(); ctx.rect(-118, -98, 232, 168); ctx.clip();
@@ -306,5 +346,5 @@
   // the Harbor — the one character who never leaves (a cousin of the Venice lagoon, in New York harbor green-blue)
   function harbor(ctx, x, y, w, t, o = {}) { ctx.save(); ctx.filter = 'hue-rotate(-14deg) saturate(1.15)'; G.Venice.lagoon(ctx, x, y, w, t, o); ctx.restore(); }
 
-  G.NYC = Object.assign(G.NYC || {}, { corner, land1609, person, walker, pigeon, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
+  G.NYC = Object.assign(G.NYC || {}, { corner, dutchCorner, land1609, person, walker, pigeon, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
 })(window);

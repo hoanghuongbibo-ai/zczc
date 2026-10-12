@@ -66,6 +66,10 @@
     if (hs === 3) { shape(ctx, COAT[(v + 3) % COAT.length], 4, c => { c.moveTo(-37, -310); c.quadraticCurveTo(-36, -346, 0, -346); c.quadraticCurveTo(36, -346, 37, -310); c.closePath(); }); shape(ctx, COAT[(v + 3) % COAT.length], 3.5, ellipse(14, -310, 32, 8)); }
     if (hs === 4) for (let i = 0; i < 7; i++) shape(ctx, hair, 3, circle(-30 + i * 10, -330 - Math.sin(i / 6 * Math.PI) * 10, 13));
     if (o.tallhat) { shape(ctx, '#1d1a17', 4, ellipse(0, -330, 54, 10)); shape(ctx, '#1d1a17', 4, poly([[-28, -330], [-24, -392], [24, -392], [28, -330]])); shape(ctx, '#c8a040', 2, rect(-10, -344, 20, 12, 2)); }
+    if (o.tricorn) { shape(ctx, '#1d1a17', 4, poly([[-56, -324], [0, -360], [56, -324], [0, -334]])); shape(ctx, '#1d1a17', 3, ellipse(0, -334, 40, 14)); }
+    if (o.firehat) { shape(ctx, '#2a2a30', 4, c => { c.moveTo(-46, -318); c.quadraticCurveTo(0, -370, 46, -318); c.lineTo(60, -312); c.lineTo(-60, -312); c.closePath(); }); shape(ctx, GOLDC, 2.5, rect(-12, -350, 24, 22, 3)); }
+    if (o.cap1900) { shape(ctx, '#5a4a3a', 4, c => { c.moveTo(-38, -312); c.quadraticCurveTo(0, -346, 38, -312); c.closePath(); }); shape(ctx, '#5a4a3a', 3, ellipse(16, -312, 30, 7)); }
+    if (o.shawl) shape(ctx, o.shawl, 3.5, c => { c.moveTo(-44, -262); c.quadraticCurveTo(0, -240, 44, -262); c.lineTo(36, -200); c.quadraticCurveTo(0, -180, -36, -200); c.closePath(); });
     if (o.skullcap) shape(ctx, '#1d1a17', 3, c => { c.moveTo(-30, -322); c.quadraticCurveTo(0, -352, 30, -322); c.closePath(); });
     if (hs === 5) { shape(ctx, '#9a9a9a', 3, ellipse(-30, -312, 9, 14)); shape(ctx, '#9a9a9a', 3, ellipse(30, -312, 9, 14)); }
     // face
@@ -332,6 +336,55 @@
     if (grey) { ctx.save(); ctx.globalAlpha = grey; shape(ctx, 'rgba(70,70,90,.45)', 0, rect(-500, -500, 2300, 1800)); ctx.restore(); }
   }
 
+  // the same camera in 1776 (Georgian brick houses) or 1835 (brick-and-granite counting houses and warehouses)
+  // o: era '1776'|'1835', night 0..1, fire 0..1, ruins 0..1 (charred shells + tents), snow 0..1, rebuild 0..1 (scaffolds → new stone fronts)
+  function oldFacade(ctx, side, s0, s1, top, col, era, o, t, i) { const Xs = X(side), ruin = o.ruins || 0;
+    if (ruin > .5) { // a burned-out shell: chimney stacks and a scorched front
+      shape(ctx, '#3a3230', 3.5, fq(side, s0, s1, top + 140, 760)); for (let k = 0; k < 3; k++) { const sa = lerp(s0, s1, .15 + k * .32); shape(ctx, '#5a4038', 3, fq(side, sa, sa - .02, top - 40, 760)); shape(ctx, '#1d1a17', 0, fq(side, lerp(s0, s1, .2 + k * .3), lerp(s0, s1, .3 + k * .3), top + 260, top + 360)); }
+      return; }
+    shape(ctx, col, 4, fq(side, s0, s1, top, 760));
+    const fl = era === '1835' ? 4 : 3, fh = (760 - top - 60) / fl;
+    for (let f = 0; f < fl; f++) for (let k = 0; k < 3; k++) { const sa = lerp(s0, s1, .12 + k * .3), sb = lerp(s0, s1, .3 + k * .3), Y0 = top + 30 + f * fh, Y1 = Y0 + fh * .55;
+      const lit = o.night ? (i + k + f) % 3 === 0 : false; shape(ctx, lit ? '#ffcf6a' : '#3f5a74', 2, fq(side, sa, sb, Y0, Y1)); shape(ctx, '#f4efe6', 0, fq(side, sa - .004, sb + .004, Y1, Y1 + 8)); }
+    if (era === '1776') shape(ctx, '#5a3a2a', 3.5, poly([[Xs(s0), PY(top, s0)], [Xs(s1), PY(top, s1)], [Xs(s1), PY(top - 60, s1)], [Xs(s0), PY(top - 90, s0)]]));
+    else { shape(ctx, '#d8d0c0', 3, fq(side, s0, s1, top - 10, top + 14)); shape(ctx, 'rgba(60,40,30,.35)', 0, fq(side, s0, s1, 600, 760)); for (let k = 0; k < 3; k++) shape(ctx, '#d8d0c0', 2.5, fq(side, lerp(s0, s1, .1 + k * .32), lerp(s0, s1, .16 + k * .32), 600, 760)); }
+    shape(ctx, '#5a3a2a', 2.5, fq(side, lerp(s0, s1, .42), lerp(s0, s1, .58), 640, 760));
+    // a chimney or two
+    shape(ctx, '#7a4a3a', 2.5, fq(side, lerp(s0, s1, .7), lerp(s0, s1, .78), top - (era === '1776' ? 130 : 60), top - (era === '1776' ? 70 : 6)));
+    if (o.rebuild != null && o.rebuild < 1) { const k = o.rebuild; ctx.save(); ctx.globalAlpha = 1 - k; for (let j = 0; j < 4; j++) { const sa = lerp(s0, s1, j / 3); line(ctx, [[Xs(sa), PY(top - 30, sa)], [Xs(sa), PY(760, sa)]], 3, '#a87a4a'); } for (let y = top; y < 760; y += 90) line(ctx, [[Xs(s0), PY(y, s0)], [Xs(s1), PY(y, s1)]], 3, '#a87a4a'); ctx.restore(); }
+  }
+  function oldCorner(ctx, t, o = {}) {
+    const era = o.era || '1776', night = o.night || 0, fire = o.fire || 0;
+    shape(ctx, grad(ctx, 0, -100, 0, 380, night ? [[0, '#0f1a34'], [.7, '#2a3a5e'], [1, fire ? '#c8643a' : '#3a4a6a']] : [[0, '#5aaee8'], [.7, '#bfe4f4'], [1, '#ffeec8']]), 0, rect(-500, -500, 2300, 900));
+    if (night) for (let i = 0; i < 40; i++) { ctx.save(); ctx.globalAlpha = .5 + .4 * Math.sin(t * 2 + i); shape(ctx, '#fff', 0, circle((i * 211) % 1400 - 60, 20 + (i * 97) % 250, 1.6)); ctx.restore(); }
+    else for (let i = 0; i < 4; i++) { const x = ((i * 300 + t * 6) % 1400) - 60; shape(ctx, '#fff8ee', 2.5, smooth([[x - 60, 120 + i * 24], [x - 20, 98 + i * 24], [x + 30, 96 + i * 24], [x + 60, 116 + i * 24], [x, 130 + i * 24]])); }
+    T.blurred(ctx, 1, () => shape(ctx, night ? '#2a3a3a' : '#86b47e', 0, c => { c.moveTo(-100, 330); for (let x = -100; x <= 1400; x += 110) c.quadraticCurveTo(x + 55, 304 - (x * 7 % 20), x + 110, 330); c.lineTo(1400, 345); c.lineTo(-100, 345); c.closePath(); }));
+    shape(ctx, night ? '#1f3a4a' : '#4aa6c2', 0, rect(-500, 335, 2300, 90));
+    for (let k = 0; k < 2; k++) { const sx = 600 + k * 120 + Math.sin(t * .2 + k) * 10; line(ctx, [[sx, 350], [sx, 296]], 2.5, '#5a3a20'); shape(ctx, night ? '#3a3a40' : '#f4efe2', 1.5, poly([[sx + 2, 300], [sx + 22, 308], [sx + 22, 338], [sx + 2, 342]])); shape(ctx, '#5a3a20', 2, poly([[sx - 24, 350], [sx + 24, 350], [sx + 18, 358], [sx - 18, 358]])); }
+    // cobbled street and brick sidewalks
+    shape(ctx, night ? '#4a4038' : '#a89a80', 0, rect(-500, 340, 2300, 800));
+    shape(ctx, grad(ctx, 0, PY(760, END), 0, 760, night ? [[0, '#3a342e'], [1, '#2a2622']] : [[0, '#b8a88a'], [1, '#9a8a6a']]), 0, gq(END, 1.1, -455, 455));
+    for (let i = 0; i < 60; i++) { const s2 = lerp(.18, 1.05, ((i * 37) % 60) / 60), u = ((i * 211) % 880) - 440; shape(ctx, 'rgba(60,50,40,.25)', 0, ellipse(VX + u * s2, PY(760, s2), 14 * s2, 4 * s2)); }
+    shape(ctx, night ? '#5a4a40' : '#b87a5a', 0, gq(END, 1.1, -740, -455)); shape(ctx, night ? '#5a4a40' : '#b87a5a', 0, gq(END, 1.1, 455, 740));
+    const L = era === '1776' ? [[1.3, .95, 260, '#b85a3a'], [.95, .7, 300, '#c8743a'], [.7, .52, 240, '#a84a3a'], [.52, .4, 300, '#d8946a'], [.4, .3, 260, '#b85a3a'], [.3, .22, 280, '#c8643a'], [.22, .15, 260, '#a85a40']]
+      : [[1.3, .95, 60, '#a8503a'], [.95, .7, 100, '#c8c0b0'], [.7, .52, 40, '#9a4a3a'], [.52, .4, 90, '#b8b0a0'], [.4, .3, 60, '#a85a40'], [.3, .22, 80, '#c8c0b0'], [.22, .15, 60, '#a8503a']];
+    L.slice().reverse().forEach((b, i) => { oldFacade(ctx, 1, b[0] * .98, b[1] * .98, b[2] + 30, b[3], era, o, t, i); oldFacade(ctx, -1, b[0], b[1], b[2], b[3], era, o, t, i + 3); });
+    // lamps and signs
+    for (const s2 of [.8, .5, .3]) for (const d of [-1, 1]) { const x = VX + d * 470 * s2, y = PY(760, s2); line(ctx, [[x, y], [x, y - 200 * s2]], 5 * s2 + 1, '#2a2a30'); shape(ctx, night ? '#ffd27a' : '#f4efe2', 2, rect(x - 10 * s2, y - 230 * s2, 20 * s2, 30 * s2, 3)); if (night) glow(ctx, x, y - 215 * s2, 60 * s2, 'rgba(255,210,120,.5)'); }
+    if (era === '1835' && !(o.ruins > .5)) for (const [s2, side, txt2] of [[.82, 1, 'INSURANCE CO.'], [.6, -1, 'DRY GOODS'], [.45, 1, 'MERCHANTS']]) { const x = X(side)(s2) - side * 40 * s2, y = PY(560, s2); ctx.save(); ctx.translate(x, y); ctx.scale(s2, s2); shape(ctx, '#f4efe2', 3, rect(-90, -18, 180, 36, 3)); txt(ctx, txt2, 0, 0, 18, '#3a2a20', 800); ctx.restore(); }
+    // crates and barrels on the sidewalk (1835 trade)
+    if (era === '1835' && !(o.ruins > .5)) for (let i = 0; i < 6; i++) { const s2 = lerp(.9, .35, i / 5), x = VX + (i % 2 ? 1 : -1) * 520 * s2, y = PY(760, s2); ctx.save(); ctx.translate(x, y); ctx.scale(s2, s2); if (i % 3) { shape(ctx, '#a87a4a', 3, rect(-30, -50, 60, 50)); line(ctx, [[-30, -25], [30, -25]], 2, '#6a4a2a'); } else { shape(ctx, '#8a5a34', 3, ellipse(0, -30, 24, 30)); line(ctx, [[-24, -40], [24, -40]], 3, '#3a2a20'); line(ctx, [[-24, -20], [24, -20]], 3, '#3a2a20'); } ctx.restore(); }
+    // tents and shacks among the ruins (the British occupation, 1776–83)
+    if (o.ruins > .5) for (let i = 0; i < 6; i++) { const s2 = lerp(.85, .3, i / 5), x = VX + (i % 2 ? 1 : -1) * 560 * s2, y = PY(760, s2); ctx.save(); ctx.translate(x, y); ctx.scale(s2, s2); shape(ctx, '#d8ccb0', 3.5, poly([[-70, 0], [0, -90], [70, 0]])); shape(ctx, '#3a2a20', 2, poly([[-14, 0], [0, -40], [14, 0]])); ctx.restore(); }
+    if (o.snow) { for (let i = 0; i < 80; i++) { const x = (i * 97 + t * 30) % 1400 - 60, y = (i * 61 + t * 60) % 760; shape(ctx, 'rgba(255,255,255,.8)', 0, circle(x, y, 2.5)); } ctx.save(); ctx.globalAlpha = .5; shape(ctx, '#f4f4f8', 0, gq(END, 1.1, -740, -455)); shape(ctx, '#f4f4f8', 0, gq(END, 1.1, 455, 740)); ctx.restore(); }
+    if (fire > 0) { // the fire: an orange glow, flames along the roofs at the far end, smoke and embers
+      glow(ctx, VX, 300, 500 * fire, `rgba(255,130,40,${.55 * fire})`);
+      for (let k = 0; k < 10; k++) { const s2 = lerp(.5, .14, k / 9), side = k % 2 ? 1 : -1, x = X(side)(s2), y = PY(200, s2), h = (60 + 40 * Math.sin(t * 6 + k)) * s2 * 2 * fire;
+        shape(ctx, '#f2a03a', 0, poly([[x - 30 * s2, y], [x - 10 * s2, y - h], [x, y - h * .6], [x + 14 * s2, y - h * 1.1], [x + 30 * s2, y]])); shape(ctx, '#ffe27a', 0, poly([[x - 14 * s2, y], [x, y - h * .5], [x + 14 * s2, y]])); }
+      for (let k = 0; k < 8; k++) { const p = (t * .15 + k / 8) % 1; ctx.save(); ctx.globalAlpha = .5 * (1 - p) * fire; shape(ctx, '#3a3238', 0, circle(VX - 200 + k * 60 + p * 80, 220 - p * 300, 40 + p * 70)); ctx.restore(); }
+      for (let k = 0; k < 20; k++) { const p = (t * .4 + k / 20) % 1; shape(ctx, '#ffb84a', 0, circle(VX - 300 + (k * 37) % 600 + Math.sin(p * 8 + k) * 20, 360 - p * 340, 3)); } }
+  }
+
   // where you are: a small map of the southern tip of Manhattan with Wall St, Broad St and a pin at the corner
   function whereMap(ctx, x, y, k, t) { if (k <= 0) return; const s = FX.settle(clamp(k / .4)); ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.rotate(.03);
     shape(ctx, 'rgba(0,0,0,.3)', 0, rect(-124, -104, 256, 216, 8)); shape(ctx, '#fbf6ea', 4.5, rect(-130, -110, 256, 216, 8)); ctx.save(); ctx.beginPath(); ctx.rect(-118, -98, 232, 168); ctx.clip();
@@ -346,5 +399,5 @@
   // the Harbor — the one character who never leaves (a cousin of the Venice lagoon, in New York harbor green-blue)
   function harbor(ctx, x, y, w, t, o = {}) { ctx.save(); ctx.filter = 'hue-rotate(-14deg) saturate(1.15)'; G.Venice.lagoon(ctx, x, y, w, t, o); ctx.restore(); }
 
-  G.NYC = Object.assign(G.NYC || {}, { corner, dutchCorner, land1609, person, walker, pigeon, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
+  G.NYC = Object.assign(G.NYC || {}, { corner, dutchCorner, oldCorner, land1609, person, walker, pigeon, taxi, harbor, whereMap, VX, VY, LX, RX, PY });
 })(window);

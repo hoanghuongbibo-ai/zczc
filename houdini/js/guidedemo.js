@@ -19,7 +19,7 @@
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1, 1.08), 640, 380); study(ctx);
     T.shadow(ctx, 640, 690, 105, 15, .3);
     const back = lt < 1.0, turn = lt < 1.0 ? 0 : -1 + ease.out(clamp((lt - 1.0) / .45));
-    Gd.draw(ctx, 640, 690, .98, { t, back, turn, pose: Gd.pose(lt, [[0, 'idle'], [1.6, 'wave'], [3.2, 'present']]), curl: Gd.curlRing(lt - 1.0, .45) + Gd.curlRing(lt - 1.6, .2),
+    Gd.draw(ctx, 640, 690, .98, { t, back, turn, pose: Gd.pose(lt, [[0, 'idle'], [1.6, 'wave'], [3.2, 'present']]), hair: Gd.hairRing(lt - 1.0, .45) + Gd.hairRing(lt - 1.6, .2),
       face: lt < 1.6 ? { mouth: 'smile', brows: 'up', look: [.2, 0] } : lt < 3.2 ? { mouth: 'grin', eyes: 'happy', brows: 'up' } : { mouth: 'grin', brows: 'neutral', look: [.5, 0] }, headTilt: lt > 1.6 && lt < 3.2 ? -.06 : 0 });
     ctx.restore(); FX.dateTag(ctx, 'MEET THEO');
     FX.caption(ctx, 'your guide to the myths of history', lt, 3.3);
@@ -33,7 +33,7 @@
     T.shadow(ctx, 520, 680, 100, 15, .3);
     const keys = [[0, 'idle'], [.4, 'magnify'], [2.5, 'magnify'], [2.95, 'cheer']];
     const face = lt < 2.45 ? { mouth: 'flat', brows: 'skeptic', eyes: 'squint', look: [.8, -.2] } : lt < 2.95 ? { mouth: 'shock', brows: 'up', eyes: 'wide', look: [.8, -.1] } : { mouth: 'grin', eyes: 'happy', brows: 'up' };
-    Gd.draw(ctx, 520, 680, .92, { t, turn: lt < 2.95 ? .55 : .2, pose: Gd.pose(lt, keys), prop: 'magnifier', face, curl: Gd.curlRing(lt - 2.45, .5) + Gd.curlRing(lt - 2.95, .25), lean: lt > 2.95 ? 0 : -.03 * ease.out(clamp((lt - .4) / .5)) });
+    Gd.draw(ctx, 520, 680, .92, { t, turn: lt < 2.95 ? .55 : .2, pose: Gd.pose(lt, keys), prop: 'magnifier', face, hair: Gd.hairRing(lt - 2.45, .5) + Gd.hairRing(lt - 2.95, .25), lean: lt > 2.95 ? 0 : -.03 * ease.out(clamp((lt - .4) / .5)) });
     ctx.restore(); FX.dateTag(ctx, 'MYTH CHECK');
     FX.caption(ctx, 'Napoleon: about 1.69 m (5 ft 7 in) — average for his day', lt, 3.0);
   }
@@ -41,7 +41,7 @@
     FX.darkBg(ctx, '#2f2a26');
     const k = FX.settle(clamp((lt - .15) / .45));
     ctx.save(); ctx.translate(640, 140); ctx.scale(k, k); FX.bigText(ctx, 'MYTH BUSTED!', 0, 0, 84, { color: '#f6c945' }); ctx.restore();
-    Gd.draw(ctx, 640, 1010, 1.25, { t, pose: Gd.pose(lt, [[0, 'idle'], [.55, 'thumbsUp']]), curl: Gd.curlRing(lt - .55, .3),
+    Gd.draw(ctx, 640, 1010, 1.25, { t, pose: Gd.pose(lt, [[0, 'idle'], [.55, 'thumbsUp']]), hair: Gd.hairRing(lt - .55, .3),
       face: lt < .55 ? { mouth: 'smile', brows: 'neutral' } : { mouth: 'smile', eyes: 'wink', brows: 'sly' }, headTilt: lt > .55 ? .05 : 0 });
   }
   const shots = [[0, 4.2, a], [4.2, 8.4, b], [8.4, 11.6, c]].map(([start, end, draw]) => ({ start, end, draw }));

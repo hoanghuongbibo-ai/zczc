@@ -1,44 +1,47 @@
 <!doctype html><meta charset="utf-8">
 <style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }
 @font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); }</style>
-<canvas id="c" width="2400" height="2200"></canvas>
-<script src="../js/guide.js"></script>
+<canvas id="c" width="2400" height="2760"></canvas>
+<script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script>
 <script>
 const c = document.getElementById('c'), g = c.getContext('2d'), D = Guide.draw;
-const label = (t, x, y, size = 28, col = '#2b2622') => { g.font = `700 ${size}px Fredoka`; g.fillStyle = col; g.textAlign = 'center'; g.fillText(t, x, y); };
-const clip = (x, y, w, h, fn) => { g.save(); g.beginPath(); g.rect(x, y, w, h); g.clip(); fn(); g.restore(); };
-const card = (x, y, w, h) => { g.fillStyle = '#fffdf8'; g.strokeStyle = '#d9cfbb'; g.lineWidth = 3; g.beginPath(); g.roundRect(x, y, w, h, 18); g.fill(); g.stroke(); };
+const label = (t, x, y, size = 26, col = '#2b2622') => { g.font = `700 ${size}px Fredoka`; g.fillStyle = col; g.textAlign = 'center'; g.fillText(t, x, y); };
+const clip = (x, y, w, h, fn) => { g.save(); g.beginPath(); g.roundRect(x, y, w, h, 14); g.clip(); fn(); g.restore(); };
+const card = (x, y, w, h, title) => { g.fillStyle = '#fffdf8'; g.strokeStyle = '#d9cfbb'; g.lineWidth = 3; g.beginPath(); g.roundRect(x, y, w, h, 18); g.fill(); g.stroke(); g.font = '700 26px Fredoka'; g.fillStyle = '#8a7f72'; g.textAlign = 'left'; g.fillText(title, x + 26, y + 44); };
+const floor = (x0, x1, y) => { const gr = g.createLinearGradient(0, y - 20, 0, y + 40); gr.addColorStop(0, 'rgba(160,140,110,0)'); gr.addColorStop(1, 'rgba(160,140,110,.18)'); g.fillStyle = gr; g.fillRect(x0, y - 20, x1 - x0, 60); };
 Promise.all([document.fonts.load('700 30px Fredoka'), document.fonts.load('40px "Luckiest Guy"')]).then(() => {
-  g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 2400, 2200);
+  g.fillStyle = '#efe8d8'; g.fillRect(0, 0, 2400, 2760);
   g.font = '64px "Luckiest Guy"'; g.fillStyle = '#1b1917'; g.textAlign = 'left'; g.fillText('THEO', 60, 92);
-  g.font = '700 30px Fredoka'; g.fillStyle = '#5b5248'; g.fillText('the history channel\'s guide & myth-buster  ·  character sheet', 250, 88);
-  // ---- row 1: turnaround (like your sheet) ----
-  card(40, 130, 2320, 700); label('TURNAROUND', 160, 180, 26, '#8a7f72');
-  clip(70, 190, 560, 620, () => D(g, 350, 1120, 1.55, { t: 1.2, face: { mouth: 'grin', brows: 'up', look: [.15, -.1] }, turn: .18, noBlink: true }));
-  label('close-up', 560, 230, 24, '#8a7f72');
-  const r1 = 790;
-  D(g, 830, r1, 1, { t: 0, face: { mouth: 'grin', brows: 'neutral' }, noBlink: true }); label('front', 830, r1 + 34, 24);
-  D(g, 1230, r1, 1, { t: .5, turn: .85, face: { mouth: 'grin', look: [.4, 0] }, noBlink: true }); label('¾ right', 1230, r1 + 34, 24);
-  D(g, 1630, r1, 1, { t: 1, turn: -.85, face: { mouth: 'grin', look: [-.4, 0] }, noBlink: true }); label('¾ left', 1630, r1 + 34, 24);
-  D(g, 2030, r1, 1, { t: 1.5, back: true }); label('back', 2030, r1 + 34, 24);
-  // ---- row 2: poses ----
-  card(40, 860, 2320, 640); label('POSES', 120, 910, 26, '#8a7f72');
-  const poses = [['wave', 'wave', { mouth: 'grin', eyes: 'happy', brows: 'up' }], ['present', 'present', { mouth: 'open', look: [.6, 0] }], ['pointUp', 'point up', { mouth: 'o', brows: 'up', look: [.3, -.8] }],
-    ['magnify', 'investigate', { mouth: 'flat', brows: 'skeptic', eyes: 'squint', look: [.7, -.4] }, .35], ['think', 'think', { mouth: 'smirk', brows: 'skeptic', look: [-.6, -.6] }], ['shrug', 'shrug', { mouth: 'frown', brows: 'worried' }],
-    ['crossed', 'not buying it', { mouth: 'flat', brows: 'angry', look: [-.4, 0] }, -.3], ['cheer', 'busted!', { mouth: 'grin', eyes: 'happy', brows: 'up' }], ['thumbsUp', 'fact ✓', { mouth: 'smile', eyes: 'wink', brows: 'sly' }], ['facepalm', 'facepalm', { mouth: 'frown', brows: 'worried' }]];
-  poses.forEach(([p, n, f, turn], i) => { const x = 180 + i * 225, y = 1440; D(g, x, y, .76, { t: 1 + i * .37, pose: p, face: f, turn: turn || 0, prop: p === 'magnify' ? 'magnifier' : null, noBlink: true }); label(n, x, y + 40, 24); });
-  // ---- row 3: expressions (head close-ups) ----
-  card(40, 1530, 2320, 420); label('EXPRESSIONS', 150, 1580, 26, '#8a7f72');
-  const ex = [['happy', { mouth: 'grin', brows: 'up', eyes: 'happy' }], ['talking', { mouth: 'open', brows: 'neutral' }], ['curious', { mouth: 'o', brows: 'skeptic', look: [.5, -.3] }],
-    ['skeptical', { mouth: 'smirk', brows: 'skeptic', eyes: 'squint', look: [-.5, 0] }], ['shocked', { mouth: 'shock', brows: 'up', eyes: 'wide' }], ['worried', { mouth: 'frown', brows: 'worried', look: [.3, .4] }],
-    ['annoyed', { mouth: 'grit', brows: 'angry' }], ['sly', { mouth: 'smirk', brows: 'sly', eyes: 'wink' }]];
-  ex.forEach(([n, f], i) => { const x = 200 + i * 285; clip(x - 135, 1600, 270, 290, () => D(g, x, 2150, .95, { t: 0, face: f, noBlink: true })); label(n, x, 1920, 24); });
-  // ---- footer: palette + notes ----
-  const pal = [['#18181b', 'hair'], ['#34363d', 'suit'], ['#ffffff', 'face / hands'], ['#d8433a', 'tie + pocket'], ['#c9993c', 'magnifier']];
-  pal.forEach(([col, n], i) => { g.fillStyle = col; g.strokeStyle = '#1b1917'; g.lineWidth = 4; g.beginPath(); g.arc(90 + i * 230, 2050, 26, 0, 7); g.fill(); g.stroke(); g.font = '700 24px Fredoka'; g.fillStyle = '#2b2622'; g.textAlign = 'left'; g.fillText(n, 128 + i * 230, 2058); });
+  g.font = '700 30px Fredoka'; g.fillStyle = '#5b5248'; g.fillText('the history channel\'s guide & myth-buster  ·  character sheet v2  ·  outfits follow the script', 250, 88);
+  // ---- turnaround ----
+  card(40, 130, 2320, 700, 'TURNAROUND');
+  clip(70, 190, 560, 620, () => { g.fillStyle = '#f3ecdc'; g.fillRect(70, 190, 560, 620); D(g, 350, 1120, 1.55, { t: 1.2, face: { mouth: 'grin', brows: 'up', look: [.15, -.1] }, turn: .18, noBlink: true, light: { cast: 0, contact: 0 } }); });
+  floor(640, 2340, 790);
+  D(g, 830, 790, 1, { t: 0, face: { mouth: 'grin' }, noBlink: true }); label('front', 830, 824);
+  D(g, 1230, 790, 1, { t: .5, turn: .85, face: { mouth: 'grin', look: [.4, 0] }, noBlink: true }); label('¾ right', 1230, 824);
+  D(g, 1630, 790, 1, { t: 1, turn: -.85, face: { mouth: 'grin', look: [-.4, 0] }, noBlink: true }); label('¾ left', 1630, 824);
+  D(g, 2030, 790, 1, { t: 1.5, back: true }); label('back', 2030, 824);
+  // ---- wardrobe ----
+  card(40, 860, 2320, 700, 'WARDROBE  (outfit + default headwear; both swap per scene)');
+  const W = [['suit', 'host suit', {}], ['roman', 'Rome', { pose: 'presentBoth' }], ['medieval', 'medieval', { pose: 'hips' }], ['edo', 'Edo Japan', { hat: 'kasa', pose: 'bow' }],
+    ['victorian', 'Victorian', { pose: 'thumbsUp' }], ['egypt', 'Egypt', { pose: 'present' }], ['explorer', 'explorer', { pose: 'magnify', prop: 'magnifier' }]];
+  floor(60, 2340, 1500);
+  W.forEach(([o, n, x], i) => { const px = 210 + i * 330; D(g, px, 1500, .92, Object.assign({ t: .3 + i * .41, outfit: o, turn: [0, .2, -.2, 0, .25, -.25, .35][i], noBlink: true, face: { mouth: o === 'edo' ? 'smile' : 'grin', eyes: o === 'edo' ? 'happy' : 'open', brows: 'up' } }, x)); label(n, px, 1540); });
+  // ---- headwear ----
+  card(40, 1590, 2320, 420, 'HEADWEAR');
+  const HT = [['laurel', 'roman'], ['galea', 'roman'], ['hood', 'medieval'], ['feltCap', 'medieval'], ['kasa', 'edo'], ['topHat', 'victorian'], ['flatCap', 'victorian'], ['nemes', 'egypt'], ['pith', 'explorer'], ['crown', 'suit']];
+  HT.forEach(([h, o], i) => { const x = 160 + i * 228; clip(x - 108, 1650, 216, 300, () => { g.fillStyle = '#f6f0e3'; g.fillRect(x - 108, 1650, 216, 300); D(g, x, 2125, .72, { t: 0, outfit: o, hat: h, face: { mouth: 'smile' }, noBlink: true, light: { cast: 0, contact: 0 } }); }); label(h, x, 1985, 24); });
+  // ---- poses + expressions ----
+  card(40, 2040, 1150, 640, 'POSES');
+  floor(60, 1170, 2610);
+  [['wave', { mouth: 'grin', eyes: 'happy', brows: 'up' }], ['pointUp', { mouth: 'o', brows: 'up', look: [.3, -.8] }], ['think', { mouth: 'smirk', brows: 'skeptic', look: [-.6, -.6] }], ['shrug', { mouth: 'frown', brows: 'worried' }], ['facepalm', { mouth: 'frown', brows: 'worried' }]]
+    .forEach(([p, f], i) => { const x = 160 + i * 220; D(g, x, 2610, .72, { t: 1 + i * .37, pose: p, face: f, noBlink: true }); label(p, x, 2650, 24); });
+  card(1210, 2040, 1150, 640, 'EXPRESSIONS');
+  [['happy', { mouth: 'grin', brows: 'up', eyes: 'happy' }], ['curious', { mouth: 'o', brows: 'skeptic', look: [.5, -.3] }], ['skeptical', { mouth: 'smirk', brows: 'skeptic', eyes: 'squint', look: [-.5, 0] }], ['shocked', { mouth: 'shock', brows: 'up', eyes: 'wide' }],
+   ['worried', { mouth: 'frown', brows: 'worried', look: [.3, .4] }], ['annoyed', { mouth: 'grit', brows: 'angry' }], ['sly', { mouth: 'smirk', brows: 'sly', eyes: 'wink' }], ['talking', { mouth: 'open' }]]
+    .forEach(([n, f], i) => { const x = 1350 + (i % 4) * 280, y = 2100 + Math.floor(i / 4) * 290; clip(x - 125, y, 250, 250, () => { g.fillStyle = '#f6f0e3'; g.fillRect(x - 125, y, 250, 250); D(g, x, y + 498, .9, { t: 0, face: f, noBlink: true, light: { cast: 0, contact: 0 } }); }); label(n, x, y + 276, 22); });
   g.font = '700 24px Fredoka'; g.fillStyle = '#5b5248'; g.textAlign = 'left';
-  g.fillText('Signature: the springy question-mark curl (bounces after every move), glossy oval eyes, thick acting brows, one red accent.', 60, 2130);
-  g.fillText('Alive in every shot: breathes, blinks, lip-syncs to the voice, eases between poses with a small overshoot.', 60, 2170);
+  g.fillText('Full, rounded black mop with three springy crown tufts (they bounce after every move). Depth pass on every frame: rim light, form shadow, contact + floor shadow.', 60, 2730);
   window.DONE = true;
 });
 </script>

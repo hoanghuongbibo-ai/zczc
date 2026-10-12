@@ -24,11 +24,13 @@ log's own wording). Never ask the user to filter text or data. Then reply with o
    - **Reference images of key real objects / places / documents** whose exact look matters (a building, a ship, a
      poster, a letter, an artefact). Default: an original flat drawing from public descriptions;
    - **Character art** if a new recurring character is wanted (default: I design one and send a sheet for approval);
+   - **Costume / headwear references** for any era Theo visits that the wardrobe doesn't have yet (default: I design it
+     from period sources and show it on the sheet);
    - **The voice-over mp3** (if not sent yet) — everything is timed to it.
 2. **What I'll build myself** (one short line): sets, maps + routes, timelines, documents/newspapers with made-up
    mastheads, stamps, counters, diagrams, Theo's acting beats, score + foley.
-3. **Engagement plan** (3–5 bullets): the cold-open hook, where Theo appears on camera (open, myth → fact reveals,
-   sign-off), the recurring "MYTH / BUSTED" or "FACT ✓" beats, and any shot the script's notes imply that needs a decision.
+3. **Engagement plan** (3–5 bullets): the cold-open hook, where Theo appears on camera and in which outfit + hat per
+   scene (open, myth → fact reveals, sign-off), the recurring "MYTH / BUSTED" or "FACT ✓" beats, and any shot the script's notes imply that needs a decision.
 4. **Data issues** found in the log, and script lines that will need a [MAP]/[DOCUMENT]/[DIAGRAM] even though unmarked.
 Then wait for the assets + voice (or "run").
 
@@ -71,24 +73,42 @@ Then wait for the assets + voice (or "run").
 - Props work like the real thing: locks on hasps, lids lowered by people or hinged correctly, ropes where something
   hangs, papers stamped on the right line, map pins on land not in lakes.
 
-## THEO — the channel guide / myth-buster (approved design target; user brief 2026-10-12)
+## THEO — the channel guide / myth-buster (user brief 2026-10-12, revised the same day)
 
-`G.Guide` in `houdini/js/guide.js` — an original character built from the user's brief sheet (round white face, black
-hair, dark suit + tie, black-and-white ink look) but with his own identity: a springy **question-mark curl** on top
-(his signature; kick it with `curl: Guide.curlRing(lt - tMove)` after every big move), glossy oval eyes with highlights,
-thick acting brows, pink cheeks, **red tie + red pocket square** (his only colour), white one-outline hands, chunky
-round shoes, a brass **magnifying glass** prop. Sheet: `out/guide-sheet.png` (`tools/guidesheet.html`, snapped with
-`node tools/_snap.mjs <abs path> out/guide-sheet.png 2400 2200`). Demo: `out/guide-demo.mp4` (`guide-demo.html`, `js/guidedemo.js`).
-- `Guide.draw(ctx, x, y, s, { t, pose, turn, back, face, talk, walk, lean, headTilt, curl, prop, mirror })`, feet at
-  (x, y), s = 1 → ~560 px tall. `turn` −1…1 gives the ¾ views (features slide on the head sphere, far ear and far arm
-  tuck behind); `back: true` for the back view. Change `turn` with an ease, never a snap, and kick the curl when he turns.
+`G.Guide` (`houdini/js/guide.js`) + his wardrobe (`houdini/js/wardrobe.js`, load it right after guide.js). An original
+character from the user's brief sheets: round white face, glossy oval eyes with highlights, thick acting brows, pink
+cheeks, white one-outline hands, and a **full rounded black mop of hair like the reference, with three small springy
+crown tufts** (kick them with `hair: Guide.hairRing(lt - tMove)` after a turn / jump / slam).
+**User rule: no single stray curl or lone strand — if hair is curly, the whole style is curly.**
+Sheet: `out/guide-sheet.png` (`tools/guidesheet.html` → `node tools/_snap.mjs <abs path> out/guide-sheet.png 2400 2760`).
+Demos: `out/guide-demo.mp4` (myth check), `out/wardrobe-demo.mp4` (time-travel wardrobe, parallax era sets).
+- **The outfit follows the script; headwear swaps to fit the setting (user rule).** For every scene pick
+  `outfit` (suit = host default, roman, medieval, edo, victorian, egypt, explorer) and `hat` (laurel, galea, hood,
+  feltCap, kasa, topHat, flatCap, pith, nemes, crown, or 'none'). A new era → add an outfit/hat to wardrobe.js in the
+  same style (cloth shading via `garment()`, a real pattern where the garment has one), show it on the sheet first.
+  Keep period details right (kimono crosses left-over-right; real insignia/logos are never copied).
+- `Guide.draw(ctx, x, y, s, { t, outfit, hat, pose, turn, back, face, talk, walk, lean, headTilt, hair, prop, mirror, light })`,
+  feet at (x, y), s = 1 → ~560 px tall. `turn` −1…1 = ¾ views (ease it, never snap), `back: true` = back view.
 - Poses (`Guide.pose(t, [[t0,'idle'], [t1,'wave'], …])`, eased with a small overshoot): idle, present, presentL,
-  presentBoth, pointUp, pointSide, pointSideL, wave, think, shrug, cheer, thumbsUp, hips, crossed, magnify (+ `prop:
-  'magnifier'`), facepalm. Faces: eyes open/wide/happy/closed/squint/wink; brows neutral/up/worried/angry/skeptic/sly;
-  mouth grin/smile/open/o/shock/flat/frown/smirk/grit. Auto breathing + blinks; `talk: Guide.talk(t)` lip-syncs to an
-  envelope from `biz/tools/envelope.py` when he speaks on camera.
-- Use him as the on-screen guide: cold open, myth statement (investigate with the magnifier), the reveal (BUSTED / FACT
-  stamp + his reaction), and the sign-off. He stays out of period scenes unless the script asks for a host moment.
+  presentBoth, pointUp, pointSide, pointSideL, wave, think, shrug, cheer, thumbsUp, hips, crossed, magnify (holds the
+  magnifier), facepalm, bow. Faces: eyes open/wide/happy/closed/squint/wink; brows neutral/up/worried/angry/skeptic/sly;
+  mouth grin/smile/open/o/shock/flat/frown/smirk/grit. Auto breathing + blinks; `talk: Guide.talk(t)` lip-syncs to
+  an envelope from `biz/tools/envelope.py` when he speaks on camera.
+- Use him as the on-screen guide: cold open, the myth statement (magnifier), the reveal (BUSTED / FACT + reaction),
+  era hops (spin → costume puff → new set, see `js/wardrobedemo.js`), sign-off.
+
+## Rich, "4D" visuals (user rule, 2026-10-12)
+
+Every shot must feel deep and lit, not flat paper:
+- **Depth pass on characters** — `Guide.draw` does it by default: rim light on the lit side, soft form shadow on the
+  far side, contact shadow + a short floor shadow away from the light. Match `light` to the set (`{ x, y, rim, rimA,
+  shade, shadeA, cast }`): warm sun from the left in Rome, orange dusk rim from the right in Edo, gas-lamp rim at night.
+- **Layered sets with parallax**: sky (fixed) → far layer (blur ≈3 px) → mid layer (blur ≈1) → perspective floor
+  whose seams converge to a vanishing point → characters → blurred foreground object; pan the camera so layers move at
+  0.15 / 0.5 / 1 / 1.5 speed, plus a slow push-in. Cached layers (`layer(key, w, blur, fn)` in wardrobedemo.js) keep it fast.
+- **Living atmosphere** on every set, deterministic: light shafts + dust motes, chimney smoke, falling petals, drifting
+  fog, swaying lanterns (`FX.pendulum`), lamp glows with floor reflections.
+- Materials get texture: cloth folds, knit, tweed, pleats, wood grain, brick courses — never a bare flat fill on a hero prop.
 
 ## Toolkit (all in `houdini/`)
 
@@ -100,7 +120,9 @@ round shoes, a brass **magnifying glass** prop. Sheet: `out/guide-sheet.png` (`t
 | `js/cast2.js … cast5.js` | supporting cast (doctor, nurse, mediums, Doyle, Jean, Margery, committee, Rose, Bey, Bess, Ford, Hardeen…). `cast3.js` exports `Chars.castFace` + `Chars.browSet` for building new heads |
 | `js/show3.js` | `G.Part3A.lib`: chapter, frame, label, parlour, suite, seanceRoom, newspaper, slam, bubble, ghostIcon, cross, tick, ring, scribble |
 | `js/show4.js`, `js/show5.js` | more set pieces to copy: maps + routes, trains, stage, dressing room, couch punch, thermometer, appendix diagram, code decoder, balance scale, marquee |
-| `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, curl spring, magnifier |
+| `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
+| `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
+| `js/wardrobedemo.js` | parallax era sets (study, Rome, medieval, Edo, London), spin + costume puff, stage line-up |
 | `js/rig.js` | puppet rig of the user's Houdini art (suit portrait, hospital bed) |
 | `js/props.js` | handcuffs, chains, watch, glass, car, etc. |
 | `js/sound.js` | synthesised score (`moods`: still / tense / mystery / silence / under) + foley `sfx`: click, clang, rattle, whoosh, hit, swell, paper, splash, bubbles, ratchet, creak, scratch, thud, press, slide, wind, boom, window |
@@ -159,4 +181,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   white face, black hair, dark suit, ink style) and add an original signature (silhouette feature, one accent colour,
   a prop) so the character is recognisable and not a copy. Show a turnaround + poses + expressions sheet and a short
   demo clip before using him in an episode.
+- **Theo v2 (user feedback, 2026-10-12):** no single curl/stray strand — the hair is a full rounded mop like the
+  reference (curly only if the whole style is curly); outfits change with the script and hats fit the setting; the
+  visuals must be rich with a "4D" depth feel (depth pass on characters, parallax layered sets, atmosphere).
 

@@ -157,6 +157,7 @@ clip). Use it when the script has dialogue lines / characters talking. Its langu
 | `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
 | `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
 | `js/score2.js` | NEW score + foley (plucks, marimba, celesta, pads, bass, soft drums; moods curious/adventure/quiet/morning/busy/comic/warm/tender/somber/rising; ducks under the voice via window.VENV). Load it instead of sound.js |
+| `js/setprops.js` | period set dressing with outline + light/shade + contact shadow: amphorae (+rack), barrels, sacks, baskets (bread/apples/veg/wool), crates, woodpile, cart, trough, well, hay, washing line, stools, laid table, chest, peg rail (helmets/bags/belts/cloaks), shield + spear racks, scroll basket, lamps, brazier, cauldron, quern, loom, fence, dig tools |
 | `js/fauna.js` | animals in the painted style with idle loops: horse (grazing), chicken (pecking), dog (tail wag), sheep, cat, butterfly, duck |
 | `js/paint.js` | shared painter kit (sky, rays, drifting clouds, hills, swaying trees/bushes/grass, birds, motes, cached parallax layers) |
 | `tools/export-par.mjs` | parallel exporter: N Chromium workers → JPEG pipe → x264 segments → concat + soundtrack + narration (pass the narration path explicitly) |
@@ -264,4 +265,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Houdini series parts 1–5 (houdini/out). Theo (channel guide) + wardrobe + skit format + painted warm look.
 - Vindolanda (houdini/vindolanda): full 13:11 episode, v2 delivered 2026-10-13 (quieter mix, richer colour, flora,
   fauna, refined crowds). User: "pretty good, could do better — pay attention to surrounding objects. Move on."
+- Vindolanda v3 (2026-10-13): props pass in every set (setprops.js) + softer score (no kick/snap/shaker, lyre-like
+  plucks, octave-lower melodies, low-passed buses), gentler foley (boing → harp flick). Measured: music+fx ≈ −21 dB
+  under the voice (bed peak −16 dB). Treat these numbers as the new house mix target.
 

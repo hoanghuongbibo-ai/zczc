@@ -112,7 +112,7 @@
     K.counter(ctx, 640, 160, 0, 5000, lt, R('k5000'), 1.2, 'shoes — by one researcher’s count', { prefix: '≈ ', size: 90 });
     [[517.43, 'soldiers’ boots', 360, 1.2, '#6b4428'], [518.81, 'women’s sandals', 640, 1.0, '#c99a3c'], [520.24, 'tiny children’s shoes', 920, .55, '#d97a3a']].forEach(([at, l, x, s, col]) => { const k = K.pop(t, at); if (k <= 0) return; ctx.save(); ctx.translate(x, 470); ctx.scale(k, k); if (l.startsWith('women')) K.sandal(ctx, 0, 0, s); else K.shoe(ctx, 0, 0, s, col); ctx.restore(); K.tag(ctx, l, x, 580, t, at + .1, { size: 22 }); }); });
   fx('leather', 'thud', .4); fx('k5000', 'rise', .5); fx('kids', 'pop', .5); fx('kids', 'pop', .5, 1.4); fx('kids', 'pop', .6, 2.8);
-  S('important', (ctx, lt, dur, t, R) => { V.street(ctx, t, 0); for (let i = 0; i < 4; i++) { const u = ((t * .12 + i / 4) % 1), x = lerp(-80, 1360, u); K.mini(ctx, x, 690 - (i % 2) * 20, .8, t, { walk: 1.8, ph: i * 2, cloth: K.CLOTH[i + 3], skin: K.SKINS[i % 6], hair: K.HAIRS[i % 6], wave: i % 2 === 0 }); }
+  S('important', (ctx, lt, dur, t, R) => { V.street(ctx, t, 0); for (let i = 0; i < 4; i++) { const u = ((t * .12 + i / 4) % 1), x = lerp(-80, 1360, u); K.mini(ctx, x, 690 - (i % 2) * 20, i % 2 ? .62 : .8, t, { walk: 1.8, ph: i * 2, cloth: K.CLOTH[i + 3], skin: K.SKINS[i % 6], hair: K.HAIRS[i % 6], wave: i % 2 === 0, dress: i === 2, bun: i === 2 }); }
     K.fig(ctx, 420, 700, .78, K.cast('lepidina', { t, turn: .3, pose: 'present', face: { mouth: 'smile', look: [.8, .3] } })); K.fig(ctx, 900, 700, .78, aux({ t, prop: 'spear', turn: -.3, pose: 'idle', face: { mouth: 'o', brows: 'up', look: [-.5, .3] } }));
     K.title(ctx, 'NOT JUST A BASE FULL OF MEN', lt, R('notmen') - .2, { y: 110, size: 48 }); });
   fx('important', 'crowd', .3, 0, 4);

@@ -25,22 +25,34 @@
   const SKINS = ['#fcd8bd', '#f2c09a', '#e3ab83', '#c98f66', '#a8714c', '#7e5236'], HAIRS = ['#3d2416', '#1f1712', '#6b4226', '#b98a4e', '#a8642e', '#8a8a8a'];
   const CLOTH = ['#a8392f', '#3c5a86', '#6f7a52', '#c99a3c', '#e6dcc4', '#8a4f9a', '#d97a3a', '#4f7a3c'];
   function mini(ctx, x, y, s, t, o = {}) {
-    const ph = o.ph || 0, walk = o.walk ?? 0, sw = Math.sin(t * 7 + ph) * walk, bob = Math.abs(Math.sin(t * 7 + ph)) * 2.5 * walk, dir = o.dir || 1;
+    // a refined crowd person: proper head/hair/face, neck, belted tunic or long dress, arms with hands, shoes
+    const ph = o.ph || 0, walk = o.walk ?? 0, sw = Math.sin(t * 7 + ph) * walk, bob = Math.abs(Math.sin(t * 7 + ph)) * 2.5 * walk, dir = o.dir || 1, idle = Math.sin(t * 1.8 + ph) * 1.2;
+    const skin = o.skin || SKINS[0], hair = o.hair || HAIRS[0], dress = !!o.dress, body = o.mail ? '#a3abb8' : (o.cloth || CLOTH[0]), dk = c => G.Guide.hexMul(c, .78);
     ctx.save(); ctx.translate(x, y - bob); ctx.scale(s * dir, s);
-    ln(ctx, [[-6, -20], [-6 - sw * 6, 0]], 7); ln(ctx, [[-6, -20], [-6 - sw * 6, 0]], 4, o.legs || '#6b5040'); ln(ctx, [[6, -20], [6 + sw * 6, 0]], 7); ln(ctx, [[6, -20], [6 + sw * 6, 0]], 4, o.legs || '#6b5040');
-    const body = o.mail ? '#9aa1ac' : (o.cloth || CLOTH[0]);
-    ln(ctx, [[-12, -44], [-16 + sw * 7, -24]], 7); ln(ctx, [[-12, -44], [-16 + sw * 7, -24]], 4, body);
-    sh(ctx, body, 2.5, c => { c.moveTo(-13, -16); c.quadraticCurveTo(-15, -46, 0, -50); c.quadraticCurveTo(15, -46, 13, -16); c.closePath(); });
-    if (o.mail) { sh(ctx, o.cloth || '#a8392f', 2, c => c.rect(-13, -20, 26, 5)); ctx.fillStyle = 'rgba(40,44,52,.35)'; for (let yy = -44; yy < -20; yy += 5) for (let xx = -10; xx < 10; xx += 5) ctx.fillRect(xx, yy, 2, 2); }
-    if (o.wave) { const a = Math.sin(t * 9 + ph) * .5; ln(ctx, [[12, -44], [22 + a * 8, -64]], 7); ln(ctx, [[12, -44], [22 + a * 8, -64]], 4, body); }
-    else { ln(ctx, [[12, -44], [16 - sw * 7, -24]], 7); ln(ctx, [[12, -44], [16 - sw * 7, -24]], 4, body); }
-    sh(ctx, o.skin || SKINS[0], 2.5, circ(0, -62, 12));
-    if (o.helmet) { sh(ctx, '#b3b9c1', 2.5, c => c.arc(0, -64, 13, Math.PI, TAU)); sh(ctx, '#d0a548', 1.5, c => c.rect(-13, -66, 26, 3)); }
-    else sh(ctx, o.hair || HAIRS[0], 0, c => c.arc(0, -65, 12, Math.PI * 1.05, Math.PI * 1.95));
-    ctx.fillStyle = OUT; ctx.beginPath(); ctx.arc(3, -61, 1.6, 0, TAU); ctx.arc(-3, -61, 1.6, 0, TAU); ctx.fill();
-    if (o.shield) sh(ctx, '#3c5a86', 2, c => c.ellipse(-12, -32, 7, 13, 0, 0, TAU));
-    if (o.spear) { ln(ctx, [[15, 2], [15, -78]], 2.5, '#7a5233'); sh(ctx, '#c9c2b0', 1.2, c => { c.moveTo(15, -84); c.lineTo(12, -76); c.lineTo(18, -76); c.closePath(); }); }
-    if (o.carry) sh(ctx, '#c9a46a', 2, c => c.roundRect(-10, -86, 20, 16, 3));
+    ctx.save(); ctx.globalAlpha = .18; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, 2 + bob / s, 16, 4, 0, 0, TAU); ctx.fill(); ctx.restore();
+    if (!dress) for (const sd of [-1, 1]) { const lx = sd * 5 + sd * sw * 6 * -sd; ln(ctx, [[sd * 5, -22], [sd * 5 + (sd > 0 ? sw : -sw) * 6, -2]], 7.5); ln(ctx, [[sd * 5, -22], [sd * 5 + (sd > 0 ? sw : -sw) * 6, -2]], 4.5, o.legs || '#7a5a44'); sh(ctx, '#4a2e1c', 1.8, c => c.ellipse(sd * 5 + (sd > 0 ? sw : -sw) * 6 + 2, 0, 5.5, 3, 0, 0, TAU)); }
+    // far arm
+    const arm = (side, a) => { const sx = side * 11, hx = side * 14 + a * 8, hy = -26 - Math.abs(a) * 3; ln(ctx, [[sx, -46], [hx, hy]], 7.5); ln(ctx, [[sx, -46], [hx, hy]], 4.5, body); sh(ctx, skin, 1.6, circ(hx, hy + 1, 3)); };
+    arm(-1, -sw);
+    if (dress) sh(ctx, body, 2.5, c => { c.moveTo(-11, -50); c.quadraticCurveTo(-16, -20, -15, 0); c.lineTo(15, 0); c.quadraticCurveTo(16, -20, 11, -50); c.quadraticCurveTo(0, -54, -11, -50); c.closePath(); });
+    else sh(ctx, body, 2.5, c => { c.moveTo(-12, -18); c.quadraticCurveTo(-14, -46, 0, -50); c.quadraticCurveTo(14, -46, 12, -18); c.quadraticCurveTo(0, -15, -12, -18); c.closePath(); });
+    ctx.save(); ctx.globalAlpha = .22; ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(8, -32, 5, 16, 0, 0, TAU); ctx.fill(); ctx.restore();
+    if (o.mail) { ctx.fillStyle = 'rgba(40,46,58,.35)'; for (let yy = -46; yy < -20; yy += 4) for (let xx = -9; xx < 10; xx += 4) ctx.fillRect(xx + (yy % 8 ? 2 : 0), yy, 2, 2); sh(ctx, o.cloth || '#b2342f', 1.6, c => c.rect(-12, -21, 24, 5)); }
+    if (!dress) ln(ctx, [[-11, -30], [11, -30]], 2.4, dk(body) === body ? '#5a3a22' : '#5a3a22'); else if (o.palla) sh(ctx, o.palla, 1.6, c => { c.moveTo(-11, -48); c.lineTo(11, -34); c.lineTo(11, -26); c.lineTo(-13, -40); c.closePath(); });
+    sh(ctx, skin, 0, c => c.rect(-3, -54, 6, 6));
+    // head
+    const hy = -64 + idle * .4; sh(ctx, skin, 2.5, circ(0, hy, 11.5)); sh(ctx, skin, 1.8, circ(-11, hy + 1, 2.6));
+    if (o.helmet) { sh(ctx, '#b9c0c9', 2.4, c => { c.arc(0, hy - 1, 13, Math.PI * 1.02, Math.PI * 1.98); c.closePath(); }); sh(ctx, '#d0a548', 1.4, c => c.rect(-13, hy - 4, 26, 3)); sh(ctx, '#d0a548', 1.4, circ(0, hy - 14, 2.5)); sh(ctx, '#a7adb5', 1.6, c => c.rect(-13, hy - 2, 4, 9)); }
+    else { sh(ctx, hair, 2.2, c => { c.arc(0, hy - 2, 12, Math.PI * .95, Math.PI * 2.05); c.quadraticCurveTo(6, hy - 6, 0, hy - 5); c.quadraticCurveTo(-8, hy - 6, -12, hy); c.closePath(); });
+      if (o.bun) sh(ctx, hair, 2, circ(-8, hy - 11, 6)); if (o.long) sh(ctx, hair, 2, c => c.roundRect(-14, hy - 2, 8, 18, 4)); if (o.beard) sh(ctx, hair, 0, c => { c.arc(0, hy + 2, 11, .15 * Math.PI, .85 * Math.PI); c.closePath(); }); }
+    sh(ctx, OUT, 0, circ(4, hy, 1.7)); sh(ctx, OUT, 0, circ(-3, hy, 1.7)); ctx.fillStyle = 'rgba(240,110,100,.45)'; ctx.beginPath(); ctx.ellipse(6, hy + 5, 3, 2, 0, 0, TAU); ctx.fill();
+    if (o.smile !== false) { ctx.beginPath(); ctx.arc(1, hy + 4, 3.5, .2, Math.PI - .2); ctx.lineWidth = 1.6; ctx.strokeStyle = OUT; ctx.stroke(); }
+    // near arm (+ wave), props
+    if (o.wave) { const a = Math.sin(t * 9 + ph) * .5; ln(ctx, [[11, -46], [20 + a * 8, -66]], 7.5); ln(ctx, [[11, -46], [20 + a * 8, -66]], 4.5, body); sh(ctx, skin, 1.6, circ(20 + a * 8, -68, 3.2)); }
+    else arm(1, sw);
+    if (o.shield) { sh(ctx, '#3c5a86', 2, c => c.ellipse(-13, -32, 8, 15, 0, 0, TAU)); ctx.strokeStyle = '#e7bf55'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.ellipse(-13, -32, 6, 12, 0, 0, TAU); ctx.stroke(); sh(ctx, '#c9cdd3', 1.2, circ(-13, -32, 2.5)); }
+    if (o.spear) { ln(ctx, [[16, 2], [16, -82]], 2.6, '#7a5233'); sh(ctx, '#c9c2b0', 1.2, c => { c.moveTo(16, -90); c.lineTo(12, -80); c.lineTo(20, -80); c.closePath(); }); }
+    if (o.carry) sh(ctx, '#c9a46a', 2, c => c.roundRect(-11, -92, 22, 17, 3));
     ctx.restore();
   }
   // a column of soldiers marching across (ix seeds the look)

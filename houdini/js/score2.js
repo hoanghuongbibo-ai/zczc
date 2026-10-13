@@ -117,15 +117,18 @@
     const dur = o.duration, b = new Float32Array(Math.ceil(dur * SR)), m = new Float32Array(b.length), cues = o.moods || [];
     for (let i = 0; i < cues.length; i++) arrange(m, cues[i].mood, cues[i].t, (cues[i + 1] || { t: dur }).t + .8);
     // cross-fade at mood changes + duck under the voice
-    const env = G.VENV, gain = o.musicGain ?? .55;
+    const env = G.VENV, gain = o.musicGain ?? .28;
     let duck = 1;
     for (const c of cues) { const s0 = S(c.t - .8); for (let i = Math.max(0, s0); i < S(c.t) && i < m.length; i++) m[i] *= .4 + .6 * (1 - (i - s0) / (SR * .8)); }   // dip into each new mood
     for (let i = 0; i < m.length; i++) {
       const t = i / SR; let v = 0; if (env) { const k = t * env.fps, a = env.v[Math.floor(k)] || 0; v = a; }
-      duck += ((v > .12 ? .42 : 1) - duck) * (v > .12 ? .0009 : .00012);
+      duck += ((v > .12 ? .36 : 1) - duck) * (v > .12 ? .0009 : .00012);
       b[i] = m[i] * gain * duck * Math.min(1, t / 1.5) * Math.min(1, (dur - t) / 2);
     }
-    for (const c of o.sfx || []) if (SFX[c.type]) SFX[c.type](b, c.t, (c.gain ?? 1) * (o.sfxGain ?? .6), c.dur);
+    // foley on its own bus: quieter overall, the punchy ones tamed further, then a soft clipper so nothing stabs the ear
+    const fx = new Float32Array(b.length), LOUD = { stamp: .55, thud: .6, tuba: .6, splash: .6, boom: .5, hammer: .6, rumble: .6, crowd: .6, rain: .7, confetti: .7, boing: .7 };
+    for (const c of o.sfx || []) if (SFX[c.type]) SFX[c.type](fx, c.t, (c.gain ?? 1) * (o.sfxGain ?? .32) * (LOUD[c.type] || 1), c.dur);
+    for (let i = 0; i < b.length; i++) { let v = fx[i]; if (env) { const e = env.v[Math.floor(i / SR * env.fps)] || 0; if (e > .12) v *= .75; } b[i] += Math.tanh(v * 2.2) / 2.2 * .9; }
     let pk = 0; for (const v of b) pk = Math.max(pk, Math.abs(v)); if (pk > .9) for (let i = 0; i < b.length; i++) b[i] *= .9 / pk;
     return b;
   }

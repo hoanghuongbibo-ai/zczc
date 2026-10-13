@@ -85,6 +85,7 @@
   function renderFrame(ctx, shots, t) {
     E.t = t; ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
     for (const s of shots) if (t >= s.start && t < s.end) { ctx.save(); s.draw(ctx, t - s.start, s.end - s.start, t); ctx.restore(); }
+    if (G.TOON_POST) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); G.TOON_POST(ctx, t); ctx.restore(); }   // optional colour grade
     finish(ctx, t, G.TOON_FINISH || {});   // a page can set window.TOON_FINISH = { grain, vignette }
   }
 

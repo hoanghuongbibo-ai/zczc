@@ -157,6 +157,7 @@ clip). Use it when the script has dialogue lines / characters talking. Its langu
 | `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
 | `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
 | `js/score2.js` | NEW score + foley (plucks, marimba, celesta, pads, bass, soft drums; moods curious/adventure/quiet/morning/busy/comic/warm/tender/somber/rising; ducks under the voice via window.VENV). Load it instead of sound.js |
+| `js/fauna.js` | animals in the painted style with idle loops: horse (grazing), chicken (pecking), dog (tail wag), sheep, cat, butterfly, duck |
 | `js/paint.js` | shared painter kit (sky, rays, drifting clouds, hills, swaying trees/bushes/grass, birds, motes, cached parallax layers) |
 | `tools/export-par.mjs` | parallel exporter: N Chromium workers → JPEG pipe → x264 segments → concat + soundtrack + narration (pass the narration path explicitly) |
 | `js/skit2.js` | SKIT v2 (default): painted warm look, swaying foliage, drifting clouds, birds, crowd, parallax, talking mouths |
@@ -242,4 +243,13 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Gotchas: the stock export-video.mjs joins the narration path to `houdini/` — for a sub-folder episode use
   export-par.mjs with the explicit path (or the old Houdini voice gets muxed!). No emoji fonts in headless Chromium:
   draw icons. `layer()` caches by key: never call it with an empty draw function under a real key.
+- **Mix (user, 2026-10-13): keep music and foley LOW — "avoid deafening the listener".** score2 defaults now: music
+  gain .28 with a .36 duck under speech (≈ −20 dB under the voice, a little louder in pauses); foley on its own bus at
+  .32, punchy types (stamp/thud/tuba/splash/hammer/crowd/rain…) tamed further, ducked under speech, soft-clipped.
+  Check with the voice-vs-music RMS script before delivering.
+- **Colour (user, 2026-10-13): refine supporting characters, backgrounds, flora and fauna.** Brighter warm sets
+  (plaster walls, terracotta tile roofs, shutters, flower boxes, potted plants, rugs, lanterns, heather), animals in
+  every outdoor set, trees + flowering bushes framing wide shots, refined crowd people (faces, hair, belts, hands,
+  dresses), and a global grade (`TOON_POST` in show.js: saturate 1.14, contrast 1.05, soft bloom, warm soft-light).
+- Deliver long videos to chat as ≤30 MB parts (the upload limit); the full file goes in the repo (<100 MB).
 

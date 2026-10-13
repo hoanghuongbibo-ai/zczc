@@ -252,4 +252,16 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   every outdoor set, trees + flowering bushes framing wide shots, refined crowd people (faces, hair, belts, hands,
   dresses), and a global grade (`TOON_POST` in show.js: saturate 1.14, contrast 1.05, soft bloom, warm soft-light).
 - Deliver long videos to chat as ≤30 MB parts (the upload limit); the full file goes in the repo (<100 MB).
+- **Set dressing (user, 2026-10-13, after Vindolanda v2: "pay attention to the surrounding objects as well").** From
+  the next part on, every set gets a props pass before render: period-correct objects around the characters (amphorae,
+  baskets, sacks, barrels, tools, writing kit, lamps, hanging cloaks, woodpiles, carts, fences, troughs, washing
+  lines), each with ink outline + light/shade, placed to support the story beat, never floating or overlapping faces.
+  Check the contact sheet for empty floor/wall areas and fill them with something that belongs there.
+- **Reporting (user, 2026-10-13): always tell the user what has been accomplished so far** — a short progress list at
+  every delivery (done / in progress / next / what I need from them).
+
+## Progress log
+- Houdini series parts 1–5 (houdini/out). Theo (channel guide) + wardrobe + skit format + painted warm look.
+- Vindolanda (houdini/vindolanda): full 13:11 episode, v2 delivered 2026-10-13 (quieter mix, richer colour, flora,
+  fauna, refined crowds). User: "pretty good, could do better — pay attention to surrounding objects. Move on."
 

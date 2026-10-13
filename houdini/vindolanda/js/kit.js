@@ -5,6 +5,9 @@
   const T = G.Toon, FX = G.FX, Gd = G.Guide, P = G.Paint, VC = G.VCast, TV = G.TV, { W, H, clamp, lerp, ease, grad, rng } = T;
   const { OUT, sh, ln, circ } = P, TAU = Math.PI * 2;
   Gd.setTheme('warm');
+  // overshoot easings can dip a hair below zero: never hand the canvas a negative radius
+  const CP = CanvasRenderingContext2D.prototype, A0 = CP.arc, E0 = CP.ellipse;
+  if (!CP.__safeR) { CP.__safeR = true; CP.arc = function (x, y, r, a, b, cc) { return A0.call(this, x, y, Math.max(0, r), a, b, cc); }; CP.ellipse = function (x, y, rx, ry, rot, a, b, cc) { return E0.call(this, x, y, Math.max(0, rx), Math.max(0, ry), rot, a, b, cc); }; }
   const FONT = (w, px) => `${w} ${px}px Fredoka, sans-serif`, DISP = px => `${px}px "Luckiest Guy", Fredoka, sans-serif`;
   const txt = (ctx, s, x, y, font, col = OUT, align = 'left', base = 'middle') => { ctx.font = font; ctx.fillStyle = col; ctx.textAlign = align; ctx.textBaseline = base; ctx.fillText(s, x, y); };
   const pop = (lt, t0, d = .35) => FX.settle(clamp((lt - t0) / d));   // overshoot-and-settle scale for pop-ins

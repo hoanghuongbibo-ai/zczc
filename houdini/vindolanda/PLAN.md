@@ -59,3 +59,13 @@ for the "you are a Tungrian soldier" day.
 6. [VERIFY] Cerialis = prefect of the Ninth Cohort of Batavians: consistent with the published tablets.
    The remaining checked facts match: AD 43, c. 85, 122, 752/456/46/337/296, 15/6/10 → 265, 343, cervesa, the 2017
    batch of ~25 with Masclus, 11 September, Brittunculi, 1973.
+
+## Build notes (full voice, 13:11)
+- The recording follows the script; it has no sponsor read, no channel tagline and no "[RELATED VIDEO]" line, so those
+  slots are left out. pocketsphinx mishears names (Vindolanda, Masclus…) but timing anchors work on the recognised words.
+- 95 shots on 271 voice anchors (`anchors.txt`), painted warm look, Theo in his suit as host and in Tungrian kit as "you".
+- Costumes by the script: Tungrian auxiliaries (mail, focale scarf, studded belt, trousers, oval shield), Masclus as a
+  cavalry decurion (plumed helmet, red cloak), Cerialis/Verecundus as equestrian prefects (narrow purple stripes, red
+  cloak), officers' wives in stola + palla with Flavian curl crowns, Britons in checked wool with torcs, enslaved
+  household workers in plain tunics, a 1973 digger in an anorak.
+- New score (score2.js) with a mood per beat, ducking under the voice; new foley per action.

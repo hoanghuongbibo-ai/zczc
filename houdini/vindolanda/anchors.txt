@@ -1,0 +1,272 @@
+# key | approx s | recognised words (pocketsphinx mishears names; that's fine, it's only for timing)
+inbox|0|check your inbox
+boss|1.43|somebody needs
+supplies|3.6|somebody is out
+mom|5.33|somebody's mom
+party|7.28|and somebody is having
+throw|11.1|now take your phone
+wet|12.5|wet
+wait|14.5|nineteen hundred years
+hypo|17.38|because that's not
+exist|19.7|those exact four
+slivers|22.79|they were written
+fort|26.64|the roman
+edge|28.8|northern edge
+soldier|31.7|one is a soldier
+care|35.64|one is a care
+bday|38.58|birthday
+handwriting|42|handwriting
+picture|44.22|when you picture
+shield|47.92|the shield wall
+charge|48.97|charge
+guess|50.22|we don't have to guess
+read|53.92|we can read it
+sowhat|55.07|so what the roman
+mail|60.7|and what are their
+where|63.59|to understand this place
+isnt|68.02|where it isn't
+invade|69.47|rome invaded britain
+decades|72.57|for decades later
+north|73.93|it's army has pushed
+y85|77.27|at around eighty five
+stanegate|78.96|on a road called
+coast|81.94|which runs across
+name|84.8|the ford is called
+lawns|87.09|white lawns
+headline|93.94|almost every headline
+hwall|97.88|you often hear
+noexist|101.61|doesn't exist yet
+y122|104.18|construction on the wall
+twenty|110.27|most of the famous
+south|115.58|just south
+road|123.57|they're guarding the road
+second|125.34|and here's the second
+italians|127.01|most of the many
+aux|129.5|their odds are east
+conquered|130.88|soldiers recruited
+tung|134.66|one unit will meet
+belg|137|belgium
+bata|139.92|another is a cohort
+neth|142.09|netherlands
+rains|145.78|in a place where it rains
+whymail|147.97|so why do we have
+paper|150.32|because the roman army
+counted|153.52|every man needs
+record|157.66|and everyone of those
+papy|160.36|what high risk
+egypt|162.38|egypt
+nopapy|165.89|but in wet cold
+around|169.5|so the people again
+cut|172.42|into thin leaves
+postcard|174|postcard
+tenth|176|tenth
+ink|178.74|and right on
+throwout|182.14|they throw them out
+bonfire|183.33|bonfires
+rots|189.31|would rocks
+fades|190.38|hank fades
+wetfort|191.77|is wet
+layers|193.93|layer after layer
+oxygen|199.54|and without oxygen
+wrote1|203.97|somebody wrote it down
+kept|205.92|and the ground kept
+gothere|208.39|let's go there
+may18|209.96|it's the eighteenth
+tung2|213.65|you're tom green
+wake|215.5|you wake up
+outside|221.5|outside it's spring
+lovely|224|might be lovely
+sideways|226|raining sideways
+army|228.5|the first thing the army
+whohere|232.94|who's actually
+thing|234.76|and here's the thing
+haveit|238.04|we have it
+report|239.19|this is a real strength
+prefect|242.9|under prefect
+y752|245.87|on paper the unit
+look|251.02|look how many
+away|253.93|four hundred fifty six
+guards|256.49|forty six per
+london|259.97|a single century
+coria|262.47|the biggest group
+corb|268.54|almost certainly
+half|272.47|so more than half
+scholars|275.84|the scholars who
+present|282.71|and of the two hundred ninety six
+cantwork|285.45|the report breaks
+sick|287.99|fifteen sec
+wounded|289.48|six wounded
+eyes|291.07|and ten suffering
+fit|294.2|that leaves two hundred
+onein10|297.83|more than one in ten
+wrote2|301.2|somebody wrote that down
+honest|303.02|and one note of honesty
+worn|305.06|the edges of this tablet
+digit|309.79|but the single digits
+healthy|313.6|so what did the two
+running|317.57|mostly they keep
+workplace|319.83|the tablets are full
+goods|323.32|was that good supplied
+errands|326.1|man sent off
+pay|327.98|one line in
+t155|333.02|another talbot
+thinking|339.21|now they know
+fighting|341.15|should roman soldiers
+sure|343.28|and sure sometimes
+logistics|345.52|frontier army
+food|350.83|food has to come
+tents|353.61|hence read
+short|354.95|what supplies run
+writeboss|356.39|somebody has to read
+masclus|358.66|which brings us to
+decurion|360.96|last close as it did
+outduty|364|out on duty
+terrible|366.96|and something terrible
+writes|369.44|humor is tough
+king|374|his cane
+flourish|375.84|which is either
+badnews|382.03|and here is the bad news
+beer|385.44|my fellow soldiers have no beer
+sendsome|388.5|but he asks
+nobody|390.65|but here's the part nobody
+punchier|392.99|if you've seen the story
+quote|397.22|if you do not send me
+answer|399.21|i cannot answer
+great|401.27|it's a great line
+news|402.77|it shows up in news
+pubtrans|405.24|but it isn't in the published
+polite|408.44|the real mouse
+cerv|413.35|the war he uses
+celtic|416.09|is the celtic
+sense|418.57|which makes sense
+northeu|419.87|many of these men
+best|425.21|now the best part
+y2017|427.14|in twenty seventeen
+again|433.29|and on one of them
+leave|437|this time it looks
+centuries|439.9|so nineteen centuries
+famous|442.09|the most famous
+reqbeer|448.1|request for beer
+reqleave|449.45|and request for time
+wrote3|451.55|somebody wrote that down
+twice|453.43|twice
+afternoon|454.5|by the afternoon
+first1973|457.72|this is the very first
+family|463.69|somebody in
+socks|467.23|they've since august
+sandals|468.59|two pairs of sandals
+underpants|470.11|two pairs of underpants
+hello|471.82|and then they ask
+messmates|475.61|all your mess
+fortune|478.79|and they pray
+thatsit|482.45|that said
+mom2|484.47|it's your mom
+mattered|487.85|but it mattered
+monuments|490.3|roman monuments show
+arch|493.78|nobody cars underpants
+evidence|497|this tablet is hard
+coldwet|503.53|in a place of this
+feet|506.78|and speaking of
+leather|508.43|they no longer has
+shoes|512.83|thousands of shoes
+k5000|514.53|roughly five thousand
+kids|517.46|soldiers good swim
+important|521.98|which tells you
+notmen|523.92|this is not just
+whereweere|526.65|now where were we
+recap|528.88|the headcount the beer
+children|531.68|and afford that turns
+light|534.83|but the light goes
+families|541.77|officers families
+getsmail|543.98|nuggets mail
+claudia|545.94|it's from girlfriend
+brocchus|548.04|the wife of another
+scribe|552.94|most of the latter
+reads|557.51|it reads in
+sept|560.38|on the eleventh
+celebr|562.65|for the day
+invite|565.46|i give you a warm
+sisters|569.35|they aren't actually
+sis|572.59|like all your best
+lookclose|575.07|but now look closely
+changes|578.34|the handwriting changes
+rougher|580.15|it's right for once
+confident|582.73|the editors are confident
+personal|586.66|adding a personal
+others|590.54|she did the same
+earliest|593.68|which means you're looking
+notpoem|600.57|not a bomb
+notspeech|601.6|not a speech
+invite2|602.96|a birthday invite
+y100|604.45|written around the year
+edgeworld|607.1|on the edge of the known
+farhome|609.11|from one woman
+didgo|612.89|that let the dna
+dontknow|614.72|we don't know
+nobodywrote|615.76|that card
+cozy|617.92|so far this sounds
+occupation|622.64|but this isn't the army
+mailshows|625.2|in the mail shows
+t164|627.01|one short military
+armor|633.42|it says the britons
+cavalry|636.02|there are very many
+noswords|638|the cavalry don't
+newword|640.56|and that uses
+britt|644.47|but tom curley
+wretched|646|the editors translated
+little|649.28|it's a sneering
+argue|653.28|specialist still argue
+tone|657.83|but nobody argues
+land|660.28|these are the people
+problem|663.02|own records
+nochoice|667.5|the force world also
+households|672.06|the households here
+enslaved|675.26|included in slaves
+showup|677.24|they show up
+work|679.05|doing the work
+sit|682.35|it's worth sitting
+archive|684.15|the same archive
+conquest|686.79|also gives us
+inkcasual|689.7|written down in the same
+y1973|692.92|in nineteen seventy three
+since|701.06|since then
+hundreds|701.89|the site has produced
+names|704.93|naming hundreds
+goeson|707.35|the work still
+faint|709.19|some of these tags
+infra|711.98|but experts can only
+think|715.62|think about what
+most|717.64|for most of history
+bones|719.03|what survives of ordinary
+words|724.45|what survives is their words
+notemp|726.93|not every speeches
+memos|728.78|workplace memos
+sicknotes|730.06|six notes
+shopping|731.07|shopping lists
+carepkg|732.26|the care package
+bdayinv|733.45|a birthday invite
+sowhat2|734.9|so what the roman
+counted2|739.7|he got counted
+worked|740.96|he worked
+waited|742.01|he waited on
+sick2|743.71|he got sick
+beerout|747.1|he wrote to the boss
+socks2|750.51|he got socks
+aroundhim|752.19|and the people around
+wives|753.62|officers wives
+ordinary|757.58|we're all living
+inbox2|762.41|check your inbox again
+boss2|763.85|somebody needs something
+supplies2|765.94|somebody is out
+package2|767.64|somebody sent
+party2|769.23|somebody is having
+y1900|770.98|nineteen hundred years from now
+leftofyou|772.78|that's what will be left
+notbig|774.63|not the big moments
+themail|776.12|the mail
+glad|777.36|and somebody will be glad
+subscribe|780.48|if you enjoy this
+dug|782.91|if archaeologist
+onemsg|786.44|what's the one message
+comments|788.91|tell me in the comments
+thanks|790.27|thanks for watching

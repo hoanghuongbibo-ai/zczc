@@ -160,6 +160,7 @@
       const ex = s * (R - 2);
       path(ctx, c => c.ellipse(ex, 14, 17 * k, 22, 0, 0, Math.PI * 2), C.face, 4.5);
       if (!back) curve(ctx, [ex + s * 2 * k, 4], [ex + s * 9 * k, 14], [ex + s * 2 * k, 26], 3);
+      if (LK.earrings) { seg(ctx, [[ex, 34], [ex, 44]], 2.5, '#c99a3c'); path(ctx, c => c.arc(ex, 50, 6, 0, Math.PI * 2), '#e7bf55', 2.5); }
     }
     // crown tufts (hidden under most hats)
     const tufts = !(HAT && HAT.hideTufts) && hairKind === 'mop';
@@ -167,6 +168,8 @@
       const bx = back ? 0 : hx * 2.2;
       tuft(ctx, bx + 38, -96, .55 + hairAng, 30, 13); tuft(ctx, bx + 66, -76, 1.05 + hairAng * 1.3, 24, 11); tuft(ctx, bx - 8, -104, .1 + hairAng * .8, 22, 11);
     }
+    if (hairKind === 'updo') { path(ctx, c => c.ellipse(hx * 2.4 - 6, -96, 46, 38, 0, 0, Math.PI * 2), hairCol, 4.5); curve(ctx, [hx * 2.4 - 34, -100], [hx * 2.4 - 6, -124], [hx * 2.4 + 26, -104], 3, 'rgba(255,255,255,.2)'); }
+    if (hairKind === 'long' && !back) path(ctx, c => { c.moveTo(-R - 6 + hx, -30); c.quadraticCurveTo(-R - 22 + hx, 60, -R + 4 + hx, 118); c.lineTo(R - 4 + hx, 118); c.quadraticCurveTo(R + 22 + hx, 60, R + 6 + hx, -30); c.closePath(); }, hairCol, 4.5);
     // curly cast: a full head of curls (bumps all round the dome), never a single stray curl
     if (hairKind === 'curly') for (let a = 2.7; a <= 6.75; a += .3) path(ctx, c => c.arc(Math.cos(a) * 100 + hx, Math.sin(a) * 92 - 8, 30, 0, Math.PI * 2), hairCol, 4.5);
     // the hair mass: a full, rounded mop that covers the top and the sides down to the ears
@@ -205,11 +208,22 @@
     if (LK.chin) curve(ctx, [sx(-.3), 84], [sx(0), 96], [sx(.3), 84], 3.5, 'rgba(0,0,0,.55)');
     // hair shine: two soft highlight strands following the dome
     if (!bald) for (const [a, b, c2] of [[[-62, -76], [-34, -96], [0, -96]], [[22, -92], [46, -90], [64, -76]]]) curve(ctx, [a[0] + hx, a[1]], [b[0] + hx, b[1]], [c2[0] + hx, c2[1]], 4.5, C.hairHi);
+    if (hairKind === 'updo' && !back) for (let row = 0; row < 2; row++) for (let i = 0; i < 9 - row; i++) {   // the Flavian crown of curls above the brow
+      const a = Math.PI * (1.12 + (i + row * .5) / 8 * .76), cx2 = hx + Math.cos(a) * (84 - row * 12), cy2 = -24 + Math.sin(a) * (78 - row * 8) - row * 16;
+      path(ctx, c => c.arc(cx2, cy2, 17 - row * 2, 0, Math.PI * 2), hairCol, 3.5); curve(ctx, [cx2 - 7, cy2 + 2], [cx2, cy2 - 8], [cx2 + 6, cy2 + 1], 2.5, 'rgba(255,255,255,.22)'); }
     if (HAT && HAT.under) HAT.draw(ctx, HC);   // hoods / headcloths sit around the face, under the features
 
     // ----- face features -----
     const lk = f.look || [0, 0], e = f.eyes || 'open', ey = 8 + lk[1] * 5;
     const blink = !noBlink && t != null && (t % 3.9 < .11 || (t + 1.7) % 6.3 < .11);
+    if (LK.beard) {   // stubble / full beard / moustache, all in the hair colour
+      const mx0 = sx(0) * .72, bc = LK.beardCol || hairCol;
+      if (LK.beard === 'stubble' || LK.beard === 'full') { ctx.save(); ctx.beginPath(); ctx.ellipse(0, 0, R - 1, RY - 1, 0, 0, Math.PI * 2); ctx.clip(); ctx.globalAlpha = LK.beard === 'full' ? 1 : .22; ctx.fillStyle = bc;
+        ctx.beginPath(); ctx.moveTo(-R, 6); ctx.quadraticCurveTo(-R + 10, 46, mx0 - 34, 40); ctx.quadraticCurveTo(mx0, 30, mx0 + 34, 40); ctx.quadraticCurveTo(R - 10, 46, R, 6); ctx.lineTo(R, 140); ctx.lineTo(-R, 140); ctx.closePath(); ctx.fill(); ctx.restore();
+        if (LK.beard === 'full') { ctx.save(); ctx.beginPath(); ctx.ellipse(0, 0, R - 1, RY - 1, 0, 0, Math.PI * 2); ctx.clip(); ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2.5; for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.moveTo(mx0 + i * 18, 60); ctx.quadraticCurveTo(mx0 + i * 20, 76, mx0 + i * 16, 88); ctx.stroke(); } ctx.restore(); path(ctx, c => c.ellipse(0, 0, R, RY, 0, 0, Math.PI * 2), null, LW); } }
+      if (LK.beard === 'moustache' || LK.beard === 'walrus' || LK.beard === 'full') { const w = LK.beard === 'walrus' ? 34 : 24, dr = LK.beard === 'walrus' ? 22 : 8;
+        path(ctx, c => { c.moveTo(mx0, 40); c.quadraticCurveTo(mx0 - w * .6, 34, mx0 - w, 48 + dr); c.quadraticCurveTo(mx0 - w * .4, 46, mx0, 50); c.quadraticCurveTo(mx0 + w * .4, 46, mx0 + w, 48 + dr); c.quadraticCurveTo(mx0 + w * .6, 34, mx0, 40); c.closePath(); }, bc, 3.5); }
+    }
     for (const s of [-1, 1]) { const v = vis(s * .78); if (v <= .4) continue; ctx.fillStyle = C.cheek; ctx.beginPath(); ctx.ellipse(sx(s * .78), 40, 15 * v, 9, 0, 0, Math.PI * 2); ctx.fill(); }
     for (const s of [-1, 1]) {
       const v = vis(s * .4); if (v < .12) continue;
@@ -222,7 +236,11 @@
       else if (shut) curve(ctx, [x - 12 * fx, ey + 2], [x, ey + 7], [x + 12 * fx, ey + 2], 5);
       else {
         const big = e === 'wide' ? 1.22 : 1, ry = (e === 'squint' ? 9 : 17) * big;
-        ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(x, ey + (e === 'squint' ? 4 : 0), 11.5 * fx * big, ry, 0, 0, Math.PI * 2); ctx.fill();
+        const eyy = ey + (e === 'squint' ? 4 : 0);
+        if (C.eyeBot) { const eg = ctx.createLinearGradient(0, eyy - ry, 0, eyy + ry); eg.addColorStop(0, C.eyeTop); eg.addColorStop(.55, C.eyeTop); eg.addColorStop(1, LK.eye || C.eyeBot); ctx.fillStyle = eg; } else ctx.fillStyle = INK;
+        ctx.beginPath(); ctx.ellipse(x, eyy, 11.5 * fx * big, ry, 0, 0, Math.PI * 2); ctx.fill();
+        if (C.eyeBot) { ctx.lineWidth = 2.5; ctx.strokeStyle = INK; ctx.stroke(); }
+        if (LK.lashes) { const lx = x + s * 10 * fx, ly = eyy - ry * .7; seg(ctx, [[lx, ly], [lx + s * 7, ly - 6]], 3); seg(ctx, [[lx - s * 3, ly - 4], [lx + s * 2, ly - 11]], 3); }
         ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + 3.5 * fx, ey - (e === 'squint' ? 1 : 7 * big), (e === 'squint' ? 2.4 : 3.8) * big, 0, Math.PI * 2); ctx.fill();
         if (e !== 'squint') { ctx.beginPath(); ctx.arc(x - 3 * fx, ey + 6 * big, 1.6 * big, 0, Math.PI * 2); ctx.fill(); }
       }
@@ -253,7 +271,7 @@
       const w = (m === 'grin' ? 30 : lerp(17, 25, o)) * wk, h = m === 'grin' ? 17 : lerp(5, 15, Math.max(o, m === 'open' ? .6 : 0));
       filled(openShape(w, h, m === 'grin'), true, h > 8);
     } else if (m === 'grit') { const w = 24 * wk; path(ctx, c => c.roundRect(mx - w, my - 6, w * 2, 18, 7), '#fff', 4.5); seg(ctx, [[mx - w + 3, my + 3], [mx + w - 3, my + 3]], 2.5); }
-    else if (m === 'smile' || m === 'smirk') { const w = 20 * wk; curve(ctx, [mx - w, my - 4 + (m === 'smirk' ? 4 : 0)], [mx + (m === 'smirk' ? 6 : 0), my + 12], [mx + w, m === 'smirk' ? my - 10 : my - 4], 5); }
+    else if (m === 'smile' || m === 'smirk') { const w = 20 * wk; if (LK.lips) curve(ctx, [mx - w, my - 4 + (m === 'smirk' ? 4 : 0)], [mx + (m === 'smirk' ? 6 : 0), my + 12], [mx + w, m === 'smirk' ? my - 10 : my - 4], 9, LK.lips); curve(ctx, [mx - w, my - 4 + (m === 'smirk' ? 4 : 0)], [mx + (m === 'smirk' ? 6 : 0), my + 12], [mx + w, m === 'smirk' ? my - 10 : my - 4], 5); }
     else if (m === 'frown') curve(ctx, [mx - 16 * wk, my + 9], [mx, my - 5], [mx + 16 * wk, my + 9], 5);
     else seg(ctx, [[mx - 13 * wk, my + 2], [mx + 13 * wk, my + 2]], 5);
     if (HAT && !HAT.under) HAT.draw(ctx, HC);
@@ -299,15 +317,26 @@
   };
   // legs + feet, by kind (each outfit picks)
   const LEGS = {
+    none() {},
     trousers(ctx, g, L) { seg(ctx, [g.hip, g.ank], 44); seg(ctx, [g.hip, g.ank], 34, L.c); seg(ctx, [[g.hip[0] + g.sd * 4, g.hip[1] + 20], [g.ank[0] + g.sd * 4, g.ank[1] - 10]], 2.5, 'rgba(0,0,0,.25)'); },
     bare(ctx, g) { seg(ctx, [g.hip, g.ank], 31); seg(ctx, [g.hip, g.ank], 21, C.face); },
   };
   const FEET = {
+    none() {},
+    slippers(ctx, g, OF) { const fx = g.ank[0] + g.toe + g.sd * 8, fy = -10 - g.lift; path(ctx, c => c.ellipse(fx, fy, 22, 10, 0, 0, Math.PI * 2), OF.shoe || '#8a5a3a', 3.5); },
     shoes(ctx, g) { const fx = g.ank[0] + g.toe + g.sd * 5, fy = -13 - g.lift; path(ctx, c => c.ellipse(fx, fy, 30, 15, 0, 0, Math.PI * 2), C.shoe, 4); curve(ctx, [fx - 14, fy - 7], [fx, fy - 11], [fx + 12, fy - 7], 3, '#3d3e44'); },
   };
 
   // ---------- whole figure (raw vector drawing; feet at 0,0 in the current transform) ----------
+  const hexMul = (hex, k) => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map(v => Math.max(0, Math.min(255, Math.round(k > 1 ? v + (255 - v) * (k - 1) : v * k)))); return '#' + c.map(v => v.toString(16).padStart(2, '0')).join(''); };
   function drawRaw(ctx, o) {
+    const LK0 = o.look || {}; if (!LK0.skin) return drawBody(ctx, o);
+    const keep = { face: C.face, faceHi: C.faceHi, faceMid: C.faceMid, faceEdge: C.faceEdge, noseFill: C.noseFill };
+    Object.assign(C, { face: LK0.skin, faceHi: hexMul(LK0.skin, 1.12), faceMid: LK0.skin, faceEdge: hexMul(LK0.skin, .8), noseFill: hexMul(LK0.skin, .97) });
+    try { drawBody(ctx, o); } finally { Object.assign(C, keep); }
+  }
+  const PROPS = {};
+  function drawBody(ctx, o) {
     const t = o.t ?? 0, P = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
     const LK = o.look || {}, wk2 = LK.width || 1, OF = OUTFITS[o.outfit] || OUTFITS.suit, hat = o.hat === 'none' ? null : (o.hat || OF.hat);
     const back = !!o.back, turn = back ? 0 : clamp(o.turn || 0, -1, 1), yaw = turn * .7;
@@ -321,7 +350,9 @@
     const handOf = (side, a) => { const sd = side === 'L' ? -1 : 1, k = P['h' + side]; hand(ctx, a.wr[0], a.wr[1], k, a.dir, sd < 0); };
     const doArm = side => {
       const sd = side === 'L' ? -1 : 1, a = arm(ctx, sh[side], [P[side][0] * wk2, P[side][1]], sd, P.out, OF.arm);
+      const pr = o.prop && PROPS[o.prop];
       if (side === 'R' && P.prop === 'magnifier' && !back) { magnifier(ctx, a.wr); hand(ctx, a.wr[0], a.wr[1], 'hold', -Math.PI / 2 + .25, false); }
+      else if (pr && side === (pr.side || 'R')) { if (pr.under) pr.under(ctx, a, sd, o); if (P['h' + side] !== 'palmIn') hand(ctx, a.wr[0], a.wr[1], pr.hand || 'hold', pr.handDir != null ? pr.handDir * sd : a.dir, sd < 0); if (pr.over) pr.over(ctx, a, sd, o); }
       else if (P['h' + side] !== 'palmIn' || back) handOf(side, a);
     };
     ctx.save(); ctx.scale(wk2, 1);
@@ -389,8 +420,8 @@
 
   // colour themes: 'ink' = the original black-and-white sheet; 'warm' = the user's painted look (peach skin, brown hair, brown ink)
   const THEMES = {
-    ink: { ink: '#1b1917', face: '#ffffff', faceHi: '#ffffff', faceMid: '#fdfcfe', faceEdge: '#dcd8e4', noseFill: '#fbf8fb', hair: '#18181b', hairHi: '#4b4e59', cheek: 'rgba(240,128,118,.32)' },
-    warm: { ink: '#3a2519', face: '#fcd8bd', faceHi: '#fee6d3', faceMid: '#fbd4b6', faceEdge: '#e7a585', noseFill: '#f9cdb0', hair: '#3d2416', hairHi: '#7d5034', cheek: 'rgba(238,104,96,.42)' },
+    ink: { ink: '#1b1917', eyeTop: null, eyeBot: null, face: '#ffffff', faceHi: '#ffffff', faceMid: '#fdfcfe', faceEdge: '#dcd8e4', noseFill: '#fbf8fb', hair: '#18181b', hairHi: '#4b4e59', cheek: 'rgba(240,128,118,.32)' },
+    warm: { ink: '#3a2519', eyeTop: '#1a0f08', eyeBot: '#7a4a2c', face: '#fcd8bd', faceHi: '#fee6d3', faceMid: '#fbd4b6', faceEdge: '#e7a585', noseFill: '#f9cdb0', hair: '#3d2416', hairHi: '#7d5034', cheek: 'rgba(238,104,96,.42)' },
   };
   function setTheme(name) { const th = THEMES[name] || THEMES.ink; INK = th.ink; for (const k of Object.keys(th)) if (k !== 'ink') C[k] = th[k]; }
   function talk(t, env = G.ENV, from = -1e9, to = 1e9) {
@@ -398,6 +429,6 @@
     const i = t * env.fps, a = env.v[Math.floor(i)] || 0, b = env.v[Math.floor(i) + 1] || 0, v = a + (b - a) * (i % 1);
     return clamp((v - .12) * 1.6);
   }
-  G.Guide = { draw, drawRaw, pose, blendPose, talk, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
+  G.Guide = { draw, drawRaw, PROPS, hexMul, pose, blendPose, talk, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
     kit: { path, seg, curve, through, union, bodyPath, garment, lerp, clamp, get INK() { return INK; }, LW }, setTheme, THEMES, name: 'Theo' };
 })(window);

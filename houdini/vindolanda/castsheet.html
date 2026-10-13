@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }
+@font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); }</style>
+<canvas id="c" width="2600" height="1500"></canvas>
+<script src="../js/toon.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="js/cast.js"></script>
+<script>
+Guide.setTheme('warm');
+const c = document.getElementById('c'), g = c.getContext('2d'), D = Guide.draw, V = VCast;
+const label = (t, x, y, size = 26) => { g.font = `700 ${size}px Fredoka`; g.fillStyle = '#3a2519'; g.textAlign = 'center'; g.fillText(t, x, y); };
+Promise.all([document.fonts.load('700 30px Fredoka'), document.fonts.load('40px "Luckiest Guy"')]).then(() => {
+  const gr = g.createLinearGradient(0, 0, 0, 1500); gr.addColorStop(0, '#f6e7cf'); gr.addColorStop(1, '#ecd3ae'); g.fillStyle = gr; g.fillRect(0, 0, 2600, 1500);
+  g.font = '60px "Luckiest Guy"'; g.fillStyle = '#3a2519'; g.textAlign = 'left'; g.fillText('VINDOLANDA CAST · c. AD 100', 50, 80);
+  const row1 = [['Theo (Tungrian)', Object.assign({ pose: 'idle', face: { mouth: 'grin', brows: 'up' } }, V.theoAux, { prop: 'shield' })], ['Tungrian A', Object.assign({ pose: 'idle', prop: 'spear', face: { mouth: 'smile' } }, V.tungA)], ['Tungrian B', Object.assign({ pose: 'hips', face: { mouth: 'grin' } }, V.tungB)],
+    ['Tungrian C', Object.assign({ pose: 'crossed', face: { mouth: 'flat', brows: 'skeptic' } }, V.tungC)], ['Masclus (decurion)', Object.assign({ pose: 'shrug', face: { mouth: 'frown', brows: 'worried' } }, V.masclus)], ['Cerialis (prefect)', Object.assign({ pose: 'present', face: { mouth: 'smile' } }, V.cerialis)],
+    ['Verecundus', Object.assign({ pose: 'idle', face: { mouth: 'flat', eyes: 'half' } }, V.verecundus)], ['clerk', Object.assign({ pose: 'present', face: { mouth: 'open' } }, V.clerk, { prop: 'tablet' })]];
+  row1.forEach(([n, o], i) => { const x = 170 + i * 315; D(g, x, 700, .9, Object.assign({ t: i * .7, noBlink: true, turn: (i % 2 ? .25 : -.2) }, o)); label(n, x, 740); });
+  const row2 = [['Sulpicia Lepidina', Object.assign({ pose: 'idle', face: { mouth: 'smile', eyes: 'happy' } }, V.lepidina)], ['Claudia Severa', Object.assign({ pose: 'present', face: { mouth: 'grin' } }, V.claudia, { prop: 'tablet' })],
+    ['Briton A', Object.assign({ pose: 'hips', face: { mouth: 'flat', brows: 'angry' } }, V.britonA)], ['Briton B', Object.assign({ pose: 'idle', prop: 'spear', face: { mouth: 'flat' } }, V.britonB)],
+    ['household (enslaved)', Object.assign({ pose: 'idle', face: { mouth: 'flat', look: [.4, .3] } }, V.servantA)], ['household (enslaved)', Object.assign({ pose: 'idle', face: { mouth: 'flat', eyes: 'half' } }, V.servantB)],
+    ['1973 dig', Object.assign({ pose: 'present', face: { mouth: 'grin', brows: 'up' } }, V.digger)], ['Theo (host)', { pose: 'wave', face: { mouth: 'grin', eyes: 'happy' } }]];
+  row2.forEach(([n, o], i) => { const x = 170 + i * 315; D(g, x, 1420, .9, Object.assign({ t: i * .7 + 3, noBlink: true, turn: (i % 2 ? -.2 : .2) }, o)); label(n, x, 1460); });
+  window.DONE = true;
+});
+</script>

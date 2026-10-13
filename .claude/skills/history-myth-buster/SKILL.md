@@ -156,6 +156,9 @@ clip). Use it when the script has dialogue lines / characters talking. Its langu
 | `js/show4.js`, `js/show5.js` | more set pieces to copy: maps + routes, trains, stage, dressing room, couch punch, thermometer, appendix diagram, code decoder, balance scale, marquee |
 | `js/guide.js` | THEO, the channel guide (`G.Guide`): posable, turnaround, poses, faces, lip-sync, hair spring, magnifier, depth pass |
 | `js/wardrobe.js` | THEO's era outfits, legs/feet kinds and headwear (`Guide.OUTFITS`, `Guide.HATS`) |
+| `js/score2.js` | NEW score + foley (plucks, marimba, celesta, pads, bass, soft drums; moods curious/adventure/quiet/morning/busy/comic/warm/tender/somber/rising; ducks under the voice via window.VENV). Load it instead of sound.js |
+| `js/paint.js` | shared painter kit (sky, rays, drifting clouds, hills, swaying trees/bushes/grass, birds, motes, cached parallax layers) |
+| `tools/export-par.mjs` | parallel exporter: N Chromium workers → JPEG pipe → x264 segments → concat + soundtrack + narration (pass the narration path explicitly) |
 | `js/skit2.js` | SKIT v2 (default): painted warm look, swaying foliage, drifting clouds, birds, crowd, parallax, talking mouths |
 | `js/skitdemo.js`, `js/skitcast.js` | SKIT format: painter kit, OTS blur, name-tab subtitles, Myth Card insert; supporting cast (Marcus) |
 | `js/wardrobedemo.js` | parallax era sets (study, Rome, medieval, Edo, London), spin + costume puff, stage line-up |
@@ -225,4 +228,18 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   skits from `js/skitdemo.js` (sets, OTS, deadpan beats, name-tab subtitles, Myth Card).
 - **Painted look (user, 2026-10-12):** the user sent repaints of the skit frames (warm skin, brown hair, lush sunset
   sets, big crowd) and wants videos like those, lively and fresh → skit2.js is the template; keep everything moving.
+- **Vindolanda episode (2026-10-13)** — `houdini/vindolanda/` is the template for a full narrated episode in the painted
+  look: `anchors.txt` + `tools_anchor.py` (phrase → time from the pocketsphinx transcript, recognised words only),
+  `js/venv.js` (voice envelope for ducking + Theo's mouth when presenting), `js/cast.js` (period costumes, helmets,
+  props, per-character skin/hair/beards/updos), `js/kit.js` (mini crowd people, paper cards, quote cards, counters,
+  tags, Myth Card, "Somebody wrote that down" sting, tablets), `js/sets.js` (fort in 4 skies, street, barracks, office,
+  studio, maps of Britain/Europe, outpost, commander's house, gate, farm, dig), `js/ep0–4.js` (shots by beat:
+  `S('anchor', fn)`, `fx()`, `mood()`), `js/show.js` (assembles). Shots start on anchors; inside, `R('key')` = anchor
+  time relative to the shot; word-level beats use absolute `t`.
+- User asked (2026-10-13): "as lively as skit2 or better", **refined, more vibrant people**, **costumes that match the
+  script**, and a **new, fresher music + SFX** → score2.js; cast with per-person skin tones, glossy warm eyes, beards,
+  Flavian updos, earrings, armour/period kit; crowds of mini people with walk cycles; something moves in every shot.
+- Gotchas: the stock export-video.mjs joins the narration path to `houdini/` — for a sub-folder episode use
+  export-par.mjs with the explicit path (or the old Houdini voice gets muxed!). No emoji fonts in headless Chromium:
+  draw icons. `layer()` caches by key: never call it with an empty draw function under a real key.
 

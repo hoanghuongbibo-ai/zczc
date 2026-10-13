@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const T = G.Toon, FX = G.FX, P = G.Paint, K = G.VK, { W, H, clamp, lerp, ease, grad, rng } = T;
-  const { OUT, sh, ln, circ, layer, put, sky, rays, clouds, hills, smoothPts, tree, bush, blades, birds, motes, leafMass, PAD } = P, TAU = Math.PI * 2, F = G.Fauna;
+  const { OUT, sh, ln, circ, layer, put, sky, rays, clouds, hills, smoothPts, tree, bush, blades, birds, motes, leafMass, PAD } = P, TAU = Math.PI * 2, F = G.Fauna, PR = G.Props;
   const grey = (ctx, t, pan, list, a = .96) => { ctx.save(); ctx.filter = 'saturate(.2) brightness(.95)'; clouds(ctx, t, pan, list); ctx.restore(); };
   const SKY = {
     day: [[0, '#5f9fd8'], [.38, '#a9cde8'], [.66, '#f5e3bc'], [1, '#f6d39a']], grey: [[0, '#7d8fa3'], [.5, '#b9c3c9'], [.8, '#d9d6c6'], [1, '#e2d6b8']],
@@ -22,6 +22,7 @@
     sh(g, tone('#7a6a48'), 4, c => { c.moveTo(x0 - 40, yB + 20); c.lineTo(x0, yB - 20); c.lineTo(x1, yB - 20); c.lineTo(x1 + 40, yB + 20); c.closePath(); });
     for (const [x, w, c2] of [[380, 170, '#b85a36'], [570, 120, '#a8502f'], [720, 170, '#c8643c'], [880, 90, '#a8502f']]) sh(g, tone(c2), 3.5, c => { c.moveTo(x, yT + 14); c.lineTo(x + w / 2, yT - 46); c.lineTo(x + w, yT + 14); c.closePath(); });
     const r = rng(8); for (let x = x0; x < x1; x += 13) { const h = 78 + r() * 8; sh(g, tone(['#8a6a44', '#7a5c3a', '#9a7a50'][Math.floor(r() * 3)]), 2.5, c => { c.moveTo(x, yB - 20); c.lineTo(x, yB - 20 - h); c.lineTo(x + 6, yB - 28 - h); c.lineTo(x + 12, yB - 20 - h); c.lineTo(x + 12, yB - 20); c.closePath(); }); }
+    PR.cart(g, 470, 606, .35, 'barrels'); PR.woodpile(g, 830, 560, .32); PR.hay(g, 900, 572, .32); PR.hay(g, 945, 576, .28); PR.barrel(g, 380, 560, .3);
     const gx = 640; for (const s of [-1, 1]) { sh(g, tone('#8a6a44'), 4, c => c.rect(gx + s * 60 - 30, yT - 70, 60, 150)); sh(g, tone('#6b4a2e'), 4, c => { c.moveTo(gx + s * 60 - 40, yT - 70); c.lineTo(gx + s * 60, yT - 110); c.lineTo(gx + s * 60 + 40, yT - 70); c.closePath(); }); sh(g, v === 'night' || v === 'dusk' ? '#ffc870' : '#2c1d16', 3, c => c.rect(gx + s * 60 - 10, yT - 50, 20, 26)); }
     sh(g, '#2c1d16', 4, c => { c.moveTo(gx - 30, yB - 20); c.lineTo(gx - 30, yT + 10); c.quadraticCurveTo(gx, yT - 10, gx + 30, yT + 10); c.lineTo(gx + 30, yB - 20); c.closePath(); });
     sh(g, tone('#7a5c3a'), 4, c => c.rect(gx - 100, yT - 76, 200, 14));
@@ -75,6 +76,10 @@
     for (let x = -PAD; x < W + PAD; x += 14) { const hh = 6 + r() * 10; ln(g, [[x, 522], [x + 3, 522 - hh]], 3, ['#4f8034', '#6ea447'][Math.floor(r() * 2)]); }
     for (const x of [140, 1100]) { sh(g, '#8a5a36', 3.5, c => c.roundRect(x, 470, 46, 60, 8)); for (const y of [482, 516]) ln(g, [[x, y], [x + 46, y]], 4, '#5a5a5a'); }
     for (const [x, sz] of [[470, 1], [800, .8]]) { sh(g, '#b8673e', 3, c => { c.moveTo(x - 18 * sz, 520); c.lineTo(x - 22 * sz, 490); c.lineTo(x + 22 * sz, 490); c.lineTo(x + 18 * sz, 520); c.closePath(); }); leafMass(g, x, 470, 34 * sz, 28 * sz, x, ['#2f5a2a', '#477c34', '#6ea447', '#9cc95a']); }
+    // set dressing along the walls (behind the action): sacks + bread, a woodpile, an amphora rack, a trough, a cart
+    PR.trough(g, -40, 560, .8); PR.sack(g, 225, 528, .8); PR.sack(g, 262, 532, .7, '#cbb68c'); PR.basket(g, 300, 536, .7, 'bread');
+    PR.woodpile(g, 575, 528, .7); PR.basket(g, 640, 532, .6, 'veg'); PR.amphoraRack(g, 900, 530, .75); PR.crate(g, 1060, 534, .6); PR.basket(g, 1130, 538, .6, 'apples');
+    PR.cart(g, 1300, 572, .8, 'sacks');
   });
   function street(ctx, t, pan, o = {}) {
     const v = o.v || 'day'; put(ctx, streetLayer(v), pan, .8);
@@ -94,8 +99,8 @@
     sh(g, '#2a1d16', 5, c => c.rect(860, 110, 230, 180)); g.fillStyle = grad(g, 0, 110, 0, 290, [[0, '#9fb0c4'], [1, '#d8cbb8']]); g.fillRect(872, 122, 206, 156); ln(g, [[975, 110], [975, 290]], 6, '#2a1d16'); ln(g, [[860, 200], [1090, 200]], 6, '#2a1d16');
     for (const [x, y] of [[60, 360], [60, 470], [420, 360], [420, 470]]) { sh(g, '#6b4a30', 4, c => c.rect(x, y, 300, 26)); sh(g, ['#b2342f', '#3c6a8a', '#c99a3c', '#5f8a4a'][(x + y) % 4 < 0 ? 0 : ((x / 60 + y / 110) | 0) % 4], 3, c => c.roundRect(x + 10, y - 22, 280, 24, 10)); g.strokeStyle = 'rgba(255,255,255,.25)'; g.lineWidth = 3; for (let k = 0; k < 6; k++) { g.beginPath(); g.moveTo(x + 30 + k * 44, y - 20); g.lineTo(x + 30 + k * 44, y); g.stroke(); } sh(g, '#efe4cc', 3, c => c.roundRect(x + 20, y - 34, 70, 22, 10)); }
     for (const x of [60, 340, 420, 700]) ln(g, [[x + 10, 300], [x + 10, 520]], 9, '#5a3c26');
-    for (let i = 0; i < 4; i++) { sh(g, ['#9aa1ac', '#a8392f', '#6d6a3e', '#b3b9c1'][i], 3, c => c.roundRect(760 + i * 34, 330, 26, 90, 6)); }
-    sh(g, '#b3b9c1', 3, c => c.arc(1150, 300, 26, Math.PI, TAU)); sh(g, '#3c5a86', 3, c => c.ellipse(1180, 420, 34, 58, 0, 0, TAU));
+    PR.pegRow(g, 380, 150, .75, ['helmet', 'bag', 'helmet', 'belt']); PR.shieldRack(g, 1170, 520, .8); PR.chest(g, 980, 520, .7); PR.stool(g, 860, 520, .8); PR.spearRack(g, 760, 520, .7);
+    PR.table(g, 600, 520, .55, ['bread', 'cup', 'jug']);
   });
   function barracks(ctx, t, pan, o = {}) {
     put(ctx, barracksLayer, pan, .6);
@@ -113,6 +118,7 @@
     sh(g, '#8a5a36', 5, c => c.rect(-PAD, 470, W + PAD * 2, 260)); g.fillStyle = 'rgba(255,220,170,.18)'; g.fillRect(-PAD, 470, W + PAD * 2, 18); for (let i = 0; i < 9; i++) ln(g, [[-PAD, 500 + i * 26], [W + PAD, 500 + i * 26]], 2, 'rgba(60,30,10,.18)');
     sh(g, '#b8673e', 3, c => { c.moveTo(1150, 470); c.lineTo(1140, 420); c.lineTo(1200, 420); c.lineTo(1190, 470); c.closePath(); }); leafMass(g, 1170, 380, 50, 50, 77, ['#2f5a2a', '#477c34', '#6ea447', '#9cc95a']);
     sh(g, '#c98a4e', 3.5, c => c.ellipse(560, 462, 30, 12, 0, 0, TAU));
+    PR.scrollBasket(g, 70, 500, .9); PR.chest(g, 1230, 506, .8); PR.amphora(g, 1100, 498, .6, '#b05a32'); PR.amphora(g, 1060, 500, .55, '#c46a3e', .08); PR.stool(g, 200, 506, .8);
   });
   function office(ctx, t, pan, o = {}) { put(ctx, officeLayer, pan, .6); const fl = Math.sin(t * 13) * 2; T.glow(ctx, 586 - pan * .6, 430, 260, 'rgba(255,200,120,.35)'); sh(ctx, '#ffcf5a', 2.5, c => { c.moveTo(586 - pan * .6, 452); c.quadraticCurveTo(596 + fl - pan * .6, 432, 588 - pan * .6, 418); c.quadraticCurveTo(578 - fl - pan * .6, 434, 586 - pan * .6, 452); c.closePath(); }); motes(ctx, t, 18, 14); }
 
@@ -170,6 +176,7 @@
   const outpostLayer = layer('outpost', g => {
     sky(g, [900, 200], SKY.grey, .2); hills(g, 500, smoothPts(-PAD, W + PAD, 400, 80, 91, 9), '#8f9fa0', '#a8b4ac', 2); hills(g, 540, smoothPts(-PAD, W + PAD, 460, 60, 93, 12), '#6f9050', '#86a85e', 2.5);
     g.fillStyle = grad(g, 0, 520, 0, H, [[0, '#7a9a50'], [1, '#56763a']]); g.fillRect(-PAD, 520, W + PAD * 2, 220); { const rr = rng(19); for (let i = 0; i < 40; i++) { const hx = -PAD + rr() * (W + PAD * 2), hy = 540 + rr() * 150; g.fillStyle = ['#9a6aa8', '#b582c0', '#7f5a90'][i % 3]; g.beginPath(); g.ellipse(hx, hy, 18 + rr() * 20, 6 + rr() * 4, 0, 0, TAU); g.fill(); } }
+    PR.hay(g, 600, 560, .55); PR.hay(g, 650, 566, .45); PR.trough(g, 1240, 600, .6); PR.spearRack(g, 900, 540, .5); PR.brazier && 0;
     sh(g, '#7a5c3a', 4, c => c.rect(980, 220, 120, 300)); for (let y = 240; y < 520; y += 40) ln(g, [[980, y], [1100, y]], 3, 'rgba(0,0,0,.3)'); sh(g, '#5a3a22', 4, c => { c.moveTo(960, 220); c.lineTo(1040, 160); c.lineTo(1120, 220); c.closePath(); }); sh(g, '#2c1d16', 3, c => c.rect(1020, 260, 40, 40));
   });
   function outpost(ctx, t, pan, o = {}) { put(ctx, outpostLayer, pan, .6); grey(ctx, t, pan, [[-200, -20, 1.5, 61, 6], [500, -30, 1.4, 62, 5], [900, 0, 1.3, 63, 7]]);
@@ -183,11 +190,13 @@
     for (let x = -PAD; x < W + PAD; x += 260) { sh(g, '#8a3a30', 3, c => c.rect(x + 20, 80, 220, 330)); sh(g, '#d9b06a', 0, c => c.rect(x + 34, 94, 192, 4)); sh(g, '#2a4a3a', 2.5, c => c.rect(x + 50, 120, 160, 250)); g.fillStyle = 'rgba(217,176,106,.6)'; g.beginPath(); g.arc(x + 130, 245, 30, 0, TAU); g.fill(); }
     sh(g, '#2a1410', 4, c => c.rect(-PAD, 470, W + PAD * 2, 260)); const r = rng(2); for (let i = 0; i < 14; i++) for (let j = 0; j < 4; j++) sh(g, (i + j) % 2 ? '#c9b08a' : '#8a6a4a', 1.5, c => c.rect(-PAD + i * 120, 480 + j * 60, 120, 60));
     sh(g, '#6b4628', 4.5, c => c.roundRect(470, 470, 340, 40, 8)); for (const x of [490, 770]) ln(g, [[x, 510], [x, 620]], 14, '#5a3a22');
+    PR.loaf(g, 520, 472, .9); PR.bowl(g, 590, 472, 1); PR.jug(g, 720, 472, .9); PR.cup(g, 770, 472, .9);
+    PR.loom(g, 250, 600, .75); PR.amphoraRack(g, 1040, 600, .7);
   });
   function house(ctx, t, pan, o = {}) { put(ctx, houseLayer, pan, .5); const fl = 1 + Math.sin(t * 11) * .04 + Math.sin(t * 7.3) * .03;
     for (const px of [70, 1215]) { const x = px - pan * .5; sh(ctx, '#b8673e', 3, c => { c.moveTo(x - 30, 680); c.lineTo(x - 36, 620); c.lineTo(x + 36, 620); c.lineTo(x + 30, 680); c.closePath(); }); bush(ctx, px, 630, 120, 120, t, px, pan, .5); }
     if (o.cat !== false) F.cat(ctx, 1000 - pan * .5, 700, .8, t, { dir: -1 });
-    sh(ctx, '#c98a4e', 3.5, c => c.ellipse(640 - pan * .5, 466, 30, 12, 0, 0, TAU)); sh(ctx, '#ffcf5a', 2.5, c => { const x = 664 - pan * .5; c.moveTo(x, 458); c.quadraticCurveTo(x + 10 * fl, 438, x + 2, 422 - 4 * fl); c.quadraticCurveTo(x - 8, 438, x, 458); c.closePath(); });
+    sh(ctx, '#c98a4e', 3.5, c => c.ellipse(650 - pan * .5, 466, 30, 12, 0, 0, TAU)); sh(ctx, '#ffcf5a', 2.5, c => { const x = 674 - pan * .5; c.moveTo(x, 458); c.quadraticCurveTo(x + 10 * fl, 438, x + 2, 422 - 4 * fl); c.quadraticCurveTo(x - 8, 438, x, 458); c.closePath(); });
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = .45 * fl; T.glow(ctx, 664 - pan * .5, 430, 520, 'rgba(255,180,90,.6)'); ctx.restore(); motes(ctx, t, 14, 31); }
 
   // ================= a Briton farmstead (roundhouse) =================
@@ -196,6 +205,7 @@
     for (let x = -PAD; x < W + PAD; x += 18) ln(g, [[x, 560], [x, 520]], 5, '#7a5c3a'); ln(g, [[-PAD, 530], [W + PAD, 530]], 4, '#7a5c3a'); });
   function farm(ctx, t, pan, o = {}) { put(ctx, farmLayer, pan, .6); K.smoke(ctx, t, 420 - pan * .6, 250, .35); grey(ctx, t, pan, [[0, 20, 1, 41, 5], [700, 40, .9, 42, 4]]);
     F.sheep(ctx, 960 - pan * .6, 520, .55, t, { ph: 0 }); F.sheep(ctx, 1060 - pan * .6, 530, .5, t, { ph: 1.4, dir: -1 }); F.sheep(ctx, 1150 - pan * .6, 515, .45, t, { ph: 2.2 });
+    PR.cauldron(ctx, 600 - pan * .6, 560, .6, t); PR.quern(ctx, 760 - pan * .6, 590, .6); PR.loom(ctx, 250 - pan * .6, 560, .55); PR.washline(ctx, 1000 - pan * .6, 330, 1250 - pan * .6, 330, t, ['#e6dcc4', '#4f7a3c', '#b0602a', '#e6dcc4']); ln(ctx, [[1000 - pan * .6, 330], [1000 - pan * .6, 560]], 6, '#6b4428'); ln(ctx, [[1250 - pan * .6, 330], [1250 - pan * .6, 560]], 6, '#6b4428');
     F.chicken(ctx, 250 - pan * .8, 600, .7, t, { ph: .3, col: '#c98a4e' }); bush(ctx, 120, 620, 180, 80, t, 61, pan, .8); blades(ctx, 100, 725, 18, 110, t, 51, pan, 1.3, 0); }
 
   // ================= gate at dusk, looking out =================
@@ -208,7 +218,7 @@
   const digLayer = layer('dig', g => { sky(g, [1000, 200], SKY.grey, .3); hills(g, 330, smoothPts(-PAD, W + PAD, 270, 70, 21, 10), '#8f9f80', '#a7b494', 2); g.fillStyle = '#6f8a4a'; g.fillRect(-PAD, 300, W + PAD * 2, 60);
     sh(g, '#6a4a30', 4, c => c.rect(-PAD, 350, W + PAD * 2, 380)); const cols = ['#5a3e2a', '#6b4a32', '#4f3726', '#7a5638', '#3e2c20']; cols.forEach((col, i) => { g.fillStyle = col; g.fillRect(-PAD, 360 + i * 70, W + PAD * 2, 70); }); const r = rng(6); for (let i = 0; i < 120; i++) sh(g, '#8d857a', 2, c => c.ellipse(-PAD + r() * (W + PAD * 2), 380 + r() * 340, 5 + r() * 8, 3 + r() * 4, r(), 0, TAU));
     g.fillStyle = 'rgba(90,120,140,.5)'; g.fillRect(-PAD, 650, W + PAD * 2, 80); for (let i = 0; i < 8; i++) ln(g, [[i * 180, 300], [i * 180 + 4, 350]], 5, '#c9a46a'); ln(g, [[-PAD, 306], [W + PAD, 306]], 3, '#e0772e'); });
-  function dig(ctx, t, pan, o = {}) { put(ctx, digLayer, pan, .5); grey(ctx, t, pan, [[0, 0, 1, 11, 5], [700, 20, .9, 12, 4]]); blades(ctx, 200, 330, 30, 40, t, 71, pan, .5, 0); blades(ctx, 1000, 330, 30, 40, t, 72, pan, .5, 0); F.butterfly(ctx, 300 - pan * .5, 200, .7, t, { col: '#f27ca0' }); }
+  function dig(ctx, t, pan, o = {}) { put(ctx, digLayer, pan, .5); grey(ctx, t, pan, [[0, 0, 1, 11, 5], [700, 20, .9, 12, 4]]); blades(ctx, 200, 330, 30, 40, t, 71, pan, .5, 0); blades(ctx, 1000, 330, 30, 40, t, 72, pan, .5, 0); PR.wheelbarrow(ctx, 1080 - pan * .5, 340, .5); PR.bucket(ctx, 300 - pan * .5, 345, .7); PR.spade(ctx, 1180 - pan * .5, 330, .55, .3); PR.findsTray(ctx, 880 - pan * .5, 345, .6); F.butterfly(ctx, 300 - pan * .5, 200, .7, t, { col: '#f27ca0' }); }
 
   G.VS = { SKY, fortExt, street, barracks, office, studio, mapBritain, mapEurope, pin, route, MP, EP, PLACES, outpost, house, farm, gate, dig, flag, BRIT, mapPt };
 })(window);

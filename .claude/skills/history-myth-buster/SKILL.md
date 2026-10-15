@@ -271,3 +271,4 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   plucks, octave-lower melodies, low-passed buses), gentler foley (boing → harp flick). Measured: music+fx ≈ −21 dB
   under the voice (bed peak −16 dB). Treat these numbers as the new house mix target.
 - Vindolanda promo pack: 20 stills with text, 17 clean plates, 17 transparent cut-outs, 2 sample thumbnails in `vindolanda/out/stills/` (zipped ≤30 MB per part for upload). After each episode, offer the user a stills pack.
+- When the user asks for images/frames from a video: send each frame as its own PNG via SendUserFile (batches of ~24), NOT zips, contact sheets or thumbnails. `node tools/_shotframes.mjs <episode.html> <outDir>` renders one frame per shot (named shotNN_<time>s.png).

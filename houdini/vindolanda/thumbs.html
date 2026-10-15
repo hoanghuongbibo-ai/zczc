@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8">
+<!-- sample YouTube thumbnails built from the stills + cut-outs (read by tools/_cutouts.mjs) -->
+<style>@font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); }
+@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }</style>
+<script>
+const img = s => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = s; });
+function big(g, t, x, y, size, fill, rot = 0) { g.save(); g.translate(x, y); g.rotate(rot); g.font = `${size}px "Luckiest Guy"`; g.textAlign = 'center'; g.lineJoin = 'round';
+  g.lineWidth = size * .22; g.strokeStyle = '#2a1a12'; g.strokeText(t, 0, 0); g.fillStyle = fill; g.fillText(t, 0, 0); g.restore(); }
+function pill(g, t, x, y, size, bg) { g.font = `700 ${size}px Fredoka`; const w = g.measureText(t).width + size * 1.2, h = size * 1.7;
+  g.fillStyle = 'rgba(0,0,0,.25)'; g.beginPath(); g.roundRect(x - w / 2 + 5, y - h / 2 + 6, w, h, h / 2); g.fill();
+  g.fillStyle = bg; g.beginPath(); g.roundRect(x - w / 2, y - h / 2, w, h, h / 2); g.fill(); g.lineWidth = 4; g.strokeStyle = '#2a1a12'; g.stroke();
+  g.fillStyle = '#2a1a12'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(t, x, y + 2); g.textBaseline = 'alphabetic'; }
+function fitCut(g, im, x, yFoot, h) { const w = im.width * h / im.height; g.drawImage(im, x - w / 2, yFoot - h, w, h); }
+(async () => {
+  await Promise.all([document.fonts.load('80px "Luckiest Guy"'), document.fonts.load('700 30px Fredoka')]);
+  const out = [];
+  { // A: NO BEER?!
+    const c = Object.assign(document.createElement('canvas'), { width: 1280, height: 720 }), g = c.getContext('2d');
+    g.drawImage(await img('out/stills/clean/01-fort-sunrise.png'), 0, 0);
+    const v = g.createLinearGradient(0, 0, 1280, 0); v.addColorStop(0, 'rgba(30,15,5,.55)'); v.addColorStop(.55, 'rgba(30,15,5,0)'); g.fillStyle = v; g.fillRect(0, 0, 1280, 720);
+    fitCut(g, await img('out/stills/cutouts/masclus-no-beer.png'), 960, 735, 640);
+    big(g, 'NO BEER?!', 380, 250, 130, '#f6c945', -.05); big(g, 'SEND MORE!', 380, 380, 92, '#ffffff', -.05);
+    pill(g, 'a real Roman letter · AD 100', 380, 480, 30, '#f3e6cf'); out.push(['thumb-no-beer', c.toDataURL('image/png')]);
+  }
+  { // B: Theo + tablets: letters from 1,900 years ago
+    const c = Object.assign(document.createElement('canvas'), { width: 1280, height: 720 }), g = c.getContext('2d');
+    g.filter = 'blur(9px)'; g.drawImage(await img('out/stills/clean/13-cerialis-lepidina.png'), -30, -20, 1340, 760); g.filter = 'none';
+    g.fillStyle = 'rgba(20,8,4,.35)'; g.fillRect(0, 0, 1280, 720);
+    fitCut(g, await img('out/stills/cutouts/claudia-severa.png'), 1010, 740, 560);
+    fitCut(g, await img('out/stills/cutouts/theo-host-shock.png'), 250, 760, 560);
+    big(g, 'ROMAN', 640, 170, 120, '#f6c945', -.03); big(g, 'GROUP CHAT', 640, 290, 104, '#ffffff', -.03);
+    pill(g, 'beer · socks · birthday parties', 640, 380, 30, '#f3e6cf'); out.push(['thumb-roman-group-chat', c.toDataURL('image/png')]);
+  }
+  window.OUT = out; window.DONE = true;
+})();
+</script>

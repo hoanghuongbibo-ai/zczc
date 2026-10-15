@@ -172,6 +172,8 @@ clip). Use it when the script has dialogue lines / characters talking. Its langu
 | `tools/align-partN.py` | script ↔ transcript aligner → `js/timingN.js` (`window.TN` anchors) |
 | `tools/export-video.mjs` | `node tools/export-video.mjs <page.html> <out.mp4> 30` (paths relative to `houdini/`) |
 | `tools/_stills.mjs` | `node tools/_stills.mjs <page.html> <outDir> 0.75` — one PNG per shot for contact sheets |
+| `tools/_still.mjs` | `node tools/_still.mjs <episode.html> <outDir> [--clean] name=t …` — lossless 1280×720 stills at chosen times; `--clean` mutes VK/FX text for poster plates (check for empty boxes left behind) |
+| `tools/_cutouts.mjs` + `<ep>/cutouts.html`, `thumbs.html` | transparent trimmed character PNGs (Guide.draw at s 2.2 → bbox trim) and sample thumbnails (Luckiest Guy title + Fredoka pill over a clean plate / blurred background) |
 
 A part = `partN.html` (script tags: toon, sound, props, rig, chars, cast*, common, timingN, shared show libs, showN,
 player) + `js/timingN.js` + `js/showN.js` (shots keyed to anchors, `cut` list, `sfx`, `moods`, `G.Show`). Copy the
@@ -268,4 +270,4 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Vindolanda v3 (2026-10-13): props pass in every set (setprops.js) + softer score (no kick/snap/shaker, lyre-like
   plucks, octave-lower melodies, low-passed buses), gentler foley (boing → harp flick). Measured: music+fx ≈ −21 dB
   under the voice (bed peak −16 dB). Treat these numbers as the new house mix target.
-
+- Vindolanda promo pack: 20 stills with text, 17 clean plates, 17 transparent cut-outs, 2 sample thumbnails in `vindolanda/out/stills/` (zipped ≤30 MB per part for upload). After each episode, offer the user a stills pack.

@@ -1,0 +1,36 @@
+<!doctype html><meta charset="utf-8">
+<!-- transparent, trimmed character cut-outs for thumbnails/posters (read by tools/_cutouts.mjs) -->
+<script src="../js/toon.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="js/cast.js"></script>
+<script>
+Guide.setTheme('warm');
+const V = VCast, A = (...o) => Object.assign({ noBlink: true }, ...o);
+const LIST = [
+  ['theo-host-cheer', A({ pose: 'cheer', face: { mouth: 'grin', eyes: 'happy', brows: 'up' } })],
+  ['theo-host-point', A({ pose: 'pointSide', face: { mouth: 'open', brows: 'up' }, turn: .2 })],
+  ['theo-host-shock', A({ pose: 'facepalm', face: { mouth: 'o', eyes: 'wide', brows: 'worried' }, sweat: true })],
+  ['theo-host-thinking', A({ pose: 'think', face: { mouth: 'flat', brows: 'skeptic', look: [.4, -.3] } })],
+  ['theo-host-present', A({ pose: 'presentBoth', face: { mouth: 'grin', brows: 'up' } })],
+  ['theo-tungrian-hero', A(V.theoAux, { pose: 'hips', prop: 'shield', face: { mouth: 'grin', brows: 'up' } })],
+  ['theo-tungrian-thumbsup', A(V.theoAux, { pose: 'thumbsUp', face: { mouth: 'grin', eyes: 'wink' } })],
+  ['theo-tungrian-shrug', A(V.theoAux, { pose: 'shrug', face: { mouth: 'frown', brows: 'worried' } })],
+  ['masclus-no-beer', A(V.masclus, { pose: 'shrug', face: { mouth: 'open', brows: 'worried', eyes: 'wide' } })],
+  ['cerialis-prefect', A(V.cerialis, { pose: 'present', face: { mouth: 'smile' }, turn: .2 })],
+  ['lepidina', A(V.lepidina, { pose: 'idle', face: { mouth: 'smile', eyes: 'happy' }, turn: -.2 })],
+  ['claudia-severa', A(V.claudia, { pose: 'present', prop: 'tablet', face: { mouth: 'grin' }, turn: .2 })],
+  ['tungrian-a', A(V.tungA, { pose: 'idle', prop: 'spear', face: { mouth: 'smile' } })],
+  ['tungrian-b', A(V.tungB, { pose: 'hips', face: { mouth: 'grin' } })],
+  ['briton-a', A(V.britonA, { pose: 'crossed', face: { mouth: 'flat', brows: 'skeptic' } })],
+  ['briton-b', A(V.britonB, { pose: 'idle', prop: 'spear', face: { mouth: 'flat' } })],
+  ['archaeologist-1973', A(V.digger, { pose: 'present', face: { mouth: 'grin', brows: 'up' } })],
+];
+window.OUT = LIST.map(([name, o], i) => {
+  const c = document.createElement('canvas'); c.width = 1200; c.height = 1700; const g = c.getContext('2d');
+  Guide.draw(g, 600, 1600, 2.2, Object.assign({ t: 1 + i * .37 }, o));
+  const d = g.getImageData(0, 0, c.width, c.height).data; let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) if (d[(y * c.width + x) * 4 + 3] > 8) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  const p = 12, o2 = document.createElement('canvas'); o2.width = x1 - x0 + 2 * p; o2.height = y1 - y0 + 2 * p;
+  o2.getContext('2d').drawImage(c, x0 - p, y0 - p, o2.width, o2.height, 0, 0, o2.width, o2.height);
+  return [name, o2.toDataURL('image/png')];
+});
+window.DONE = true;
+</script>

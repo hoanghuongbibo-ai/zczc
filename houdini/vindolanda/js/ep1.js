@@ -2,7 +2,7 @@
 (function (G) {
   'use strict';
   const T = G.Toon, FX = G.FX, Gd = G.Guide, P = G.Paint, K = G.VK, V = G.VS, TV = G.TV, { W, H, clamp, lerp, ease, grad, rng } = T;
-  const { OUT, sh, ln, circ, motes } = P, TAU = Math.PI * 2, { S, fx, mood } = G.EP;
+  const { OUT, sh, ln, circ, motes, layer, put, PAD } = P, TAU = Math.PI * 2, { S, fx, mood } = G.EP;
   const theo = o => Object.assign({ light: K.LIGHT.warm }, o), MP = V.MP, PL = V.PLACES;
 
   // ---------- 13. where it is — the empire, Britain at its edge, fog beyond ----------
@@ -120,23 +120,28 @@
     sh(ctx, '#6a4a30', 4, c => { c.moveTo(250, 690); c.quadraticCurveTo(400, 560, 560, 690); c.closePath(); }); const r = rng(9); for (let i = 0; i < 9; i++) K.tablet(ctx, 330 + r() * 160, 640 - r() * 60, 90, 50, { rot: (r() - .5), seed: i, ink: .6 });
     for (let i = 0; i < 4; i++) { const u = ((lt - .2 - i * .35)); if (u < 0 || u > .7) continue; const x = lerp(760, 420, u / .7), y = 420 - Math.sin(u / .7 * Math.PI) * 160 + 200 * (u / .7); K.tablet(ctx, x, y, 90, 50, { rot: u * 10, seed: i + 30, ink: .6 }); }
     K.fig(ctx, 860, 700, .78, K.cast('tungB', { t, hat: 'none', pose: Gd.pose(lt, [[0, 'idle'], [.1, 'pointSideL'], [.5, 'idle'], [.6, 'pointSideL']]), face: { mouth: 'flat', eyes: 'half' } }));
-    if (lt > R('bonfire')) { const bx = 1120; for (let i = 0; i < 7; i++) { const fl = Math.sin(t * 9 + i) * 8; sh(ctx, ['#ffcf5a', '#f6a04d', '#e85d3a'][i % 3], 2.5, c => { const x = bx - 60 + i * 20; c.moveTo(x - 16, 690); c.quadraticCurveTo(x - 10 + fl, 600 - (i % 3) * 30, x, 560 - (i % 2) * 40); c.quadraticCurveTo(x + 12 - fl, 610, x + 16, 690); c.closePath(); }); } T.glow(ctx, bx, 620, 200, 'rgba(255,170,80,.4)'); K.smoke(ctx, t, bx, 520, .5); } });
+    if (lt > R('bonfire')) { const k = ease.out(clamp((lt - R('bonfire')) / .6)); G.Paint2.fire(ctx, 1215, 705, .68 * k, t); K.smoke(ctx, t, 1215, 500, .45 * k); } });
   [.2, .55, .9, 1.25].forEach(o => fx('throwout', 'swish', .4, o)); fx('bonfire', 'fire', .6, 0, 4);
   // ---------- wood rots, ink fades … but Vindolanda is wet ----------
   S('rots', (ctx, lt, dur, t, R) => { V.studio(ctx, t, 0); const k = clamp(lt / (R('fades') + 1)); K.tablet(ctx, 640, 360, 520, 260, { seed: 81, ink: .85 * (1 - clamp((lt - R('fades')) / .9)), worn: true, wood: G.Guide.hexMul('#6b4a2e', 1 - k * .35) });
     const r = rng(3); for (let i = 0; i < 18; i++) { const a = clamp((lt - .1 - i * .05) / .4); if (a <= 0) continue; sh(ctx, ['#7a8a5a', '#9aa070', '#5a6a4a'][i % 3], 2, circ(400 + r() * 480, 250 + r() * 220, 6 + r() * 14 * a)); }
     K.tag(ctx, 'wood rots', 400, 140, lt, .2, { size: 28 }); K.tag(ctx, 'ink fades', 880, 140, lt, R('fades'), { size: 28 }); });
   fx('rots', 'rumble', .3, 0, 1.2);
+  const P2 = G.Paint2, storm = layer('v-storm', g => { P2.overcast(g, [[0, '#3c4656'], [.2, '#5a6676'], [.3, '#7a8694'], [1, '#8a94a0']], 61, [640, 260]); }),
+    strataL = layer('v-strata2', g => { P2.strata(g, 205, 600, { seed: 23, n: 7, pebbles: 140, roots: 14 }); }),
+    clayL = layer('v-clay', g => { g.fillStyle = grad(g, 0, 585, 0, H, [[0, '#4e5860'], [1, '#2e363c']]); g.fillRect(-PAD, 585, W + PAD * 2, 140); P2.grain(g, -PAD, 585, W + PAD * 2, 140, .5, 4, 'overlay', .8);
+      P2.pebbles(g, -PAD, 600, W + PAD * 2, 110, 70, 9, { min: 3, var: 6, cols: ['#6a7278', '#565e64', '#7a8288', '#4a5258'] }); g.strokeStyle = 'rgba(20,24,28,.7)'; g.lineWidth = 3; g.beginPath(); g.moveTo(-PAD, 590); for (let x = -PAD; x <= W + PAD; x += 20) g.lineTo(x, 590 + Math.sin(x * .01) * 4); g.stroke(); });
   S('wetfort', (ctx, lt, dur, t, R) => {
     if (lt < R('layers')) { V.fortExt(ctx, t, 0, { v: 'rain', march: false }); return; }
-    const u = lt - R('layers'); ctx.fillStyle = grad(ctx, 0, 0, 0, 200, [[0, '#7d8fa3'], [1, '#b9c3c9']]); ctx.fillRect(0, 0, W, 200); K.rain(ctx, t, .7, 80);
-    const n = 7; for (let i = 0; i < n; i++) { const k = ease.out(clamp((u - i * .45) / .6)), yT = 200 + i * 72; if (k <= 0) continue; ctx.save(); ctx.globalAlpha = k; ctx.fillStyle = ['#5a4030', '#6b4c36', '#4f3a2c', '#735339', '#5e4532', '#6a4a34', '#544030'][i]; ctx.fillRect(0, yT - (1 - k) * 60, W, 74); ctx.restore(); }
-    ctx.fillStyle = 'rgba(70,100,120,.45)'; ctx.fillRect(0, 560, W, 160); const r = rng(7); for (let i = 0; i < 5; i++) K.tablet(ctx, 220 + i * 210, 620 + (r() - .5) * 30, 120, 60, { rot: (r() - .5) * .4, seed: i + 90, ink: .7 }); K.shoe(ctx, 1150, 600, .8);
+    const u = lt - R('layers'); put(ctx, storm, 0, 0); K.rain(ctx, t, .7, 80);
+    const n = 7; for (let i = 0; i < n; i++) { const k = ease.out(clamp((u - i * .45) / .6)), y0 = 200 + i * 57, y1 = i === n - 1 ? 600 : y0 + 60; if (k <= 0) continue; ctx.save(); ctx.globalAlpha = k; ctx.beginPath(); ctx.rect(0, y0 - (1 - k) * 60, W, y1 - y0 + 4); ctx.clip(); ctx.drawImage(strataL, -PAD, -(1 - k) * 60); ctx.restore(); }
+    put(ctx, clayL, 0, 0); const r = rng(7); for (let i = 0; i < 5; i++) K.tablet(ctx, 220 + i * 210, 640 + (r() - .5) * 30, 120, 60, { rot: (r() - .5) * .4, seed: i + 90, ink: .7, worn: true }); K.shoe(ctx, 1150, 620, .8);
+    K.rain(ctx, t, .8, 120, .1);
     if (lt > R('oxygen')) { const v = lt - R('oxygen'); for (let i = 0; i < 6; i++) { const y = lerp(120, 520, ((v * .5 + i / 6) % 1)), x = 200 + i * 170; const blocked = y > 480; sh(ctx, blocked ? 'rgba(200,220,255,.4)' : 'rgba(200,230,255,.9)', 2.5, circ(x, Math.min(y, 482), 18)); K.txt(ctx, 'O₂', x, Math.min(y, 482), K.FONT(700, 16), '#3a5a7a', 'center'); }
       ln(ctx, [[0, 500], [W, 500]], 6, 'rgba(255,255,255,.5)'); K.tag(ctx, 'NO OXYGEN', 640, 650, v, .4, { size: 30, fill: '#fde6c4' }); for (let i = 0; i < 4; i++) { const bx = 250 + i * 260 + Math.sin(t * 3 + i) * 20; ctx.save(); ctx.translate(bx, 470 + Math.abs(Math.sin(t * 4 + i)) * -10); sh(ctx, '#8a6a4a', 2.5, c => c.ellipse(0, 0, 14, 8, 0, 0, TAU)); for (const s of [-1, 1]) ln(ctx, [[s * 6, 4], [s * 12, 12]], 2); ctx.restore(); } }
     K.tag(ctx, 'damp, compacted earth', 640, 240, u, .3, { size: 24 }); });
   fx('wetfort', 'rain', .5, 0, 2); fx('layers', 'thud', .5, 0); fx('layers', 'thud', .5, .45); fx('layers', 'thud', .5, .9); fx('oxygen', 'boing', .4, .6);
   S('wrote1', (ctx, lt, dur, t, R) => { if (lt < R('kept')) { K.wroteSting(ctx, lt, t, { text: 'Somebody wrote it down.' }); return; } const u = lt - R('kept');
-    ctx.fillStyle = '#4a3a2e'; ctx.fillRect(0, 0, W, H); for (let i = 0; i < 5; i++) { ctx.fillStyle = ['#5a4030', '#6b4c36', '#4f3a2c', '#735339', '#5e4532'][i]; ctx.fillRect(0, i * 144, W, 144); } K.tablet(ctx, 640, 380, 380, 200, { seed: 7, glow: .3 + Math.sin(t * 3) * .1 }); K.title(ctx, '…AND THE GROUND KEPT IT.', u, .1, { y: 140, size: 50 }); });
+    ctx.save(); ctx.translate(0, -205 * 1.83); ctx.scale(1, 1.83); ctx.drawImage(strataL, -PAD, -1); ctx.restore(); ctx.fillStyle = 'rgba(20,10,4,.25)'; ctx.fillRect(0, 0, W, H); K.tablet(ctx, 640, 380, 380, 200, { seed: 7, glow: .3 + Math.sin(t * 3) * .1 }); K.title(ctx, '…AND THE GROUND KEPT IT.', u, .1, { y: 140, size: 50 }); });
   fx('wrote1', 'wrote', .9); fx('kept', 'sparkle', .5);
 })(window);

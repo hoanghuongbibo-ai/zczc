@@ -13,6 +13,8 @@
     blg.filter = 'brightness(1.25) contrast(1.6) blur(6px)'; blg.clearRect(0, 0, 320, 180); blg.drawImage(ctx.canvas, 0, 0, 320, 180);
     ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = .16; ctx.drawImage(bl, 0, 0, 1280, 720);
     ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .12; ctx.fillStyle = '#ffb46a'; ctx.fillRect(0, 0, 1280, 720);
+    // painterly canvas: brush strokes + paper tooth over everything (characters included), like the repainted references
+    ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .2; ctx.drawImage(G.Paint2.canvasTex(), 0, 0);
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
   };
   G.Show = { duration: DUR, narration: 'assets/audio/narration.mp3', shots, sfx: EP.sfx, moods: EP.moods.slice().sort((a, b) => a.t - b.t), images: {},

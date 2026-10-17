@@ -9,9 +9,9 @@
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;
   const bg = buf.getContext('2d'), blg = bl.getContext('2d');
   G.TOON_POST = (ctx) => {
-    bg.filter = 'saturate(1.14) contrast(1.05) brightness(1.03)'; bg.clearRect(0, 0, 1280, 720); bg.drawImage(ctx.canvas, 0, 0); ctx.drawImage(buf, 0, 0);
+    bg.filter = 'saturate(1.24) contrast(1.1) brightness(1.03)'; bg.clearRect(0, 0, 1280, 720); bg.drawImage(ctx.canvas, 0, 0); ctx.drawImage(buf, 0, 0);
     blg.filter = 'brightness(1.25) contrast(1.6) blur(6px)'; blg.clearRect(0, 0, 320, 180); blg.drawImage(ctx.canvas, 0, 0, 320, 180);
-    ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = .16; ctx.drawImage(bl, 0, 0, 1280, 720);
+    ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = .14; ctx.drawImage(bl, 0, 0, 1280, 720);
     ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .12; ctx.fillStyle = '#ffb46a'; ctx.fillRect(0, 0, 1280, 720);
     // painterly canvas: brush strokes + paper tooth over everything (characters included), like the repainted references
     ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .2; ctx.drawImage(G.Paint2.canvasTex(), 0, 0);

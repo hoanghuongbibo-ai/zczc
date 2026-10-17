@@ -78,7 +78,7 @@
     const st = lt > R('gary') + 1 ? clamp((lt - R('gary') - 1) / .5) : 0;
     ride(ctx, 'gary', 780, 690, .95, t, { gait: st > 0 ? 'stand' : 'walk', coat: '#b07a4a', stumble: st > 0 ? Math.sin(st * Math.PI) * .9 : 0, riderOpts: { face: st > 0 ? { mouth: 'shock', eyes: 'wide', brows: 'worried' } : { mouth: 'smile', eyes: 'half' }, pose: st > 0 ? 'cheer' : 'idle' } });
     if (st > 0) { ctx.save(); sh(ctx, '#5a4030', 3, c => c.ellipse(880, 700, 40, 10, 0, 0, TAU)); ctx.restore(); CK.puff(ctx, 870, 680, st, .7, 70); }
-    fig(ctx, 'director', 200, 780, .82, { t, pose: lt < R('no') ? 'pointSide' : 'shrug', turn: .3, face: lt < R('no') ? { mouth: 'grin', brows: 'up', eyes: 'wide' } : { mouth: 'frown', brows: 'worried' }, talk: talkIn(t, TV.robbers, TV.no - .1) });
+    fig(ctx, 'director', 200, 780, .82, { t, pose: lt < R('no') ? 'pointSide' : 'shrug', turn: .3, face: lt < R('no') ? { mouth: 'grin', brows: 'up', eyes: 'wide' } : { mouth: 'frown', brows: 'worried' }, vis: Gd.say(t, TV.robbers, TV.no - .1) });
     K.bubble(ctx, 'Is this where the bank robbers show up?', 360, 220, lt, .05, { size: 26 });
     if (lt > R('no')) K.tag(ctx, 'No. This is where Gary\'s horse steps in a hole.', 760, 120, lt, R('no'), { size: 26 }); if (lt > R('gary') + .3) K.tag(ctx, 'Gary', 780, 330, lt, R('gary') + .3, { size: 24 });
   });
@@ -123,7 +123,7 @@
   S('song', (ctx, lt, dur, t, R) => {   // "Ohhh, please don't stampede…" — an unimpressed stare
     CS.prairie(ctx, t, 0, { v: 'night', seed: 15 }); ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(80,90,140,.35)'; ctx.fillRect(0, 0, W, H); ctx.restore();
     B.face(ctx, 820, 470, .9, t, { mood: 'meh', coat: 2, look: -1 });
-    theo(ctx, 240, 760, .7, TC({ t, pose: 'present', turn: .5, light: K.LIGHT.night, face: { mouth: 'o', eyes: 'closed', brows: 'up' }, talk: K.vtalk(t) })); CK.notes(ctx, 300, 340, t, 1, 4);
+    theo(ctx, 240, 760, .7, TC({ t, pose: 'present', turn: .5, light: K.LIGHT.night, face: { mouth: 'o', eyes: 'closed', brows: 'up' }, vis: Gd.say(t) })); CK.notes(ctx, 300, 340, t, 1, 4);
     K.bubble(ctx, '~ Ohhh, please don\'t stampede… ~', 420, 200, lt, .05, { size: 26 });
   });
   fx('song', 'moo', .25, 1.4);

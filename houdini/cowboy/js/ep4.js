@@ -10,7 +10,7 @@
     CS.studio(ctx, t, 0); const tear = clamp((lt - R('people') + .1) / .5);
     ['vaquero', 'freed', 'vet', 'freed2', 'vaquero2'].forEach((n, i) => fig(ctx, n, 560 + i * 130 - 130, 700, .6, { t: t + i, pose: i === 2 ? 'wave' : 'idle', turn: (2 - i) * .2, face: { mouth: 'smile' } }));
     if (tear < 1) { ctx.save(); for (const sd of [-1, 1]) { ctx.save(); ctx.translate(sd * tear * 420, tear * 60); ctx.rotate(sd * tear * .3); ctx.beginPath(); if (sd < 0) ctx.rect(0, 0, 820, H); else ctx.rect(820, 0, 460, H); ctx.clip(); CK.poster(ctx, 820, 380, 520, 640, { seed: 5, draw: c => { c.fillStyle = grad(c, 0, -320, 0, 320, [[0, '#f2a050'], [1, '#c0563a']]); c.fillRect(-260, -320, 520, 640); Gd.draw(c, 0, 300, .8, cast('gun1', { t, pose: 'hips', face: { eyes: 'squint', brows: 'angry', mouth: 'smirk' }, light: false })); CK.txt(c, 'THE COWBOY', 0, -270, '52px "Luckiest Guy"', '#fff3d0'); } }); ctx.restore(); } ctx.restore(); }
-    theo(ctx, 220, 720, .85, { t, pose: Gd.pose(lt, [[0, 'present'], [R('people') - .3, 'pointSide']]), turn: .3, talk: K.vtalk(t), face: { mouth: 'grin', brows: 'up' } });
+    theo(ctx, 220, 720, .85, { t, pose: Gd.pose(lt, [[0, 'present'], [R('people') - .3, 'pointSide']]), turn: .3, vis: Gd.say(t), face: { mouth: 'grin', brows: 'up' } });
     if (lt > R('people')) K.title(ctx, 'THE PEOPLE', lt, R('people'), { y: 100, size: 64 });
   });
   mood('violence', 'warm'); fx('people', 'paper', .8); fx('people', 'whoosh', .4);
@@ -100,16 +100,16 @@
     CS.studio(ctx, t, 0);
     K.tag(ctx, 'shooting contests', 260, 140, lt, .1, { size: 26 }); K.tag(ctx, 'wild adventures', 640, 120, lt, 1.2, { size: 26 }); K.tag(ctx, 'near-death escapes', 1020, 140, lt, R('neardeath'), { size: 26 });
     K.tag(ctx, 'historians love the book…', 640, 230, lt, R('historians2'), { size: 28 });
-    if (lt > R('fish')) { const g = clamp((lt - R('fish') - .3) / 3); theo(ctx, 640, 740, .8, { t, pose: 'presentBoth', face: { mouth: 'grin', eyes: 'happy', brows: 'up' }, talk: K.vtalk(t) }); ctx.save(); ctx.translate(640, 470); ctx.scale(.6 + g * 1.4, .6 + g * 1.4); sh(ctx, '#7aa0b8', 4, c => { c.ellipse(0, 0, 90, 34, 0, 0, TAU); }); sh(ctx, '#7aa0b8', 4, c => { c.moveTo(80, 0); c.lineTo(130, -34); c.lineTo(130, 34); c.closePath(); }); sh(ctx, OUT, 0, circ(-60, -6, 5)); ctx.restore(); K.tag(ctx, '…and treat it like a fish story', 640, 300, lt, R('fish') + .4, { size: 26 }); }
+    if (lt > R('fish')) { const g = clamp((lt - R('fish') - .3) / 3); theo(ctx, 640, 740, .8, { t, pose: 'presentBoth', face: { mouth: 'grin', eyes: 'happy', brows: 'up' }, vis: Gd.say(t) }); ctx.save(); ctx.translate(640, 470); ctx.scale(.6 + g * 1.4, .6 + g * 1.4); sh(ctx, '#7aa0b8', 4, c => { c.ellipse(0, 0, 90, 34, 0, 0, TAU); }); sh(ctx, '#7aa0b8', 4, c => { c.moveTo(80, 0); c.lineTo(130, -34); c.lineTo(130, 34); c.closePath(); }); sh(ctx, OUT, 0, circ(-60, -6, 5)); ctx.restore(); K.tag(ctx, '…and treat it like a fish story', 640, 300, lt, R('fish') + .4, { size: 26 }); }
   });
   fx('contests', 'pop', .4, .1); fx('contests', 'pop', .4, 1.2); fx('neardeath', 'pop', .4); fx('fish', 'rise', .4, .3);
 
   S('buffalo', (ctx, lt, dur, t, R) => {   // skit: eleven buffalo, one hand — "Reportedly." — "…while reading a newspaper." — "I made that up."
     CS.prairie(ctx, t, 0, { v: 'day', seed: 21 });
     for (let i = 0; i < 11; i++) { const x = 760 + (i % 4) * 120 + Math.floor(i / 4) * 40, y = 560 + Math.floor(i / 4) * 50; ctx.save(); ctx.translate(x, y); ctx.scale(.42, .42); sh(ctx, '#5a3a24', 4, c => { c.ellipse(0, -90, 110, 60, 0, 0, TAU); }); sh(ctx, '#3e2616', 4, c => c.ellipse(80, -110, 60, 70, 0, 0, TAU)); sh(ctx, '#3e2616', 3, c => c.ellipse(100, -70, 30, 30, 0, 0, TAU)); for (const lx of [-60, -30, 40, 70]) ln(ctx, [[lx, -40], [lx, 0]], 14, '#3e2616'); ctx.restore(); ctx.save(); ctx.strokeStyle = '#c9a868'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(420, 380); ctx.quadraticCurveTo((420 + x) / 2, 300, x + 30, y - 60); ctx.stroke(); ctx.restore(); }
-    B.steed(ctx, 400, 690, .95, t, { gait: 'stand', coat: '#d8c4a0', paint: true, rider: cast('natlove', { light: { cast: 0, contact: 0 }, prop: lt > R('newspaper') ? 'newspaper' : 'lasso', pose: 'cheer', face: { mouth: 'grin', eyes: 'happy' }, talk: talkIn(t, TV.buffalo, TV.reportedly2) || talkIn(t, TV.newspaper, TV.didnt) }) });
+    B.steed(ctx, 400, 690, .95, t, { gait: 'stand', coat: '#d8c4a0', paint: true, rider: cast('natlove', { light: { cast: 0, contact: 0 }, prop: lt > R('newspaper') ? 'newspaper' : 'lasso', pose: 'cheer', face: { mouth: 'grin', eyes: 'happy' }, vis: Gd.say(t, TV.buffalo, TV.reportedly2) || Gd.say(t, TV.newspaper, TV.didnt) }) });
     K.bubble(ctx, '…then I roped ELEVEN buffalo with one hand—', 420, 150, lt, .05, { size: 24 });
-    if (lt > R('reportedly2')) { theo(ctx, 1150, 780, .62, { t, pose: lt > R('didnt') ? 'shrug' : 'crossed', turn: -.4, face: lt > R('didnt') ? { mouth: 'grin', eyes: 'half', blush: 1 } : { mouth: 'flat', brows: 'skeptic', eyes: 'half' }, talk: talkIn(t, TV.reportedly2, TV.newspaper) || talkIn(t, TV.didnt, TV.strangest) }); K.bubble(ctx, lt > R('didnt') ? 'That part he didn\'t say. I made that up.' : 'Reportedly.', 1000, 300, lt, lt > R('didnt') ? R('didnt') : R('reportedly2'), { size: 26 }); }
+    if (lt > R('reportedly2')) { theo(ctx, 1150, 780, .62, { t, pose: lt > R('didnt') ? 'shrug' : 'crossed', turn: -.4, face: lt > R('didnt') ? { mouth: 'grin', eyes: 'half', blush: 1 } : { mouth: 'flat', brows: 'skeptic', eyes: 'half' }, vis: Gd.say(t, TV.reportedly2, TV.newspaper) || Gd.say(t, TV.didnt, TV.strangest) }); K.bubble(ctx, lt > R('didnt') ? 'That part he didn\'t say. I made that up.' : 'Reportedly.', 1000, 300, lt, lt > R('didnt') ? R('didnt') : R('reportedly2'), { size: 26 }); }
     if (lt > R('newspaper')) K.bubble(ctx, '—while reading a newspaper.', 420, 240, lt, R('newspaper'), { size: 24 });
   });
   mood('buffalo', 'comic'); fx('buffalo', 'whip', .5, 1); fx('reportedly2', 'pluckUp', .3); fx('newspaper', 'paper', .5); fx('didnt', 'pluckUp', .4, 1.4);
@@ -175,6 +175,7 @@
     CS.movieSet(ctx, t, 0, { tumble: false });
     const st = [[R('along'), 'cowhand', { look: { skin: '#7a4e34', hair: 'curly', hairCol: '#1a1410' } }, 'the real one: often a teen, often not white'], [R('whiter'), 'cowhand', { look: { skin: '#f4caa8' } }, 'whiter'], [R('older'), 'boss', {}, 'older'], [R('angrier'), 'gun1', { face: { brows: 'angry', mouth: 'grit', eyes: 'squint' } }, 'angrier'], [R('pistol'), 'gun1', { pose: 'pointSide', face: { brows: 'angry', mouth: 'smirk', eyes: 'squint' } }, 'better with a pistol']];
     let cur = 0; st.forEach((s, i) => { if (lt >= s[0]) cur = i; }); const s0 = st[cur];
+    CS.longShadow(ctx, 640, 720, 50, 220);
     fig(ctx, s0[1], 640, 720, 1.0, Object.assign({ t, pose: 'idle', face: { mouth: 'flat' } }, s0[2])); { const pk = clamp((lt - s0[0]) / .35); if (pk < 1) K.puff(ctx, 640, 470, pk, 1 - pk); }
     K.tag(ctx, s0[3], 640, 120, lt, s0[0], { size: 34 }); EP.filmLook(ctx, t, .7);
   });
@@ -182,8 +183,9 @@
 
   S('lasttake', (ctx, lt, dur, t, R) => {   // the last take: what does the real cowboy do?
     ctx.save(); EP.push(ctx, lt, dur, 1.0, 1.04, 640, 520); CS.movieSet(ctx, t, 0, { crew: true, tumble: false });
-    fig(ctx, 'cowhand', 520, 700, .8, { t, pose: lt > R('thejob') ? 'shrug' : 'present', turn: .45, face: { mouth: 'smile', brows: 'up' }, talk: talkIn(t, TV.walkcows, TV.worst - .1) || talkIn(t, TV.thejob, TV.leaves) });
-    fig(ctx, 'director', 1000, 760, .86, { t, pose: lt > R('worst') ? 'facepalm' : 'present', turn: -.4, face: lt > R('worst') ? { mouth: 'frown', brows: 'worried', eyes: 'closed' } : { mouth: 'open', brows: 'up' }, talk: talkIn(t, TV.lasttake, TV.walkcows - .1) || talkIn(t, TV.worst, TV.thejob - .1) });
+    CS.longShadow(ctx, 520, 700, 40); CS.longShadow(ctx, 1000, 760, 44, 200);
+    fig(ctx, 'cowhand', 520, 700, .8, { t, pose: lt > R('thejob') ? 'shrug' : 'present', turn: .45, face: { mouth: 'smile', brows: 'up' }, vis: Gd.say(t, TV.walkcows, TV.worst - .1) || Gd.say(t, TV.thejob, TV.leaves) });
+    fig(ctx, 'director', 1000, 760, .86, { t, pose: lt > R('worst') ? 'facepalm' : 'present', turn: -.4, face: lt > R('worst') ? { mouth: 'frown', brows: 'worried', eyes: 'closed' } : { mouth: 'open', brows: 'up' }, vis: Gd.say(t, TV.lasttake, TV.walkcows - .1) || Gd.say(t, TV.worst, TV.thejob - .1) });
     ctx.restore();
     if (lt < R('walkcows')) K.bubble(ctx, 'Okay, okay. Last take. What does the REAL cowboy do?', 900, 180, lt, .05, { size: 24 });
     [['Walk cows.', 'walkcows'], ['Eat beans.', 'eatbeans'], ['Sing to the cows.', 'singcows'], ['Don\'t drown.', 'dontdrown']].forEach(([s, k], i) => card(ctx, s, 300, 130 + i * 74, lt, R(k), { size: 28, rot: (i % 2 ? .02 : -.02) }));
@@ -218,6 +220,7 @@
 
   S('thinkback', (ctx, lt, dur, t, R) => {   // think back to the movie set — it almost never happened
     ctx.save(); EP.push(ctx, lt, dur, 1.0, 1.08, 640, 470); CS.movieSet(ctx, t, 0, {});
+    CS.longShadow(ctx, 320, 650, 34); CS.longShadow(ctx, 960, 650, 34);
     fig(ctx, 'gun1', 320, 650, .62, { t, pose: 'hips', turn: .7, face: { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [.8, 0] } }); fig(ctx, 'gun2', 960, 650, .62, { t: t + 1, pose: 'hips', turn: -.7, face: { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [-.8, 0] } });
     ctx.restore(); EP.filmLook(ctx, t); if (lt > R('never')) { const k = K.pop(lt, R('never'), .3); ctx.save(); ctx.translate(640, 320); ctx.rotate(-.12); ctx.scale(k * 1.2, k * 1.2); ctx.strokeStyle = '#d8433a'; ctx.lineWidth = 8; ctx.strokeRect(-260, -50, 520, 100); CK.txt(ctx, 'ALMOST NEVER HAPPENED', 0, 4, '40px "Luckiest Guy"', '#d8433a'); ctx.restore(); }
   });
@@ -238,7 +241,7 @@
 
   S('subscribe', (ctx, lt, dur, t, R) => {   // sign-off: which job would you have survived?
     CS.studio(ctx, t, 0);
-    theo(ctx, 300, 720, .95, TC({ t, pose: Gd.pose(lt, [[0, 'present'], [R('which') - .3, 'think'], [R('comments'), 'pointSide'], [R('thanks'), 'wave']]), turn: .3, talk: K.vtalk(t), face: { mouth: 'grin', brows: 'up', eyes: lt > R('thanks') ? 'happy' : 'open' } }));
+    theo(ctx, 300, 720, .95, TC({ t, pose: Gd.pose(lt, [[0, 'present'], [R('which') - .3, 'think'], [R('comments'), 'pointSide'], [R('thanks'), 'wave']]), turn: .3, vis: Gd.say(t), face: { mouth: 'grin', brows: 'up', eyes: lt > R('thanks') ? 'happy' : 'open' } }));
     if (lt < R('which')) { const k = K.pop(lt, .2); ctx.save(); ctx.translate(880, 340); ctx.scale(k, k); sh(ctx, '#d8433a', 5, c => c.roundRect(-170, -50, 340, 100, 50)); CK.txt(ctx, 'SUBSCRIBE', 0, 4, '44px "Luckiest Guy"', '#fff'); ctx.restore(); }
     else { K.title(ctx, 'WHICH JOB WOULD YOU SURVIVE?', lt, R('which'), { x: 820, y: 110, size: 40 }); [['POINT', 'pointq'], ['DRAG', 'dragq'], ['WRANGLER', 'wranglerq'], ['COOK', 'wranglerq']].forEach(([s, k], i) => card(ctx, s, 700 + (i % 2) * 280, 260 + Math.floor(i / 2) * 120, lt, R(k) + (i === 3 ? .8 : 0), { size: 40, rot: (i % 2 ? .03 : -.03) })); if (lt > R('comments')) K.tag(ctx, 'tell me in the comments', 840, 520, lt, R('comments'), { size: 28 }); }
   });

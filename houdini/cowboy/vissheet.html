@@ -1,0 +1,5 @@
+<!doctype html><meta charset="utf-8"><canvas id="c" width="2400" height="900"></canvas>
+<script src="../js/toon.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="js/cast.js"></script>
+<script>Guide.setTheme('warm'); const g = document.getElementById('c').getContext('2d'); g.fillStyle = '#f2e2c4'; g.fillRect(0, 0, 2400, 900);
+['X', 'A', 'E', 'O', 'S', 'M'].forEach((k, i) => { Guide.draw(g, 200 + i * 400, 860, 1.4, { t: 1, noBlink: true, pose: 'present', vis: { k, o: .8, nod: 0, brow: i === 1 ? 1 : 0, beat: i === 2 ? 1 : 0, beat2: 0, tilt: 0 }, face: { mouth: i === 5 ? 'grin' : 'smile' } }); });
+Guide.draw(g, 2300, 860, .7, Object.assign({ t: 1, vis: { k: 'A', o: .9, nod: .5, brow: 1, beat: .8, beat2: .5, tilt: .03 } }, CW.director)); window.DONE = true;</script>

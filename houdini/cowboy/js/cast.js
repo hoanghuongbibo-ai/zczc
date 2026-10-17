@@ -139,7 +139,7 @@
         garment(ctx, { shadeSide: 1 }, crown, col, 'rgba(0,0,0,.28)', c2 => { c2.fillStyle = band; c2.fillRect(x - 100, -104, 200, 22); c2.fillStyle = 'rgba(255,255,255,.14)'; c2.fillRect(x - 56, -190, 14, 120); if (o.stain) { c2.fillStyle = 'rgba(90,60,30,.35)'; c2.beginPath(); c2.ellipse(x - 20, -94, 70, 18, 0, 0, TAU); c2.fill(); } });
         curve(ctx, [x - 30, -176], [x, -150], [x + 30, -176], 3, 'rgba(0,0,0,.35)');
         ctx.save(); ctx.rotate(tilt); path(ctx, c => { c.ellipse(x, -64, w, 30, 0, 0, PI); c.quadraticCurveTo(x - w * .5, -40, x, -46); c.quadraticCurveTo(x + w * .5, -40, x + w, -64); }, col, 4);
-        if (o.hole) path(ctx, c => c.ellipse(x + 40, -150, 9, 6, .3, 0, TAU), '#2a1a10', 2);
+        if (o.hole) { path(ctx, c => c.ellipse(x + 40, -150, 9, 6, .3, 0, TAU), '#2a1a10', 2); path(ctx, c => c.rect(x - 52, -160, 30, 26), '#6a7a8a', 2.5); for (let k = 0; k < 4; k++) seg(ctx, [[x - 50 + k * 8, -164], [x - 50 + k * 8, -156]], 1.5, '#e8dcc0'); ctx.save(); ctx.fillStyle = 'rgba(70,50,30,.3)'; for (const [dx, dy, r] of [[-20, -120, 22], [30, -100, 16], [60, -180, 12]]) { ctx.beginPath(); ctx.ellipse(x + dx, dy, r, r * .6, 0, 0, TAU); ctx.fill(); } ctx.restore(); }
         ctx.restore(); if (o.glasses) glasses(ctx, hc, '#2a2a2a', 'rgba(200,230,255,.25)'); } };
   }
   function glasses(ctx, hc, frame, lens) { const x = hc.hx; for (const s of [-1, 1]) path(ctx, c => c.ellipse(x + s * 44, 10, 26, 22, 0, 0, TAU), lens, 4); seg(ctx, [[x - 18, 8], [x + 18, 8]], 4, frame); }
@@ -175,7 +175,7 @@
   // ---------- the cast (spread into Guide.draw options) ----------
   G.CW = {
     theoCow:  { outfit: 'cowTheo', hat: 'stetson' },                                                     // Theo on the trail ("you, new guy")
-    cowhand:  { outfit: 'cowhand', hat: 'battered', look: { skin: '#f4b694', hairCol: '#b8873e', width: .94 } },   // the 17-year-old extra
+    cowhand:  { outfit: 'cowhand', hat: 'battered', look: { skin: '#f4b694', hairCol: '#b8873e', width: .94, dirt: 1 } },   // the 17-year-old extra
     gun1:     { outfit: 'gunslinger', look: { skin: '#e6b48e', hairCol: '#2a1a12', beard: 'moustache', brow: 1 } },
     gun2:     { outfit: 'lawman', look: { skin: '#f0c4a0', hairCol: '#8a5a30', chin: true } },
     director: { outfit: 'director', prop: 'megaphone', look: { skin: '#efc3a0', hairCol: '#3a2a20', beard: 'moustache', width: 1.06 } },

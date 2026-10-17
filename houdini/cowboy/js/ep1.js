@@ -51,9 +51,9 @@
   S('cut2', (ctx, lt, dur, t, R) => {   // "CUT! None of my cowboys look like that." — "Yeah. We'll get to why."
     const sk = Math.max(0, 1 - lt / .4) * 8; ctx.save(); ctx.translate(Math.sin(lt * 60) * sk, 0); CS.prairie(ctx, t, 0, { v: 'day', seed: 7 });
     ['vet', 'vaquero', 'freed', 'freed2'].forEach((n, i) => fig(ctx, n, 160 + i * 150, 660, .5, { t: t + i, pose: 'idle', turn: .5, face: { mouth: 'flat', brows: 'skeptic', look: [.8, 0] } }));
-    const dk = clamp(lt / .4); fig(ctx, 'director', lerp(1500, 1000, ease.out(dk)), 760, .92, { t, pose: Gd.pose(lt, [[0, 'pointSideL'], [2, 'crossed']]), turn: -.3, face: { mouth: 'shock', brows: 'angry', eyes: 'wide' }, talk: talkIn(t, TV.cut2, TV.getto) });
+    const dk = clamp(lt / .4); fig(ctx, 'director', lerp(1500, 1000, ease.out(dk)), 760, .92, { t, pose: Gd.pose(lt, [[0, 'pointSideL'], [2, 'crossed']]), turn: -.3, face: { mouth: 'shock', brows: 'angry', eyes: 'wide' }, vis: Gd.say(t, TV.cut2, TV.getto) });
     ctx.restore(); K.title(ctx, 'CUT!', lt, 0, { y: 110, size: 90, color: '#e8433a' }); K.bubble(ctx, 'None of MY cowboys look like that!', 900, 230, lt, R('mycowboys'), { size: 26 });
-    if (lt > R('getto')) { theo(ctx, 120, 760, .72, { t, pose: 'present', turn: .5, face: { mouth: 'smirk', eyes: 'half', brows: 'skeptic' }, talk: K.vtalk(t) }); K.bubble(ctx, 'Yeah. We\'ll get to why.', 330, 330, lt, R('getto'), { size: 26 }); }
+    if (lt > R('getto')) { theo(ctx, 120, 760, .72, { t, pose: 'present', turn: .5, face: { mouth: 'smirk', eyes: 'half', brows: 'skeptic' }, vis: Gd.say(t) }); K.bubble(ctx, 'Yeah. We\'ll get to why.', 330, 330, lt, R('getto'), { size: 26 }); }
     EP.filmLook(ctx, t, .6);
   });
   mood('cut2', 'comic'); fx('cut2', 'clap', .6); fx('cut2', 'stamp', .5, .05);
@@ -61,7 +61,7 @@
   // ===================== BEAT 4 — a day on the trail =====================
   S('trail', (ctx, lt, dur, t, R) => {   // Theo spins into his trail kit
     CS.studio(ctx, t, 0); const sp = .5, k = clamp((lt - sp) / .5), th = ease.inOut(k) * TAU * 1.5, after = lt > sp + .25;
-    const o = { t, turn: k > 0 && k < 1 ? Math.sin(th) : 0, back: k > 0 && k < 1 && Math.cos(th) < 0, talk: K.vtalk(t), pose: after ? Gd.pose(lt - sp, [[0, 'idle'], [.6, 'thumbsUp'], [2.2, 'present']]) : 'present', hair: Gd.hairRing(lt - sp - .4, .5), face: { mouth: 'grin', brows: 'up', eyes: after && lt < 2 ? 'happy' : 'open' } };
+    const o = { t, turn: k > 0 && k < 1 ? Math.sin(th) : 0, back: k > 0 && k < 1 && Math.cos(th) < 0, vis: Gd.say(t), pose: after ? Gd.pose(lt - sp, [[0, 'idle'], [.6, 'thumbsUp'], [2.2, 'present']]) : 'present', hair: Gd.hairRing(lt - sp - .4, .5), face: { mouth: 'grin', brows: 'up', eyes: after && lt < 2 ? 'happy' : 'open' } };
     K.fig(ctx, 420, 700, .95, after ? TC(o) : Object.assign({ light: K.LIGHT.warm }, o)); K.puff(ctx, 420, 470, clamp((lt - sp - .2) / .25), 1 - clamp((lt - sp - .45) / .4));
     K.title(ctx, 'YOU: NEW HAND, 1870s', lt, .4, { y: 90, size: 50 });
     EP.card(ctx, 'Kansas: 2–3 months away', 920, 260, lt, R('months'), { size: 30, rot: .03 });
@@ -102,8 +102,8 @@
 
   S('coffee', (ctx, lt, dur, t, R) => {   // skit: Cookie's menu
     ctx.save(); EP.push(ctx, lt, dur, 1.02, 1.08, 640, 560); CS.camp(ctx, t, 0, { v: 'dawn', wagon: true });
-    fig(ctx, 'cook', 860, 720, .86, { t, prop: lt < R('couldi') ? 'coffee' : 'ladle', pose: Gd.pose(lt, [[0, 'present'], [R('complaints'), 'crossed'], [R('menu'), 'pointSideL']]), turn: -.35, light: K.LIGHT.dusk, face: { mouth: lt > R('complaints') ? 'smirk' : 'flat', brows: 'skeptic', eyes: 'half' }, talk: talkIn(t, TV.coffee, TV.couldi - .1) || talkIn(t, TV.menu, TV.morning) });
-    theo(ctx, 360, 720, .82, TC({ t, prop: 'plate', pose: lt > R('menu') + .6 ? 'shrug' : 'present', turn: .35, light: K.LIGHT.dusk, face: lt > R('menu') ? { mouth: 'frown', brows: 'worried', eyes: 'half' } : { mouth: 'smile', brows: 'up' }, talk: talkIn(t, TV.couldi, TV.menu - .1) }));
+    fig(ctx, 'cook', 860, 720, .86, { t, prop: lt < R('couldi') ? 'coffee' : 'ladle', pose: Gd.pose(lt, [[0, 'present'], [R('complaints'), 'crossed'], [R('menu'), 'pointSideL']]), turn: -.35, light: K.LIGHT.dusk, face: { mouth: lt > R('complaints') ? 'smirk' : 'flat', brows: 'skeptic', eyes: 'half' }, vis: Gd.say(t, TV.coffee, TV.couldi - .1) || Gd.say(t, TV.menu, TV.morning) });
+    theo(ctx, 360, 720, .82, TC({ t, prop: 'plate', pose: lt > R('menu') + .6 ? 'shrug' : 'present', turn: .35, light: K.LIGHT.dusk, face: lt > R('menu') ? { mouth: 'frown', brows: 'worried', eyes: 'half' } : { mouth: 'smile', brows: 'up' }, vis: Gd.say(t, TV.couldi, TV.menu - .1) }));
     ctx.restore();
     K.bubble(ctx, 'Coffee\'s on.', 960, 200, lt, .05, { size: 28 }); if (lt > R('beanson')) K.bubble(ctx, 'Beans are on.', 1010, 270, lt, R('beanson'), { size: 28 }); if (lt > R('complaints')) K.bubble(ctx, 'Complaints are OFF.', 980, 340, lt, R('complaints'), { size: 30 });
     if (lt > R('couldi') && lt < R('menu')) K.bubble(ctx, 'Could I maybe get—', 320, 300, lt, R('couldi'), { size: 28 });

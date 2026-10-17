@@ -224,6 +224,7 @@
       if (LK.beard === 'moustache' || LK.beard === 'walrus' || LK.beard === 'full') { const w = LK.beard === 'walrus' ? 34 : 24, dr = LK.beard === 'walrus' ? 22 : 8;
         path(ctx, c => { c.moveTo(mx0, 40); c.quadraticCurveTo(mx0 - w * .6, 34, mx0 - w, 48 + dr); c.quadraticCurveTo(mx0 - w * .4, 46, mx0, 50); c.quadraticCurveTo(mx0 + w * .4, 46, mx0 + w, 48 + dr); c.quadraticCurveTo(mx0 + w * .6, 34, mx0, 40); c.closePath(); }, bc, 3.5); }
     }
+    if (LK.dirt && !back) { ctx.save(); ctx.beginPath(); ctx.ellipse(0, 0, R - 2, RY - 2, 0, 0, Math.PI * 2); ctx.clip(); for (const [dx, dy, rx, ry, a] of [[-.55, .35, 22, 12, .3], [.6, .5, 18, 9, .26], [.15, -.45, 26, 10, .2], [-.2, .72, 14, 8, .24]]) { ctx.fillStyle = `rgba(120,85,50,${a * LK.dirt})`; ctx.beginPath(); ctx.ellipse(sx(dx), dy * RY, rx, ry, .3, 0, Math.PI * 2); ctx.fill(); } ctx.restore(); }
     for (const s of [-1, 1]) { const v = vis(s * .78); if (v <= .4) continue; ctx.fillStyle = C.cheek; ctx.beginPath(); ctx.ellipse(sx(s * .78), 40, 15 * v, 9, 0, 0, Math.PI * 2); ctx.fill(); }
     for (const s of [-1, 1]) {
       const v = vis(s * .4); if (v < .12) continue;
@@ -266,6 +267,20 @@
       if (tongue) { ctx.fillStyle = C.tongue; ctx.beginPath(); ctx.ellipse(mx + 3, my + 30, 18 * wk, 12, 0, 0, Math.PI * 2); ctx.fill(); }
       ctx.restore(); path(ctx, shp, null, 4.5);
     };
+    const VS = H.vis;   // lip-sync: a viseme from the voice (Guide.say) replaces the static mouth while the character speaks
+    if (VS && VS.k !== 'X' && !back) {
+      const vo = clamp(VS.o), happy = m === 'grin' || m === 'smile', sad = m === 'frown', lipW = LK.lips ? 10 : 0;
+      const corner = (s2, up) => curve(ctx, [mx + s2 * 20 * wk, my - 2], [mx + s2 * 27 * wk, my - 6 * up], [mx + s2 * 30 * wk, my - 12 * up], 4.5);
+      const lip = shp => { if (LK.lips) path(ctx, shp, null, 0), (ctx.lineWidth = lipW, ctx.strokeStyle = LK.lips, ctx.beginPath(), shp(ctx), ctx.stroke()); };
+      if (VS.k === 'A') { const shp = openShape(lerp(18, 23, vo) * wk, lerp(7, 17, vo), false); lip(shp); filled(shp, true, true); }
+      else if (VS.k === 'E') { const shp = openShape(lerp(24, 29, vo) * wk, lerp(3.5, 8, vo), true); lip(shp); filled(shp, true, false); }
+      else if (VS.k === 'O') { const w = lerp(10, 14, vo) * wk, h = lerp(10, 17, vo), shp = c => c.ellipse(mx, my + 6, w, h, 0, 0, Math.PI * 2); lip(shp); path(ctx, shp, C.mouth, 4.5); ctx.save(); ctx.beginPath(); shp(ctx); ctx.clip(); ctx.fillStyle = C.tongue; ctx.beginPath(); ctx.ellipse(mx, my + 6 + h * .8, w, h * .5, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); path(ctx, shp, null, 4.5); }
+      else if (VS.k === 'S') { const w = 20 * wk, shp = c => c.roundRect(mx - w, my - 5, w * 2, 13, 6); lip(shp); path(ctx, shp, '#fff', 4.5); seg(ctx, [[mx - w + 4, my + 1.5], [mx + w - 4, my + 1.5]], 2, 'rgba(0,0,0,.35)'); }
+      else { const w = 15 * wk; if (LK.lips) curve(ctx, [mx - w, my + 1], [mx, my + 6], [mx + w, my + 1], 10, LK.lips); curve(ctx, [mx - w, my + 1], [mx, my + 5], [mx + w, my + 1], 6); }
+      if (happy && VS.k !== 'O') { corner(-1, 1); corner(1, 1); } else if (sad) { corner(-1, -1); corner(1, -1); }
+      if (HAT && !HAT.under) HAT.draw(ctx, HC);
+      return;
+    }
     if (m === 'o' || m === 'shock') { const w = (m === 'o' ? 11 : 17) * wk, h = m === 'o' ? 14 : 22; path(ctx, c => c.ellipse(mx, my + 8, w, h, 0, 0, Math.PI * 2), C.mouth, 4.5); if (m === 'shock') { ctx.save(); ctx.beginPath(); ctx.ellipse(mx, my + 8, w, h, 0, 0, Math.PI * 2); ctx.clip(); ctx.fillStyle = C.tongue; ctx.beginPath(); ctx.ellipse(mx, my + 28, w, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); } }
     else if (m === 'grin' || m === 'open' || o > .08) {
       const w = (m === 'grin' ? 30 : lerp(17, 25, o)) * wk, h = m === 'grin' ? 17 : lerp(5, 15, Math.max(o, m === 'open' ? .6 : 0));
@@ -337,10 +352,12 @@
   }
   const PROPS = {};
   function drawBody(ctx, o) {
-    const t = o.t ?? 0, P = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
+    const t = o.t ?? 0, P0 = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
+    const P = o.vis && o.vis.beat > .02 && !P0.cross ? Object.assign({}, P0, { R: [P0.R[0] + o.vis.beat * 10, P0.R[1] - o.vis.beat * 30], L: [P0.L[0] - o.vis.beat2 * 6, P0.L[1] - o.vis.beat2 * 16] }) : P0;
     const LK = o.look || {}, wk2 = LK.width || 1, OF = OUTFITS[o.outfit] || OUTFITS.suit, hat = o.hat === 'none' ? null : (o.hat || OF.hat);
     const back = !!o.back, turn = back ? 0 : clamp(o.turn || 0, -1, 1), yaw = turn * .7;
-    const breathe = Math.sin(t * 2.1) * 2.4, talk = o.talk || 0, bob = -talk * 3 + breathe * .4;
+    const SA = o.vis || null;   // speech acting (from Guide.say): nod on syllable onsets, brows up on emphasis, hand beats, head tilt
+    const breathe = Math.sin(t * 2.1) * 2.4, talk = SA ? clamp(SA.o) : (o.talk || 0), bob = -talk * 3 + breathe * .4 - (SA ? SA.nod * 7 : 0);
     const bowK = P.bow || 0;
     const nar = 1 - Math.abs(turn) * .12, vx = Math.sin(yaw) * 34;
     const top = -330 + breathe - (P.shrug || 0) * 12, sh = { L: [(-58 * nar + turn * 4) * wk2, top + 22], R: [(58 * nar + turn * 4) * wk2, top + 22] };
@@ -379,8 +396,9 @@
       seg(ctx, [sh.R, [72, yB], [-64, yB]], sw + 10); seg(ctx, [sh.R, [72, yB], [-64, yB]], sw, sc); hand(ctx, -70, yB, 'fist', Math.PI, true);
     } else for (const side of ['L', 'R']) if (side !== far && !(side === 'R' && P.hR === 'palmIn' && !back)) doArm(side);
     if (OF.front) { ctx.save(); ctx.scale(wk2, 1); OF.front(ctx, B); ctx.restore(); }
-    ctx.save(); ctx.translate(vx * .45, top - 84 + bob + bowK * 30); ctx.rotate((o.headTilt || 0) + Math.sin(t * 1.3) * .015 + talk * .02 * Math.sin(t * 9));
-    head(ctx, { f: o.face || {}, talk, t, yaw, back, hairAng: (o.hair || 0) + Math.sin(t * 1.7) * .03, noBlink: o.noBlink, hat, shadeSide, look: LK });
+    ctx.save(); ctx.translate(vx * .45, top - 84 + bob + bowK * 30); ctx.rotate((o.headTilt || 0) + Math.sin(t * 1.3) * .015 + talk * .02 * Math.sin(t * 9) + (SA ? SA.tilt : 0));
+    const F0 = o.face || {}, F1 = SA && SA.brow > .5 && (!F0.brows || F0.brows === 'neutral') ? Object.assign({}, F0, { brows: 'up' }) : F0;
+    head(ctx, { f: F1, talk, t, yaw, back, hairAng: (o.hair || 0) + Math.sin(t * 1.7) * .03, noBlink: o.noBlink, hat, shadeSide, look: LK, vis: SA });
     ctx.restore();
     if (P.hR === 'palmIn' && !back) { const a = arm(ctx, sh.R, [vx * .45 + 34, top - 52], 1, true, OF.arm); ctx.save(); ctx.translate(a.wr[0], a.wr[1]); ctx.scale(1.3, 1.3); hand(ctx, 0, 0, 'palm', -Math.PI / 2 - .35, false); ctx.restore(); }
   }
@@ -424,11 +442,20 @@
     warm: { ink: '#3a2519', eyeTop: '#1a0f08', eyeBot: '#7a4a2c', face: '#fcd8bd', faceHi: '#fee6d3', faceMid: '#fbd4b6', faceEdge: '#e7a585', noseFill: '#f9cdb0', hair: '#3d2416', hairHi: '#7d5034', cheek: 'rgba(238,104,96,.42)' },
   };
   function setTheme(name) { const th = THEMES[name] || THEMES.ink; INK = th.ink; for (const k of Object.keys(th)) if (k !== 'ink') C[k] = th[k]; }
+  // lip-sync + speech acting from window.VIS (tools/visemes.py): { k viseme, o opening, nod, brow, beat, beat2, tilt } or null outside [from, to]
+  function say(t, from = -1e9, to = 1e9, V = G.VIS) {
+    if (!V || t < from || t > to) return null; const i = Math.max(0, Math.floor(t * V.fps)), O = V.o, at = j => O[Math.min(O.length - 1, Math.max(0, j))] || 0;
+    const o = at(i), k = V.k[i] || 'X'; let prev = 0; for (let j = 1; j <= 4; j++) prev += at(i - j) / 4;
+    let mean = 0; for (let j = -15; j <= 15; j++) mean += at(i + j) / 31;
+    let brow = 0; for (let j = 0; j < 8; j++) { const v = at(i - j); if (v > .72 && v > mean * 1.35) brow = Math.max(brow, 1 - j / 8); }
+    let beat = 0, beat2 = 0; for (let j = 0; j < 10; j++) { const on = Math.max(0, at(i - j) - at(i - j - 3)); beat += on * Math.sin(Math.PI * (1 - j / 10)) * .5; beat2 += Math.max(0, at(i - j - 5) - at(i - j - 8)) * Math.sin(Math.PI * (1 - j / 10)) * .4; }
+    return { k, o, nod: clamp((o - prev) * 2.2), brow, beat: clamp(beat * 2.2), beat2: clamp(beat2 * 2), tilt: Math.sin(t * .8 + Math.floor(t / 3.7)) * .035 * clamp(mean * 2) };
+  }
   function talk(t, env = G.ENV, from = -1e9, to = 1e9) {
     if (!env || t < from || t > to) return 0;
     const i = t * env.fps, a = env.v[Math.floor(i)] || 0, b = env.v[Math.floor(i) + 1] || 0, v = a + (b - a) * (i % 1);
     return clamp((v - .12) * 1.6);
   }
-  G.Guide = { draw, drawRaw, PROPS, hexMul, pose, blendPose, talk, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
+  G.Guide = { draw, drawRaw, PROPS, hexMul, pose, blendPose, talk, say, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
     kit: { path, seg, curve, through, union, bodyPath, garment, lerp, clamp, get INK() { return INK; }, LW }, setTheme, THEMES, name: 'Theo' };
 })(window);

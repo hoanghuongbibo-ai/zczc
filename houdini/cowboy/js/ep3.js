@@ -12,7 +12,7 @@
 
   S('nobody', (ctx, lt, dur, t, R) => {   // not a bullet — weather and water
     CS.studio(ctx, t, 0);
-    theo(ctx, 320, 700, .9, TC({ t, pose: Gd.pose(lt, [[0, 'present'], [R('bullet') + .6, 'crossed'], [R('weather'), 'presentBoth']]), turn: .3, talk: K.vtalk(t), face: { mouth: 'smile', brows: 'up' } }));
+    theo(ctx, 320, 700, .9, TC({ t, pose: Gd.pose(lt, [[0, 'present'], [R('bullet') + .6, 'crossed'], [R('weather'), 'presentBoth']]), turn: .3, vis: Gd.say(t), face: { mouth: 'smile', brows: 'up' } }));
     icon(ctx, 'bullet', 820, 330, 1.6, K.pop(lt, R('bullet'))); CK.crossOut(ctx, 820, 330, 90, clamp((lt - R('bullet') - .8) / .5));
     icon(ctx, 'storm', 760, 560, 1.2, K.pop(lt, R('weather') + .6)); icon(ctx, 'water', 1060, 560, 1.2, K.pop(lt, R('weather') + 1.2));
     K.tag(ctx, 'weather', 760, 680, lt, R('weather') + .7, { size: 26 }); K.tag(ctx, 'water', 1060, 680, lt, R('weather') + 1.3, { size: 26 });
@@ -65,7 +65,7 @@
 
   S('fine', (ctx, lt, dur, t, R) => {   // "Fine. FINE. But the cow towns! Shootouts every night!"
     CS.cowtown(ctx, t, 0, { v: 'night' });
-    fig(ctx, 'director', 640, 780, 1.0, { t, pose: Gd.pose(lt, [[0, 'facepalm'], [1.6, 'pointUp'], [R('shootouts'), 'cheer']]), turn: .1, light: K.LIGHT.night, face: lt < 1.6 ? { mouth: 'frown', eyes: 'closed', brows: 'worried' } : { mouth: 'grin', eyes: 'wide', brows: 'up' }, talk: K.vtalk(t) });
+    fig(ctx, 'director', 640, 780, 1.0, { t, pose: Gd.pose(lt, [[0, 'facepalm'], [1.6, 'pointUp'], [R('shootouts'), 'cheer']]), turn: .1, light: K.LIGHT.night, face: lt < 1.6 ? { mouth: 'frown', eyes: 'closed', brows: 'worried' } : { mouth: 'grin', eyes: 'wide', brows: 'up' }, vis: Gd.say(t) });
     K.bubble(ctx, lt < R('towns') ? 'Fine. FINE.' : lt < R('shootouts') ? 'But the COW TOWNS! Abilene! Dodge City!' : 'Shootouts EVERY NIGHT!', 640, 160, lt, lt < R('towns') ? .05 : lt < R('shootouts') ? R('towns') : R('shootouts'), { size: 30 });
     EP.filmLook(ctx, t, .5);
   });
@@ -73,7 +73,7 @@
 
   const KV = { lon: -98.6, lat: 38.2, z: 1.5 }, TOWNS = ['Abilene', 'Ellsworth', 'Wichita', 'Dodge City', 'Caldwell'];
   S('check', (ctx, lt, dur, t, R) => {   // let's check: Robert Dykstra, the five Kansas cattle towns
-    if (lt < R('five') - .2) { CS.studio(ctx, t, 0); theo(ctx, 320, 700, .9, { t, prop: 'magnifier', pose: 'magnify', turn: .3, talk: K.vtalk(t), face: { mouth: 'smile', brows: 'up', eyes: 'squint' } });
+    if (lt < R('five') - .2) { CS.studio(ctx, t, 0); theo(ctx, 320, 700, .9, { t, prop: 'magnifier', pose: 'magnify', turn: .3, vis: Gd.say(t), face: { mouth: 'smile', brows: 'up', eyes: 'squint' } });
       CK.book(ctx, 880, 360, 1, K.pop(lt, R('dykstra')), 'THE\nCATTLE\nTOWNS', 'Robert R. Dykstra · 1968', { col: '#3a5a7a', ts: 36 }); K.tag(ctx, 'historian Robert Dykstra', 880, 600, lt, R('dykstra') + .3, { size: 26 }); K.tag(ctx, 'went through the records', 880, 650, lt, R('dykstra') + 1.2, { size: 22 }); return; }
     CS.map(ctx, t, KV); TOWNS.forEach((n, i) => CS.pin(ctx, n, KV, lt, R('five') + i * .55, { size: 22, dy: i === 3 ? 40 : -66 })); FX.dateTag(ctx, 'KANSAS · THE 5 BIG CATTLE TOWNS');
   });

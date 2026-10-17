@@ -29,19 +29,21 @@
     ctx.restore(); }
   EP.clapper = clapper;
   const flicker = t => .94 + .06 * Math.sin(t * 47) * Math.sin(t * 13);   // old-film flicker on the movie-set shots
-  function filmLook(ctx, t, a = 1) { ctx.save(); ctx.globalAlpha = (1 - flicker(t)) * 2 * a; ctx.fillStyle = '#fff6e0'; ctx.fillRect(0, 0, W, H); ctx.restore(); const r = rng(Math.floor(t * 24)); ctx.save(); ctx.globalAlpha = .35 * a; ctx.strokeStyle = 'rgba(40,30,20,.5)'; ctx.lineWidth = 1.2; for (let i = 0; i < 2; i++) { const x = r() * W; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + (r() - .5) * 8, H); ctx.stroke(); } ctx.restore(); CK.filmFrame(ctx, t, a); }
+  function filmLook(ctx, t, a = 1) { ctx.save(); ctx.globalAlpha = (1 - flicker(t)) * .5 * a; ctx.fillStyle = '#fff6e0'; ctx.fillRect(0, 0, W, H); ctx.restore(); const r = rng(Math.floor(t * 24)); ctx.save(); ctx.globalAlpha = .35 * a; ctx.strokeStyle = 'rgba(40,30,20,.5)'; ctx.lineWidth = 1.2; for (let i = 0; i < 2; i++) { const x = r() * W; ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x + (r() - .5) * 8, H); ctx.stroke(); } ctx.restore(); CK.filmFrame(ctx, t, a); }
   EP.filmLook = filmLook;
   const GX1 = 320, GX2 = 960;   // gunslinger marks on Main Street
   function duel(ctx, t, lt, o = {}) {
-    fig(ctx, 'gun1', GX1, 650, .62, { t, pose: o.p1 || 'idle', turn: o.turn1 ?? .7, face: o.f1 || { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [.8, 0] }, talk: o.talk1 || 0 });
-    fig(ctx, 'gun2', GX2, 650, .62, { t: t + 1, pose: o.p2 || 'idle', turn: o.turn2 ?? -.7, face: o.f2 || { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [-.8, 0] }, talk: o.talk2 || 0 });
+    CS.longShadow(ctx, GX1, 650, 34); CS.longShadow(ctx, GX2, 650, 34);
+    fig(ctx, 'gun1', GX1, 650, .62, { t, pose: o.p1 || 'idle', turn: o.turn1 ?? .7, face: o.f1 || { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [.8, 0] }, vis: o.vis1 || null });
+    fig(ctx, 'gun2', GX2, 650, .62, { t: t + 1, pose: o.p2 || 'idle', turn: o.turn2 ?? -.7, face: o.f2 || { mouth: 'flat', brows: 'angry', eyes: 'squint', look: [-.8, 0] }, vis: o.vis2 || null });
   }
 
   // ===================== COLD OPEN =====================
   S('action', (ctx, lt, dur, t, R) => {   // "Aaand… ACTION!"  the director, the crew, the clapper
     ctx.save(); EP.push(ctx, lt, dur, 1.0, 1.04); CS.movieSet(ctx, t, 0, { crew: true });
     duel(ctx, t, lt, { f1: { mouth: 'flat', brows: 'neutral', look: [.8, 0] }, f2: { mouth: 'flat', look: [-.8, 0] } });
-    fig(ctx, 'director', 1040, 760, .78, { t, pose: lt < R('action') ? 'present' : 'pointUp', turn: -.3, face: { mouth: 'open', brows: 'up' }, talk: talkIn(t, 0, 2.4) });
+    CS.longShadow(ctx, 1040, 760, 44, 200);
+    fig(ctx, 'director', 1040, 760, .78, { lean: lt > R('action') - .2 ? -.06 : 0, t, pose: lt < R('action') ? 'present' : 'pointUp', turn: -.3, face: { mouth: 'open', brows: 'up' }, vis: Gd.say(t, 0, 2.4) });
     ctx.restore();
     const ck = clamp((lt - R('action') + .12) / .12); clapper(ctx, 420, 380 + Math.max(0, 1 - lt / .3) * 300, .9, ck, t);
     K.bubble(ctx, 'Aaand… ACTION!', 1010, 210, lt, .2, { size: 30 }); filmLook(ctx, t);
@@ -50,7 +52,7 @@
 
   S('town', (ctx, lt, dur, t, R) => {   // the face-off on Main Street
     ctx.save(); EP.push(ctx, lt, dur + 3.6, 1.0, 1.12, 640, 470); CS.movieSet(ctx, t, 0, { tph: .2 });
-    duel(ctx, t, lt, { talk1: talkIn(t, TV.town, TV.draw - .1), talk2: talkIn(t, TV.draw, TV.excuse), p1: lt > R('draw') ? 'hips' : 'idle', p2: lt > R('draw') + .4 ? 'hips' : 'idle' });
+    duel(ctx, t, lt, { vis1: Gd.say(t, TV.town, TV.draw - .1), vis2: Gd.say(t, TV.draw, TV.excuse), p1: lt > R('draw') ? 'hips' : 'idle', p2: lt > R('draw') + .4 ? 'hips' : 'idle' });
     ctx.restore();
     K.bubble(ctx, 'This town ain\'t big enough for the both of us.', 360, 170, lt, .1, { size: 24 });
     if (lt > R('draw')) K.bubble(ctx, 'Then draw, partner.', 930, 230, lt, R('draw'), { size: 26 });
@@ -63,7 +65,8 @@
     const walkK = clamp(lt / 2.2), cx = lerp(-80, 640, ease.out(walkK));
     duel(ctx, t, lt, { p1: 'hips', p2: 'hips', f1: lt > 1 ? { mouth: 'o', brows: 'skeptic', look: [.4, 0] } : undefined, f2: lt > 1.2 ? { mouth: 'flat', brows: 'worried', look: [-.4, 0] } : undefined, turn1: .5, turn2: -.5 });
     CK.puff(ctx, cx - 30, 640, (lt * 2) % 1, .5, 50);
-    fig(ctx, 'cowhand', cx, 660, .6, { t, walk: walkK < 1 ? t * 8 : null, turn: walkK < 1 ? .6 : 0, pose: walkK < 1 ? 'idle' : 'shrug', face: { mouth: 'smile', brows: 'worried' }, talk: talkIn(t, TV.excuse, TV.cut) });
+    CS.longShadow(ctx, cx, 660, 32);
+    fig(ctx, 'cowhand', cx, 660, .6, { t, walk: walkK < 1 ? t * 8 : null, turn: walkK < 1 ? .6 : 0, pose: walkK < 1 ? 'idle' : 'shrug', face: { mouth: 'smile', brows: 'worried' }, vis: Gd.say(t, TV.excuse, TV.cut) });
     CK.stink(ctx, cx + 60, 360, t, .8);
     ctx.restore();
     if (lt > R('cows')) K.bubble(ctx, 'Has anybody seen about two thousand cows?', 640, 150, lt, R('cows'), { size: 26 });
@@ -77,7 +80,7 @@
     const sk = Math.max(0, 1 - lt / .5) * 10; ctx.save(); ctx.translate(Math.sin(lt * 60) * sk, 0); EP.push(ctx, lt, dur, 1.0, 1.02);
     ctx.save(); ctx.filter = 'blur(3px)'; CS.movieSet(ctx, t, 0, { tumble: false }); ctx.restore();
     fig(ctx, 'cowhand', 820, 560, .4, { t, pose: 'wave', face: { mouth: 'grin' }, light: false });
-    fig(ctx, 'director', 520, 800, 1.0, { t, pose: Gd.pose(lt, [[0, 'pointSide'], [1.2, 'facepalm']], .25), turn: .25, face: { mouth: 'shock', brows: 'angry', eyes: 'wide' }, talk: talkIn(t, TV.cut, TV.know) });
+    fig(ctx, 'director', 520, 800, 1.0, { lean: .08 * Math.max(0, 1 - lt / 1.2), t, pose: Gd.pose(lt, [[0, 'pointSide'], [1.2, 'facepalm']], .25), turn: .25, face: { mouth: 'shock', brows: 'angry', eyes: 'wide' }, vis: Gd.say(t, TV.cut, TV.know) });
     ctx.restore();
     K.title(ctx, 'CUT!', lt, 0, { y: 140, size: 110, color: '#e8433a' }); if (lt > R('wholet')) K.bubble(ctx, 'Who let the extra in?', 900, 260, lt, R('wholet'), { size: 30 });
     filmLook(ctx, t);
@@ -87,7 +90,7 @@
   // ===================== MYTH vs REAL =====================
   S('know', (ctx, lt, dur, t, R) => {   // the cowboy you know: a movie poster
     CS.studio(ctx, t, 0);
-    theo(ctx, 330, 700, .9, { t, pose: Gd.pose(lt, [[0, 'present'], [1.4, 'pointSide']]), turn: .3, talk: K.vtalk(t), face: { mouth: 'smile', brows: 'up' } });
+    theo(ctx, 330, 700, .9, { t, pose: Gd.pose(lt, [[0, 'present'], [1.4, 'pointSide']]), turn: .3, vis: Gd.say(t), face: { mouth: 'smile', brows: 'up' } });
     const k = K.pop(lt, .2, .45); CK.poster(ctx, 900, 360, 380, 520, { rot: .03, scale: k, seed: 5, draw: c => {
       c.fillStyle = grad(c, 0, -260, 0, 260, [[0, '#f2a050'], [1, '#c0563a']]); c.fillRect(-190, -260, 380, 520);
       Gd.draw(c, 0, 230, .62, cast('gun1', { t, pose: 'hips', face: { eyes: 'squint', brows: 'angry', mouth: 'smirk' }, light: false }));
@@ -99,7 +102,7 @@
 
   S('existed', (ctx, lt, dur, t, R) => {   // … and the one who actually existed
     CS.studio(ctx, t, 0);
-    theo(ctx, 300, 700, .9, { t, pose: Gd.pose(lt, [[0, 'presentL'], [.4, 'pointSide'], [9, 'present'], [12.5, 'shrug']]), turn: .35, talk: K.vtalk(t), face: { mouth: 'smile', brows: 'up' } });
+    theo(ctx, 300, 700, .9, { t, pose: Gd.pose(lt, [[0, 'presentL'], [.4, 'pointSide'], [9, 'present'], [12.5, 'shrug']]), turn: .35, vis: Gd.say(t), face: { mouth: 'smile', brows: 'up' } });
     const k = K.pop(lt, .1, .4); if (k > .01) fig(ctx, 'cowhand', 860, 700, .92 * k, { t, pose: Gd.pose(lt, [[0, 'idle'], [4, 'shrug'], [7, 'idle']]), turn: -.3, face: lt > R('bathed') && lt < R('decent') ? { mouth: 'grin', eyes: 'happy', blush: 1 } : { mouth: 'smile', brows: 'worried' } });
     if (lt > R('bathed')) { CK.stink(ctx, 800, 300, t, 1.1); CK.stink(ctx, 960, 330, t + .5, .9); }
     K.tag(ctx, 'THE COWBOY WHO ACTUALLY EXISTED', 760, 70, lt, .1, { size: 28 });
@@ -111,7 +114,7 @@
 
   S('noon', (ctx, lt, dur, t, R) => {   // three questions
     CS.studio(ctx, t, 0);
-    theo(ctx, 640, 720, .95, { t, pose: Gd.pose(lt, [[0, 'think'], [R('famous') - .5, 'present'], [R('saddle') - 1.5, 'cheer']]), talk: K.vtalk(t), face: lt < R('famous') ? { mouth: 'flat', brows: 'skeptic', look: [-.4, -.5] } : { mouth: 'grin', brows: 'up' } });
+    theo(ctx, 640, 720, .95, { t, pose: Gd.pose(lt, [[0, 'think'], [R('famous') - .5, 'present'], [R('saddle') - 1.5, 'cheer']]), vis: Gd.say(t), face: lt < R('famous') ? { mouth: 'flat', brows: 'skeptic', look: [-.4, -.5] } : { mouth: 'grin', brows: 'up' } });
     card(ctx, 'What did he actually\ndo all day?', 250, 200, lt, R('allday'), { size: 28, rot: -.04 });
     card(ctx, 'Why was he out\nthere at all?', 1030, 200, lt, R('why'), { size: 28, rot: .04 });
     card(ctx, 'How did a ~20-year job become\nthe most famous job in America?', 640, 110, lt, R('famous') + .4, { size: 26 });
@@ -205,7 +208,7 @@
 
   S('thinking', (ctx, lt, dur, t, R) => {   // "just put the cows on a train"
     CS.studio(ctx, t, 0);
-    theo(ctx, 360, 700, .9, { t, pose: Gd.pose(lt, [[0, 'think'], [R('train'), 'present'], [R('great'), 'thumbsUp']]), turn: .2, talk: K.vtalk(t), face: lt > R('great') ? { mouth: 'grin', eyes: 'wink' } : { mouth: 'smile', brows: 'up' } });
+    theo(ctx, 360, 700, .9, { t, pose: Gd.pose(lt, [[0, 'think'], [R('train'), 'present'], [R('great'), 'thumbsUp']]), turn: .2, vis: Gd.say(t), face: lt > R('great') ? { mouth: 'grin', eyes: 'wink' } : { mouth: 'smile', brows: 'up' } });
     if (lt > R('train') - .3) { const x = lerp(1400, 820, ease.out(clamp((lt - R('train') + .3) / 1.4))); ctx.save(); ctx.translate(x, 560); sh(ctx, '#2a2a30', 4, c => c.roundRect(-80, -80, 120, 80, 8)); sh(ctx, '#2a2a30', 4, c => c.rect(-60, -130, 34, 50)); sh(ctx, '#b8322a', 4, c => c.rect(20, -110, 60, 110)); for (const wx of [-50, 0, 50]) { sh(ctx, '#5a5a62', 3, circ(wx, 0, 20)); } K.smoke(ctx, t, -44, -150, .5);
       for (let i = 0; i < 2; i++) { sh(ctx, '#8a5a36', 4, c => c.rect(100 + i * 170, -90, 150, 90)); for (let j = 0; j < 3; j++) B.longhorn(ctx, 130 + i * 170 + j * 40, -40, .22, t + j, { mode: 'stand', coat: j + i }); sh(ctx, '#3a3a42', 3, circ(130 + i * 170, 4, 16)); sh(ctx, '#3a3a42', 3, circ(220 + i * 170, 4, 16)); } ctx.restore(); }
     card(ctx, '"Just put the cows on a train."', 820, 160, lt, R('train'), { size: 30 });
@@ -220,7 +223,7 @@
 
   S('plan', (ctx, lt, dur, t, R) => {   // the plan: walk them to Kansas
     CS.studio(ctx, t, 0);
-    theo(ctx, 250, 700, .85, { t, pose: Gd.pose(lt, [[0, 'presentBoth'], [2, 'pointSide']]), turn: .3, talk: K.vtalk(t), face: { mouth: 'grin', brows: 'up' } });
+    theo(ctx, 250, 700, .85, { t, pose: Gd.pose(lt, [[0, 'presentBoth'], [2, 'pointSide']]), turn: .3, vis: Gd.say(t), face: { mouth: 'grin', brows: 'up' } });
     const k = K.pop(lt, .2, .5); K.paper(ctx, 800, 370, 760, 460, { scale: k, rot: .01, draw: c => {
       CK.txt(c, 'THE PLAN', 0, -190, '48px "Luckiest Guy"', '#5a3420'); CK.txt(c, '(beautifully simple, incredibly dumb)', 0, -146, '700 20px Fredoka', '#8a6a4a');
       const u = clamp((lt - R('couple')) / 5); B.herd(c, t, { seed: 21, n: 16, x: [-300, -300 + 560 * (.3 + u * .7)], y: [10, 70], s: [.14, .18], mode: 'walk', speed: 0 });

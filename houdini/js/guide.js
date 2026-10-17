@@ -58,18 +58,19 @@
     shrug:       { L: [-166, -268], R: [166, -268], hL: 'palm', hR: 'palm', shrug: true },
     cheer:       { L: [-128, -498], R: [128, -498], hL: 'fist', hR: 'fist' },
     thumbsUp:    { L: [-68, -158], R: [146, -356], hL: 'rest', hR: 'thumbsUp' },
-    hips:        { L: [-90, -206], R: [90, -206], hL: 'fist', hR: 'fist', out: true },
+    hips:        { L: [-90, -206], R: [90, -206], hL: 'fist', hR: 'fist' },
     crossed:     { L: [-68, -158], R: [68, -158], hL: 'fist', hR: 'fist', cross: true },
     magnify:     { L: [-68, -158], R: [128, -380], hL: 'rest', hR: 'hold', prop: 'magnifier' },
     facepalm:    { L: [-68, -158], R: [24, -376], hL: 'rest', hR: 'palmIn' },
     bow:         { L: [-40, -150], R: [40, -150], hL: 'rest', hR: 'rest', bow: true },
     // talking gestures: both hands, elbows bent, hands at chest/waist height (used while a character speaks)
-    talkA:       { L: [-150, -238], R: [150, -238], hL: 'palm', hR: 'palm' },
-    talkB:       { L: [-118, -250], R: [166, -226], hL: 'palm', hR: 'palm' },
-    talkC:       { L: [-166, -226], R: [118, -250], hL: 'palm', hR: 'palm' },
-    talkD:       { L: [-172, -268], R: [172, -268], hL: 'palm', hR: 'palm' },
-    talkE:       { L: [-84, -190], R: [160, -246], hL: 'rest', hR: 'palm' },
-    talkF:       { L: [-160, -246], R: [84, -190], hL: 'palm', hR: 'rest' },
+    // (user's reference: upper arm out and down from the shoulder, elbow OUT to the side, forearm up, hand beside the body; never across the chest)
+    talkA:       { L: [-148, -258], R: [148, -258], hL: 'palm', hR: 'palm' },
+    talkB:       { L: [-140, -244], R: [156, -274], hL: 'palm', hR: 'palm' },
+    talkC:       { L: [-156, -274], R: [140, -244], hL: 'palm', hR: 'palm' },
+    talkD:       { L: [-160, -286], R: [160, -286], hL: 'palm', hR: 'palm' },
+    talkE:       { L: [-80, -160], R: [156, -266], hL: 'rest', hR: 'palm' },
+    talkF:       { L: [-156, -266], R: [80, -160], hL: 'palm', hR: 'rest' },
   };
   function blendPose(a, b, k) {
     const A = POSES[a] || POSES.idle, B = POSES[b] || POSES.idle, pick = key => k < .5 ? A[key] : B[key];
@@ -493,6 +494,8 @@
       const cur = set[((ph.i + s0) % n + n) % n], prev = set[((ph.i - 1 + s0) % n + n) % n], k = ease(clamp((V.t - ph.t0) / .6));
       P = lerpPose(home, lerpPose(toPose(prev), toPose(cur), k), (V.fade ?? 1) * (isStr ? 1 : (o.gestMix ?? .62)));
       if (home.prop) { P.R = home.R; P.hR = home.hR; P.prop = home.prop; }   // a hand holding a prop keeps holding it
+      // user: arms stay at the sides, never reaching across the front of the body — keep each talking hand outside the torso
+      if (!P.cross && !home.prop) { P = Object.assign({}, P, { L: [Math.min(P.L[0], -138), P.L[1]], R: [Math.max(P.R[0], 138), P.R[1]] }); if (P.hL === 'rest') P.L = [-80, -160]; if (P.hR === 'rest') P.R = [80, -160]; }
       // both hands drift gently, out of phase, so the gesture keeps breathing between phrases
       const fd = V.fade ?? 1, d1 = Math.sin(t * 2.1 + seed) * 7 * fd, d2 = Math.sin(t * 1.7 + seed * 1.6 + 1.3) * 7 * fd;
       P = Object.assign({}, P, { L: [P.L[0] - d2 * .5, P.L[1] + d1], R: [P.R[0] + d1 * .5, P.R[1] + d2] });

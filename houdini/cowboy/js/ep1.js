@@ -73,10 +73,9 @@
     ctx.save(); EP.push(ctx, lt, dur, 1.0, 1.05, 640, 560); CS.camp(ctx, t, 0, { v: 'dawn' });
     const up = clamp((lt - R('wake') - .4) / .5);
     ctx.save(); ctx.translate(lerp(300, 330, up), lerp(670, 700, up)); ctx.rotate(-Math.PI / 2 * (1 - ease.out(up))); Gd.draw(ctx, 0, 0, .62, TC({ t, hat: up > .5 ? 'stetson' : 'none', light: Object.assign({}, K.LIGHT.dusk, { cast: 0, contact: up }), pose: up < 1 ? 'idle' : 'facepalm', face: up < .05 ? { eyes: 'closed', mouth: 'o' } : { eyes: 'half', mouth: 'frown', brows: 'worried' } })); ctx.restore();
-    if (up < .05) { sh(ctx, '#3a5a7a', 3.5, c => c.roundRect(170, 650, 260, 44, 20)); K.bubble(ctx, 'z z z', 260, 560, lt, .1, { size: 24 }); }
+    if (up < .05) { sh(ctx, '#3a5a7a', 3.5, c => c.roundRect(170, 650, 260, 44, 20)); }
     fig(ctx, 'cook', 760, 700, .74, { t, pose: Gd.pose(lt, [[0, 'pointSideL'], [R('grumpy'), 'hips']]), turn: -.4, light: K.LIGHT.dusk, face: { mouth: 'shock', brows: 'angry', eyes: 'squint' }, talk: lt > R('wake') ? .5 + .5 * Math.sin(t * 16) : 0 });
     ctx.restore(); CK.dayBanner(ctx, 'DAWN', lt, .1, { icon: 'dawn' });
-    if (lt > R('wake') + .2) K.bubble(ctx, 'UP! UP! UP!', 820, 250, lt, R('wake') + .2, { size: 34 });
     if (lt > R('alarm')) { const k = K.pop(lt, R('alarm')); ctx.save(); ctx.translate(1110, 420); ctx.scale(k, k); sh(ctx, '#c9a648', 4, circ(0, 0, 46)); sh(ctx, '#f6ead0', 3, circ(0, 0, 36)); ln(ctx, [[0, 0], [0, -24]], 4); ln(ctx, [[0, 0], [16, 6]], 4); for (const sd of [-1, 1]) sh(ctx, '#c9a648', 3, circ(sd * 34, -40, 14)); ctx.restore(); CK.crossOut(ctx, 1110, 420, 60, clamp((lt - R('alarm') - .3) / .4)); }
     K.tag(ctx, 'a man', 760, 330, lt, R('aman'), { size: 26 }); K.tag(ctx, 'a GRUMPY one', 780, 380, lt, R('grumpy'), { size: 28, rot: .04 });
   });

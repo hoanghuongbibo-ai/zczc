@@ -353,7 +353,7 @@
   const PROPS = {};
   function drawBody(ctx, o) {
     const t = o.t ?? 0, P0 = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
-    const P = o.vis && o.vis.beat > .02 && !P0.cross ? Object.assign({}, P0, { R: [P0.R[0] + o.vis.beat * 16, P0.R[1] - o.vis.beat * 46], L: [P0.L[0] - o.vis.beat2 * 10, P0.L[1] - o.vis.beat2 * 28] }) : P0;
+    const P = o.vis && o.vis.beat > .02 && !P0.cross ? Object.assign({}, P0, { R: P0.R, L: [P0.L[0] - Math.max(o.vis.beat, o.vis.beat2) * 8, P0.L[1] - Math.max(o.vis.beat, o.vis.beat2) * 20] }) : P0;
     const LK = o.look || {}, wk2 = LK.width || 1, OF = OUTFITS[o.outfit] || OUTFITS.suit, hat = o.hat === 'none' ? null : (o.hat || OF.hat);
     const back = !!o.back, turn = back ? 0 : clamp(o.turn || 0, -1, 1), yaw = turn * .7;
     const SA = o.vis || null;   // speech acting (from Guide.say): nod on syllable onsets, brows up on emphasis, hand beats, head tilt
@@ -478,6 +478,9 @@
       const cur = set[((ph.i + s0) % n + n) % n], prev = set[((ph.i - 1 + s0) % n + n) % n], k = backOut(clamp((V.t - ph.t0) / .5));
       P = lerpPose(home, lerpPose(toPose(prev), toPose(cur), k), (V.fade ?? 1) * (isStr ? 1 : (o.gestMix ?? .62)));
     }
+    // user: the right hand stays still, resting at the side (unless it holds a prop or the pose is a held one: crossed, hips, facepalm)
+    const keepR = home.prop || home.cross || home.out || home.hR === 'palmIn' || home.hR === 'hold';
+    P = Object.assign({}, P, keepR ? { R: home.R, hR: home.hR, prop: home.prop } : { R: [68, -158], hR: 'rest' });
     r.pose = P;
     const fs = (o.turn || 0) >= 0 ? 1 : -1, fv = V ? (V.fade ?? 1) : 0;
     r.lean = (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);

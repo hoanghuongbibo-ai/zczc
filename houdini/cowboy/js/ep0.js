@@ -193,7 +193,7 @@
   mood('y1865', 'curious'); fx('millions', 'pop', .5); fx('nomoney', 'pluckUp', .5);
 
   S('north', (ctx, lt, dur, t, R) => { const k = ease.inOut(clamp(lt / 1.6)), v = { lon: lerp(-98.6, -93, k), lat: lerp(31.4, 36.5, k), z: lerp(.82, .62, k) }; CS.map(ctx, t, v); cattleField(ctx, lt, 160, -5, { lon: v.lon, lat: v.lat, z: v.z }, 9, 0);
-    for (const [p, i] of [['Chicago', 0], ['St. Louis', 1]]) { const [x, y] = CS.toS(...CS.PLACES[p], v), kk = K.pop(lt, 1.4 + i * .4); if (kk <= 0) continue; ctx.save(); ctx.translate(x, y); ctx.scale(kk, kk); for (let b = 0; b < 5; b++) sh(ctx, ['#7a7a86', '#8a8a96', '#6a6a76'][b % 3], 3, c => c.rect(-60 + b * 24, -40 - (b % 3) * 18, 22, 40 + (b % 3) * 18)); K.smoke(ctx, t, -30, -80, .4); ctx.restore(); K.bubble(ctx, 'BEEF!', x + 40, y - 120, lt, 2 + i * .5, { size: 28 }); K.tag(ctx, p, x, y + 30, lt, 1.5 + i * .4, { size: 20 }); }
+    for (const [p, i] of [['Chicago', 0], ['St. Louis', 1]]) { const [x, y] = CS.toS(...CS.PLACES[p], v), kk = K.pop(lt, 1.4 + i * .4); if (kk <= 0) continue; ctx.save(); ctx.translate(x, y); ctx.scale(kk, kk); for (let b = 0; b < 5; b++) sh(ctx, ['#7a7a86', '#8a8a96', '#6a6a76'][b % 3], 3, c => c.rect(-60 + b * 24, -40 - (b % 3) * 18, 22, 40 + (b % 3) * 18)); K.smoke(ctx, t, -30, -80, .4); ctx.restore(); K.tag(ctx, p, x, y + 30, lt, 1.5 + i * .4, { size: 20 }); }
     K.tag(ctx, 'up north: booming cities', 640, 640, lt, .6, { size: 28 }); });
   fx('north', 'whoosh', .4); fx('north', 'crowd', .3, 1.6, 2.5);
 

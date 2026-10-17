@@ -64,12 +64,12 @@
     facepalm:    { L: [-68, -158], R: [24, -376], hL: 'rest', hR: 'palmIn' },
     bow:         { L: [-40, -150], R: [40, -150], hL: 'rest', hR: 'rest', bow: true },
     // talking gestures: both hands, elbows bent, hands at chest/waist height (used while a character speaks)
-    talkA:       { L: [-118, -214], R: [118, -214], hL: 'palm', hR: 'palm' },
-    talkB:       { L: [-96, -236], R: [140, -198], hL: 'palm', hR: 'palm' },
-    talkC:       { L: [-140, -198], R: [96, -236], hL: 'palm', hR: 'palm' },
-    talkD:       { L: [-146, -246], R: [146, -246], hL: 'palm', hR: 'palm' },
-    talkE:       { L: [-84, -190], R: [108, -228], hL: 'rest', hR: 'palm' },
-    talkF:       { L: [-108, -228], R: [84, -190], hL: 'palm', hR: 'rest' },
+    talkA:       { L: [-150, -238], R: [150, -238], hL: 'palm', hR: 'palm' },
+    talkB:       { L: [-118, -250], R: [166, -226], hL: 'palm', hR: 'palm' },
+    talkC:       { L: [-166, -226], R: [118, -250], hL: 'palm', hR: 'palm' },
+    talkD:       { L: [-172, -268], R: [172, -268], hL: 'palm', hR: 'palm' },
+    talkE:       { L: [-84, -190], R: [160, -246], hL: 'rest', hR: 'palm' },
+    talkF:       { L: [-160, -246], R: [84, -190], hL: 'palm', hR: 'rest' },
   };
   function blendPose(a, b, k) {
     const A = POSES[a] || POSES.idle, B = POSES[b] || POSES.idle, pick = key => k < .5 ? A[key] : B[key];
@@ -94,9 +94,13 @@
     ctx.rotate(dir); if (flip) ctx.scale(1, -1);
     const W = C.face, P = [];
     const finger = (ox, oy, a, len, r = 6) => c => { c.save(); c.translate(ox, oy); c.rotate(a); c.roundRect(-r, -r, len + r, r * 2, r); c.restore(); };
-    if (kind === 'palm') {   // open talking hand: soft mitten, fingers together, small thumb
-      P.push(c => c.ellipse(11, 0, 15, 14, 0, 0, Math.PI * 2)); P.push(c => c.roundRect(8, -13, 32, 26, 13));
-      P.push(finger(6, -11, -.85, 13, 6));
+    if (kind === 'palm') {   // open palm-up talking hand (the user's chosen look): fingers together, curling up, thumb raised, palm crease
+      ctx.scale(1.12, 1.12);
+      P.push(c => c.ellipse(12, 1, 16, 13.5, -.08, 0, Math.PI * 2));
+      for (const [by, a, len] of [[-8.5, -.42, 19], [-3, -.2, 22], [2.5, -.02, 21], [7.5, .14, 17]]) {
+        P.push(finger(23, by, a, len * .62, 4.6)); const tx = 23 + Math.cos(a) * len * .62, ty = by + Math.sin(a) * len * .62; P.push(finger(tx, ty, a - .45, len * .45, 4.4));
+      }
+      P.push(finger(9, -10, -1.25, 15, 5.4));
     } else if (kind === 'wave' || kind === 'palmIn') {
       P.push(c => c.ellipse(12, 0, 17, 15, 0, 0, Math.PI * 2));
       for (const a of [-.42, -.14, .14, .42]) P.push(finger(20, a * 14, a, 20, 5.5));
@@ -113,7 +117,7 @@
     union(ctx, P, W);
     ctx.lineWidth = 2.2; ctx.strokeStyle = INK; ctx.lineCap = 'round';
     if (kind === 'fist' || kind === 'hold') for (const yy of [-2, 6]) { ctx.beginPath(); ctx.moveTo(14, yy); ctx.lineTo(21, yy); ctx.stroke(); }
-    if (kind === 'palm') for (const yy of [-4.5, 4.5]) { ctx.beginPath(); ctx.moveTo(29, yy); ctx.lineTo(38, yy); ctx.stroke(); }
+    if (kind === 'palm') { ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(5, 4); ctx.quadraticCurveTo(14, -2, 22, 2); ctx.stroke(); }   // palm crease
     if (kind === 'rest') for (const yy of [-4, 4]) { ctx.beginPath(); ctx.moveTo(18, yy); ctx.lineTo(26, yy); ctx.stroke(); }
     ctx.restore();
   }

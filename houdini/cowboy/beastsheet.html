@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8">
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../js/toon.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="../js/paint.js"></script><script src="js/cast.js"></script><script src="js/beasts.js"></script>
+<script>
+Guide.setTheme('warm');
+const c = document.getElementById('c'), g = c.getContext('2d'), B = Beasts, t = +(location.hash.slice(1) || 1.3);
+g.fillStyle = '#d9c9a0'; g.fillRect(0, 0, 1920, 1080);
+B.longhorn(g, 220, 330, 1, t, { mode: 'stand', coat: 1 }); B.longhorn(g, 620, 330, 1, t, { mode: 'walk', coat: 0, ph: .3 }); B.longhorn(g, 1020, 330, 1, t, { mode: 'graze', coat: 2 }); B.longhorn(g, 1420, 330, 1, t, { mode: 'run', coat: 3 }); B.longhorn(g, 1760, 330, .8, t, { mode: 'lie', coat: 4, dir: -1 });
+B.face(g, 260, 760, .9, t, { mood: 'meh', chew: 1 });
+B.steed(g, 700, 720, 1.4, t, { gait: 'walk', rider: CW.theoCow }); B.steed(g, 1150, 720, 1.4, t, { gait: 'gallop', rider: CW.vaquero, coat: '#3a2a20', dir: -1 }); B.steed(g, 1500, 720, 1.2, t, { gait: 'stand', coat: '#c9a070', paint: 1 });
+B.mini(g, 1500, 1000, .7, t, { gait: 'walk' }); B.mini(g, 1700, 1000, .7, t, { gait: 'gallop', dir: -1, shirt: '#3f6f9a' });
+B.tumbleweed(g, 1100, 960, 60, t);
+B.herd(g, t, { x: [0, 1000], y: [900, 1060], s: [.2, .35], n: 20, mode: 'walk', dust: .6 });
+window.DONE = true;
+</script>

@@ -43,6 +43,14 @@
   const shaker = (b, t, vel = .06) => noiseHit(b, t, .07, vel, .85, Math.floor(t * 100), x => Math.sin(Math.PI * Math.min(1, x * 2)) * (1 - x));
   const snap = (b, t, vel = .12) => { noiseHit(b, t, .05, vel, .6, Math.floor(t * 77), x => Math.pow(1 - x, 3)); };
 
+  // ---- western voices (cowboy episode): whistle, harmonica, woodblock clip-clop, strummed / twangy guitar ----
+  function whistle(b, t, n, dur, vel = .12) { const f = midi(n), s0 = S(t), len = Math.min(Math.floor(SR * (dur + .25)), b.length - s0), r = rng(n + Math.floor(t * 50)); let ph = 0, lp = 0;
+    for (let i = 0; i < len; i++) { const x = i / SR, vib = 1 + .007 * Math.sin(TAU * 5.4 * x) * Math.min(1, x / .25), env = Math.min(1, x / .06) * Math.min(1, Math.max(0, (dur + .2 - x) / .2)); ph = (ph + f * vib / SR) % 1; lp += ((r() * 2 - 1) - lp) * .08;
+      b[s0 + i] += vel * env * (Math.sin(TAU * ph) + .06 * Math.sin(TAU * ph * 2) + lp * .05); } }
+  function harmonica(b, t, n, dur, vel = .06) { const f = midi(n), s0 = S(t), len = Math.min(Math.floor(SR * (dur + .2)), b.length - s0), A = [1, .55, .42, .28, .18, .1]; let ph = 0, lp = 0;
+    for (let i = 0; i < len; i++) { const x = i / SR, env = Math.min(1, x / .08) * Math.min(1, Math.max(0, (dur + .15 - x) / .15)) * (1 + .15 * Math.sin(TAU * 6 * x)); ph = (ph + f / SR) % 1; let v = 0; for (let h = 0; h < 6; h++) v += A[h] * Math.sin(TAU * ph * (h + 1)); lp += (v - lp) * .25; b[s0 + i] += vel * env * lp * .45; } }
+  function clop(b, t, vel = .08) { const s0 = S(t); for (let i = 0; i < SR * .05 && s0 + i < b.length; i++) { const x = i / SR; b[s0 + i] += vel * (Math.sin(TAU * 1250 * x) * .6 + Math.sin(TAU * 780 * x) * .4) * Math.exp(-x * 90); } }
+  function strum(b, t, notes, vel = .1, bright = .55) { notes.forEach((n, i) => pluck(b, t + i * .014, n, vel * (1 - i * .08), .996, bright)); }
   // ---------------- moods ----------------
   const D = [[50, 62, 66, 69], [47, 59, 62, 66], [43, 55, 59, 62], [45, 57, 61, 64]], Dp = [62, 64, 66, 69, 71, 74, 76, 78, 81];          // D Bm G A
   const Gk = [[43, 55, 59, 62], [50, 62, 66, 69], [40, 52, 55, 59], [48, 60, 64, 67]], Gp = [55, 57, 59, 62, 64, 67, 69, 71, 74];       // G D Em C
@@ -62,6 +70,12 @@
     warm:      { bpm: 78,  prog: Fk, pent: Fp,  parts: { cel: .08, pad: .08, ost: .1, bass: .18 } },
     tender:    { bpm: 62,  prog: D,  pent: Dp,  parts: { pad: .09, bell: .08, bass: .12, arp: .07 } },
     somber:    { bpm: 56,  prog: Dm, pent: Dmp, parts: { pad: .08, bell: .05, bass: .1 } },
+    // western (cowboy episode): Am G F E spaghetti cadence; G C D G trail; C Am F G campfire; Dm danger; C F G C saloon
+    western:   { bpm: 84,  prog: [[45, 57, 60, 64], [43, 55, 59, 62], [41, 53, 57, 60], [40, 52, 56, 59]], pent: [57, 59, 60, 62, 64, 65, 68, 69, 71, 72, 76], parts: { whistle: .1, twang: .12, clop: .07, bass: .18, pad: .04 } },
+    trail:     { bpm: 92,  prog: [[43, 55, 59, 62], [48, 60, 64, 67], [50, 62, 66, 69], [43, 55, 59, 62]], pent: Gp, parts: { strum: .07, clop: .07, harp: .05, bass: .17 } },
+    campfire:  { bpm: 66,  prog: Ck, pent: Cp, parts: { arpG: .08, harp: .045, bass: .11, pad: .04 } },
+    danger:    { bpm: 108, prog: Dm, pent: Dmp, parts: { fdrum: .13, twang: .1, bass: .2, pad: .06 } },
+    saloon:    { bpm: 116, prog: [[48, 60, 64, 67], [41, 53, 57, 60], [43, 55, 59, 62], [48, 60, 64, 67]], pent: Cp, parts: { honky: .09, bass: .18, clop: .04 } },
     rising:    { bpm: 92,  prog: Gk, pent: Gp,  parts: { ost: .15, mar: .09, fdrum: .1, bass: .22, pad: .08, cel: .07 } },
   };
   const RH = { mel: [1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0], pizz: [1, 0, 1, 1, 0, 1, 0, 1] };
@@ -80,6 +94,17 @@
         if (P.kick && i % 4 === 0) kick(b, t, P.kick);
         if (P.fdrum && (i === 0 || i === 5)) fdrum(b, t, P.fdrum * (i ? .6 : 1));
         if (P.snap && i % 4 === 2) snap(b, t, P.snap);
+      }
+      if (P.whistle || P.twang || P.strum || P.arpG || P.honky || P.harp || P.clop) {
+        const beat2 = beat, ch2 = ch;
+        if (P.clop) for (let i = 0; i < 4; i++) { const tt = bt + i * beat2; if (tt < t1) { clop(b, tt, P.clop); clop(b, tt + beat2 * .32, P.clop * .7); } }
+        if (P.twang) { const riff = [0, 7, 12, 7, 10, 7, 5, 3]; for (let i = 0; i < 8; i++) { const tt = bt + i * beat2 / 2; if (tt < t1 && (i % 2 === 0 || i === 3)) pluck(b, tt, ch2[0] + 12 + (riff[i] % 12) * (i % 4 === 0 ? 0 : 1) * 0 + [0, 0, 7, 0, 12, 0, 7, 3][i], P.twang * (i % 2 ? .6 : 1), .997, .75); } }
+        if (P.strum) for (let i = 0; i < 4; i++) { const tt = bt + i * beat2; if (tt < t1) strum(b, tt + (i % 2 ? beat2 / 2 : 0), i % 2 ? ch2.slice(1) : [ch2[0] + 12, ...ch2.slice(1)], P.strum * (i % 2 ? .7 : 1)); }
+        if (P.arpG) for (let i = 0; i < 8; i++) { const tt = bt + i * beat2 / 2; if (tt < t1) pluck(b, tt, [ch2[0] + 12, ch2[1], ch2[2], ch2[3], ch2[2] + 12, ch2[3], ch2[2], ch2[1]][i], P.arpG * (i % 2 ? .7 : 1), .996, .45); }
+        if (P.honky) for (let i = 0; i < 8; i++) { const tt = bt + i * beat2 / 2; if (tt < t1) { if (i % 2) strum(b, tt, ch2.slice(1).map(n => n + 12), P.honky, .7); else pluck(b, tt, ch2[0], P.honky * 1.2, .995, .6); } }
+        const MOT = [[[4, 0, 1.5], [3, 1.5, .5], [4, 2, 2]], [[6, 0, 1], [5, 1, .5], [4, 1.5, .5], [2, 2, 2]], [[4, 0, .5], [5, .5, .5], [7, 1, 2], [6, 3, 1]], [[5, 0, 1.5], [3, 1.5, .5], [1, 2, 2]]];
+        if (P.whistle && k % 4 !== 3 && (k >> 2) % 2 === 0) for (const [ix, st, du] of MOT[k % 4]) { const tt = bt + st * beat2; if (tt < t1) whistle(b, tt, M.pent[Math.min(M.pent.length - 1, ix)] + 12, du * beat2 * .95, P.whistle); }
+        if (P.harp && k % 2 === 1) for (const [ix, st, du] of MOT[(k >> 1) % 4]) { const tt = bt + st * beat2; if (tt < t1) harmonica(b, tt, M.pent[Math.min(M.pent.length - 1, ix)], du * beat2 * .9, P.harp); }
       }
       // melody: pentatonic notes on a fixed rhythm (16ths over the bar), contour gently wandering
       if (P.cel || P.mar || P.bell) { let idx = 3 + (k % 3);
@@ -115,6 +140,16 @@
     rise(b, t, g) { const s0 = S(t), len = Math.floor(SR * 1.2); let ph = 0; for (let i = 0; i < len && s0 + i < b.length; i++) { const x = i / len; ph += (300 + 900 * x * x) / SR; b[s0 + i] += g * .12 * Math.sin(TAU * ph) * x; } },
     boing(b, t, g) { return SFX.pluckUp(b, t, g); const s0 = S(t); let ph = 0; for (let i = 0; i < SR * .5 && s0 + i < b.length; i++) { const x = i / SR; ph += (220 + 120 * Math.sin(x * 40) * Math.exp(-x * 6)) / SR; b[s0 + i] += g * .35 * Math.sin(TAU * ph) * Math.exp(-x * 6); } },
     pluckUp(b, t, g) { pluck(b, t, 67, .5 * g, .99, .3); pluck(b, t + .09, 74, .45 * g, .99, .3); },   // a soft two-note harp flick replaces the cartoon boing
+    moo(b, t, g) { const s0 = S(t), len = Math.floor(SR * 1.3); let ph = 0, lp = 0; for (let i = 0; i < len && s0 + i < b.length; i++) { const x = i / len, f = 110 + 40 * Math.sin(Math.PI * Math.min(1, x * 1.6)) - 20 * x; ph = (ph + f / SR) % 1; const saw = ph * 2 - 1; lp += (saw - lp) * .05; b[s0 + i] += g * .5 * lp * Math.sin(Math.PI * x); } },
+    hooves(b, t, g, dur = 2, rate = 7) { const r = rng(Math.floor(t * 7)); for (let tt = 0; tt < dur; tt += 1 / rate * (.8 + r() * .4)) { kick(b, t + tt, .18 * g); noiseHit(b, t + tt, .03, .12 * g, .5, Math.floor(tt * 997)); } },
+    thunder(b, t, g) { noiseHit(b, t, 2.6, .55 * g, .04, 31, x => Math.pow(1 - x, 1.6) * (x < .05 ? x * 20 : 1)); kick(b, t, .5 * g); },
+    cough(b, t, g) { for (let i = 0; i < 3; i++) noiseHit(b, t + i * .32, .16, .35 * g, .35, 70 + i, x => Math.sin(Math.PI * Math.min(1, x * 3)) * (1 - x)); },
+    clap(b, t, g) { noiseHit(b, t, .05, .7 * g, .6, 12, x => Math.pow(1 - x, 4)); kick(b, t, .25 * g); },
+    gong(b, t, g) { celesta(b, t, 52, .4 * g, 1.2); celesta(b, t, 59, .25 * g, 1.2); },
+    buzz(b, t, g, dur = 2) { const s0 = S(t), len = Math.floor(SR * dur); let ph = 0; for (let i = 0; i < len && s0 + i < b.length; i++) { const x = i / SR, f = 210 + 30 * Math.sin(x * 9); ph = (ph + f / SR) % 1; b[s0 + i] += g * .06 * (ph < .5 ? 1 : -1) * (.5 + .5 * Math.sin(x * 13)) * Math.sin(Math.PI * i / len); } },
+    whip(b, t, g) { noiseHit(b, t, .08, .6 * g, .85, 17, x => Math.pow(1 - x, 2)); },
+    river(b, t, g, dur = 4) { SFX.rain(b, t, g * .8, dur); },
+    sizzle(b, t, g, dur = 2) { SFX.fire(b, t, g, dur); },
     thud(b, t, g) { kick(b, t, .7 * g); noiseHit(b, t, .06, .3 * g, .3, 26); },
   };
 

@@ -1,0 +1,14 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); } @font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); }</style>
+<canvas id="c" width="2560" height="2160"></canvas>
+<script src="../js/toon.js"></script><script src="../js/common.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script><script src="../js/paint.js"></script><script src="../js/paint2.js"></script><script src="../js/fauna.js"></script><script src="../js/setprops.js"></script>
+<script src="js/timing.js"></script><script src="../vindolanda/js/cast.js"></script><script src="../vindolanda/js/kit.js"></script><script src="js/cast.js"></script><script src="js/beasts.js"></script><script src="js/sets.js"></script>
+<script>
+window.addEventListener('load', () => setTimeout(() => Promise.all([document.fonts.load('700 30px Fredoka'), document.fonts.load('40px "Luckiest Guy"')]).then(() => {
+const c = document.getElementById('c'), g = c.getContext('2d'), off = document.createElement('canvas'); off.width = 1280; off.height = 720; const o = off.getContext('2d'), t = 3;
+const list = [x => CS.movieSet(x, t, 0, { crew: true }), x => CS.prairie(x, t, 0, { v: 'noon' }), x => CS.prairie(x, t, 0, { v: 'night' }), x => CS.prairie(x, t, 0, { v: 'storm', flash: .0 }), x => CS.prairie(x, t, 0, { v: 'snow' }), x => CS.studio(x, t, 0),
+  x => CS.camp(x, t, 0, { v: 'dawn', open: true }), x => { CS.river(x, t, 0); }, x => CS.cowtown(x, t, 0, { v: 'night' }), x => CS.saloon(x, t, 0), x => CS.ranch(x, t, 0), x => { CS.cemetery(x, t, 0); CS.stone(x, 640, 700, .9, 1); },
+  x => CS.rodeo(x, t, 0), x => CS.city(x, t, 0, { banner: 'RIDING CLUB PARADE' }), x => { const v = { lon: -99, lat: 34.5, z: .55 }; CS.map(x, t, v); CS.route(x, CS.TRAILS.chisholm, v, 1, { label: 'Chisholm Trail' }); CS.route(x, CS.TRAILS.western, v, 1, { col: '#c06a1a' }); CS.route(x, CS.TRAILS.goodnight, v, 1, { col: '#3a6a9a' }); CS.route(x, CS.TRAILS.rail, v, 1, { rail: 1 }); CS.pin(x, 'Abilene', v, 3, 0); }, x => CS.prairie(x, t, 0, { v: 'dusk' })];
+list.forEach((f, i) => { o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, 1280, 720); f(o); g.drawImage(off, (i % 4) * 640, Math.floor(i / 4) * 360 * 1.5, 640, 360 * 1.5 * .667); });
+window.DONE = true; }), 50));
+</script>

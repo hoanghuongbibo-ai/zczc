@@ -1,0 +1,321 @@
+# key | approx s | recognised words
+action|1.42|action
+town|2.6|this town
+draw|4.93|then draw
+excuse|6.24|excuse me
+cows|7.07|has anybody
+lost|9.92|i lost
+cut|14.14|hi
+wholet|15.01|who let
+know|16.73|here's the cowboy you know
+squint|18.46|faster on
+shoots|20.70|shoot first
+existed|23.68|and here's the cowboy who
+teen|26.39|he's probably
+dollar|28.10|he makes
+bathed|30.15|he hasn't bathed
+decent|32.66|and is a decent
+firing|35.85|ever firing
+noon|39.29|dueling at high
+allday|41.77|what was he actually
+why|44.30|why was
+famous|46.75|and how did
+saddle|53.49|settle out
+walk|54.66|it's a long walk
+guy|56.52|to understand the cowboy
+thisguy|59.07|this guy
+longhorn|59.79|the texas
+tough|61.29|top
+halfwild|61.88|half wild
+ticket|64.78|and has the personality
+multiply|67.39|before entering
+skip|71.27|in years apart
+ranchers|73.23|all texas ranchers
+enslaved|75.67|a lot of the cattle work
+ended|78.97|when the war ended
+walkedout|80.06|many of those men
+y1865|86.71|so an eighteen sixty five
+millions|89.96|millions of cattle
+nomoney|91.42|and no money
+north|92.90|meanwhile up north
+smith|96.94|according to the smithsonian
+tentimes|98.58|beef up north
+thinking|103.37|now i know
+train|105.21|just put the cows
+great|107.50|great idea
+except|108.58|except the railroad
+kansas2|112.64|kansas
+plan|113.96|so the plan
+couple|117.82|you take a couple
+rivers|123.81|your rivers
+storms|124.91|the storms
+territory|126.18|you're indian territory
+horseback|127.80|on horseback
+whole|129.41|that's the whole job
+thecowboy|131.24|that's the cowboy
+began|133.00|and just like that
+outfit|135.73|the typical outfit
+twelve|138.75|was maybe twelve
+boss|143.30|the trail boss
+wrangler|145.00|of course wrangler
+hands|146.26|and the rest
+teens|147.93|some of them teenagers
+wanted|150.32|wanted
+young|151.18|young man
+ride|152.31|must ride
+ground|153.71|must not mind
+trampled|156.92|must accept
+drowned|158.79|drowned
+lightning|159.65|or struck by lightning
+pay|161.63|hey
+thirty|162.53|thirty dollars
+food|164.17|food
+beans|165.28|beans
+signed|166.21|who signed up
+anyone|167.28|basically anyone
+southerners|170.25|white southerners
+vaqueros|172.42|mexican and the
+morelater|176.95|more on them
+freedmen|178.48|and friedman
+oneinfour|179.68|historians estimate
+debated|183.32|though the exact
+lower|185.14|and some estimates
+cut2|186.90|got it
+mycowboys|187.82|now my cowboys
+getto|190.25|yeah look at
+trail|192.12|okay let's put
+months|194.25|kansas is roughly
+yourday|196.95|here is your day
+dawn|198.41|don
+wake|199.58|you wake up
+alarm|201.76|not an alarm
+aman|203.03|oh man
+grumpy|204.16|a grumpy one
+important|205.60|the cook is the most
+nps|210.73|the n p
+fifty|214.22|an email about
+morethan|216.33|more than you
+chuck|217.62|he drives the chuck
+rolling|219.16|rolling kitchen
+coffee|225.87|go free zone
+beanson|227.16|beings are on
+complaints|228.60|complaints
+couldi|231.27|could i maybe
+menu|232.63|you want a menu
+kc|233.98|go to kansas city
+morning|235.59|morning
+dontrun|236.97|you don't run
+walkit|238.28|you walk it
+miles|239.57|the goal was
+faster|242.71|push faster
+skinny|244.96|and skinny
+patient|247.18|so the whole drive
+position|252.74|you get a position
+rotate|254.11|riders rotate
+upfront|255.50|up front
+point|256.40|point
+sides|260.04|along the sides
+line|262.70|keeping the heard
+back|264.52|and at the very
+drag|265.85|drag
+slow|266.86|were this low
+newguy|270.32|and where you end
+dust|272.32|eating the best
+noon2|276.76|none
+eat|277.87|you eat
+same|278.83|same beans
+switch|280.08|you switch
+remuda|281.45|each hand road
+nosingle|285.24|because no single
+robbers|288.89|this is where the bank
+no|290.64|no mm
+gary|291.27|this is where gary's
+afternoon|294.06|afternoon
+honest|295.54|and here's the honest
+boring|298.69|it's boring
+glorious|300.33|glorious
+grass1|303.34|grass
+sky|304.42|this guy
+cowbutt|305.65|cowboy
+grass2|306.88|grass
+night|308.50|my
+beds|309.33|the herd beds down
+butyou|311.03|but you don't
+shift|313.36|you pull a shift
+circles|315.29|riding slow circles
+story|319.55|and the story goes
+memoirs|320.94|told again
+sang|323.82|the cowboys saying
+pass|326.33|partly to pass
+spook|328.16|partly so sudden
+humming|330.93|right or humming
+song|335.67|oh please don't
+nobody|337.97|but here's the part
+bullet|340.39|you were at most likely
+weather|343.43|you are likely to die by weather
+nps2|346.61|yeah and piazza
+river1|349.13|cow panicking
+stampnight|351.46|stampede the night
+storms2|353.79|and storms
+tallest|357.92|on the open prairie
+stampede|362.69|a stampede is
+somewhere|367.42|suddenly deciding
+dark|370.25|in the dark
+turn|371.98|your job
+rivers2|375.54|river crossings were worse
+swim|377.82|most of these young
+drownedm|380.28|man drowned
+trampledm|381.76|men were trampled
+buried|383.49|they were buried
+morning2|385.31|and i heard cat
+kansas3|387.48|because the cattle still
+fine|390.99|fine fine
+towns|392.88|but the cow towns
+abilene|394.34|abilene dodge city
+shootouts|396.16|those were shoot outs
+check|398.84|let's check
+dykstra|399.88|the historian robert
+five|404.77|abilene ellsworth
+y1870|409.01|between eighteen seventeen
+fortyfive|411.72|he counted about
+police|416.38|that's including killings
+season|418.59|that's about one and a half
+dodge|421.38|dodge city
+wickedest|422.43|the wicked as town
+fifteen|424.39|how about fifteen
+point2|427.55|the extras point
+why2|433.57|so why the reputation
+sells|435.62|because violence sells
+eastern|438.12|eastern journalist
+locals|440.42|and locals
+business|442.55|it was great for business
+decades|444.43|and then a few decades
+hollywood|446.64|hollywood bottle
+fair|449.24|to be fair
+cowtown2|453.21|before was a cow town
+law|454.69|and before had real
+argue|457.13|historians to argue
+paycheck|460.92|but a cowboy coming up
+violence|468.37|so if the movie's got
+people|472.90|the people
+first|474.28|first
+anglo|474.94|the cowboy wasn't really
+spanish|478.19|spanish and mexican
+vocab|484.60|and you can hear
+lasso|487.26|while so
+lariat|488.13|larry it
+rodeo|489.02|rodeo
+chaps|489.99|jobs
+ranch|490.94|ranch
+buckaroo|491.87|locker room
+borrowed|493.03|all borrowed from spanish
+ikard|495.34|then there's bows
+born|497.15|born into slavery in mississippi
+texas3|500.43|brought to texas
+emanc|502.64|after emancipation
+y1866|504.23|in eighteen sixty six
+goodnight|507.80|led by charles
+besthand|510.92|i'd heard became
+tracker|513.93|he worked as a tracker
+stamps|515.52|road through
+cash|517.19|and good night trusted
+reportedly|520.83|good night reportedly
+farther|523.36|farther than any
+died|525.88|when i agree died
+paid|528.31|good night paid
+wrote|531.24|and roll towards
+says|533.08|it says
+shirked|536.71|never sure
+rode|539.97|road with them
+comanche|542.41|fought in three
+twowords|545.41|and ends with two
+splendid|547.70|splendid behavior
+complicated|549.56|here's the complicated
+equality|551.41|out on the trail
+judged|555.62|you're judged
+pay2|560.34|they could be roughly
+limits|562.22|but it had limits
+bosses|563.62|black cowboys really
+segreg|566.38|and the moment
+natlove|571.32|and then there's not love
+bornT|572.94|born in slaves
+later|574.85|later a cowboy
+y1907|576.15|an ninety no seven
+author|577.69|the author of
+contests|584.24|he describes shooting
+neardeath|587.31|near death
+historians2|588.80|historians love the book
+fish|590.39|and also treat
+buffalo|594.22|and then i wrote
+reportedly2|597.71|reportedly
+newspaper|598.92|while reading
+didnt|601.47|the party didn't
+madeup|603.33|i'm a bat out
+strangest|605.36|here's the strangest
+golden|608.20|the golden age
+twentyyrs|610.66|about twenty years
+killed|612.68|because three things
+railroads|614.92|the railroads finally
+barbed|619.70|barbed wire
+fever|622.62|and state started
+ticks|626.92|the disease spread
+winters|629.28|and then came the winters
+overgraze|635.41|after an overcrowded
+blizzard|639.70|blizzard after blizzard
+starved|642.52|huge numbers
+bankrupt|645.55|ranchers went bankrupt
+teddy|647.07|including a young
+dieup|652.01|people call that
+howbig|654.55|how big
+argue2|655.66|honestly historians
+most|659.00|some popular counts
+pct|662.72|other estimates
+study|666.93|and at least one
+nobody2|672.14|what nobody disputes
+over|673.71|the open range
+thecowboys|676.43|and the cowboys
+seasons|677.82|most only ever
+ranchhands|681.19|some became ranch
+rodeoriders|684.13|some became rodeo
+harder|686.38|black cowboys in particular
+matter|691.89|so why does a twenty
+disappeared|694.89|because when the real
+bigger|697.27|the idea of them
+dime|699.44|i'm novels
+wildwest|700.43|wild west shows
+westerns|701.76|then a century
+along|704.14|and somewhere along
+whiter|705.76|the cowboy got wider
+older|707.40|older
+angrier|708.21|angry or
+pistol|709.48|and alot better
+lasttake|712.14|okay okay lasted
+whatdoes|713.95|what does the real
+walkcows|716.82|walk house
+eatbeans|718.54|the beans
+singcows|720.13|sing to the cats
+dontdrown|722.02|don't drown
+worst|723.91|that's the worst movie
+thejob|726.65|that's the job
+leaves|728.47|but the real story
+rodeogrew|731.27|rodeo grew
+pickett|733.00|the black cowboy go
+words2|737.89|words like lasso
+clubs|742.44|and there are black
+thinkback|748.29|think back to the movie
+twoguns|750.13|two gunslinger
+never|752.60|that seemed almost
+quieter|754.93|what happened thousands
+seventeen|757.85|seventeen year old
+circles2|759.80|reading slow circles
+hum|763.36|humming so they'd
+thatscowboy|765.87|that's the cowboys
+fastest|767.40|not the fastest
+asleep|769.47|just the guy
+subscribe|772.93|if you enjoyed
+which|775.82|which cowboy job
+pointq|778.11|coin
+dragq|778.95|drag
+wranglerq|779.82|the wrangler
+comments|781.80|tell me in
+thanks|783.83|thanks for watching

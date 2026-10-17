@@ -65,6 +65,7 @@
     bow:         { L: [-40, -150], R: [40, -150], hL: 'rest', hR: 'rest', bow: true },
     // talking gestures: both hands, elbows bent, hands at chest/waist height (used while a character speaks)
     // (user's reference: upper arm out and down from the shoulder, elbow OUT to the side, forearm up, hand beside the body; never across the chest)
+    behind:      { L: [-40, -196], R: [40, -196], hL: 'fist', hR: 'fist', behind: true },
     talkA:       { L: [-148, -258], R: [148, -258], hL: 'palm', hR: 'palm' },
     talkB:       { L: [-140, -244], R: [156, -274], hL: 'palm', hR: 'palm' },
     talkC:       { L: [-156, -274], R: [140, -244], hL: 'palm', hR: 'palm' },
@@ -75,7 +76,7 @@
   function blendPose(a, b, k) {
     const A = POSES[a] || POSES.idle, B = POSES[b] || POSES.idle, pick = key => k < .5 ? A[key] : B[key];
     return { L: [lerp(A.L[0], B.L[0], k), lerp(A.L[1], B.L[1], k)], R: [lerp(A.R[0], B.R[0], k), lerp(A.R[1], B.R[1], k)],
-      hL: pick('hL'), hR: pick('hR'), cross: lerp(A.cross ? 1 : 0, B.cross ? 1 : 0, k), out: pick('out'), prop: pick('prop'),
+      hL: pick('hL'), hR: pick('hR'), cross: lerp(A.cross ? 1 : 0, B.cross ? 1 : 0, k), out: pick('out'), prop: pick('prop'), behind: pick('behind'), keepR: pick('keepR'),
       shrug: lerp(A.shrug ? 1 : 0, B.shrug ? 1 : 0, k), bow: lerp(A.bow ? 1 : 0, B.bow ? 1 : 0, k) };
   }
   // keys = [[time, 'pose'], …]; each change eases over `dur` s with a little overshoot (anticipation → settle)
@@ -369,7 +370,7 @@
   const PROPS = {};
   function drawBody(ctx, o) {
     const t = o.t ?? 0, P0 = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
-    const bt = o.vis ? Math.max(o.vis.beat, o.vis.beat2) : 0, P = bt > .02 && !P0.cross && !P0.out ? Object.assign({}, P0, { L: [P0.L[0] - bt * 6, P0.L[1] - bt * 14], R: o.prop ? P0.R : [P0.R[0] + bt * 4, P0.R[1] - bt * 9] }) : P0;   // speech beats lift both hands a little
+    const bt = o.vis ? Math.max(o.vis.beat, o.vis.beat2) : 0, P = bt > .02 && !P0.cross && !P0.out && !P0.behind ? Object.assign({}, P0, { L: [P0.L[0] - bt * 6, P0.L[1] - bt * 14], R: o.prop ? P0.R : [P0.R[0] + bt * 4, P0.R[1] - bt * 9] }) : P0;   // speech beats lift both hands a little
     const LK = o.look || {}, wk2 = LK.width || 1, OF = OUTFITS[o.outfit] || OUTFITS.suit, hat = o.hat === 'none' ? null : (o.hat || OF.hat);
     const back = !!o.back, turn = back ? 0 : clamp(o.turn || 0, -1, 1), yaw = turn * .7;
     const SA = o.vis || null;   // speech acting (from Guide.say): nod on syllable onsets, brows up on emphasis, hand beats, head tilt
@@ -383,6 +384,7 @@
     const handOf = (side, a) => { const sd = side === 'L' ? -1 : 1, k = P['h' + side]; hand(ctx, a.wr[0], a.wr[1], k, a.dir, sd < 0); };
     const doArm = side => {
       const sd = side === 'L' ? -1 : 1, a = arm(ctx, sh[side], [P[side][0] * wk2, P[side][1]], sd, P.out, OF.arm);
+      if (P.behind && !(P.keepR && side === 'R')) return;   // hands clasped behind the back: only the upper arms show, the hands stay hidden behind the body
       const pr = o.prop && PROPS[o.prop];
       if (side === 'R' && P.prop === 'magnifier' && !back) { magnifier(ctx, a.wr); hand(ctx, a.wr[0], a.wr[1], 'hold', -Math.PI / 2 + .25, false); }
       else if (pr && side === (pr.side || 'R')) { if (pr.under) pr.under(ctx, a, sd, o); if (P['h' + side] !== 'palmIn') hand(ctx, a.wr[0], a.wr[1], pr.hand || 'hold', pr.handDir != null ? pr.handDir * sd : a.dir, sd < 0); if (pr.over) pr.over(ctx, a, sd, o); }
@@ -391,7 +393,10 @@
     ctx.save(); ctx.scale(wk2, 1);
     if (OF.behind) OF.behind(ctx, B);
     ctx.restore();
-    if (far && !(P.cross > .5)) doArm(far);
+    // arms drawn BEHIND the body (user: the torso sits in front of the arms, nothing reaches across the front)
+    const armsBack = ((o.armsBack ?? G.Guide.armsBack) || P.behind) && !(P.cross > .5);
+    if (armsBack) { for (const side of ['L', 'R']) doArm(side); }
+    else if (far && !(P.cross > .5)) doArm(far);
     // legs + feet (toes follow the turn; walking swings and lifts them)
     ctx.save(); ctx.scale(wk2, 1);
     const wk = o.walk, st = wk == null ? 0 : Math.sin(wk), toe = back ? 0 : Math.sin(yaw) * 14;
@@ -410,7 +415,7 @@
       const yA = top + 98, yB = top + 116, sc = OF.arm.sleeve || C.suit, sw = OF.arm.w || 26;
       seg(ctx, [sh.L, [-72, yA], [64, yA]], sw + 10); seg(ctx, [sh.L, [-72, yA], [64, yA]], sw, sc); hand(ctx, 70, yA, 'fist', 0);
       seg(ctx, [sh.R, [72, yB], [-64, yB]], sw + 10); seg(ctx, [sh.R, [72, yB], [-64, yB]], sw, sc); hand(ctx, -70, yB, 'fist', Math.PI, true);
-    } else for (const side of ['L', 'R']) if (side !== far && !(side === 'R' && P.hR === 'palmIn' && !back)) doArm(side);
+    } else if (!armsBack) for (const side of ['L', 'R']) if (side !== far && !(side === 'R' && P.hR === 'palmIn' && !back)) doArm(side);
     if (OF.front) { ctx.save(); ctx.scale(wk2, 1); OF.front(ctx, B); ctx.restore(); }
     ctx.save(); ctx.translate(vx * .45, top - 84 + bob + bowK * 30); ctx.rotate((o.headTilt || 0) + Math.sin(t * 1.3) * .015 + talk * .02 * Math.sin(t * 9) + (SA ? SA.tilt : 0));
     const F0 = o.face || {}, F1 = SA && SA.brow > .5 && (!F0.brows || F0.brows === 'neutral') ? Object.assign({}, F0, { brows: 'up' }) : F0;
@@ -472,7 +477,7 @@
     return { k, o, nod: clamp((o - prev) * 2.4), brow, beat: clamp(beat * 2.4), beat2: clamp(beat2 * 2.2), tilt: Math.sin(t * .8 + Math.floor(t / 3.7)) * .05 * clamp(mean * 2), t, fade };
   }
   // ---------- ACTING: idle life for everyone + phrase-driven gestures while speaking + listening nods ----------
-  const LOCK = new Set(['crossed', 'facepalm', 'magnify', 'think', 'cheer', 'wave', 'thumbsUp', 'bow', 'pointUp', 'hips']);
+  const LOCK = new Set(['behind', 'crossed', 'facepalm', 'magnify', 'think', 'cheer', 'wave', 'thumbsUp', 'bow', 'pointUp', 'hips']);
   const TALK = ['talkA', 'talkB', 'talkD', 'talkC', 'talkE', 'talkA', 'talkF', 'talkB'];
   const GSETS = { idle: TALK, present: TALK, presentL: TALK, presentBoth: TALK, pointSide: TALK, pointSideL: TALK, shrug: TALK };
   let PHR = null;
@@ -480,16 +485,26 @@
   function phraseAt(t) { const P = phrases(); let lo = 0, hi = P.length - 1, idx = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (P[m] <= t) { idx = m; lo = m + 1; } else hi = m - 1; } return { i: idx, t0: idx >= 0 ? P[idx] : 0 }; }
   const num = v => v === true ? 1 : v || 0;
   function lerpPose(A, B, k) { return { L: [lerp(A.L[0], B.L[0], k), lerp(A.L[1], B.L[1], k)], R: [lerp(A.R[0], B.R[0], k), lerp(A.R[1], B.R[1], k)], hL: k < .5 ? A.hL : B.hL, hR: k < .5 ? A.hR : B.hR,
-    cross: lerp(num(A.cross), num(B.cross), k), out: k < .5 ? A.out : B.out, prop: k < .5 ? A.prop : B.prop, shrug: lerp(num(A.shrug), num(B.shrug), k), bow: lerp(num(A.bow), num(B.bow), k) }; }
+    cross: lerp(num(A.cross), num(B.cross), k), out: k < .5 ? A.out : B.out, behind: k < .5 ? A.behind : B.behind, keepR: k < .5 ? A.keepR : B.keepR, prop: k < .5 ? A.prop : B.prop, shrug: lerp(num(A.shrug), num(B.shrug), k), bow: lerp(num(A.bow), num(B.bow), k) }; }
   const toPose = p => (typeof p === 'object' && p && p.L) ? p : blendPose(p || 'idle', p || 'idle', 1);
   const hashS = str => { let h = 7; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0; return Math.abs(h); };
   const backOut = k => k >= 1 ? 1 : 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2);
+  // user (cowboy v7): stand up straight with the hands clasped behind the back — never held out in front.
+  // Only a few deliberate reactions keep their own arms; riders keep the reins; a hand holding a prop keeps holding it.
+  const KEEP_ARMS = new Set(['hips', 'cheer', 'wave', 'facepalm', 'magnify', 'bow', 'thumbsUp', 'pointUp', 'think']);
+  function handsBehind(o) {
+    if (!G.Guide.handsBehind || (o.outfit || '').includes('@ride') || (typeof o.pose === 'string' && KEEP_ARMS.has(o.pose))) return o;
+    const r = Object.assign({}, o, { pose: 'behind' });
+    if (o.prop) r.pose = Object.assign({}, POSES.behind, { R: [118, -212], hR: 'hold', keepR: true });
+    return r;
+  }
   function act(o) {
+    o = handsBehind(o);
     if (o.still) return o;
     const t = o.t ?? 0, V = o.vis, Ls = o.listen, seed = hashS((o.outfit || 'suit') + ((o.look && o.look.skin) || '') + (o.hat || '')) % 997 / 97, r = Object.assign({}, o);
     const isStr = typeof o.pose === 'string' || !o.pose, home = toPose(o.pose);
     let P = home;
-    if (V && o.gest !== false && !(isStr && LOCK.has(o.pose || 'idle'))) {
+    if (V && o.gest !== false && !home.behind && !(isStr && LOCK.has(o.pose || 'idle'))) {
       const set = o.gestSet || GSETS[isStr ? (o.pose || 'idle') : 'idle'] || GSETS.idle, n = set.length, ph = phraseAt(V.t), s0 = Math.floor(seed * 3);
       const cur = set[((ph.i + s0) % n + n) % n], prev = set[((ph.i - 1 + s0) % n + n) % n], k = ease(clamp((V.t - ph.t0) / .6));
       P = lerpPose(home, lerpPose(toPose(prev), toPose(cur), k), (V.fade ?? 1) * (isStr ? 1 : (o.gestMix ?? .62)));
@@ -502,7 +517,7 @@
     }
     r.pose = P;
     const fs = (o.turn || 0) >= 0 ? 1 : -1, fv = V ? (V.fade ?? 1) : 0;
-    r.lean = (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);
+    r.lean = G.Guide.straight ? 0 : (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);
     r.headTilt = (o.headTilt || 0) + Math.sin(t * .43 + seed * 3) * .035 + (Ls ? Ls.nod * .07 : 0);
     const f = Object.assign({}, o.face || {});
     if (!f.look) { const st = Math.floor(t / 1.9 + seed), rr = x => Math.abs(Math.sin(x * 12.9898) * 43758.5453) % 1; f.look = [(rr(st) - .5) * .7 + Math.sin(t * .3 + seed) * .1, (rr(st + 7) - .5) * .3]; }

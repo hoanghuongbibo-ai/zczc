@@ -289,3 +289,12 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 ### Lesson: v6 hands + bubbles from the user's reference (cowboy)
 - Hands: the user picked the palm-up 'palm' hand in guide.js: fingers drawn together in one outline and curling up, thumb raised, a small palm crease, scale 1.12, turning with the forearm. Don't redraw it with separate outlined fingers or as a mitten. Talking poses use talkA–F, matching the user's reference arm: the upper arm goes out and down from the shoulder, the elbow is bent at the side, the forearm points up and out, and the hand is beside the body at about ±150, −260. The arm NEVER reaches across the front of the body: act() keeps each talking hand at |x| ≥ 138 unless it's holding a prop or the arms are crossed. Don't use `out: true` for these poses, because it flips the elbows up into chicken wings.
 - Bubbles (reference: cream card #fbf3df, 5px brown outline #4a3222, offset drop shadow, radius 16, small tail pointing down at the speaker): EP.mark stores mouth, head top (≈625 units above the feet, hat included) and head half-width (≈215 units). EP.speech tries spots above the head, beside it, and in the top band beside the hat, and picks the one overlapping the fewest heads drawn this frame (marks are stamped with G.EP.frame, set in show.js). Bubbles must never cover a face or hat.
+
+### Lesson: v7 posture — back straight, hands behind the back (cowboy)
+- The user asked: "keep your back straight and your hands behind your back, not in front". The cowboy show.js sets `G.Guide.handsBehind = true; G.Guide.straight = true`.
+- In guide.js, handsBehind() maps every standing pose to POSES.behind: elbows bent back, arms drawn behind the torso, hands hidden. No gestures or beats apply.
+- Exceptions:
+  - deliberate reactions in KEEP_ARMS (hips, cheer, wave, facepalm, magnify, bow, thumbsUp, pointUp, think)
+  - riders (outfits ending in @ride)
+  - a prop hand, which keeps holding its prop at the side (keepR)
+- `straight` removes lean and sway, so the body stays upright and only the head and face act.

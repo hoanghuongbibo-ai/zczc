@@ -294,7 +294,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - The user asked: "keep your back straight and your hands behind your back, not in front". The cowboy show.js sets `G.Guide.handsBehind = true; G.Guide.straight = true`.
 - In guide.js, handsBehind() maps every standing pose to POSES.behind: elbows bent back, arms drawn behind the torso, hands hidden. No gestures or beats apply.
 - Exceptions:
-  - deliberate reactions in KEEP_ARMS (hips, cheer, wave, facepalm, magnify, bow, thumbsUp, pointUp, think)
+  - deliberate reactions in KEEP_ARMS (cheer, wave, facepalm, magnify, bow, thumbsUp, pointUp). 'hips' and 'think' were REMOVED in v8 because the user saw them as arms in front and confirmed hands-behind-back is the correct pose
   - riders (outfits ending in @ride)
   - a prop hand, which keeps holding its prop at the side (keepR)
 - `straight` removes lean and sway, so the body stays upright and only the head and face act.

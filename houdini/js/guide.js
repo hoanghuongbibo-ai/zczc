@@ -491,7 +491,7 @@
   const backOut = k => k >= 1 ? 1 : 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2);
   // user (cowboy v7): stand up straight with the hands clasped behind the back — never held out in front.
   // Only a few deliberate reactions keep their own arms; riders keep the reins; a hand holding a prop keeps holding it.
-  const KEEP_ARMS = new Set(['hips', 'cheer', 'wave', 'facepalm', 'magnify', 'bow', 'thumbsUp', 'pointUp', 'think']);
+  const KEEP_ARMS = new Set(['cheer', 'wave', 'facepalm', 'magnify', 'bow', 'thumbsUp', 'pointUp']);   // (hips + think removed: user saw them as arms in front)
   function handsBehind(o) {
     if (!G.Guide.handsBehind || (o.outfit || '').includes('@ride') || (typeof o.pose === 'string' && KEEP_ARMS.has(o.pose))) return o;
     const r = Object.assign({}, o, { pose: 'behind' });

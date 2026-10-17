@@ -353,11 +353,11 @@
   const PROPS = {};
   function drawBody(ctx, o) {
     const t = o.t ?? 0, P0 = typeof o.pose === 'object' && o.pose.L ? o.pose : blendPose(o.pose || 'idle', o.pose || 'idle', 1);
-    const P = o.vis && o.vis.beat > .02 && !P0.cross ? Object.assign({}, P0, { R: [P0.R[0] + o.vis.beat * 10, P0.R[1] - o.vis.beat * 30], L: [P0.L[0] - o.vis.beat2 * 6, P0.L[1] - o.vis.beat2 * 16] }) : P0;
+    const P = o.vis && o.vis.beat > .02 && !P0.cross ? Object.assign({}, P0, { R: [P0.R[0] + o.vis.beat * 16, P0.R[1] - o.vis.beat * 46], L: [P0.L[0] - o.vis.beat2 * 10, P0.L[1] - o.vis.beat2 * 28] }) : P0;
     const LK = o.look || {}, wk2 = LK.width || 1, OF = OUTFITS[o.outfit] || OUTFITS.suit, hat = o.hat === 'none' ? null : (o.hat || OF.hat);
     const back = !!o.back, turn = back ? 0 : clamp(o.turn || 0, -1, 1), yaw = turn * .7;
     const SA = o.vis || null;   // speech acting (from Guide.say): nod on syllable onsets, brows up on emphasis, hand beats, head tilt
-    const breathe = Math.sin(t * 2.1) * 2.4, talk = SA ? clamp(SA.o) : (o.talk || 0), bob = -talk * 3 + breathe * .4 - (SA ? SA.nod * 7 : 0);
+    const breathe = Math.sin(t * 2.1) * 2.4, talk = SA ? clamp(SA.o) : (o.talk || 0), bob = -talk * 3 + breathe * .4 - (SA ? SA.nod * 12 * (SA.fade ?? 1) : 0);
     const bowK = P.bow || 0;
     const nar = 1 - Math.abs(turn) * .12, vx = Math.sin(yaw) * 34;
     const top = -330 + breathe - (P.shrug || 0) * 12, sh = { L: [(-58 * nar + turn * 4) * wk2, top + 22], R: [(58 * nar + turn * 4) * wk2, top + 22] };
@@ -413,6 +413,7 @@
   }
   const LIGHT = { x: -.62, y: -.78, rim: '#fff4dc', rimA: .45, shadeA: .32, shade: '#1a1430', cast: .16, contact: .35 };
   function draw(ctx, x, y, s = 1, o = {}) {
+    o = act(o);
     if (o.light === false) { ctx.save(); ctx.translate(x, y); ctx.scale(s * (o.mirror ? -1 : 1), s); ctx.rotate(o.lean || 0); drawRaw(ctx, o); ctx.restore(); return; }
     const L = Object.assign({}, LIGHT, o.light || {}), ln = Math.hypot(L.x, L.y) || 1, lx = L.x / ln, ly = L.y / ln;
     const m = ctx.getTransform(), z = Math.max(.2, Math.hypot(m.a, m.b)), S = s * z;
@@ -444,18 +445,53 @@
   function setTheme(name) { const th = THEMES[name] || THEMES.ink; INK = th.ink; for (const k of Object.keys(th)) if (k !== 'ink') C[k] = th[k]; }
   // lip-sync + speech acting from window.VIS (tools/visemes.py): { k viseme, o opening, nod, brow, beat, beat2, tilt } or null outside [from, to]
   function say(t, from = -1e9, to = 1e9, V = G.VIS) {
-    if (!V || t < from || t > to) return null; const i = Math.max(0, Math.floor(t * V.fps)), O = V.o, at = j => O[Math.min(O.length - 1, Math.max(0, j))] || 0;
+    if (!V || t < from - .35 || t > to + .55) return null;
+    const fade = t < from ? clamp((t - from + .35) / .35) : t > to ? clamp(1 - (t - to) / .55) : 1;
+    if (t < from || t > to) return { k: 'X', o: 0, nod: 0, brow: 0, beat: 0, beat2: 0, tilt: 0, t, fade };
+    const i = Math.max(0, Math.floor(t * V.fps)), O = V.o, at = j => O[Math.min(O.length - 1, Math.max(0, j))] || 0;
     const o = at(i), k = V.k[i] || 'X'; let prev = 0; for (let j = 1; j <= 4; j++) prev += at(i - j) / 4;
     let mean = 0; for (let j = -15; j <= 15; j++) mean += at(i + j) / 31;
-    let brow = 0; for (let j = 0; j < 8; j++) { const v = at(i - j); if (v > .72 && v > mean * 1.35) brow = Math.max(brow, 1 - j / 8); }
-    let beat = 0, beat2 = 0; for (let j = 0; j < 10; j++) { const on = Math.max(0, at(i - j) - at(i - j - 3)); beat += on * Math.sin(Math.PI * (1 - j / 10)) * .5; beat2 += Math.max(0, at(i - j - 5) - at(i - j - 8)) * Math.sin(Math.PI * (1 - j / 10)) * .4; }
-    return { k, o, nod: clamp((o - prev) * 2.2), brow, beat: clamp(beat * 2.2), beat2: clamp(beat2 * 2), tilt: Math.sin(t * .8 + Math.floor(t / 3.7)) * .035 * clamp(mean * 2) };
+    let brow = 0; for (let j = 0; j < 10; j++) { const v = at(i - j); if (v > .7 && v > mean * 1.3) brow = Math.max(brow, 1 - j / 10); }
+    let beat = 0, beat2 = 0; for (let j = 0; j < 12; j++) { const on = Math.max(0, at(i - j) - at(i - j - 3)); beat += on * Math.sin(Math.PI * (1 - j / 12)) * .5; beat2 += Math.max(0, at(i - j - 5) - at(i - j - 8)) * Math.sin(Math.PI * (1 - j / 12)) * .4; }
+    return { k, o, nod: clamp((o - prev) * 2.4), brow, beat: clamp(beat * 2.4), beat2: clamp(beat2 * 2.2), tilt: Math.sin(t * .8 + Math.floor(t / 3.7)) * .05 * clamp(mean * 2), t, fade };
+  }
+  // ---------- ACTING: idle life for everyone + phrase-driven gestures while speaking + listening nods ----------
+  const LOCK = new Set(['crossed', 'facepalm', 'magnify', 'think', 'cheer', 'wave', 'thumbsUp', 'bow', 'pointUp', 'hips']);
+  const GSETS = { idle: ['present', 'idle', 'presentBoth', 'shrug', 'presentL', 'present'], present: ['present', 'presentBoth', 'pointSide', 'shrug', 'presentL', 'present'], presentL: ['presentL', 'presentBoth', 'present', 'shrug'],
+    presentBoth: ['presentBoth', 'present', 'shrug', 'presentL'], pointSide: ['pointSide', 'present', 'presentBoth', 'pointSide', 'shrug'], pointSideL: ['pointSideL', 'presentL', 'presentBoth', 'pointSideL'], shrug: ['shrug', 'presentBoth', 'present', 'presentL'] };
+  let PHR = null;
+  function phrases() { if (PHR) return PHR; const V = G.VIS; PHR = []; if (!V) return PHR; let quiet = 99; for (let i = 0; i < V.o.length; i++) { if (V.o[i] < .12) quiet++; else { if (quiet >= 7) PHR.push(i / V.fps); quiet = 0; } } return PHR; }
+  function phraseAt(t) { const P = phrases(); let lo = 0, hi = P.length - 1, idx = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (P[m] <= t) { idx = m; lo = m + 1; } else hi = m - 1; } return { i: idx, t0: idx >= 0 ? P[idx] : 0 }; }
+  const num = v => v === true ? 1 : v || 0;
+  function lerpPose(A, B, k) { return { L: [lerp(A.L[0], B.L[0], k), lerp(A.L[1], B.L[1], k)], R: [lerp(A.R[0], B.R[0], k), lerp(A.R[1], B.R[1], k)], hL: k < .5 ? A.hL : B.hL, hR: k < .5 ? A.hR : B.hR,
+    cross: lerp(num(A.cross), num(B.cross), k), out: k < .5 ? A.out : B.out, prop: k < .5 ? A.prop : B.prop, shrug: lerp(num(A.shrug), num(B.shrug), k), bow: lerp(num(A.bow), num(B.bow), k) }; }
+  const toPose = p => (typeof p === 'object' && p && p.L) ? p : blendPose(p || 'idle', p || 'idle', 1);
+  const hashS = str => { let h = 7; for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0; return Math.abs(h); };
+  const backOut = k => k >= 1 ? 1 : 1 + 2.4 * Math.pow(k - 1, 3) + 1.4 * Math.pow(k - 1, 2);
+  function act(o) {
+    if (o.still) return o;
+    const t = o.t ?? 0, V = o.vis, Ls = o.listen, seed = hashS((o.outfit || 'suit') + ((o.look && o.look.skin) || '') + (o.hat || '')) % 997 / 97, r = Object.assign({}, o);
+    const isStr = typeof o.pose === 'string' || !o.pose, home = toPose(o.pose);
+    let P = home;
+    if (V && o.gest !== false && !(isStr && LOCK.has(o.pose || 'idle'))) {
+      const set = o.gestSet || GSETS[isStr ? (o.pose || 'idle') : 'idle'] || GSETS.idle, n = set.length, ph = phraseAt(V.t), s0 = Math.floor(seed * 3);
+      const cur = set[((ph.i + s0) % n + n) % n], prev = set[((ph.i - 1 + s0) % n + n) % n], k = backOut(clamp((V.t - ph.t0) / .5));
+      P = lerpPose(home, lerpPose(toPose(prev), toPose(cur), k), (V.fade ?? 1) * (isStr ? 1 : (o.gestMix ?? .62)));
+    }
+    r.pose = P;
+    const fs = (o.turn || 0) >= 0 ? 1 : -1, fv = V ? (V.fade ?? 1) : 0;
+    r.lean = (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);
+    r.headTilt = (o.headTilt || 0) + Math.sin(t * .43 + seed * 3) * .035 + (Ls ? Ls.nod * .07 : 0);
+    const f = Object.assign({}, o.face || {});
+    if (!f.look) { const st = Math.floor(t / 1.9 + seed), rr = x => Math.abs(Math.sin(x * 12.9898) * 43758.5453) % 1; f.look = [(rr(st) - .5) * .7 + Math.sin(t * .3 + seed) * .1, (rr(st + 7) - .5) * .3]; }
+    if (Ls && Ls.brow > .5 && (!f.brows || f.brows === 'neutral')) f.brows = 'up';
+    r.face = f; return r;
   }
   function talk(t, env = G.ENV, from = -1e9, to = 1e9) {
     if (!env || t < from || t > to) return 0;
     const i = t * env.fps, a = env.v[Math.floor(i)] || 0, b = env.v[Math.floor(i) + 1] || 0, v = a + (b - a) * (i % 1);
     return clamp((v - .12) * 1.6);
   }
-  G.Guide = { draw, drawRaw, PROPS, hexMul, pose, blendPose, talk, say, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
+  G.Guide = { draw, drawRaw, PROPS, hexMul, pose, blendPose, lerpPose, phraseAt, talk, say, act, hairRing, curlRing: hairRing, POSES, C, OUTFITS, HATS, LEGS, FEET, LIGHT,
     kit: { path, seg, curve, through, union, bodyPath, garment, lerp, clamp, get INK() { return INK; }, LW }, setTheme, THEMES, name: 'Theo' };
 })(window);

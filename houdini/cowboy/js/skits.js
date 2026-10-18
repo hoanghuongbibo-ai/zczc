@@ -19,42 +19,25 @@
   // ---------- speech bubbles that follow the voice ----------
   const marks = {};
   // remember where a speaker's mouth is on screen (call inside the camera transform, right after drawing the figure)
-  // (top = hat/head top ≈ 620 figure units above the feet; the bubble sits just above it so it never covers the face)
-  EP.mark = (ctx, who, x, y, s, dy = 400, top = 625) => { const m = ctx.getTransform(); marks[who] = { f: G.EP.frame, mouth: m.transformPoint(new DOMPoint(x, y - dy * s)), top: m.transformPoint(new DOMPoint(x, y - top * s)), half: 215 * s * Math.hypot(m.a, m.b) }; };
+  EP.mark = (ctx, who, x, y, s, dy = 400) => { marks[who] = ctx.getTransform().transformPoint(new DOMPoint(x, y - dy * s)); };
   // end of a line = last voiced frame before `limit`
   const lineEnd = (from, limit) => { const V = G.VIS; if (!V) return limit; for (let i = Math.floor(limit * V.fps); i > from * V.fps; i--) if (V.o[i] > .12) return i / V.fps + .1; return limit; };
   const ends = {};
-  // speech bubble in the user's reference style: cream card, thick brown outline, soft drop shadow, small tail pointing
-  // down to the speaker, sitting fully ABOVE the head (beside the head only when a close-up leaves no room above)
   EP.speech = (ctx, who, text, from, limit, t, o = {}) => {
     const key = from + ':' + limit, end = ends[key] ?? (ends[key] = lineEnd(from, limit));
     if (t < from - .05 || t > end + .3) return;
-    const M = marks[who]; if (!M) return; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
-    const cw = ctx.canvas.width / W; ctx.scale(cw, cw);   // work in 1280×720 screen units
+    const pin = marks[who]; if (!pin) return; const p = ctx.getTransform().inverse().transformPoint(pin);
     const words = text.split(' '), shown = Math.min(words.length, Math.ceil(words.length * clamp((t - from) / Math.max(.3, (end - from) * .9)) + .001));
-    const pop = FX.settle(clamp((t - from + .05) / .22)), out = clamp((t - end) / .3), size = Math.round((o.size || 30) * 1.25);
-    ctx.font = `700 ${size}px Fredoka, sans-serif`; const said = words.slice(0, shown).join(' ');
-    const wf = ctx.measureText(text).width + 56, h = size * 1.75, gap = 20, tail = 16;
-    const hx = M.top.x / cw, hy = M.top.y / cw, mx = M.mouth.x / cw, my = M.mouth.y / cw, half = M.half / cw;
-    // candidate spots: above the head, beside it, or in the top band clear of the hat; pick the one covering the fewest heads
-    const heads = Object.values(marks).filter(m => m.f === G.EP.frame).map(m => { const hh = m.half / cw; return [m.top.x / cw - hh, m.top.y / cw - 6, m.top.x / cw + hh, m.mouth.y / cw + 70 * hh / 215 * 1.6]; });
-    const over = (x, y) => { let a = 0; for (const [x0, y0, x1, y1] of heads) a += Math.max(0, Math.min(x1, x + wf / 2) - Math.max(x0, x - wf / 2)) * Math.max(0, Math.min(y1, y + h / 2 + tail) - Math.max(y0, y - h / 2)); return a; };
-    const cx0 = x => clamp(x, wf / 2 + 20, W - wf / 2 - 20), topY = h / 2 + 22;
-    const C = [[cx0(hx), hy - gap - tail - h / 2, 0, 0], [cx0(hx + half + 30 + wf / 2), clamp(my - 70, topY, H - h / 2 - 90), 1, 4], [cx0(hx - half - 30 - wf / 2), clamp(my - 70, topY, H - h / 2 - 90), -1, 4],
-      [cx0(hx + half * .55 + wf / 2), topY, 0, 2], [cx0(hx - half * .55 - wf / 2), topY, 0, 2]];
-    let best = null; for (const [x, y, sd, pen] of C) { if (y - h / 2 < 14) continue; const sc = over(x, y) + pen * 400 + Math.abs(x - hx) * .3; if (!best || sc < best[0]) best = [sc, x, y, sd]; }
-    let [, bx, by, side] = best || [0, cx0(hx), topY, 0];
-    const w = Math.min(wf, Math.max(h * 1.8, ctx.measureText(said).width + 56)), cx = side ? side * -(wf - w) / 2 : 0;
+    const pop = FX.settle(clamp((t - from + .05) / .22)), out = clamp((t - end) / .3), size = o.size || 28;
+    ctx.save(); ctx.font = `700 ${size}px Fredoka, sans-serif`; const said = words.slice(0, shown).join(' '), wf = ctx.measureText(text).width + 46, h = size * 1.9;
+    // the box is placed for the whole line but only grows as wide as the words spoken so far
+    const bx = clamp(o.x ?? p.x, wf / 2 + 24, W - wf / 2 - 24), by = clamp(o.y ?? (p.y - 150), h / 2 + 40, H - 120);
+    const w0 = Math.max(h * 1.6, ctx.measureText(said).width + 46), w = Math.min(wf, w0), cx = clamp(p.x - bx, -wf / 2 + w / 2, wf / 2 - w / 2);
     ctx.globalAlpha = 1 - out; ctx.translate(bx + cx, by); ctx.scale(pop, pop);
-    const r = 16, INKB = '#4a3222';
-    const shape = c => { c.beginPath(); c.roundRect(-w / 2, -h / 2, w, h, r);
-      if (!side) { const tx = clamp(hx - bx - cx, -w / 2 + 34, w / 2 - 34); c.moveTo(tx - 13, h / 2); c.lineTo(tx, h / 2 + tail); c.lineTo(tx + 13, h / 2); }
-      else { const ty = clamp(my - by, -h / 2 + 14, h / 2 - 14), ex = -side * w / 2; c.moveTo(ex, ty - 11); c.lineTo(ex - side * tail, ty + 6); c.lineTo(ex, ty + 11); } };
-    ctx.save(); ctx.translate(6, 6); shape(ctx); ctx.fillStyle = 'rgba(60,35,15,.28)'; ctx.fill(); ctx.restore();
-    shape(ctx); ctx.fillStyle = '#fbf3df'; ctx.fill(); ctx.lineJoin = 'round'; ctx.lineWidth = 5; ctx.strokeStyle = INKB; ctx.stroke();
-    // cover the outline where the tail joins the card
-    ctx.fillStyle = '#fbf3df'; if (!side) { const tx = clamp(hx - bx - cx, -w / 2 + 34, w / 2 - 34); ctx.fillRect(tx - 10, h / 2 - 4, 20, 6); } else { const ty = clamp(my - by, -h / 2 + 14, h / 2 - 14); ctx.fillRect(-side * w / 2 - (side > 0 ? 2 : 4), ty - 8, 6, 16); }
-    ctx.font = `700 ${size}px Fredoka, sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = INKB; ctx.fillText(said, -w / 2 + 28, 2);
+    const px = p.x - bx - cx, tx = clamp(px, -w / 2 + 30, w / 2 - 30), tipX = clamp(px, -w, w), tipY = Math.min(Math.max(p.y - by - 40, h / 2 + 18), h / 2 + 70);
+    sh(ctx, '#fffaf0', 3.5, c => { c.roundRect(-w / 2, -h / 2, w, h, h / 2); c.moveTo(tx - 14, h / 2 - 2); c.lineTo(tipX * .6 + tx * .4, tipY); c.lineTo(tx + 14, h / 2 - 2); });
+    ctx.fillStyle = '#fffaf0'; ctx.fillRect(tx - 12, h / 2 - 6, 24, 6);
+    ctx.font = `700 ${size}px Fredoka, sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillStyle = OUT; ctx.fillText(said, -w / 2 + 23, 1);
     ctx.restore();
   };
   // narrator lines shown as a caption strip (only while spoken)

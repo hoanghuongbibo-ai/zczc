@@ -483,7 +483,7 @@
     P = Object.assign({}, P, keepR ? { R: home.R, hR: home.hR, prop: home.prop } : { R: [68, -158], hR: 'rest' });
     r.pose = P;
     const fs = (o.turn || 0) >= 0 ? 1 : -1, fv = V ? (V.fade ?? 1) : 0;
-    r.lean = (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);
+    r.lean = G.Guide.straight ? 0 : (o.lean || 0) + Math.sin(t * .55 + seed) * .016 + Math.sin(t * 1.3 + seed * 2) * .004 + (V ? (V.nod * .04 + V.brow * .025) * fs * fv : 0) + (Ls ? Ls.nod * .012 * fs : 0);
     r.headTilt = (o.headTilt || 0) + Math.sin(t * .43 + seed * 3) * .035 + (Ls ? Ls.nod * .07 : 0);
     const f = Object.assign({}, o.face || {});
     if (!f.look) { const st = Math.floor(t / 1.9 + seed), rr = x => Math.abs(Math.sin(x * 12.9898) * 43758.5453) % 1; f.look = [(rr(st) - .5) * .7 + Math.sin(t * .3 + seed) * .1, (rr(st + 7) - .5) * .3]; }

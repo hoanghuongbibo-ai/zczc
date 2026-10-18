@@ -1,9 +1,10 @@
 /* assembles the episode: shots sorted by their anchor time, each running until the next one starts */
 (function (G) {
   'use strict';
+  G.Guide.straight = true;   // v9: the v8 upright posture (no body lean/sway); arms and hands stay as in v4
   const EP = G.EP, DUR = 784.6, list = EP.shots.slice().sort((a, b) => a.t - b.t);
   const shots = list.map((s, i) => { const start = s.t, end = (list[i + 1] || { t: DUR }).t, R = k => G.TV[k] - start;
-    return { start, end, draw: (ctx, lt, dur, t) => { ctx.save(); const z = 1.012; ctx.translate(640 + Math.sin(t * .47) * 3.2, 360 + Math.sin(t * .31 + 1) * 2.2); ctx.scale(z, z); ctx.translate(-640, -360); s.fn(ctx, lt, dur, t, R); ctx.restore(); } }; });   // a gently breathing camera
+    return { start, end, draw: (ctx, lt, dur, t) => { G.EP.frame = t; ctx.save(); const z = 1.012; ctx.translate(640 + Math.sin(t * .47) * 3.2, 360 + Math.sin(t * .31 + 1) * 2.2); ctx.scale(z, z); ctx.translate(-640, -360); s.fn(ctx, lt, dur, t, R); ctx.restore(); } }; });   // a gently breathing camera
   G.TOON_FINISH = { grain: .02, vignette: .32 };
   // colour grade: a touch more saturation + contrast, warm soft-light toning, and a soft bloom on the highlights
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;

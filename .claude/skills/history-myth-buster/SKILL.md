@@ -285,9 +285,8 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 ### Lesson: right hand still + speech-following bubbles (cowboy v4)
 - Dialogue must follow the voice exactly. Use `EP.mark(ctx, who, x, y, s)` after drawing a speaker, then `EP.speech(ctx, who, line, TV.from, TV.limit, t)`. The bubble appears only while that line is voiced (its end comes from VIS silence), reveals words in step and grows its box with them, has its tail to the speaker, and fades .3 s after. Narrator lines go through `EP.caption`. Never leave stacked or early bubbles, and never put up bubbles for unvoiced text (removed "UP! UP! UP!", "z z z", "BEEF!").
 
-### HOUSE STYLE = cowboy v4 (user's final decision, after trying v5–v8)
-- The user tried v5 (both hands gesturing), v6 (palm hands, arms at the sides, bubbles above the heads), v7 and v8 (straight back, hands behind the back), and concluded that **v4 is best**. Follow v4 from now on (code at commit 975fd1c, restored in guide.js, skits.js and show.js):
-  - Right arm rests still at the side. Only the left arm gestures, with the phrase-driven GSETS and the original palm hand. A prop or held pose keeps its arm.
-  - Speech bubbles follow the voice: `EP.mark` gives the speaker's mouth point, and `EP.speech` shows only the line being spoken, revealing words in step and growing the pill box. The tail points to the speaker, and the bubble fades .3 s after the line. Narrator lines use `EP.caption`. Never show unvoiced text in a bubble.
-  - Body keeps the natural lean, sway and idle life from act().
-- Don't reintroduce the v5–v8 experiments (TALK sets, the custom palm-hand redraws, above-head bubble placement, hands behind the back) unless the user asks for them again.
+### HOUSE STYLE = cowboy v9: v4 hands + v8 everything else (user's final decision)
+- Arms and hands as in v4: the right arm rests still at the side, only the left arm gestures (phrase-driven GSETS, the original palm hand), and props or held poses keep their arm. Don't use the v5 TALK set, the v6 hand redraws, or the v7/v8 hands-behind-the-back pose.
+- Everything else as in v8:
+  - Bubbles in the reference style (cream card, thick brown outline, drop shadow, small tail), placed ABOVE the speaker's head or beside it in close-ups. Placement picks the spot covering the fewest heads drawn this frame (EP.mark stores the mouth, the head top at ≈625 units, the half-width at ≈215 units, and the frame stamp G.EP.frame set in show.js). Bubbles follow the voice word by word and vanish when the line ends.
+  - `G.Guide.straight = true` for an upright body with no lean or sway. The head, face and lip-sync still act.

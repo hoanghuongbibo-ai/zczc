@@ -250,3 +250,12 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - **Every `since(t,'key')` key must exist in `F`.** A missing key gives NaN, and the element silently never appears (Beat 9's first checkbox tick). Also, don't cut away before the payoff word: check that each shot's last key word falls inside the shot's window.
 
 - **The sponsor bridge is a beat too.** If the voice-over skips the sponsor lines, still deliver that beat as a music-only clip: a "quick break" bumper, a hard cut where the ad goes, then a "Now, where were we?" recap of the story so far. Never silently drop a beat number; NYC Beat 5 was missed this way the first time.
+
+- **Maya series (`houdini/maya/`).** The voice-over is one file (`assets/audio/narration-full.mp3`, 1310.7 s; transcript `asr-full.json`; beat map in `PLAN.md`). The recording skips Beat 5.
+  Pages load `../nyc/js/corner.js` (for `walker` and `person`), `../nyc/js/nyc-common.js`, then `js/maya-set.js`, which exports `G.Maya`:
+  - `plaza(ctx, t, {tod, thin, drift, doorGlow})` is the series' fixed camera on El Castillo. `tod` runs 0 (night) → 1 (dawn) → 2 (morning).
+  - `castillo`, `sky`, `jungle`, `torch` and `crowdBand` are the set pieces it's built from.
+  - `vendor()` is the water seller in a huipil, a recurring character; `table()` is her folding table.
+  - `mayaMap()` and `site()` draw the map traced from lon/lat; `SITES` holds Tikal, Copán, Palenque, Toniná and the other sites.
+  Shared helpers come from `nyc/js/sponsor.js` lines 9–139, copied into each part (strip, tag, counter, deskBg, …).
+- **Maps: clip any shading polygon to the land path,** or it spills into the sea. Extend land edges past the frame so no straight cut-off edge shows.

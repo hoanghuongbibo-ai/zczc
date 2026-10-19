@@ -143,5 +143,37 @@
     if (label) { ctx.font = FX.FONT(800, o.px || 18); const w = ctx.measureText(label).width + 16, dx = o.left ? -w - 14 : 14; shape(ctx, '#f6f0e0', 2.5, rect(dx, -14, w, 28, 5)); ctx.fillStyle = INK; ctx.textBaseline = 'middle'; ctx.fillText(label, dx + 8, 1); }
     ctx.restore(); }
 
-  G.Maya = { mix, sky, jungle, castillo, torch, crowdBand, plaza, vendor, table, flowers, mayaMap, site, MP, SITES };
+
+  // ---- Classic city pieces (reused for Tikal, Copán, Palenque…) ----
+  // a steep temple-pyramid with a roof comb; x = centre, y = base; o.col stucco colour, o.k 0..1 builds it up from the ground
+  function temple(ctx, x, y, s, o = {}) { const k = o.k ?? 1; if (k <= 0) return; const col = o.col || '#d8cdb4', dk = o.dark || mix(col, '#3a2a20', .35), n = o.tiers || 6, Hh = o.h || 300, w0 = o.w || 150;
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.beginPath(); ctx.rect(-400, -900, 800, 900 + 40); ctx.rect(-400, 0, 800, 40); ctx.save(); ctx.beginPath(); ctx.rect(-400, -(Hh + 260) * k - 10, 800, (Hh + 260) * k + 60); ctx.clip();
+    shape(ctx, 'rgba(0,0,0,.18)', 0, ellipse(0, 4, w0 * 1.3, 14));
+    for (let i = 0; i < n; i++) { const y0 = -i * Hh / n, wa = lerp(w0, w0 * .45, i / n), wb = lerp(w0, w0 * .45, (i + .85) / n); shape(ctx, col, 3.5, poly([[-wa, y0], [wa, y0], [wb, y0 - Hh / n + 3], [-wb, y0 - Hh / n + 3]])); shape(ctx, dk, 0, rect(-wb, y0 - Hh / n + 3, wb * 2, 4)); }
+    shape(ctx, mix(col, '#ffffff', .25), 3, poly([[-w0 * .2, 0], [w0 * .2, 0], [w0 * .13, -Hh], [-w0 * .13, -Hh]])); for (let j = 0; j < 16; j++) { const yy = -j * Hh / 16; line(ctx, [[-w0 * .2 + j * .5, yy], [w0 * .2 - j * .5, yy]], 1.4, 'rgba(60,40,30,.3)'); }
+    const tw = w0 * .42; shape(ctx, col, 3.5, rect(-tw, -Hh - 70, tw * 2, 70)); shape(ctx, '#2a2024', 3, rect(-14, -Hh - 54, 28, 54, 4));
+    shape(ctx, col, 3.5, poly([[-tw * .7, -Hh - 70], [tw * .7, -Hh - 70], [tw * .5, -Hh - 170], [-tw * .5, -Hh - 170]])); for (let j = 0; j < 3; j++) shape(ctx, dk, 0, rect(-tw * .4 + j * tw * .3, -Hh - 150, tw * .18, 50, 3)); // roof comb
+    if (o.paint) { shape(ctx, 'rgba(200,60,50,.35)', 0, rect(-tw, -Hh - 70, tw * 2, 70)); shape(ctx, 'rgba(200,60,50,.25)', 0, poly([[-tw * .7, -Hh - 70], [tw * .7, -Hh - 70], [tw * .5, -Hh - 170], [-tw * .5, -Hh - 170]])); }
+    ctx.restore(); ctx.restore(); }
+  function palace(ctx, x, y, s, o = {}) { const k = o.k ?? 1; if (k <= 0) return; const col = o.col || '#e2d6bc'; ctx.save(); ctx.translate(x, y); ctx.scale(s, s * k);
+    shape(ctx, mix(col, '#3a2a20', .2), 3.5, rect(-210, -40, 420, 40)); shape(ctx, col, 3.5, rect(-180, -120, 360, 80)); shape(ctx, mix(col, '#3a2a20', .3), 3, rect(-190, -136, 380, 18));
+    for (let i = 0; i < 5; i++) shape(ctx, '#2a2024', 2.5, rect(-150 + i * 70, -100, 26, 60, 3)); if (o.paint) shape(ctx, 'rgba(200,60,50,.4)', 0, rect(-180, -120, 360, 14)); ctx.restore(); }
+  function stelaSmall(ctx, x, y, s, k = 1) { if (k <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(s, s * k); shape(ctx, '#bcae90', 3.5, c => { c.moveTo(-26, 0); c.lineTo(-24, -110); c.quadraticCurveTo(0, -124, 24, -110); c.lineTo(26, 0); c.closePath(); });
+    shape(ctx, '#8a7c62', 2, circle(0, -86, 9)); shape(ctx, '#8a7c62', 2, rect(-9, -74, 18, 46, 4)); for (let i = 0; i < 3; i++) shape(ctx, '#3a8a5a', 1.5, ellipse(-8 + i * 8, -98, 3, 9, (i - 1) * .4)); ctx.restore(); }
+  // a holy lord: quetzal plumes, jade collar, jaguar kilt, cape; walker underneath
+  function king(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
+    const plume = o.plume || '#2f9a6a', sw = Math.sin(t * 1.4 + (o.ph || 0)) * .05; for (let i = 0; i < 9; i++) { const a = -1.1 + i * .275 + sw; ctx.save(); ctx.translate(0, -330); ctx.rotate(a); shape(ctx, i % 2 ? plume : mix(plume, '#ffffff', .2), 2.5, ellipse(0, -70, 13, 70)); ctx.restore(); }
+    if (o.cape) shape(ctx, o.cape, 3.5, poly([[-44, -250], [44, -250], [64, -40], [-64, -40]]));
+    ctx.restore();
+    N.walker(ctx, x, y, s, t, o.v ?? 2, { plain: true, still: o.still ?? true, reach: o.reach, flip: o.flip, coat: o.coat || '#f0e6cc', pants: o.skin || '#8a5a34', skin: o.skin || '#8a5a34', hair: '#1d1a17', hs: 0, shoe: '#c8a040' });
+    ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
+    shape(ctx, '#e8a040', 3, poly([[-38, -132], [38, -132], [34, -72], [-34, -72]])); for (let i = 0; i < 8; i++) shape(ctx, '#3a2a1a', 0, circle(-26 + (i % 4) * 17, -118 + Math.floor(i / 4) * 24 + (i % 2) * 6, 4.5)); // jaguar kilt
+    for (let i = 0; i < 11; i++) shape(ctx, i % 2 ? '#2fa06a' : '#5ac08a', 1.5, circle(-30 + i * 6, -246 + Math.abs(i - 5) * -2 + Math.abs(i - 5) * 4, 5)); // jade collar
+    shape(ctx, '#2fa06a', 3, circle(0, -224, 9)); shape(ctx, '#c8a040', 3, rect(-40, -140, 80, 12, 4));
+    shape(ctx, '#c8a040', 3, c => { c.moveTo(-34, -330); c.quadraticCurveTo(0, -362, 34, -330); c.lineTo(30, -322); c.lineTo(-30, -322); c.closePath(); }); shape(ctx, '#2fa06a', 2.5, circle(0, -342, 9)); // headband with jade
+    for (const d of [-1, 1]) shape(ctx, '#2fa06a', 2.5, circle(d * 38, -290, 7)); // ear spools
+    if (o.staff) { line(ctx, [[80, -240], [96, 0]], 7, '#6a4a2a'); shape(ctx, '#2fa06a', 3, circle(78, -250, 14)); }
+    ctx.restore(); }
+
+  G.Maya = { temple, palace, stelaSmall, king, mix, sky, jungle, castillo, torch, crowdBand, plaza, vendor, table, flowers, mayaMap, site, MP, SITES };
 })(window);

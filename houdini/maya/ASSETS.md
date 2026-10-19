@@ -47,3 +47,34 @@ Numbers run across all four boxes, so you can reply with something like "sending
 36. **Photos of Takeshi Inomata, David Stuart, Marcello Canuto and Francisco Estrada-Belli**. Default: name cards only, no faces.
 
 People who become silhouettes or composites: Guatemalan victims and Maní townspeople (silhouettes), the water vendor (a composite, not a real person), and the Itza' elder (a composite).
+
+## Received 2026-10-19 (46 files) — review
+Kept (saved in `assets/img/` with slug names):
+- **Codices (PD facsimiles):**
+  - Dresden p.9, p.57b eclipse, and a Venus-table photo;
+  - Madrid 26–27, 30a (Chaak rain), 90–92, 101c and 103–104;
+  - Paris 23–24 (Rosny 1888).
+  - The Madrid and Paris scans sit on blue lecture slides; I crop to the codex page.
+  - Item 4 is done. For item 5, the Madrid and Paris pages are in, the Maya Codex of Mexico is still missing, and I'll draw it.
+- **Landa:** the alphabet page (item 6) and the portrait (item 8).
+- **Copán, 18 Rabbit's stelae:** B, C (plus a front view), D, F and H (plus the back of H) (item 9).
+- **Quiriguá:** Zoomorph G, two photos (item 10, half).
+- **Palenque:** the Temple of the Inscriptions, twice (item 11, exterior only), plus the jade mask (item 12, half).
+- **Tikal:** the Marcador (item 2), plus Stela 31 as a photo, the side-figures drawing and the back-text drawing (item 1). Both drawings are Tikal Project line drawings, kept as reference only.
+- **Chichén Itzá:** El Castillo by day (item 13). I'll draw it at night with the crowd.
+- **Reference:** the Aguada Fénix lidar 3D view (item 17) and Piedras Negras Stela 8 (Maler 1901 photo plus Graham drawing; it stands in for item 24).
+- **People:** Knorozov with his cat (item 20), Proskouriakoff (item 21), Ruz Lhuillier (item 22, at work on a stucco head).
+- **Dress:** a Yucatec terno and a festival-dress reference (item 25). The vendor gets an everyday white huipil with a flower-embroidered yoke, based on the terno.
+
+Not used:
+- `sarcophagus-lid-of-sisobek` is an **Egyptian** sarcophagus (Sisobek), not Pakal's lid. I'll draw Pakal's lid from my own reference.
+- `Toniná Stela 1` is a different Toniná monument, not **Monument 101** (the AD 909 date). I'll draw Monument 101 as a small stone disc with the 10.4.0.0.0 date; Stela 1 can appear as "a Toniná stone" in the background.
+- **Copán Stelae P and N are not 18 Rabbit's** (P is Ruler 11's, AD 623; N is Ruler 15's, AD 761). They won't appear in the 18 Rabbit shot.
+- Duplicates: Dresden p.9 (small copy), the Venus table (second copy), Stela H (1), Zoomorph G (second photo).
+
+Still missing (I'll draw them):
+- Quiriguá Stela E, Ballcourt A-III, and the Catherwood plates;
+- the 2012 crowd photos and PACUNAM lidar;
+- the Proskouriakoff 1960 paper;
+- the CEH report, Toniná Monument 101, Pakal's lid, the Palenque slab and staircase;
+- the data tables (I use the published headline figures).

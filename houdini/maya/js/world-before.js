@@ -250,7 +250,7 @@
     tag(ctx, 'A SKINNY, STUBBORN GRASS', 420, 110, since(t, 'skinny'), 26);
     if (since(t, 'patience') > 0) { const gen = Math.round(lerp(1, 300, g)); tag(ctx, `GENERATION ${gen}`, 420, 170, since(t, 'patience'), 22); }
     if (since(t, 'corn') > 0) strip(ctx, 'CORN', 640, 300, since(t, 'corn'), { px: 70, color: '#c88a10' });
-    if (since(t, 'stay') > 0) FX.stamp(ctx, 'YOU CAN STAY', 860, 440, since(t, 'stay') - .1, { color: GREEN, size: 40 });
+    if (since(t, 'stay') > 0) strip(ctx, 'YOU CAN STAY', 860, 430, since(t, 'stay') - .1, { px: 46, color: '#c8322a', rot: -.04 });
     vig(ctx);
   }
 

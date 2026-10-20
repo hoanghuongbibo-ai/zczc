@@ -103,7 +103,7 @@
     EK.chapter(ctx, lt, 6, 'Midday: the river is the highway');
   });
   S('pnas', (ctx, lt, dur, t, R) => {   // 2022, PNAS: sediment cores + ancient pollen → 8,000 years of water levels → ~40 % of maximum
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 211, 'multiply', 1);
+    EK.board(ctx, 211 % 7 + 1);
     EK.nameCard(ctx, lt, .2, 'HADER SHEISHA + team', 'study in PNAS, 2022', 330, 110, { icon: 'drill', w: 460 });
     // a sediment core: coloured layers, pollen grains appearing
     const ck = K.pop(lt, R('cores') - .2, .4); if (ck > 0) { ctx.save(); ctx.translate(330, 420); ctx.scale(ck, ck); const cols = ['#c8a06a', '#8a6a4a', '#b8905a', '#6a5a4a', '#a8885a', '#7a6a50', '#c0a070']; cols.forEach((c2, i) => sh(ctx, c2, 3, cc => cc.rect(-50, -200 + i * 57, 100, 57))); const r = rng(4); for (let i = 0; i < 30; i++) { const a = clamp((lt - R('cores') - .5 - i * .05) / .2); if (a <= 0) continue; sh(ctx, '#e8d84a', 1.5, circ(-40 + r() * 80, -190 + r() * 380, 4 * a)); } ctx.restore(); K.tag(ctx, 'sediment cores + ancient pollen', 330, 670, lt, R('cores') + .3, { size: 22 }); K.tag(ctx, '8,000 years of water levels', 330, 160 + 60, lt, R('cores') + 2.5, { size: 22, fill: '#f6c945' }); }
@@ -155,7 +155,7 @@
     if (lt > R('twohundred')) EK.count(ctx, 640, 300, 200, lt, R('twohundred') + .4, 1, 'blocks a month · one team', { prefix: '≈ ', size: 84 });
   });
   S('tendays', (ctx, lt, dur, t, R) => {   // ten days = the Egyptian work week — longer than mine; but not all year
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 221, 'multiply', 1);
+    EK.board(ctx, 221 % 7 + 1);
     EK.calendar(ctx, lt, .2, { y: 360 });
     if (lt > R('notyear')) K.tag(ctx, '…but not all year: only during the flood', 640, 600, lt, R('notyear') + .2, { size: 28, fill: '#f6c945' });
   });

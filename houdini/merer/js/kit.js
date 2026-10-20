@@ -32,6 +32,13 @@
           ctx.fillStyle = '#3a5aa0'; ctx.beginPath(); ctx.ellipse(cx, y + 14, 4, 10, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#c8402a'; ctx.fillRect(cx - 2, y + 26, 4, 6); } }
       const by = h / 2 - 22; for (let x = -w / 2 + 10; x < w / 2 - 10; x += 16) { ctx.fillStyle = ['#2a7a7a', '#d8b040', '#3a5aa0', '#c8402a'][Math.floor((x + w) / 16) % 4]; ctx.fillRect(x, by, 12, 10); } ctx.strokeStyle = '#3a2614'; ctx.lineWidth = 2; ctx.strokeRect(-w / 2 + 10, by - 2, w - 20, 14); }
     if (o.draw) o.draw(ctx); ctx.restore(); ctx.restore(); }
+  // painted diagram board (user's repainted refs): a reed-mat table under one big bordered papyrus sheet, warm light from upper left
+  const board = (ctx, seed = 1) => ctx.drawImage(P.layer('ekboard' + seed, g => { g.setTransform(1, 0, 0, 1, 0, 0); const r = rng(seed);
+    g.fillStyle = grad(g, 0, 0, 0, H, [[0, '#6e4a2c'], [1, '#4a3020']]); g.fillRect(0, 0, W, H);
+    for (let y = 0; y < H; y += 9) { g.fillStyle = `rgba(${r() < .5 ? '30,18,8' : '160,110,60'},${.08 + r() * .1})`; g.fillRect(0, y, W, 4 + r() * 3); }   // reed mat
+    papyrusSheet(g, W / 2, H / 2 + 4, W - 50, H - 34, { rot: (r() - .5) * .006, seed: seed + 40, border: true });
+    const lg = g.createRadialGradient(260, 120, 40, 520, 300, 1000); lg.addColorStop(0, 'rgba(255,236,190,.28)'); lg.addColorStop(.5, 'rgba(255,220,160,0)'); lg.addColorStop(1, 'rgba(60,30,10,.28)'); g.fillStyle = lg; g.fillRect(0, 0, W, H);
+  }, 0, W, H), 0, 0);
   // a line from Merer's log: hieratic writes itself, then the English translation types under it
   function logCard(ctx, lt, t0, text, o = {}) {
     const k = pop(lt, t0, .45); if (k <= 0) return; const w = o.w || 900, lines = K.wrap(ctx, text, FONT(700, o.size || 34), w - 120), lh = (o.size || 34) * 1.3, h = 150 + lines.length * lh + (o.source === false ? 0 : 30);
@@ -116,7 +123,7 @@
   }
   // wet vs dry sand: two sledges, sand heaping up in front of the dry one, force arrows
   function sandDiagram(ctx, lt, t, t0 = 0) {
-    ctx.fillStyle = '#f2e8d4'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 141, 'multiply', 1);
+    board(ctx, 2);
     const panel = (x, label, wet, at) => { const a = pop(lt, at, .4); if (a <= 0) return; ctx.save(); ctx.translate(x, 380); ctx.scale(a, a);
       sh(ctx, wet ? '#b8956a' : '#e2c58e', 3.5, c => c.rect(-260, 60, 520, 80)); if (wet) { ctx.fillStyle = 'rgba(80,120,160,.25)'; ctx.fillRect(-258, 62, 516, 76); }
       const k = clamp((lt - at - .4) / 2), dx = lerp(-140, wet ? 60 : -60, ease.out(k));
@@ -127,25 +134,25 @@
   }
   // four ramp theories, each a mini pyramid diagram, then STILL DEBATED
   function rampTypes(ctx, lt, t0, o = {}) {
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 151, 'multiply', 1);
+    board(ctx, 5);
     const names = ['STRAIGHT', 'ZIGZAG', 'SPIRAL', 'INTERNAL'];
-    names.forEach((n, i) => { const a = pop(lt, t0 + i * (o.gap ?? 1.1), .4); if (a <= 0) return; const x = 170 + i * 313, y = 470; ctx.save(); ctx.translate(x, y); ctx.scale(a, a);
+    names.forEach((n, i) => { const a = pop(lt, t0 + i * (o.gap ?? 1.1), .4); if (a <= 0) return; const x = 250 + i * 260, y = 470; ctx.save(); ctx.translate(x, y); ctx.scale(a, a);
       ES.pyramid(ctx, 0, 0, 220, { k: 1 }); ctx.lineCap = 'round'; ctx.strokeStyle = '#a0602a'; ctx.lineWidth = 10;
-      ctx.beginPath(); if (i === 0) { ctx.moveTo(-200, 0); ctx.lineTo(-20, -130); } else if (i === 1) { ctx.moveTo(100, -6); ctx.lineTo(-60, -40); ctx.lineTo(60, -76); ctx.lineTo(-30, -110); ctx.lineTo(10, -136); } else if (i === 2) { ctx.moveTo(-110, -2); ctx.lineTo(100, -20); ctx.lineTo(60, -50); ctx.lineTo(-60, -60); ctx.lineTo(-30, -96); ctx.lineTo(30, -110); } else { ctx.setLineDash([8, 8]); ctx.moveTo(-80, -20); ctx.lineTo(70, -40); ctx.lineTo(-40, -76); ctx.lineTo(30, -110); }
+      ctx.beginPath(); if (i === 0) { ctx.moveTo(-165, -4); ctx.lineTo(-20, -130); } else if (i === 1) { ctx.moveTo(100, -6); ctx.lineTo(-60, -40); ctx.lineTo(60, -76); ctx.lineTo(-30, -110); ctx.lineTo(10, -136); } else if (i === 2) { ctx.moveTo(-110, -2); ctx.lineTo(100, -20); ctx.lineTo(60, -50); ctx.lineTo(-60, -60); ctx.lineTo(-30, -96); ctx.lineTo(30, -110); } else { ctx.setLineDash([8, 8]); ctx.moveTo(-80, -20); ctx.lineTo(70, -40); ctx.lineTo(-40, -76); ctx.lineTo(30, -110); }
       ctx.stroke(); ctx.setLineDash([]); txt(ctx, n, 0, 60, DISP(32), OUT); ctx.restore(); });
     if (o.stampAt != null) FX.stamp(ctx, 'STILL DEBATED', 640, 200, lt - o.stampAt, { color: '#c8322a', size: 54, rot: -.08 });
   }
   // gang → 5 divisions → teams (tree), with team-name banners
   function gangChart(ctx, lt, t0, o = {}) {
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 161, 'multiply', 1);
+    board(ctx, 1);
     const box = (x, y, w, h, s, at, col) => { const a = pop(lt, at, .35); if (a <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(a, a); sh(ctx, col || '#f7eedb', 3.5, c => c.roundRect(-w / 2, -h / 2, w, h, 10)); txt(ctx, s, 0, 1, FONT(700, h > 50 ? 28 : 20), OUT); ctx.restore(); };
     box(640, 130, 380, 70, 'GANG · "Friends of Khufu"', t0, '#f2d27a');
-    for (let d = 0; d < 5; d++) { const x = 160 + d * 240, at = t0 + .6 + d * .2; if (lt > at) ln(ctx, [[640, 165], [x, 280]], 3, 'rgba(60,30,10,.5)'); box(x, 300, 200, 56, 'division ' + (d + 1), at, '#e2ecd4');
+    for (let d = 0; d < 5; d++) { const x = 180 + d * 230, at = t0 + .6 + d * .2; if (lt > at) ln(ctx, [[640, 165], [x, 280]], 3, 'rgba(60,30,10,.5)'); box(x, 300, 200, 56, 'division ' + (d + 1), at, '#e2ecd4');
       for (let tm = 0; tm < 3; tm++) { const ty = 420 + tm * 70, at2 = t0 + 1.8 + d * .12 + tm * .1; if (lt > at2) ln(ctx, [[x, 328], [x, ty - 22]], 2, 'rgba(60,30,10,.35)'); box(x, ty, 150, 44, 'team', at2, '#f7eedb'); } }
   }
   // workforce bars: Herodotus' 100,000 vs modern estimates
   function workforce(ctx, lt, t0, o = {}) {
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 171, 'multiply', 1);
+    board(ctx, 4);
     const bar = (y, v0, v1, label, col, at) => { const k = ease.out(clamp((lt - at) / 1)); if (k <= 0) return; const sc = 9.4e-3, x0 = 180; sh(ctx, col, 3.5, c => c.rect(x0, y - 34, v1 * sc * k, 68)); if (v0 !== v1) { ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.fillRect(x0, y - 34, v0 * sc * k, 68); }
       txt(ctx, label, x0, y - 62, FONT(700, 26), OUT, 'left'); };
     bar(260, 100000, 100000, 'Herodotus: 100,000 men', '#c8763a', t0); bar(480, 10000, 25000, 'Modern estimates: ~10,000–25,000', '#3f8a6a', t0 + (o.modernAt ?? 1.4));
@@ -177,5 +184,5 @@
   function count(ctx, x, y, to, lt, t0, d, label, o = {}) { const k = clamp((lt - t0) / d); if (lt < t0 - .2) return; const v = lerp(0, to, ease.out(k)), s = pop(lt, t0 - .2, .35);
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s); FX.bigText(ctx, (o.prefix || '') + v.toFixed(o.dec ?? 0) + (o.suffix || ''), 0, 0, o.size || 84, { color: o.color || '#f6c945' });
     if (label) { ctx.font = FONT(700, 24); const w = ctx.measureText(label).width + 30; sh(ctx, '#f7eedb', 3, c => c.roundRect(-w / 2, (o.size || 84) * .55, w, 40, 10)); txt(ctx, label, 0, (o.size || 84) * .55 + 21, FONT(700, 24)); } ctx.restore(); }
-  G.EK = { scroll, count, hieratic, papyrusSheet, logCard, onScreen, chapter, nameCard, timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, txt, FONT, DISP };
+  G.EK = { board, scroll, count, hieratic, papyrusSheet, logCard, onScreen, chapter, nameCard, timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, txt, FONT, DISP };
 })(window);

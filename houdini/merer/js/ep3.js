@@ -74,7 +74,7 @@
   mood('twist', 'curious');
   fx('graffiti', 'scratch', .5, .4); fx('friends', 'ding', .4); fx('drunk', 'ding', .4, 1.6);
   function relieving(ctx, lt, t) {   // a cut-away of the pyramid: the King's Chamber with the stacked relieving chambers above it
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 231, 'multiply', 1);
+    EK.board(ctx, 231 % 7 + 1);
     ES.pyramid(ctx, 640, 680, 900, { k: 1 }); ln(ctx, [[640 - 300, 680], [640, 380]], 0);
     sh(ctx, '#3a2a20', 3.5, c => c.rect(600, 420, 90, 46)); for (let i = 0; i < 5; i++) { const a = clamp((lt - .6 - i * .2) / .3); if (a <= 0) continue; ctx.save(); ctx.globalAlpha = a; sh(ctx, '#5a4030', 3, c => c.rect(604, 400 - i * 26, 82, 18)); ctx.restore(); }
     sh(ctx, '#7a5a40', 3, c => { c.moveTo(604, 280); c.lineTo(645, 250); c.lineTo(686, 280); c.closePath(); });

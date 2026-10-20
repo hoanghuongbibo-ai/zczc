@@ -311,14 +311,18 @@
     motes(ctx, t, 16, 9); }
 
   // ================= the builders' cemetery =================
-  const cemLayer = v => layer('cem2-' + v, g => {
+  const cemLayer = v => layer('cem3-' + v, g => {
     skyFor(g, v); const dark = v === 'dusk' ? .8 : v === 'night' ? .5 : 1;
     pyramid(g, 860, 360, 520, { k: 1, col: mul('#e4cc98', dark) });
-    for (let x = -PAD; x < 560; x += 50) G.EF.palm(g, x, 362, .3 + (x % 3) * .04, 800 + x, { dark: dark * .85, dates: false, fronds: 7 });
+    const rp = rng(78); for (let x = -PAD; x < 560; x += 34 + rp() * 40) G.EF.palm(g, x, 362, .24 + rp() * .16, 800 + (x | 0), { dark: dark * .85, dates: false, fronds: 7 });
     dunes(g, 356, dark, 71); for (const [x, y, w] of [[60, 700, 140], [1180, 690, 120]]) G.EF.rock(g, x, y, w, w * .45, x, mul('#b8946a', dark));
     const r = rng(12); const tombs = []; for (let i = 0; i < 26; i++) tombs.push([-120 + r() * 1500, 400 + r() * 300, r()]); tombs.sort((a, b) => a[1] - b[1]);
+    g.fillStyle = grad(g, 0, 360, 0, H, [[0, 'rgba(255,220,160,0)'], [1, 'rgba(120,70,30,.18)']]); g.fillRect(-PAD, 360, W + PAD * 2, H - 360); P2.grain(g, -PAD, 360, W + PAD * 2, H - 360, .4, 72, 'multiply', 1.4);
+    for (const [x, y, sd] of [[980, 372, 1], [1120, 380, 2], [1240, 368, 3]]) G.EF.acacia(g, x, y, .55, 70 + sd, dark);
     for (const [x, y, k] of tombs) { const s = .5 + (y - 400) / 300 * .9; if (k < .3) { const w = 60 * s; g.fillStyle = mul('#c8a878', dark); g.beginPath(); g.moveTo(x - w / 2, y); g.lineTo(x, y - w * .8); g.lineTo(x + w / 2, y); g.closePath(); g.fill(); g.lineWidth = 3; g.strokeStyle = OUT; g.stroke(); g.fillStyle = 'rgba(80,50,20,.25)'; g.beginPath(); g.moveTo(x, y - w * .8); g.lineTo(x + w / 2, y); g.lineTo(x + w * .1, y); g.closePath(); g.fill(); }
       else { const w = (70 + k * 60) * s, h = 34 * s; sh(g, mul(k > .65 ? '#b8865a' : '#cdb48a', dark), 3, c => { c.moveTo(x - w / 2, y); c.lineTo(x - w / 2 + 6 * s, y - h); c.lineTo(x + w / 2 - 6 * s, y - h); c.lineTo(x + w / 2, y); c.closePath(); }); g.strokeStyle = 'rgba(80,50,30,.35)'; g.lineWidth = 1.5; for (let yy = y - h + 7 * s; yy < y; yy += 7 * s) { g.beginPath(); g.moveTo(x - w / 2 + 4, yy); g.lineTo(x + w / 2 - 4, yy); g.stroke(); } sh(g, '#3a2a1e', 0, c => c.rect(x - 6 * s, y - h * .8, 12 * s, h * .8)); } }
+    G.EF.bushMass(g, -PAD, H, 300, 130, 74, dark); G.EF.palm(g, -10, H + 10, 1.25, 75, { dark, lean: .18 }); G.EF.bushMass(g, W + PAD - 280, H, 280, 120, 76, dark); G.EF.palm(g, W + 20, H + 10, 1.15, 77, { dark, lean: -.2 });
+    for (const x of [300, 520, 860, 1040]) G.EF.tuft(g, x, 712, 1.2, mul('#8a9a50', dark));
   });
   function cemetery(ctx, t, pan, o = {}) { put(ctx, cemLayer(o.v || 'dusk'), pan, .4); motes(ctx, t, 10, 11); }
 
@@ -379,14 +383,22 @@
     for (const [x, h, col] of [[1000, 70, '#7ac0e0'], [1060, 50, '#e0a060'], [1110, 90, '#a0d080']]) { sh(ctx, 'rgba(220,240,250,.6)', 3, c => c.rect(x, 430 - h, 40, h)); ctx.fillStyle = col; ctx.fillRect(x + 3, 430 - h * .5, 34, h * .5 - 2); }
     K.tag(ctx, o.label || 'University of Amsterdam · 2014', 230, 640, 1, 0, { size: 22 });
   }
-  const hatnubLayer = () => layer('hatnub', g => {
-    skyFor(g, 'day');
-    sh(g, '#d8c0a0', 4, c => { c.moveTo(-PAD, H); c.lineTo(-PAD, 120); c.lineTo(W + PAD, 120); c.lineTo(W + PAD, H); c.closePath(); }); strataBands(g, -PAD, W + PAD, 130, 300, 91, '#e6d6bc');
-    g.fillStyle = grad(g, 0, 300, 0, H, [[0, '#e8d8be'], [1, '#c8b08a']]); g.fillRect(-PAD, 300, W + PAD * 2, H - 300);
+  const hatnubLayer = () => layer('hatnub2', g => {   // v2: travertine quarry bowl under a soft sky, rimmed with acacias; rubble, tufts, painterly light
+    skyFor(g, 'day'); P.hills(g, 150, [[-PAD, 150], [200, 112], [420, 128], [700, 100], [980, 122], [W + PAD, 108]], '#e2c49a', '#c8a478', 2);
+    for (const [x, sd] of [[90, 1], [250, 2], [1040, 3], [1200, 4]]) G.EF.acacia(g, x, 140, .55, 30 + sd);
+    G.EF.bushMass(g, 300, 144, 160, 44, 90, .9); G.EF.bushMass(g, 900, 140, 180, 40, 92, .9);
+    sh(g, '#d8c0a0', 4, c => { c.moveTo(-PAD, H); c.lineTo(-PAD, 140); c.lineTo(W + PAD, 140); c.lineTo(W + PAD, H); c.closePath(); }); strataBands(g, -PAD, W + PAD, 146, 300, 91, '#e6d6bc');
+    g.fillStyle = grad(g, 0, 300, 0, H, [[0, '#ead8b8'], [1, '#c8a880']]); g.fillRect(-PAD, 300, W + PAD * 2, H - 300);
+    g.fillStyle = grad(g, 0, 0, W, 0, [[0, 'rgba(120,80,40,.22)'], [.3, 'rgba(0,0,0,0)'], [.7, 'rgba(0,0,0,0)'], [1, 'rgba(120,80,40,.22)']]); g.fillRect(-PAD, 140, W + PAD * 2, H - 140);   // shaded quarry walls
     // the steep ramp (~20 % grade, perspective) with a staircase on each side and post holes
-    const R = c => { c.moveTo(520, 140); c.lineTo(760, 140); c.lineTo(900, H); c.lineTo(380, H); c.closePath(); }; sh(g, '#cdb490', 4, R);
-    for (const sd of [-1, 1]) for (let i = 0; i < 18; i++) { const u = i / 18, y = lerp(150, H, u * u * .2 + u * .8), xL = sd < 0 ? lerp(470, 300, u) : lerp(810, 980, u), w = lerp(46, 80, u); sh(g, '#e2ccaa', 2, c => c.rect(xL - w / 2, y, w, 10 + u * 18)); }
-    for (let i = 0; i < 8; i++) { const u = i / 8, y = lerp(170, 680, u), x0 = lerp(520, 380, u), x1 = lerp(760, 900, u); for (const x of [x0 + 20, x1 - 20]) sh(g, '#2a1e16', 0, c => c.ellipse(x, y, 6 + u * 8, 4 + u * 5, 0, 0, TAU)); }
+    const R = c => { c.moveTo(520, 160); c.lineTo(760, 160); c.lineTo(900, H); c.lineTo(380, H); c.closePath(); }; sh(g, '#cdb490', 4, R);
+    g.save(); g.beginPath(); R(g); g.clip(); const rr = rng(95); for (let i = 0; i < 160; i++) { const y = 170 + rr() * 560, x = lerp(lerp(520, 380, (y - 160) / 560), lerp(760, 900, (y - 160) / 560), rr()), w = 6 + (y - 160) / 560 * 22; g.fillStyle = `rgba(${rr() < .5 ? '150,120,80' : '240,224,190'},.35)`; g.beginPath(); g.ellipse(x, y, w, w * .4, 0, 0, TAU); g.fill(); }
+      g.fillStyle = grad(g, 380, 0, 900, 0, [[0, 'rgba(255,240,210,.25)'], [.5, 'rgba(0,0,0,0)'], [1, 'rgba(110,70,30,.2)']]); g.fillRect(380, 160, 520, 560); g.restore();
+    for (const sd of [-1, 1]) for (let i = 0; i < 18; i++) { const u = i / 18, y = lerp(170, H, u * u * .2 + u * .8), xL = sd < 0 ? lerp(470, 300, u) : lerp(810, 980, u), w = lerp(46, 80, u); sh(g, '#e2ccaa', 2, c => c.rect(xL - w / 2, y, w, 10 + u * 18)); g.fillStyle = 'rgba(110,70,30,.25)'; g.fillRect(xL - w / 2, y + 7 + u * 14, w, 3 + u * 4); }
+    for (let i = 0; i < 8; i++) { const u = i / 8, y = lerp(190, 680, u), x0 = lerp(520, 380, u), x1 = lerp(760, 900, u); for (const x of [x0 + 20, x1 - 20]) sh(g, '#2a1e16', 0, c => c.ellipse(x, y, 6 + u * 8, 4 + u * 5, 0, 0, TAU)); }
+    for (const [x, y, w, sd] of [[90, 690, 200, 1], [200, 610, 110, 2], [1170, 700, 220, 3], [1060, 620, 120, 4], [30, 470, 90, 5], [1240, 480, 100, 6]]) G.EF.rock(g, x, y, w, w * .5, 96 + sd, '#d8c4a0');
+    for (const [x, y] of [[150, 700], [290, 690], [1000, 700], [1130, 650], [60, 600]]) G.EF.tuft(g, x, y, 1.1, '#8aa050');
+    G.EF.bushMass(g, -PAD, H, 260, 120, 97, 1); G.EF.bushMass(g, W + PAD - 240, H, 240, 110, 98, 1);
     P2.grain(g, -PAD, 120, W + PAD * 2, 600, .3, 93, 'overlay', .8);
   });
   function hatnub(ctx, t, pan, o = {}) { put(ctx, hatnubLayer(), pan, .4); motes(ctx, t, 10, 17); }
@@ -411,30 +423,34 @@
     ctx.restore(); }
 
   // ================= maps of Egypt =================
-  const MW = 4100, MH = 2600, LON0 = 22.0, LAT0 = 34.0, SC = 230;
+  const MW = 5000, MH = 2600, LON0 = 22.0, LAT0 = 34.0, SC = 230;
   const px = (lon, lat) => [(lon - LON0) * SC * Math.cos(28 * PI / 180), (LAT0 - lat) * SC];
   const NILE = [[32.9, 23.9], [32.93, 24.45], [32.87, 24.98], [32.55, 25.29], [32.64, 25.69], [32.72, 26.16], [32.24, 26.05], [31.69, 26.56], [31.18, 27.18], [30.75, 28.1], [30.95, 28.7], [31.1, 29.07], [31.24, 30.04], [31.15, 30.4]];
   const ROSETTA = [[31.15, 30.4], [30.85, 30.8], [30.6, 31.2], [30.37, 31.46]], DAMIETTA = [[31.15, 30.4], [31.35, 30.9], [31.6, 31.2], [31.81, 31.42]];
   const COAST = [[25.0, 31.6], [27.2, 31.4], [29.0, 30.95], [29.9, 31.2], [30.37, 31.48], [30.9, 31.58], [31.4, 31.55], [31.81, 31.5], [32.3, 31.27], [33.0, 31.12], [34.2, 31.32], [35.0, 32.6]];
   const SUEZ = [[32.55, 29.97], [32.6, 29.6], [32.75, 29.1], [33.1, 28.6], [33.55, 27.9], [33.8, 27.4], [34.2, 26.6], [34.9, 25.4], [35.6, 24.0]];
-  const SINAI = [[32.55, 29.97], [32.6, 29.6], [32.75, 29.1], [33.1, 28.6], [33.55, 27.9], [34.3, 27.75], [34.6, 28.2], [34.9, 29.5], [34.9, 31.32], [34.2, 31.32], [33.0, 31.12], [32.3, 31.27], [32.35, 30.6]];
+  const SINAI = [[32.62, 29.92], [32.78, 29.6], [33.0, 29.1], [33.3, 28.65], [33.75, 28.05], [34.0, 27.8], [34.3, 27.75], [34.6, 28.2], [34.9, 29.5], [34.9, 31.32], [34.2, 31.32], [33.0, 31.12], [32.3, 31.27], [32.35, 30.6]];
+  // mirror-tiled grain: flipping alternate 512 tiles makes the low-frequency noise seamless on the big map canvas
+  function mgrain(g, a, seed, mode, scale) { const tx = G.Paint2.noiseTex(seed, 512, 512, scale); g.save(); g.globalCompositeOperation = mode; g.globalAlpha = a; for (let j = 0; j * 512 < MH; j++) for (let i = 0; i * 512 < MW; i++) { g.save(); g.translate(i * 512 + (i % 2) * 512, j * 512 + (j % 2) * 512); g.scale(i % 2 ? -1 : 1, j % 2 ? -1 : 1); g.drawImage(tx, 0, 0); g.restore(); } g.restore(); }
   let mapCanvas = null;
   function mapCv() {
     if (mapCanvas) return mapCanvas; const c = document.createElement('canvas'); c.width = MW; c.height = MH; const g = c.getContext('2d');
     // relief-map look (user's repainted map): deep blue seas with turquoise shallows, sun-baked desert with shaded mountains + dune streaks
-    g.fillStyle = grad(g, 0, 0, MW, MH, [[0, '#1e5486'], [1, '#163e6a']]); g.fillRect(0, 0, MW, MH); P2.grain(g, 0, 0, MW, MH, .25, 3, 'overlay', 2);
+    g.fillStyle = grad(g, 0, 0, MW, MH, [[0, '#1e5486'], [1, '#163e6a']]); g.fillRect(0, 0, MW, MH); mgrain(g, .25, 3, 'overlay', 2);
     const path = pts => { const p = new Path2D(); pts.forEach((q, i) => { const [x, y] = px(...q); i ? p.lineTo(x, y) : p.moveTo(x, y); }); p.closePath(); return p; };
-    const EGY = path([[20, 40], ...COAST.slice(0, 9), [32.3, 31.27], [32.35, 30.6], ...SUEZ, [35.6, 20], [20, 20]]), SIN = path(SINAI), ARB = path([[34.95, 29.5], [35.0, 32.6], [40, 32.6], [40, 20], [39.2, 21.4], [38.3, 23.6], [37.4, 25.0], [36.6, 26.2], [35.8, 27.3], [35.15, 28.05], [34.98, 29.3]]);
+    const EGY = path([[20, 40], ...COAST.slice(0, 9), [32.3, 31.27], [32.35, 30.6], ...SUEZ, [35.6, 20], [20, 20]]), SIN = path(SINAI), ARB = path([[34.95, 29.5], [35.0, 32.6], [35.6, 34.4], [46, 34.4], [46, 20], [40, 20], [39.2, 21.4], [38.3, 23.6], [37.4, 25.0], [36.6, 26.2], [35.8, 27.3], [35.15, 28.05], [34.98, 29.3]]);
     g.save(); g.filter = 'blur(14px)'; g.lineWidth = 46; g.strokeStyle = 'rgba(80,190,200,.6)'; for (const p of [EGY, SIN, ARB]) g.stroke(p); g.restore();
     for (const p of [EGY, SIN, ARB]) { g.fillStyle = '#e2c084'; g.fill(p); }
     g.save(); const land = new Path2D(); land.addPath(EGY); land.addPath(SIN); land.addPath(ARB); g.clip(land);
-    g.fillStyle = grad(g, 0, 0, 0, MH, [[0, 'rgba(200,170,110,.25)'], [1, 'rgba(230,180,110,.25)']]); g.fillRect(0, 0, MW, MH); P2.grain(g, 0, 0, MW, MH, .55, 5, 'multiply', 2.5); P2.grain(g, 0, 0, MW, MH, .35, 9, 'overlay', 1);
+    g.fillStyle = grad(g, 0, 0, 0, MH, [[0, 'rgba(200,170,110,.25)'], [1, 'rgba(230,180,110,.25)']]); g.fillRect(0, 0, MW, MH); mgrain(g, .3, 5, 'multiply', 2.5); mgrain(g, .35, 9, 'overlay', 1);
     const R2 = rng(9);
-    for (let i = 0; i < 5200; i++) {   // mountain ridges: Eastern Desert (east of the Nile), Sinai, Arabia — shaded SE, lit NW
-      const zone = R2(), lon = zone < .55 ? 32.0 + R2() * 2.6 : zone < .8 ? 33.2 + R2() * 1.6 : 35.4 + R2() * 4, lat = zone < .55 ? 22 + R2() * 7.6 : zone < .8 ? 27.9 + R2() * 1.9 : 22 + R2() * 9, [x, y] = px(lon, lat);
-      if (zone < .55 && lon < 32.9 && lat > 27.5) continue; const L = 14 + R2() * 34, a = .9 + (R2() - .5) * .8;
-      g.strokeStyle = 'rgba(100,56,24,.5)'; g.lineWidth = 6; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L); g.stroke();
-      g.strokeStyle = 'rgba(255,236,200,.45)'; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 5, y - 5); g.lineTo(x - 5 + Math.cos(a) * L, y - 5 + Math.sin(a) * L); g.stroke(); }
+    const rc = document.createElement('canvas'); rc.width = MW; rc.height = MH; { const g = rc.getContext('2d');   // mountain ranges: soft ridge chains running NNW-SSE (Red Sea hills, Sinai, Hejaz), shaded SE, lit NW
+    for (let i = 0; i < 2600; i++) {
+      const zone = R2(), lon = zone < .55 ? 32.0 + R2() * 2.6 : zone < .8 ? 33.2 + R2() * 1.6 : 35.6 + R2() * 3.6, lat = zone < .55 ? 22 + R2() * 7.6 : zone < .8 ? 27.9 + R2() * 1.9 : 22 + R2() * 9;
+      if (zone < .55 && lon < 32.9 && lat > 27.5) continue; const [x, y] = px(lon, lat), L = 14 + R2() * 30, w = 6 + R2() * 9, a = 1.95 + (R2() - .5) * .6;   // a hill lump: shadow SE, highlight NW
+      g.fillStyle = 'rgba(110,62,26,.2)'; g.beginPath(); g.ellipse(x + 6, y + 5, L, w, a, 0, TAU); g.fill(); g.fillStyle = 'rgba(150,92,44,.18)'; g.beginPath(); g.ellipse(x + 2, y + 2, L * .9, w * .7, a, 0, TAU); g.fill();
+      g.fillStyle = 'rgba(255,240,212,.24)'; g.beginPath(); g.ellipse(x - 3, y - 3, L * .75, w * .45, a, 0, TAU); g.fill(); } }
+    g.save(); g.filter = 'blur(4px)'; g.drawImage(rc, 0, 0); g.restore();
     for (let i = 0; i < 900; i++) { const [x, y] = px(23 + R2() * 7.2, 22 + R2() * 8.6), L = 50 + R2() * 110; g.strokeStyle = `rgba(160,100,44,${.16 + R2() * .14})`; g.lineWidth = 5; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + L / 2, y - 8, x + L, y + 4); g.stroke(); }   // dune streaks
     for (let i = 0; i < 6; i++) { const [x, y] = px(26 + R2() * 4, 24 + R2() * 5); g.fillStyle = 'rgba(160,100,50,.18)'; g.beginPath(); g.ellipse(x, y, 60 + R2() * 90, 30 + R2() * 40, R2(), 0, TAU); g.fill(); }   // depressions
     g.restore(); for (const p of [EGY, SIN, ARB]) { g.lineWidth = 3; g.strokeStyle = 'rgba(70,50,30,.8)'; g.stroke(p); }
@@ -452,7 +468,7 @@
   }
   const PLACES = { Giza: [31.13, 29.98], Tura: [31.29, 29.93], Aswan: [32.9, 24.09], Cairo: [31.24, 30.05], Memphis: [31.25, 29.85], 'Wadi al-Jarf': [32.64, 29.08], Suez: [32.55, 29.97], Sinai: [33.9, 28.9], Hatnub: [30.98, 27.56], 'Deir el-Bersha': [30.9, 27.75] };
   function toS(lon, lat, v) { const [x, y] = px(lon, lat), [fx, fy] = px(v.lon, v.lat); return [640 + (x - fx) * v.z, 360 + (y - fy) * v.z]; }
-  function map(ctx, t, v) { const c = mapCv(), [fx, fy] = px(v.lon, v.lat); ctx.save(); ctx.fillStyle = '#d8b882'; ctx.fillRect(0, 0, W, H); ctx.drawImage(c, 640 - fx * v.z, 360 - fy * v.z, MW * v.z, MH * v.z); ctx.restore();
+  function map(ctx, t, v) { const c = mapCv(), [fx, fy] = px(v.lon, v.lat); ctx.save(); ctx.fillStyle = '#1a4878'; ctx.fillRect(0, 0, W, H); ctx.drawImage(c, 640 - fx * v.z, 360 - fy * v.z, MW * v.z, MH * v.z); ctx.restore();
     ctx.save(); ctx.globalCompositeOperation = 'multiply'; const vg = ctx.createRadialGradient(640, 360, 300, 640, 360, 820); vg.addColorStop(0, 'rgba(255,255,255,0)'); vg.addColorStop(1, 'rgba(120,90,50,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H); ctx.restore(); }
   function route(ctx, pts, v, k, o = {}) { if (k <= 0) return; const S = pts.map(p => toS(p[0], p[1], v)); let L = 0; const segs = []; for (let i = 1; i < S.length; i++) { const d = Math.hypot(S[i][0] - S[i - 1][0], S[i][1] - S[i - 1][1]); segs.push(d); L += d; }
     let rem = L * clamp(k); ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; const draw = (w, col, dash) => { let r2 = rem; ctx.beginPath(); ctx.moveTo(...S[0]); for (let i = 1; i < S.length && r2 > 0; i++) { const f = Math.min(1, r2 / segs[i - 1]); ctx.lineTo(lerp(S[i - 1][0], S[i][0], f), lerp(S[i - 1][1], S[i][1], f)); r2 -= segs[i - 1]; } ctx.lineWidth = w; ctx.strokeStyle = col; ctx.setLineDash(dash || []); ctx.stroke(); };

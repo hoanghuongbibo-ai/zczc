@@ -38,10 +38,10 @@
     sh(ctx, col, 3, c => c.ellipse(0, 0, 40, 24, 0, 0, TAU)); sh(ctx, col, 3, c => c.ellipse(40, -10, 16, 14, 0, 0, TAU)); for (const lx of [-24, -8, 10, 24]) ln(ctx, [[lx, 20], [lx, 40]], 6);
     if (kind === 'cattle') { ln(ctx, [[34, -22], [26, -38]], 4, '#f0e2c0'); ln(ctx, [[46, -22], [56, -38]], 4, '#f0e2c0'); } if (kind === 'pig') sh(ctx, '#d88a80', 2, c => c.ellipse(54, -8, 6, 5, 0, 0, TAU)); sh(ctx, OUT, 0, circ(44, -14, 2.5)); ctx.restore(); }
   S('redding', (ctx, lt, dur, t, R) => {   // Richard Redding: ~25,000 sheep/goat, ~8,000 cattle, ~1,000 pig bone fragments → >4,000 lb of meat a day (estimate)
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 311, 'multiply', 1);
+    EK.board(ctx, 311 % 7 + 1);
     EK.nameCard(ctx, lt, .2, 'RICHARD REDDING', 'zooarchaeologist', 330, 90, { icon: 'bone', w: 420 });
     [['sheep', 25000, 'sheep + goat fragments', 0], ['cattle', 8000, 'cattle fragments', R('cattle')], ['pig', 1000, 'pig fragments', R('pigs')]].forEach(([k2, v, l, at], i) => { const a = K.pop(lt, at || .6); if (a <= 0) return; const x = 240 + i * 400; animal(ctx, k2, x - 30, 290, 1.4 * a); EK.count(ctx, x, 440, v, lt, (at || .6) + .2, 1.2, l, { size: 66, prefix: '~' }); });
-    if (lt > R('pounds4k')) { ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 160, W, 560); P2.grain(ctx, 0, 160, W, 560, .25, 313, 'multiply', 1); EK.count(ctx, 640, 360, 4000, lt, R('pounds4k') + .8, 1.4, 'pounds of meat a day, on average (estimate)', { size: 110, prefix: '> ' }); }
+    if (lt > R('pounds4k')) { ctx.save(); ctx.beginPath(); ctx.rect(0, 160, W, 560); ctx.clip(); EK.board(ctx, 311 % 7 + 1); ctx.restore(); EK.count(ctx, 640, 360, 4000, lt, R('pounds4k') + .8, 1.4, 'pounds of meat a day, on average (estimate)', { size: 110, prefix: '> ' }); }
     if (lt > R('estimate')) K.tag(ctx, 'an estimate: bones + calorie math', 640, 620, lt, R('estimate'), { size: 26, fill: '#f6c945' });
   });
   S('howmany', (ctx, lt, dur, t, R) => {   // how many people? Not 100,000: ~10,000–25,000; a smaller year-round crew + many more in the flood
@@ -128,7 +128,7 @@
     else { EK.papyrusSheet(ctx, 0, 0, 70, 80, { draw: c => { for (let i = 0; i < 3; i++) EK.hieratic(c, -24, -20 + i * 18, 48, i, 1, '#2a2018', 2); } }); }
     ctx.restore(); EK.txt(ctx, kind, x, y + 92 * s, '700 22px Fredoka'); }
   S('trick', (ctx, lt, dur, t, R) => {   // not one superhuman trick — a supply chain: a river, a harbor, a calendar, a city of bakers, a medical system, paperwork
-    ctx.fillStyle = '#efe4cc'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .25, 411, 'multiply', 1);
+    EK.board(ctx, 411 % 7 + 1);
     if (lt < R('supply')) { card(ctx, 'one superhuman trick', 640, 300, lt, .3, { size: 44 }); K.cross(ctx, 640, 300, 90, lt, 2.4); }
     else { K.title(ctx, 'A SUPPLY CHAIN', lt, R('supply'), { y: 140, size: 60 });
       const step = (R('notstone') - R('river2') - .6) / 6; ICONS.forEach((k2, i) => { const at = R('river2') + i * step, a = K.pop(lt, at, .4); if (a <= 0) return; const x = 150 + i * 196; icon(ctx, k2, x, 380, a, t); if (i && lt > at) { ctx.setLineDash([8, 8]); ln(ctx, [[x - 120, 380], [x - 76, 380]], 4, '#b8322a'); ctx.setLineDash([]); } }); }

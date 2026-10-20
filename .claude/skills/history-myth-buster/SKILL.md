@@ -309,3 +309,19 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   - Anchor keys must be unique ("away" was used twice and silently moved a cold-open shot to 11 minutes). Check with `cut -d'|' -f1 anchors.txt | sort | uniq -d`.
   - The map canvas must cover the whole view: fill outside the canvas with the land colour.
   - P2.pebbles takes `cols: [...]`, not `col`. pcloud tones are day/grey/warm/dusk.
+
+### Lesson: "Merer repainted refs" look (user's 12 repainted frames, `houdini/merer/ref/user-01..12.jpg`)
+The user repainted Merer frames and asked that every frame look like those. What made the difference:
+- **Lush flora everywhere**: `merer/js/flora.js` (G.EF) has a big painted date palm (with dates), acacia, `bushMass` (scalloped leaf clumps in 4 tones), papyrus, lilies, flowers, ibis/egret, feluccas, flocks, sparkles. Frame every outdoor shot with a foreground bush and palm on one or both edges, and put haze palms of varied size on the far bank.
+- **Soft god-ray `beams`** instead of P.rays sunbursts. Use a blue→pink→peach "gold" sky and painted cumulus clouds.
+- **Water**: the far bank is mirrored as a reflection, with a sun path, sparkles and lilies.
+- **Props that make a place lived-in**: tents, braziers, standards, baskets, jars, rope coils, carts, scaffolds, rocks, and a carved plinth with a cartouche.
+- **Text**: parchment `EK.scroll` labels and a parchment chapter banner with a red ribbon and Georgia serif.
+- **Diagrams** never sit on a flat colour. Use `EK.board(ctx, seed)`: a reed-mat table under a big papyrus sheet with a lotus frieze, cached as a layer.
+- **Relief map**:
+  - deep blue sea with turquoise shallows
+  - hill-lump shading (shadow SE, highlight NW), drawn on one offscreen canvas and blurred once; per-stroke `filter` is far too slow on a 5000 px canvas
+  - mirror-tiled grain (`P2.grain` tiles are not seamless and show square seams when zoomed)
+  - a real Gulf of Suez gap between Egypt and Sinai
+  - a brass compass rose
+- **Process**: render a 99-shot contact sheet (5×5 per sheet) after every pass and fix the plainest frames first.

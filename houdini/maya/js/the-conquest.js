@@ -279,7 +279,7 @@
     shape(ctx, grad(ctx, 0, 0, 0, H, [[0, '#1e1a22'], [1, '#141016']]), 0, rect(0, 0, W, H));
     const mk = clamp((since(t, 'europe') + .2) / .8);
     const SL = [['dresden', 'DRESDEN'], ['madrid90', 'MADRID'], ['paris', 'PARIS'], [null, 'MEXICO CITY']];
-    for (let i = 0; i < 4; i++) { const k = since(t, 'only') + .2 - i * .25; if (k <= 0) continue; const x = 190 + i * 300, y = lerp(330, 250, mk), w = [120, 240, 200, 180][i], h = [250, 80, 180, 160][i]; glow(ctx, x, y, 180, 'rgba(255,230,190,.16)'); shape(ctx, '#3a3440', 3, rect(x - 130, y + h / 2 + 30, 260, 16, 4));
+    for (let i = 0; i < 4; i++) { const k = Math.max(since(t, 'only') + .2, lt - .2) - i * .25; if (k <= 0) continue; const x = 190 + i * 300, y = lerp(330, 250, mk), w = [120, 240, 200, 180][i], h = [250, 80, 180, 160][i]; glow(ctx, x, y, 180, 'rgba(255,230,190,.16)'); shape(ctx, '#3a3440', 3, rect(x - 130, y + h / 2 + 30, 260, 16, 4));
       if (SL[i][0]) imgFrame(ctx, SL[i][0], x, y, w, h, k, SL[i][1]); else { ctx.save(); ctx.globalAlpha = fade(k); shape(ctx, '#e8dcb8', 3, rect(x - w / 2, y - h / 2, w, h, 4)); for (let j = 0; j < 6; j++) shape(ctx, '#a8946a', 0, rect(x - w / 2 + 16, y - h / 2 + 16 + j * 22, w - 32, 10, 4)); ctx.restore(); tag(ctx, 'MAYA CODEX OF MEXICO', x, y + h / 2 + 30, k, 16); } }
     if (since(t, 'only') > 0) quiet(ctx, 'ONLY FOUR ARE KNOWN TO SURVIVE', 70, since(t, 'only'), '#fff', 32);
     if (since(t, 'four2') > 0) counter(ctx, 640, 140, '4', since(t, 'four2'), null, GOLD, 56);
@@ -387,7 +387,7 @@
   // ---------- c20: 1901 — Mexican troops occupy Chan Santa Cruz. Death toll estimates vary enormously. Ending #4 ----------
   function c20(ctx, lt, dur, t) {
     deskBg(ctx, t); ctx.save(); ctx.globalAlpha = .25; ctx.fillStyle = '#1e1a22'; ctx.fillRect(0, 0, W, H); ctx.restore();
-    counter(ctx, 330, 130, '1901', since(t, 'occupied') + .1, 'CHAN SANTA CRUZ OCCUPIED', GOLD, 40);
+    counter(ctx, 330, 130, '1901', Math.max(lt, since(t, 'occupied') + .1), 'CHAN SANTA CRUZ OCCUPIED', GOLD, 40);
     if (since(t, 'estimates') > -.2) { const k = fade(since(t, 'estimates') + .2); ctx.save(); ctx.globalAlpha = k; ctx.translate(330, 380); shape(ctx, '#fbf6ea', 4, rect(-260, -80, 520, 180, 8)); txt(ctx, 'DEATH TOLL ESTIMATES', 0, -50, FX.DISPLAY(22)); const g = grad(ctx, -220, 0, 220, 0, [[0, '#d8a080'], [1, '#6a1a1a']]); shape(ctx, g, 3, rect(-220, -10, 440, 36, 18)); txt(ctx, 'TENS OF THOUSANDS', -120, 60, FX.FONT(800, 16)); txt(ctx, '→  FAR MORE', 130, 60, FX.FONT(800, 16)); ctx.restore(); }
     if (since(t, 'tens') > -.4) { ctx.save(); ctx.translate(900, 360); ctx.globalAlpha = fade(since(t, 'tens') + .4); shape(ctx, 'rgba(0,0,0,.35)', 0, rect(-226, -146, 460, 300)); shape(ctx, '#fbf6ea', 5, rect(-230, -150, 460, 300, 4)); ctx.lineWidth = 8; ctx.strokeStyle = '#1d1a17'; ctx.strokeRect(-216, -136, 432, 272); txt(ctx, 'OBITUARY', 0, -96, FX.FONT(700, 20), '#5a5048'); txt(ctx, 'THE MAYA', 0, -44, FX.DISPLAY(46)); txt(ctx, 'ARE FINISHED.', 0, 6, FX.DISPLAY(40), RED); txt(ctx, 'Ending #4 — Caste War of Yucatán,', 0, 62, FX.FONT(700, 15), '#5a5048'); txt(ctx, '1847–1901 (estimates of deaths vary widely)', 0, 86, FX.FONT(700, 15), '#5a5048'); ctx.restore();
       counter(ctx, 900, 620, `ENDINGS: ${since(t, 'far') > 0 ? 4 : 3}`, since(t, 'tens') + .3, null, GOLD, 36); }

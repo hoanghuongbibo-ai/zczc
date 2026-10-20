@@ -26,12 +26,17 @@
     sh(ctx, '#e8d49c', 4, edge); ctx.save(); ctx.beginPath(); edge(ctx); ctx.clip();
     for (let xx = -w / 2; xx < w / 2; xx += 4 + r() * 9) { ctx.strokeStyle = `rgba(140,100,40,${.06 + r() * .12})`; ctx.lineWidth = 1 + r() * 2.5; ctx.beginPath(); ctx.moveTo(xx, -h / 2); ctx.bezierCurveTo(xx + (r() - .5) * 6, -h / 6, xx + (r() - .5) * 6, h / 6, xx + (r() - .5) * 5, h / 2); ctx.stroke(); } for (let yy = -h / 2; yy < h / 2; yy += 6 + r() * 14) { ctx.strokeStyle = `rgba(150,110,50,${.04 + r() * .08})`; ctx.lineWidth = 1 + r() * 2; ctx.beginPath(); ctx.moveTo(-w / 2, yy); ctx.lineTo(w / 2, yy + (r() - .5) * 4); ctx.stroke(); }
     const vg = ctx.createRadialGradient(0, 0, Math.min(w, h) * .3, 0, 0, Math.max(w, h) * .7); vg.addColorStop(0, 'rgba(120,80,30,0)'); vg.addColorStop(1, 'rgba(120,80,30,.35)'); ctx.fillStyle = vg; ctx.fillRect(-w / 2, -h / 2, w, h);
+    if (o.border) {   // Egyptian frieze: lotus + papyrus panels down the sides, a striped band along the bottom
+      for (const sd of [-1, 1]) { const bx = sd < 0 ? -w / 2 + 10 : w / 2 - 44; ctx.fillStyle = '#d8c48a'; ctx.fillRect(bx, -h / 2 + 10, 34, h - 20); ctx.strokeStyle = '#3a6a8a'; ctx.lineWidth = 2.5; ctx.strokeRect(bx, -h / 2 + 10, 34, h - 20);
+        for (let y = -h / 2 + 24; y < h / 2 - 30; y += 34) { const cx = bx + 17; ctx.fillStyle = '#2a7a7a'; ctx.beginPath(); ctx.moveTo(cx, y); ctx.quadraticCurveTo(cx - 13, y + 12, cx - 9, y + 26); ctx.lineTo(cx + 9, y + 26); ctx.quadraticCurveTo(cx + 13, y + 12, cx, y); ctx.fill();
+          ctx.fillStyle = '#3a5aa0'; ctx.beginPath(); ctx.ellipse(cx, y + 14, 4, 10, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#c8402a'; ctx.fillRect(cx - 2, y + 26, 4, 6); } }
+      const by = h / 2 - 22; for (let x = -w / 2 + 10; x < w / 2 - 10; x += 16) { ctx.fillStyle = ['#2a7a7a', '#d8b040', '#3a5aa0', '#c8402a'][Math.floor((x + w) / 16) % 4]; ctx.fillRect(x, by, 12, 10); } ctx.strokeStyle = '#3a2614'; ctx.lineWidth = 2; ctx.strokeRect(-w / 2 + 10, by - 2, w - 20, 14); }
     if (o.draw) o.draw(ctx); ctx.restore(); ctx.restore(); }
   // a line from Merer's log: hieratic writes itself, then the English translation types under it
   function logCard(ctx, lt, t0, text, o = {}) {
     const k = pop(lt, t0, .45); if (k <= 0) return; const w = o.w || 900, lines = K.wrap(ctx, text, FONT(700, o.size || 34), w - 120), lh = (o.size || 34) * 1.3, h = 150 + lines.length * lh + (o.source === false ? 0 : 30);
     const kw = clamp((lt - t0 - .2) / (o.writeDur || 1.2)), n = Math.floor((lt - t0 - .3 - (o.writeDur || 1.2) * .6) * 34);
-    papyrusSheet(ctx, o.x ?? W / 2, o.y ?? H / 2, w, h, { rot: o.rot ?? -.012, scale: k, seed: o.seed || 3, draw: c => {
+    papyrusSheet(ctx, o.x ?? W / 2, o.y ?? H / 2, w + 80, h + 20, { rot: o.rot ?? -.012, scale: k, seed: o.seed || 3, border: o.border !== false, draw: c => {
       hieratic(c, -w / 2 + 60, -h / 2 + 52, w - 120, o.seed || 7, kw, '#2a2018', 3.2); if (o.red !== false) hieratic(c, -w / 2 + 60, -h / 2 + 52, 90, (o.seed || 7) + 1, kw * 6, '#b2342a', 3.4);
       let used = 0; lines.forEach((l, i) => { const show = l.slice(0, Math.max(0, n - used)); used += l.length; txt(c, show, -w / 2 + 60, -h / 2 + 118 + i * lh, FONT(700, o.size || 34), '#2a1a10', 'left'); });
       if (o.source !== false && n > text.length) txt(c, o.source || '— Papyrus Jarf, trans. Tallet', w / 2 - 50, h / 2 - 30, FONT(600, 20), '#7a4a2a', 'right');
@@ -43,9 +48,18 @@
     ctx.translate(o.x ?? W / 2, o.y ?? H - 74); ctx.scale(k, k); ctx.rotate(o.rot ?? -.01); ctx.fillStyle = 'rgba(30,14,6,.35)'; ctx.fillRect(-w / 2 + 6, -h / 2 + 7, w, h); sh(ctx, o.fill || '#f7eedb', 3.5, c => c.roundRect(-w / 2, -h / 2, w, h, 10));
     sh(ctx, o.accent || '#c8322a', 0, c => c.rect(-w / 2, -h / 2, 10, h)); txt(ctx, text, 6, 1, FONT(700, sz), o.col || OUT); ctx.restore(); }
   // chapter strip (titles are not spoken: a paper strip slides in top-left)
-  function chapter(ctx, lt, num, title, o = {}) { const k = clamp(lt / .5), out = clamp((lt - (o.dur || 3.2)) / .5); if (k <= 0 || out >= 1) return; const x = lerp(-520, 40, ease.out(k)) - out * 600;
-    ctx.save(); ctx.font = FONT(700, 26); const w = ctx.measureText(title).width + 110; ctx.translate(x, 46); ctx.fillStyle = 'rgba(30,14,6,.35)'; ctx.fillRect(6, 7, w, 52); sh(ctx, '#f7eedb', 3.5, c => c.roundRect(0, 0, w, 52, 8));
-    sh(ctx, '#c8322a', 3, c => c.roundRect(-8, -6, 64, 64, 10)); txt(ctx, String(num), 24, 27, DISP(38), '#fff6e0'); txt(ctx, title, 74, 27, FONT(700, 26), OUT, 'left'); ctx.restore(); }
+  // parchment scroll label with rolled ends (the user's map + river frames)
+  function scroll(ctx, text, x, y, k = 1, o = {}) { if (k <= 0) return; const sz = o.size || 24; ctx.save(); ctx.font = (o.serif ? `600 ${sz}px Georgia, serif` : FONT(700, sz)); const w = ctx.measureText(text).width + 48, h = sz * 1.9;
+    ctx.translate(x, y); ctx.scale(k, k); ctx.rotate(o.rot || 0); ctx.fillStyle = 'rgba(30,14,6,.35)'; ctx.fillRect(-w / 2 + 5, -h / 2 + 6, w, h);
+    sh(ctx, '#f2e2bc', 3, c => c.rect(-w / 2, -h / 2, w, h)); ctx.fillStyle = grad(ctx, 0, -h / 2, 0, h / 2, [[0, 'rgba(255,250,235,.4)'], [1, 'rgba(150,110,60,.25)']]); ctx.fillRect(-w / 2, -h / 2, w, h);
+    for (const sd of [-1, 1]) { sh(ctx, '#e2cc9c', 3, c => c.roundRect(sd * w / 2 - 7, -h / 2 - 5, 14, h + 10, 7)); ln(ctx, [[sd * w / 2, -h / 2 - 2], [sd * w / 2, h / 2 + 2]], 1.5, 'rgba(120,80,40,.5)'); }
+    ctx.fillStyle = o.col || '#3a2614'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 0, 2); ctx.restore(); }
+  // chapter strip: a parchment scroll banner with a red ribbon carrying the chapter number (titles are not spoken)
+  function chapter(ctx, lt, num, title, o = {}) { const k = clamp(lt / .5), out = clamp((lt - (o.dur || 3.2)) / .5); if (k <= 0 || out >= 1) return; const x = lerp(-560, 30, ease.out(k)) - out * 640;
+    ctx.save(); ctx.font = '600 30px Georgia, serif'; const w = ctx.measureText(title).width + 120; ctx.translate(x, 34); ctx.fillStyle = 'rgba(30,14,6,.35)'; ctx.fillRect(8, 8, w, 60);
+    sh(ctx, '#f2e2bc', 3, c => c.rect(0, 0, w, 60)); ctx.fillStyle = grad(ctx, 0, 0, 0, 60, [[0, 'rgba(255,250,235,.4)'], [1, 'rgba(150,110,60,.28)']]); ctx.fillRect(0, 0, w, 60); sh(ctx, '#e2cc9c', 3, c => c.roundRect(w - 8, -6, 16, 72, 8));
+    sh(ctx, '#a8282a', 3, c => { c.moveTo(4, -8); c.lineTo(66, -8); c.lineTo(66, 74); c.lineTo(35, 60); c.lineTo(4, 74); c.closePath(); }); ln(ctx, [[10, -2], [60, -2]], 2, '#e8c070');
+    txt(ctx, String(num), 35, 28, '700 36px Georgia, serif', '#f6e6c0'); txt(ctx, title, 84, 31, '600 30px Georgia, serif', '#3a2614', 'left'); ctx.restore(); }
   // name card for real people (no faces): name, role, a small icon
   function nameCard(ctx, lt, t0, name, role, x, y, o = {}) { const k = pop(lt, t0, .4); if (k <= 0) return; K.paper(ctx, x, y, o.w || 380, 112, { rot: o.rot ?? .015, scale: k, draw: c => {
       sh(c, o.iconCol || '#c8a46a', 3, circ(-(o.w || 380) / 2 + 52, 0, 34)); const ic = o.icon || 'brush'; c.save(); c.translate(-(o.w || 380) / 2 + 52, 0);
@@ -163,5 +177,5 @@
   function count(ctx, x, y, to, lt, t0, d, label, o = {}) { const k = clamp((lt - t0) / d); if (lt < t0 - .2) return; const v = lerp(0, to, ease.out(k)), s = pop(lt, t0 - .2, .35);
     ctx.save(); ctx.translate(x, y); ctx.scale(s, s); FX.bigText(ctx, (o.prefix || '') + v.toFixed(o.dec ?? 0) + (o.suffix || ''), 0, 0, o.size || 84, { color: o.color || '#f6c945' });
     if (label) { ctx.font = FONT(700, 24); const w = ctx.measureText(label).width + 30; sh(ctx, '#f7eedb', 3, c => c.roundRect(-w / 2, (o.size || 84) * .55, w, 40, 10)); txt(ctx, label, 0, (o.size || 84) * .55 + 21, FONT(700, 24)); } ctx.restore(); }
-  G.EK = { count, hieratic, papyrusSheet, logCard, onScreen, chapter, nameCard, timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, txt, FONT, DISP };
+  G.EK = { scroll, count, hieratic, papyrusSheet, logCard, onScreen, chapter, nameCard, timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, txt, FONT, DISP };
 })(window);

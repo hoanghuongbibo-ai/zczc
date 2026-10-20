@@ -22,7 +22,16 @@
     const e = ease.inOut(k), z = lerp(A[1], Bk[1], e); let fx_ = lerp(A[2], Bk[2], e), fy = lerp(A[3], Bk[3], e);
     fx_ = clamp(fx_, 640 / z, W - 640 / z); fy = clamp(fy, 360 / z, H - 360 / z); ctx.translate(640, 360); ctx.scale(z, z); ctx.translate(-fx_, -fy); };
   EP.dateTag = (ctx, s) => FX.dateTag ? FX.dateTag(ctx, s) : K.tag(ctx, s, 170, 40, 1, 0, { size: 20 });
-  EP.deck = (ctx, y, dark = 1) => { P2.planks(ctx, 0, y, W, H - y, { size: 26, base: G.Guide.hexMul('#9a6a3e', dark), seed: 4 }); ln(ctx, [[0, y], [W, y]], 5); };
+  EP.deck = (ctx, y, dark = 1, props = y > 200) => { P2.planks(ctx, 0, y, W, H - y, { size: 26, base: G.Guide.hexMul('#9a6a3e', dark), seed: 4 }); ln(ctx, [[0, y], [W, y]], 5);
+    if (props) { const EF = G.EF; EF.bollard(ctx, 60, H - 20, 1); EF.ropeCoil(ctx, 150, H - 10, 1.1); EF.bollard(ctx, 1220, y + 60, .9); EF.jar(ctx, 1150, H - 16, 1.1); EF.jar(ctx, 1200, H - 6, .9, '#a85a36'); EF.bundle(ctx, 1060, H - 20, 1); } };
+  // a carved stone plinth (hieroglyph band, cartouche, cavetto top) with braziers, standards + offering baskets around it
+  EP.plinth = (ctx, x, y, w, h, t, o = {}) => { const EF = G.EF;
+    sh(ctx, '#d8b47c', 4, c => c.rect(x - w / 2, y, w, h)); ctx.fillStyle = grad(ctx, x - w / 2, 0, x + w / 2, 0, [[0, 'rgba(255,240,200,.25)'], [1, 'rgba(90,60,30,.25)']]); ctx.fillRect(x - w / 2, y, w, h);
+    sh(ctx, '#e6c890', 4, c => { c.moveTo(x - w / 2 - 16, y); c.lineTo(x + w / 2 + 16, y); c.lineTo(x + w / 2 + 6, y + 22); c.lineTo(x - w / 2 - 6, y + 22); c.closePath(); }); sh(ctx, '#c8a060', 2.5, c => c.rect(x - w / 2 + 6, y + 26, w - 12, 10));
+    for (let r2 = 0; r2 < 2; r2++) for (let i = 0; i < Math.floor(w / 46); i++) { const gx = x - w / 2 + 26 + i * 46, gy = y + 54 + r2 * 46; if (Math.abs(gx - x) < 50) continue; G.EK.hieratic(ctx, gx - 14, gy, 28, i * 3 + r2, 1, 'rgba(110,70,30,.75)', 2.6); }
+    sh(ctx, '#e6c890', 3, c => c.roundRect(x - 26, y + 40, 52, 90, 26)); ln(ctx, [[x - 30, y + 134], [x + 30, y + 134]], 4); G.EK.hieratic(ctx, x - 14, y + 70, 28, 77, 1, '#8a4a2a', 2.6); G.EK.hieratic(ctx, x - 14, y + 100, 28, 78, 1, '#8a4a2a', 2.6);
+    if (o.props !== false) { EF.brazier(ctx, x - w / 2 - 70, y + h - 10, 1.1, t); EF.brazier(ctx, x + w / 2 + 70, y + h - 10, 1.1, t + 1); EF.standard(ctx, x - w / 2 - 150, y + h, 1, t, '#c8642a'); EF.standard(ctx, x + w / 2 + 150, y + h, 1, t + .5, '#c8642a');
+      EF.basket(ctx, x + w / 2 + 230, y + h + 10, 1.1, 'fruit'); EF.basket(ctx, x - w / 2 - 230, y + h + 10, 1.1, 'grain'); } };
   EP.say = t => Gd.say(t);
   const fig = EP.fig, theo = EP.theo, push = EP.push, cover = EP.cover;
   const card = (ctx, text, x, y, lt, t0, o = {}) => { const k = K.pop(lt, t0, .4); if (k <= 0) return; const lines = text.split('\n'), sz = o.size || 32; ctx.font = `700 ${sz}px Fredoka`; const w = o.w || Math.max(...lines.map(l => ctx.measureText(l).width)) + 70, h = lines.length * sz * 1.3 + 40;
@@ -56,7 +65,7 @@
   });
   const deckSleepers = (ctx, t) => { for (let i = 0; i < 7; i++) ES.ew(ctx, 80 + i * 170, 600 + (i % 2) * 14, 2.2, t, { pose: 'sleep', seed: i + 3 }); };
   S('awake', (ctx, lt, dur, t, R) => {   // a few feet away a man is already awake: reed pen, papyrus
-    ctx.save(); push(ctx, lt, dur, 1.0, 1.06, 700, 420); ES.nile(ctx, t, 0, { v: 'dawn', mist: .6, near: false, h: 300 }); EP.deck(ctx, 560); deckSleepers(ctx, t);
+    ctx.save(); push(ctx, lt, dur, 1.0, 1.06, 700, 420); ES.nile(ctx, t, 0, { v: 'dawn', mist: .6, near: false, h: 300 }); G.EF.lilies(ctx, 160, 500, 300, 10, 4, t); G.EF.papyrus(ctx, 70, 600, 20, 260, 3, t); EP.deck(ctx, 560); deckSleepers(ctx, t);
     fig(ctx, 'merer', 760, 720, .82, { t, pose: 'idle', turn: -.35, light: LIGHT.dawn, face: { mouth: 'flat', brows: 'neutral', eyes: lt < R('reed') ? 'half' : 'open', look: [.3, .5] } }); ctx.restore();
     if (lt > R('reed')) K.tag(ctx, 'a reed pen + a sheet of papyrus', 380, 180, lt, R('reed') + .4, { size: 24 });
   });
@@ -68,7 +77,7 @@
     K.tag(ctx, 'where the team spent the night', 640, 640, lt, R('where') + .1, { size: 26 });
   });
   S('away', (ctx, lt, dur, t, R) => {   // he rolls it up, puts it away — and looks at you
-    ctx.save(); push(ctx, lt, dur, 1.12, 1.2, 700, 380); ES.nile(ctx, t, 0, { v: 'dawn', mist: .5, near: false, h: 300 }); EP.deck(ctx, 560); deckSleepers(ctx, t);
+    ctx.save(); push(ctx, lt, dur, 1.12, 1.2, 700, 380); ES.nile(ctx, t, 0, { v: 'dawn', mist: .5, near: false, h: 300 }); G.EF.lilies(ctx, 160, 500, 300, 10, 4, t); G.EF.papyrus(ctx, 70, 600, 20, 260, 3, t); EP.deck(ctx, 560); deckSleepers(ctx, t);
     fig(ctx, 'merer', 700, 760, .9, { t, pose: 'idle', prop: lt < .8 ? 'papyrus' : null, turn: -.15, light: LIGHT.dawn, face: { mouth: lt > R('boss') ? 'smirk' : 'flat', brows: lt > R('boss') ? 'up' : 'neutral', look: lt > R('name') - .3 ? [0, 0] : [.4, .4] } }); ctx.restore();
     if (lt > R('name')) EK.nameCard(ctx, lt, R('name'), 'MERER', 'inspector', 300, 200, { icon: 'brush' }); if (lt > R('boss')) K.tag(ctx, 'your boss', 960, 210, lt, R('boss') + .1, { size: 30, rot: -.04 });
   });
@@ -125,14 +134,15 @@
   });
   S('khufu', (ctx, lt, dur, t, R) => {   // Khufu — dates uncertain; one estimate 2589–2566 BC
     ctx.save(); push(ctx, lt, dur, 1.0, 1.08, 640, 380); ES.nile(ctx, t, 0, { v: 'gold', giza: false, near: false, h: 360 });
-    sh(ctx, '#e2c48e', 4, c => c.rect(380, 560, 520, 40)); sh(ctx, '#d4b47e', 4, c => c.rect(420, 600, 440, 120));
+    G.EF.papyrus(ctx, 60, 720, 16, 190, 3, t); G.EF.papyrus(ctx, 1220, 720, 16, 190, 7, t); G.EF.lilies(ctx, 140, 560, 300, 8, 4, t); G.EF.lilies(ctx, 860, 566, 300, 8, 6, t);
+    EP.plinth(ctx, 640, 568, 520, 160, t, { props: false });
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; T.glow(ctx, 640, 300, 280, 'rgba(255,210,120,.25)'); ctx.restore();
     fig(ctx, 'khufu', 640, 570, .78, { t, pose: 'idle', turn: 0, light: LIGHT.gold, face: { mouth: 'flat', brows: 'neutral', eyes: 'half' } }); ctx.restore();
     K.tag(ctx, 'KHUFU (KOO-foo)', 640, 90, lt, .4, { size: 34 }); if (lt > R('dates')) K.tag(ctx, 'exact dates: unknown', 260, 300, lt, R('dates') + .2, { size: 22, rot: -.04 }); if (lt > R('reign')) K.tag(ctx, 'one estimate: 2589–2566 BC', 1020, 300, lt, R('reign') + .4, { size: 24, rot: .03 });
   });
   S('people', (ctx, lt, dur, t, R) => {   // to his people he's a god living on Earth
-    ctx.save(); push(ctx, lt, dur, 1.0, 1.06, 640, 300); ES.nile(ctx, t, 0, { v: 'gold', near: false, h: 360 }); sh(ctx, '#d8b884', 4, c => c.rect(0, 520, W, 200));
-    sh(ctx, '#e2c48e', 4, c => c.rect(500, 380, 280, 40)); sh(ctx, '#d4b47e', 4, c => c.rect(520, 420, 240, 100));
+    ctx.save(); push(ctx, lt, dur, 1.0, 1.06, 640, 300); ES.nile(ctx, t, 0, { v: 'day', near: false, h: 340 }); ctx.fillStyle = grad(ctx, 0, 520, 0, H, [[0, '#e2c08a'], [1, '#c89a62']]); ctx.fillRect(0, 520, W, 200); ln(ctx, [[0, 520], [W, 520]], 3.5); P2.grain(ctx, 0, 520, W, 200, .3, 3, 'overlay', 1);
+    G.EF.papyrus(ctx, 40, 560, 12, 160, 5, t); G.EF.papyrus(ctx, 1240, 560, 12, 160, 9, t); EP.plinth(ctx, 640, 380, 300, 160, t);
     ctx.save(); ctx.globalCompositeOperation = 'lighter'; T.glow(ctx, 640, 240, 220 + Math.sin(t * 2) * 10, 'rgba(255,220,140,.35)'); ctx.restore();
     fig(ctx, 'khufu', 640, 390, .5, { t, pose: 'presentBoth', light: LIGHT.gold, face: { mouth: 'flat', eyes: 'half' } });
     const r = rng(3); for (let i = 0; i < 26; i++) { const x = 60 + (i % 13) * 92 + (i > 12 ? 46 : 0), y = 600 + (i > 12 ? 70 : 0); ES.ew(ctx, x, y, 1.3, t, { pose: 'stand', seed: i, dir: x < 640 ? 1 : -1 }); }

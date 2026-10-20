@@ -325,3 +325,6 @@ The user repainted Merer frames and asked that every frame look like those. What
   - a real Gulf of Suez gap between Egypt and Sinai
   - a brass compass rose
 - **Process**: render a 99-shot contact sheet (5×5 per sheet) after every pass and fix the plainest frames first.
+
+### Lesson: mounted riders need the "@ride" outfit twins (3-legs bug, Merer 1990 horse shot)
+`Beasts.steed` draws the rider via `G.Guide.draw` with outfit `<name>@ride` and adds one near leg in the stirrup itself. The `@ride` twins (legs `kind: 'none'`, `feet: 'none'`) are only created in `cowboy/js/cast.js`. Any episode that borrows `cowboy/js/beasts.js` without that cast must create the twins itself (see the end of `merer/js/cast.js`). Otherwise the outfit lookup fails, the figure is drawn with both standing legs, and the rider shows three legs.

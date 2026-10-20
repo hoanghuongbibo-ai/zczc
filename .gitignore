@@ -2,3 +2,5 @@ node_modules
 houdini/vindolanda/out/.parts/
 houdini/cowboy/voice.raw
 houdini/cowboy/out/.parts
+houdini/merer/voice.raw
+houdini/merer/out/.parts

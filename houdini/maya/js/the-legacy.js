@@ -369,7 +369,7 @@
     const L = [200, 470], R = [1080, 470], ak = clamp((t - A.current + .3) / 1.6);
     ctx.save(); ctx.setLineDash([14, 10]); ctx.lineWidth = 6; ctx.strokeStyle = '#8a6a4a'; ctx.beginPath(); ctx.moveTo(...L); ctx.quadraticCurveTo(640, 180, ...R); ctx.stroke(); ctx.restore();
     if (ak > 0) { ctx.save(); ctx.lineWidth = 8; ctx.strokeStyle = GOLD; ctx.beginPath(); for (let i = 0; i <= 40 * ak; i++) { const u = i / 40, x = (1 - u) * (1 - u) * L[0] + 2 * u * (1 - u) * 640 + u * u * R[0], y = (1 - u) * (1 - u) * L[1] + 2 * u * (1 - u) * 180 + u * u * R[1]; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke(); ctx.restore();
-      const u = ak, x = (1 - u) * (1 - u) * L[0] + 2 * u * (1 - u) * 640 + u * u * R[0], y = (1 - u) * (1 - u) * L[1] + 2 * u * (1 - u) * 180 + u * u * R[1]; N.walker(ctx, x, y, .3, t, 9, {}); }
+      const u = ak, x = (1 - u) * (1 - u) * L[0] + 2 * u * (1 - u) * 640 + u * u * R[0], y = (1 - u) * (1 - u) * L[1] + 2 * u * (1 - u) * 180 + u * u * R[1]; M.sideWalker(ctx, x, y, .3, t, 9, { dir: 1, coat: '#3a6ab8', pants: '#2a2a34', skin: '#e8b890', hair: '#5a3a20' }); }
     if (ak > .3) tag(ctx, '13 BAK’TUNS = ABOUT 5,125 YEARS', 640, 300, (ak - .3) * 3, 24);
     counter(ctx, R[0], R[1] + 40, '13.0.0.0.0', lt + .2, 'DEC 21, 2012', GOLD, 36);
     counter(ctx, L[0], L[1] + 40, '13.0.0.0.0', since(t, 'mythological') - .1, '3114 BC · MYTHOLOGICAL START', GOLD, 36);
@@ -424,8 +424,8 @@
     M.sky(ctx, t, 2, 480); M.jungle(ctx, 440, 2, t); shape(ctx, '#7aa858', 0, rect(-600, 480, 2600, 600));
     mound(ctx, 120, -80, 1500, 600);
     for (let i = 0; i < 9; i++) { const dir = i % 2 ? -1 : 1, x = dir > 0 ? ((t * 70 + i * 190) % 1600) - 160 : 1440 - ((t * 70 + i * 190) % 1600), y = 700 + (i % 3) * 20;
-      villager(ctx, x, y, .55, t, i, { flip: dir < 0 }); basketOnHead(ctx, x, y, .55, dir > 0); }
-    const kk = since(t, 'kings2'); if (kk > 0) { const x = lerp(1500, 1040, ease.out(clamp(kk / 1.0))); king(ctx, x, 470, .62, t, { cape: '#c8322a', staff: true }); }
+      M.sideWalker(ctx, x, y, .55, t, i, { dir, coat: CL[i % 4], pants: SK[i % 5], skin: SK[i % 5], shoe: SK[i % 5], bun: i % 3 === 1 }); basketOnHead(ctx, x + dir * 2, y + 4, .55, dir > 0); }
+    const kk = since(t, 'kings2'); if (kk > 0) { const e = pop(kk, .45); ctx.save(); ctx.translate(1040, 470); ctx.scale(e, e); king(ctx, 0, 0, .62, t, { cape: '#c8322a', staff: true }); ctx.restore(); sparkle(ctx, 1100, 170, kk / .8, 1.4); }
     ctx.restore();
     tag(ctx, '3,000 YEARS AGO', 300, 140, since(t, 'three'), 24);
     strip(ctx, 'BUILT BY EVERYBODY', 640, 240, since(t, 'everybody') + .1, { px: 50, color: GREEN });
@@ -487,7 +487,7 @@
     ctx.save(); plaza(ctx, t, { tod: lerp(1.2, 1.7, sunK), crowd: false, torches: false });
     glow(ctx, 640, 470, 520, `rgba(255,200,120,${.35 * sunK})`); ctx.restore();
     for (const [x, y, sc, v, cup] of FOLK) { const near = Math.abs(vx - x) < 320; N.walker(ctx, x, y, sc, t, v, { still: true, cam: false, look: clamp((vx - x) / 50, -4, 4), reach: (walking && near) || (!walking && v % 5 === 0) }); }
-    vendor(ctx, vx, 760, 1.05, t, { reach: !walking && lid < 1 && lid > 0, walk: walking, look: walking ? -2 : 0 });
+    if (walking) M.vendorSide(ctx, vx, 760, 1.05, t, { dir: -1 }); else vendor(ctx, vx, 760, 1.05, t, { reach: lid < 1 && lid > 0 });
     table(ctx, 560, 760, 1.15, { bottles: 2 });
     // the cooler lid swings shut (drawn over the table's cooler)
     ctx.save(); ctx.translate(560, 760); ctx.scale(1.15, 1.15); ctx.translate(-134, -201); ctx.rotate(-1.3 * (1 - lid)); shape(ctx, '#f4efe6', 4, rect(0, -11, 138, 22, 8)); ctx.restore();

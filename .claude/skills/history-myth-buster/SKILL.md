@@ -260,3 +260,9 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   Shared helpers come from `nyc/js/sponsor.js` lines 9–139, copied into each part (strip, tag, counter, deskBg, …).
 - **Maps: clip any shading polygon to the land path,** or it spills into the sea. Extend land edges past the frame so no straight cut-off edge shows.
 - **User feedback (Maya Beat 2): text in the same colour as what's behind it is invisible.** A green "YOU CAN STAY" stamp on green jungle couldn't be read. Any on-screen word that sits over scenery goes on a paper label (`strip` / `tag`), or gets a colour that contrasts with what's directly behind it. Bare `FX.stamp` and bare `txt` belong only on plain backgrounds (desk, paper, sky). Check each label against its background on the stills.
+
+### Character movement & weather consistency (user feedback, Maya Beat 9)
+- Anyone moving left/right across the frame must be drawn **in profile** (`G.Maya.sideWalker` / `vendorSide`, `dir: ±1`), facing the way they travel. Never slide a front-facing walker sideways. Front-facing `N.walker` is only for standing, or walking toward the camera.
+- Characters who appear (kings and so on) pop or rise into place rather than sliding in while standing still.
+- Bystanders react: their eyes follow the main character (`look:` on `N.walker`), and the nearest ones wave.
+- Weather is all-or-nothing: rain covers the whole frame under an overcast sky with clouds edge to edge. The sun only appears after the rain has fully stopped. Night is dark across the whole frame. Never show rain and sunshine together.

@@ -186,5 +186,36 @@
     if (o.staff) { line(ctx, [[80, -240], [96, 0]], 7, '#6a4a2a'); shape(ctx, '#2fa06a', 3, circle(78, -250, 14)); }
     ctx.restore(); }
 
-  G.Maya = { temple, palace, stelaSmall, king, mix, sky, jungle, castillo, torch, crowdBand, plaza, vendor, table, flowers, mayaMap, site, MP, SITES };
+
+  // a character walking SIDEWAYS in profile: body, face and eye point the way they travel (dir 1 = right, -1 = left)
+  function sideWalker(ctx, x, y, s, t, v, o = {}) { const dir = o.dir || 1, ph = t * 6.5 + v * 1.7, sw = Math.sin(ph), bob = -Math.abs(Math.cos(ph)) * 6;
+    const skin = o.skin || '#b07848', coat = o.coat || '#e8dcc0', pants = o.pants || '#7a4a2a', hair = o.hair || '#1d1a17', shoe = o.shoe || '#5a3a20';
+    ctx.save(); ctx.translate(x, y); ctx.scale(dir * s, s);
+    shape(ctx, 'rgba(40,30,60,.22)', 0, ellipse(0, 18, 50, 16)); ctx.translate(0, bob);
+    const leg = (k, dark) => { const fx = k * 30; line(ctx, [[0, -128], [fx * .5, -64], [fx, -12]], 26, INK); line(ctx, [[0, -128], [fx * .5, -64], [fx, -12]], 19, dark ? mix(pants, '#000000', .25) : pants); shape(ctx, shoe, 3.5, ellipse(fx + 8, -8, 20, 10)); };
+    const arm = (k, dark) => { const hx = k * 34, hy = -150 - Math.abs(k) * 6; line(ctx, [[2, -236], [hx * .5, -192], [hx, hy]], 18, INK); line(ctx, [[2, -236], [hx * .5, -192], [hx, hy]], 12, dark ? mix(coat, '#000000', .15) : coat); shape(ctx, skin, 3, circle(hx, hy + 4, 10)); };
+    leg(-sw, true); arm(sw, true);
+    if (o.load) o.load(ctx);
+    shape(ctx, coat, 4.5, c => { c.moveTo(-24, -250); c.quadraticCurveTo(4, -262, 28, -248); c.lineTo(30, -124); c.quadraticCurveTo(2, -114, -26, -124); c.closePath(); });
+    if (o.skirt) { shape(ctx, coat, 4, poly([[-30, -132], [32, -132], [40 + sw * 6, -6], [-38 + sw * 6, -6]])); flowers(ctx, -32, 36, -24, 5, 7); line(ctx, [[-36, -12], [38, -12]], 3, '#e8423a'); flowers(ctx, -24, 28, -134, 4, 6); }
+    if (o.yoke) { ctx.lineWidth = 2.5; ctx.strokeStyle = '#e8423a'; ctx.strokeRect(-6, -248, 30, 46); flowers(ctx, -2, 20, -228, 2, 7); }
+    leg(sw, false); if (o.skirt) { shape(ctx, coat, 4, poly([[-30, -132], [32, -132], [40 + sw * 6, -6], [-38 + sw * 6, -6]])); flowers(ctx, -32, 36, -24, 5, 7); line(ctx, [[-36, -12], [38, -12]], 3, '#e8423a'); }
+    arm(-sw, false);
+    // head in profile
+    shape(ctx, skin, 3.5, rect(-6, -272, 16, 20));
+    shape(ctx, skin, 4.5, c => { c.arc(2, -302, 34, 0, Math.PI * 2); });
+    shape(ctx, skin, 3.5, c => { c.moveTo(34, -306); c.quadraticCurveTo(46, -296, 35, -290); c.closePath(); }); // nose
+    if (o.bun) { shape(ctx, hair, 4, c => { c.moveTo(30, -318); c.quadraticCurveTo(10, -344, -24, -330); c.quadraticCurveTo(-40, -310, -30, -276); c.quadraticCurveTo(-10, -300, -4, -314); c.quadraticCurveTo(14, -322, 30, -318); c.closePath(); }); shape(ctx, hair, 4, circle(-30, -338, 15));
+      shape(ctx, o.ribbon || '#e8423a', 2.5, poly([[-30, -352], [-42, -366], [-20, -362]])); for (const [fx, fy, fc] of [[-14, -346, '#e8423a'], [-2, -340, '#f6c945'], [-44, -330, '#d84a8a']]) { for (let p = 0; p < 5; p++) shape(ctx, fc, 1.5, circle(fx + Math.cos(p * 1.26) * 5, fy + Math.sin(p * 1.26) * 5, 4.2)); shape(ctx, '#fff2a0', 1, circle(fx, fy, 2.5)); } }
+    else shape(ctx, hair, 4, c => { c.moveTo(32, -318); c.quadraticCurveTo(14, -346, -22, -334); c.quadraticCurveTo(-38, -318, -32, -290); c.quadraticCurveTo(-14, -304, -6, -316); c.quadraticCurveTo(14, -322, 32, -318); c.closePath(); });
+    shape(ctx, skin, 3.5, circle(-6, -298, 8)); if (o.hoop) { ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = '#e8b830'; ctx.beginPath(); ctx.arc(-6, -284, 7, 0, 7); ctx.stroke(); ctx.restore(); }
+    shape(ctx, '#fff', 0, ellipse(20, -302, 6, 8)); shape(ctx, '#4a2a18', 0, circle(23, -301, 4.6)); shape(ctx, INK, 0, circle(24, -301, 2.4)); shape(ctx, '#fff', 0, circle(25.5, -303.5, 1.5));
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineWidth = 3; ctx.strokeStyle = INK; ctx.beginPath(); ctx.moveTo(13, -314); ctx.quadraticCurveTo(21, -319, 28, -314); ctx.stroke();
+    if (o.lashes) { ctx.lineWidth = 3.5; ctx.beginPath(); ctx.ellipse(20, -302, 7, 8, 0, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(26, -308); ctx.lineTo(31, -312); ctx.stroke(); } ctx.restore();
+    if (o.lashes) shape(ctx, 'rgba(240,100,110,.45)', 0, ellipse(18, -284, 7, 4.5));
+    shape(ctx, '#8a2a2a', 2, c => { c.moveTo(22, -280); c.quadraticCurveTo(28, -270, 34, -282); c.closePath(); });
+    ctx.restore(); }
+  // the water seller, walking in profile
+  function vendorSide(ctx, x, y, s, t, o = {}) { sideWalker(ctx, x, y, s, t, o.v ?? 1, Object.assign({ coat: '#fbf8f0', pants: '#fbf8f0', skin: o.skin || '#b07848', shoe: '#c8a878', skirt: true, yoke: true, bun: true, hoop: true, lashes: true }, o)); }
+  G.Maya = { sideWalker, vendorSide, temple, palace, stelaSmall, king, mix, sky, jungle, castillo, torch, crowdBand, plaza, vendor, table, flowers, mayaMap, site, MP, SITES };
 })(window);

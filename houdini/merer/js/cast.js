@@ -93,4 +93,6 @@
     guideman: { outfit: 'eWorker', hat: 'kerchief', look: { skin: '#a8683e', hairCol: '#1a1410', beard: 'moustache' } },
     scientist:{ outfit: 'eLab', hat: 'none', look: { skin: '#f0c8a8', hairCol: '#8a6a4a', beard: 'stubble' } },
   };
+  // "@ride" twins (no legs/feet) for Beasts.steed riders: the steed draws the one near leg in the stirrup, so the rider's own legs must go
+  for (const k of Object.keys(O)) if (!k.includes('@') && !O[k + '@ride']) O[k + '@ride'] = Object.assign({}, O[k], { legs: { kind: 'none', c: ((O[k].legs || {}).c) }, feet: 'none' });
 })(window);

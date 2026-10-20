@@ -87,13 +87,24 @@
   function flowers(ctx, x0, x1, y, n, r = 6) { for (let i = 0; i < n; i++) { const x = lerp(x0, x1, (i + .5) / n); for (let p = 0; p < 5; p++) shape(ctx, FLOW[(i + p) % 5], 1.5, circle(x + Math.cos(p * 1.26) * r * .7, y + Math.sin(p * 1.26) * r * .7, r * .55)); shape(ctx, '#f6d23a', 1, circle(x, y, r * .35));
     shape(ctx, '#3a8a3a', 1.2, ellipse(x + r * 1.1, y + r * .3, r * .7, r * .3, .4)); } }
   function vendor(ctx, x, y, s, t, o = {}) {
-    N.walker(ctx, x, y, s, t, o.v ?? 1, { plain: true, still: true, coat: '#fbf8f0', pants: '#fbf8f0', skin: o.skin || '#b07848', hair: '#1d1a17', hs: 2, flip: o.flip, reach: o.reach, shoe: '#c8a878' });
+    N.walker(ctx, x, y, s, t, o.v ?? 1, { plain: true, still: !o.walk, coat: '#fbf8f0', pants: '#fbf8f0', skin: o.skin || '#b07848', hair: '#1d1a17', hs: 2, flip: o.flip, reach: o.reach, shoe: '#c8a878' });
     ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
     shape(ctx, '#fbf8f0', 4, poly([[-38, -132], [38, -132], [46, -6], [-46, -6]])); // the long fustán skirt over the legs
     flowers(ctx, -40, 40, -24, 6, 7); line(ctx, [[-44, -12], [44, -12]], 3, '#e8423a');
     shape(ctx, '#fbf8f0', 0, rect(-34, -246, 68, 50)); ctx.lineWidth = 2.5; ctx.strokeStyle = '#e8423a'; ctx.strokeRect(-30, -250, 60, 50); flowers(ctx, -26, 26, -228, 4, 7);
     flowers(ctx, -34, 34, -134, 5, 6);
     shape(ctx, o.ribbon || '#e8423a', 2.5, poly([[-6, -352], [-24, -362], [-22, -342]])); shape(ctx, o.ribbon || '#e8423a', 2.5, poly([[6, -352], [24, -362], [22, -342]]));
+    // her face: warm eyes with lashes, soft brows, blush, a big smile; gold hoops and flowers in her hair
+    const sk = o.skin || '#b07848', bob = o.walk ? -Math.abs(Math.cos(t * 6.5 + (o.v ?? 1) * 1.7)) * 5 : 0; ctx.translate(0, bob);
+    shape(ctx, sk, 0, ellipse(0, -289, 31, 23));
+    for (const d of [-1, 1]) { shape(ctx, '#fff', 0, ellipse(d * 13, -297, 9, 9)); ctx.save(); ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(60,30,20,.7)'; ctx.beginPath(); ctx.ellipse(d * 13, -297, 9, 9, 0, Math.PI * .15, Math.PI * .85); ctx.stroke(); ctx.restore(); shape(ctx, '#4a2a18', 0, circle(d * 13 + (o.look ?? 0), -297, 6.5)); shape(ctx, INK, 0, circle(d * 13 + (o.look ?? 0), -297, 3.2)); shape(ctx, '#fff', 0, circle(d * 13 + (o.look ?? 0) + 2.5, -300, 2)); shape(ctx, '#fff', 0, circle(d * 13 + (o.look ?? 0) - 2, -294, 1));
+      ctx.save(); ctx.lineCap = 'round'; ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.beginPath(); ctx.ellipse(d * 13, -298, 10, 11, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke(); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(d * 21, -304); ctx.lineTo(d * 27, -309); ctx.moveTo(d * 18, -308); ctx.lineTo(d * 22, -314); ctx.stroke();
+      ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(d * 6, -315); ctx.quadraticCurveTo(d * 14, -320, d * 22, -315); ctx.stroke(); ctx.restore();
+      shape(ctx, 'rgba(240,100,110,.45)', 0, ellipse(d * 22, -282, 8, 5));
+      ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = '#e8b830'; ctx.beginPath(); ctx.arc(d * 35, -284, 7, 0, 7); ctx.stroke(); ctx.restore(); }
+    line(ctx, [[1, -292], [-1, -284], [3, -283]], 2.5, 'rgba(70,35,20,.55)');
+    shape(ctx, '#8a2a2a', 2.5, c => { c.moveTo(-12, -276); c.quadraticCurveTo(0, -260, 12, -276); c.quadraticCurveTo(0, -272, -12, -276); c.closePath(); }); shape(ctx, '#fff', 0, c => { c.moveTo(-9, -275); c.quadraticCurveTo(0, -271, 9, -275); c.lineTo(8, -272); c.quadraticCurveTo(0, -269, -8, -272); c.closePath(); });
+    for (const [fx, fy, fc] of [[-26, -340, '#e8423a'], [-38, -326, '#f6c945'], [-14, -352, '#d84a8a']]) { for (let p = 0; p < 5; p++) shape(ctx, fc, 1.5, circle(fx + Math.cos(p * 1.26) * 6, fy + Math.sin(p * 1.26) * 6, 5)); shape(ctx, '#fff2a0', 1, circle(fx, fy, 3)); }
     ctx.restore(); }
 
   // folding table with a cooler, bottles and a cardboard sign

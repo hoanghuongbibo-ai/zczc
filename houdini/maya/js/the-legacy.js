@@ -435,17 +435,19 @@
 
   // ---------- g15: the kings carved their faces in stone and promised rain; the rain stopped; the kings fell ----------
   function g15(ctx, lt, dur, t) {
-    const dry = clamp((t - A.stopped + .2) / 1.0), fall = ease.in(clamp((t - A.fell1 + .1) / .7));
+    const wet = 1 - clamp((t - A.stopped + .1) / .4), dry = clamp((t - A.stopped - .3) / .9), fall = ease.in(clamp((t - A.fell1 + .1) / .7));
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.06), 640, 400);
-    M.sky(ctx, t, lerp(1.9, 2.1, dry), 520); shape(ctx, mix('#7aa858', '#c8a868', dry), 0, rect(-600, 520, 2600, 600));
+    M.sky(ctx, t, lerp(1.9, 2.1, dry), 520); if (wet > 0) { ctx.save(); ctx.globalAlpha = wet; shape(ctx, grad(ctx, 0, -300, 0, 520, [[0, '#6a7688'], [1, '#a8b0bc']]), 0, rect(-600, -400, 2600, 920)); ctx.restore(); }
+    shape(ctx, mix(mix('#7aa858', '#5a8a48', wet), '#c8a868', dry), 0, rect(-600, 520, 2600, 600));
     if (dry > .3) for (let i = 0; i < 14; i++) line(ctx, [[100 + i * 80, 600 + (i % 3) * 40], [130 + i * 80, 620 + (i % 3) * 40], [116 + i * 80, 650 + (i % 3) * 40]], 3, `rgba(90,60,30,${dry})`);
     temple(ctx, 260, 540, .7, { col: '#e0d4b8', paint: true });
     for (const x of [520, 600]) stelaSmall(ctx, x, 600, 1.4, clamp((t - A.carved + .3) / .5));
-    if (dry < 1) { cloud(ctx, 900, 150, .9, mix('#8a96a8', '#e8eef8', dry)); cloud(ctx, 640, 120, .6, mix('#8a96a8', '#e8eef8', dry)); rainfall(ctx, t, (since(t, 'rain') > -.4 ? 1 : 0) * (1 - dry), 480, 1180, 180, 560); }
+    if (wet > 0) { ctx.save(); ctx.globalAlpha = wet; for (const [cx, cy, cs] of [[60, 90, .9], [330, 50, 1.0], [620, 110, .9], [900, 60, 1.0], [1180, 100, .9], [1450, 70, .8]]) cloud(ctx, cx, cy, cs, '#7a8698'); ctx.restore(); }
     if (dry > 0) sun(ctx, 1110, 130, 50, dry);
     ctx.save(); ctx.translate(880, 640); ctx.rotate(fall * 1.45); ctx.translate(-880, -640); king(ctx, 880, 640, .78, t, { cape: '#c8322a', reach: fall === 0 && dry < .5, staff: true }); ctx.restore();
     for (let i = 0; i < 5; i++) villager(ctx, 1000 + i * 60, 720 + (i % 2) * 12, .45, t, i, { still: true, flip: true });
     ctx.restore();
+    if (wet > 0) { ctx.save(); ctx.globalAlpha = wet; for (let i = 0; i < 220; i++) { const x = (i * 59) % (W + 60) - 30, y = ((t * 720 + i * 97) % (H + 60)) - 30; line(ctx, [[x, y], [x - 7, y + 26]], 3, 'rgba(70,120,200,.8)'); } ctx.restore(); }
     tag(ctx, 'FACES IN STONE', 560, 360, since(t, 'carved'), 22);
     if (since(t, 'rain') > 0) tag(ctx, '"I BRING THE RAIN"', 880, 260, since(t, 'rain'), 24);
     if (since(t, 'fell1') > 0) strip(ctx, 'THE KINGS FELL', 640, 120, since(t, 'fell1'), { px: 50, color: RED });
@@ -479,17 +481,20 @@
   }
 
   // ---------- g18: the woman at the folding table, closing up her cooler as the sun comes up ----------
-  function vendorScene(ctx, t, lid, sunK) {
-    ctx.save(); plaza(ctx, t, { tod: lerp(1.2, 1.7, sunK), thin: .85, torches: false });
+  // early visitors who turn to look at her (and wave as she passes)
+  const FOLK = [[120, 610, .52, 2, 1], [250, 640, .58, 5, 0], [372, 604, .5, 8, 1], [980, 606, .5, 3, 0], [1100, 636, .58, 7, 1], [1220, 608, .52, 10, 0]];
+  function vendorScene(ctx, t, lid, sunK, vx = 760, walking = false) {
+    ctx.save(); plaza(ctx, t, { tod: lerp(1.2, 1.7, sunK), crowd: false, torches: false });
     glow(ctx, 640, 470, 520, `rgba(255,200,120,${.35 * sunK})`); ctx.restore();
-    vendor(ctx, 760, 760, 1.05, t, { reach: lid < 1 && lid > 0 });
+    for (const [x, y, sc, v, cup] of FOLK) { const near = Math.abs(vx - x) < 320; N.walker(ctx, x, y, sc, t, v, { still: true, cam: false, look: clamp((vx - x) / 50, -4, 4), reach: (walking && near) || (!walking && v % 5 === 0) }); }
+    vendor(ctx, vx, 760, 1.05, t, { reach: !walking && lid < 1 && lid > 0, walk: walking, look: walking ? -2 : 0 });
     table(ctx, 560, 760, 1.15, { bottles: 2 });
     // the cooler lid swings shut (drawn over the table's cooler)
     ctx.save(); ctx.translate(560, 760); ctx.scale(1.15, 1.15); ctx.translate(-134, -201); ctx.rotate(-1.3 * (1 - lid)); shape(ctx, '#f4efe6', 4, rect(0, -11, 138, 22, 8)); ctx.restore();
   }
   function g18(ctx, lt, dur, t) {
     const lid = ease.inOut(clamp((t - A.closing) / .9)), sk = clamp((t - A.closing + .6) / 2.4);
-    ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.08), 680, 520); vendorScene(ctx, t, lid, sk); ctx.restore();
+    const wk = clamp((lt - .1) / 1.8), vx = lerp(1420, 760, ease.out(wk)); ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.08), 680, 520); vendorScene(ctx, t, lid, sk, vx, wk < .97); ctx.restore();
     tag(ctx, 'THE WOMAN AT THE FOLDING TABLE', 640, 90, lt + .1, 26);
     if (since(t, 'older') > -.2) { ctx.save(); ctx.fillStyle = 'rgba(20,16,30,.55)'; ctx.fillRect(0, 150, W, 64); ctx.restore(); txt(ctx, 'SPEAKING A LANGUAGE OLDER THAN ENGLISH', 640, 184, FX.DISPLAY(32), GOLD); }
     if (since(t, 'didnt') > -.2) { ctx.save(); ctx.globalAlpha = clamp((since(t, 'didnt') + .2) / .6); ctx.fillStyle = 'rgba(20,16,30,.55)'; ctx.fillRect(0, 230, W, 56); ctx.restore(); ctx.save(); ctx.globalAlpha = clamp((since(t, 'didnt') + .2) / .6); txt(ctx, "…ON A WORLD THAT DIDN'T END.", 640, 260, FX.DISPLAY(28), '#fff'); ctx.restore(); }

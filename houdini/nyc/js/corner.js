@@ -75,7 +75,7 @@
     // face
     if (cam) { shape(ctx, '#2a2a30', 4, rect(-30, -312, 60, 34, 6)); shape(ctx, '#5a6a7a', 3, circle(0, -295, 12)); shape(ctx, '#9ac0dc', 0, circle(-3, -298, 4)); shape(ctx, '#2a2a30', 2, rect(14, -320, 12, 8, 2)); line(ctx, [[-10, -268], [0, -264], [10, -268]], 3);
       if ((t * 1.2 + v) % 3 < .12) glow(ctx, 0, -300, 60, 'rgba(255,255,255,.8)'); }
-    else { for (const d of [-1, 1]) { shape(ctx, '#fff', 2.5, ellipse(d * 13, -300, 8, 9)); shape(ctx, INK, 0, circle(d * 13 + 1, -298, 4.5)); shape(ctx, '#fff', 0, circle(d * 13 + 2.5, -300, 1.5)); line(ctx, [[d * 6, -316], [d * 20, -318 + (v % 2) * 2]], 3); }
+    else { for (const d of [-1, 1]) { shape(ctx, '#fff', 2.5, ellipse(d * 13, -300, 8, 9)); shape(ctx, INK, 0, circle(d * 13 + (o.look ?? 1), -298, 4.5)); shape(ctx, '#fff', 0, circle(d * 13 + (o.look ?? 1) + 1.5, -300, 1.5)); line(ctx, [[d * 6, -316], [d * 20, -318 + (v % 2) * 2]], 3); }
       if (v % 7 === 3) { ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = INK; for (const d of [-1, 1]) { ctx.beginPath(); ctx.arc(d * 13, -300, 12, 0, 7); ctx.stroke(); } line(ctx, [[-1, -300], [1, -300]], 3); ctx.restore(); }
       line(ctx, [[0, -296], [-3, -286], [2, -284]], 2.5, 'rgba(60,30,20,.6)'); shape(ctx, '#7a2a2a', 2.5, c => { c.moveTo(-11, -276); c.quadraticCurveTo(0, -264, 11, -276); c.closePath(); });
       shape(ctx, 'rgba(240,120,110,.35)', 0, ellipse(-22, -284, 7, 4)); shape(ctx, 'rgba(240,120,110,.35)', 0, ellipse(22, -284, 7, 4)); }

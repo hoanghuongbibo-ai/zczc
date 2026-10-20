@@ -8,8 +8,15 @@
 
   // schematic map of the Giza / Tura stretch: desert plateau, green floodplain, the modern Nile, the old "Khufu branch"
   function localMap(ctx, lt, t, o = {}) {
-    ctx.fillStyle = '#e6cf9e'; ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .35, 201, 'multiply', 1.4);
-    ctx.fillStyle = '#9fbf6a'; ctx.beginPath(); ctx.moveTo(380, 0); ctx.bezierCurveTo(420, 200, 360, 420, 420, H); ctx.lineTo(1010, H); ctx.bezierCurveTo(960, 480, 1040, 220, 980, 0); ctx.closePath(); ctx.fill(); P2.grain(ctx, 360, 0, 700, H, .3, 203, 'overlay', 1);
+    ctx.drawImage(P.layer('lmap2', g => { g.setTransform(1, 0, 0, 1, 0, 0);   // painted relief look: dune streaks, field patchwork, palm groves along the banks
+    g.fillStyle = '#e6cf9e'; g.fillRect(0, 0, W, H); P2.grain(g, 0, 0, W, H, .35, 201, 'multiply', 1.4);
+    g.fillStyle = '#9fbf6a'; g.beginPath(); g.moveTo(380, 0); g.bezierCurveTo(420, 200, 360, 420, 420, H); g.lineTo(1010, H); g.bezierCurveTo(960, 480, 1040, 220, 980, 0); g.closePath(); g.fill(); P2.grain(g, 360, 0, 700, H, .3, 203, 'overlay', 1);
+      const r = rng(205); for (let i = 0; i < 70; i++) { const x = r() < .5 ? r() * 360 : 1010 + r() * 270, y = r() * H, L = 40 + r() * 70; g.strokeStyle = `rgba(160,100,44,${.14 + r() * .12})`; g.lineWidth = 4; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + L / 2, y - 6, x + L, y + 3); g.stroke(); }
+      g.save(); g.beginPath(); g.moveTo(380, 0); g.bezierCurveTo(420, 200, 360, 420, 420, H); g.lineTo(1010, H); g.bezierCurveTo(960, 480, 1040, 220, 980, 0); g.closePath(); g.clip();
+      for (let y = 0; y < H; y += 46) for (let x = 360; x < 1060; x += 58 + r() * 30) { g.fillStyle = ['rgba(120,170,70,.35)', 'rgba(200,190,90,.3)', 'rgba(80,140,60,.3)', 'rgba(150,180,80,.25)'][(r() * 4) | 0]; g.fillRect(x + 3, y + 3 + r() * 6, 52 + r() * 24, 38); }
+      for (let i = 0; i < 160; i++) { const y = r() * H, x = r() < .5 ? 400 + r() * 60 : 930 + r() * 60; g.fillStyle = 'rgba(40,90,40,.5)'; g.beginPath(); g.arc(x + 2, y + 2, 6 + r() * 5, 0, TAU); g.fill(); g.fillStyle = '#5a9a40'; g.beginPath(); g.arc(x, y, 5 + r() * 5, 0, TAU); g.fill(); }
+      g.restore(); const vg = g.createRadialGradient(640, 360, 300, 640, 360, 820); vg.addColorStop(0, 'rgba(90,50,20,0)'); vg.addColorStop(1, 'rgba(90,50,20,.3)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
+    }, 0, W, H), 0, 0);
     // the modern Nile (east)
     ctx.lineCap = 'round'; ctx.lineWidth = 34; ctx.strokeStyle = '#4f86a0'; ctx.beginPath(); ctx.moveTo(880, -20); ctx.bezierCurveTo(840, 200, 920, 420, 860, H + 20); ctx.stroke(); ctx.lineWidth = 24; ctx.strokeStyle = '#8fc0d6'; ctx.stroke();
     // the old western branch near the plateau, drawn on o.branch (0..1), with the harbor basin

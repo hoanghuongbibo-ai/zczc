@@ -113,7 +113,7 @@
     if (lt > R('mystery')) { ctx.save(); ctx.globalAlpha = .9; [['a pharaoh', R('pharaoh')], ['a mountain of stone', R('pharaoh') + 1.2], ['nameless people with whips at their backs', R('army')]].forEach(([s2, at], i) => card(ctx, s2, 640, 180 + i * 80, lt, at, { size: 28, fill: '#e8e2d4', rot: (i % 2 ? .02 : -.02) })); ctx.restore(); }
   });
   S('now2', (ctx, lt, dur, t, R) => {   // now we know: names, the boat's name, where they slept, what they ate, who the boss reported to, the Drunkards
-    ctx.fillStyle = grad(ctx, 0, 0, 0, H, [[0, '#f2dcae'], [1, '#d6b47e']]); ctx.fillRect(0, 0, W, H); P2.grain(ctx, 0, 0, W, H, .3, 401, 'overlay', 1);
+    EK.board(ctx, 2);
     const items = [['some of their names', R('names')], ['the name of their boat', R('boatsname')], ['where they slept · what they ate', R('slept2')], ['who their boss reported to', R('reported')], ['that some called themselves the Drunkards', R('reported') + 2]];
     items.forEach(([s2, at], i) => { if (lt < at) return; card(ctx, s2, 600, 120 + i * 100, lt, at, { size: 30, rot: (i % 2 ? .012 : -.012) }); K.tick(ctx, 220, 120 + i * 100, 30, lt, at + .3); });
     K.title(ctx, 'NOW WE KNOW', lt, .1, { y: 660, size: 50 });
@@ -139,10 +139,14 @@
     card(ctx, 'not about stone', 400, 160, lt, .2, { size: 32, rot: -.03 }); if (lt > R('organizing')) K.title(ctx, 'ORGANIZING PEOPLE', lt, R('organizing') + .2, { y: 260, size: 58 });
   });
   S('world', (ctx, lt, dur, t, R) => {   // the world they started: timesheets, crew rosters, shipping logs, office cafeterias
-    ctx.fillStyle = grad(ctx, 0, 0, 0, H, [[0, '#dfe8ee'], [1, '#c4d2dc']]); ctx.fillRect(0, 0, W, H);
+    EK.board(ctx, 6);
     K.tag(ctx, 'you still live in the world they started', 640, 90, lt, .2, { size: 28 });
-    [['timesheet', R('timesheet')], ['crew roster', R('roster')], ['shipping log', R('shipping')], ['office cafeteria', R('cafeteria')]].forEach(([s2, at], i) => { const a = K.pop(lt, at, .4); if (a <= 0) return; K.paper(ctx, 200 + i * 290, 380, 240, 300, { rot: (i % 2 ? .03 : -.03), scale: a, draw: c => {
-      for (let j = 0; j < 7; j++) ln(c, [[-90, -90 + j * 26], [90, -90 + j * 26]], 3, 'rgba(60,60,80,.25)'); if (i === 3) { sh(c, '#d09a52', 3, cc => cc.ellipse(0, -40, 50, 18, 0, 0, TAU)); sh(c, '#9aa0a8', 3, cc => cc.ellipse(0, -30, 70, 14, 0, 0, TAU)); } EK.txt(c, s2, 0, 110, '700 24px Fredoka'); } }); });
+    [['timesheet', R('timesheet')], ['crew roster', R('roster')], ['shipping log', R('shipping')], ['office cafeteria', R('cafeteria')]].forEach(([s2, at], i) => { const a = K.pop(lt, at, .4); if (a <= 0) return; K.paper(ctx, 220 + i * 280, 380, 240, 300, { rot: (i % 2 ? .03 : -.03), scale: a, draw: c => {
+      if (i === 0) { for (let j = 0; j <= 5; j++) { ln(c, [[-90, -110 + j * 32], [90, -110 + j * 32]], 2, 'rgba(60,40,20,.35)'); } for (let k = 0; k <= 5; k++) ln(c, [[-90 + k * 36, -110], [-90 + k * 36, 50]], 2, 'rgba(60,40,20,.35)'); for (let j = 0; j < 5; j++) for (let k = 0; k < 5; k++) if ((j * 3 + k) % 4) ln(c, [[-80 + k * 36, -94 + j * 32], [-74 + k * 36, -86 + j * 32], [-62 + k * 36, -102 + j * 32]], 3.5, '#2f8a4a'); }
+      else if (i === 1) { for (let j = 0; j < 5; j++) { const y = -100 + j * 34; sh(c, ['#c88a5a', '#a86a3a', '#d8a070', '#8a5a34', '#b87a4a'][j], 2.5, cc => cc.arc(-70, y, 12, 0, TAU)); ln(c, [[-46, y], [60 + (j % 3) * 12, y]], 4, 'rgba(60,40,20,.45)'); } }
+      else if (i === 2) { c.save(); c.translate(0, -60); sh(c, '#a0703e', 3, cc => { cc.moveTo(-70, 0); cc.lineTo(70, 0); cc.quadraticCurveTo(50, 26, 0, 26); cc.quadraticCurveTo(-50, 26, -70, 0); }); ln(c, [[0, 0], [0, -70]], 4, '#6a4a2a'); sh(c, '#f2e8d0', 3, cc => { cc.moveTo(4, -66); cc.lineTo(52, -8); cc.lineTo(4, -8); cc.closePath(); }); c.fillStyle = 'rgba(60,140,200,.45)'; c.fillRect(-90, 26, 180, 8); c.restore(); for (let j = 0; j < 3; j++) ln(c, [[-80, 10 + j * 22], [80, 10 + j * 22]], 3, 'rgba(60,40,20,.3)'); }
+      else { sh(c, '#d09a52', 3, cc => cc.ellipse(-30, -50, 46, 20, 0, 0, TAU)); sh(c, '#c87a3a', 3, cc => cc.ellipse(-30, -56, 30, 10, 0, 0, TAU)); sh(c, '#9aa0a8', 3, cc => cc.ellipse(-20, -30, 70, 14, 0, 0, TAU)); sh(c, '#c8963a', 3, cc => cc.ellipse(50, -66, 28, 18, 0, 0, TAU)); sh(c, '#b8653a', 3, cc => { cc.moveTo(40, 10); cc.quadraticCurveTo(14, 20, 30, 50); cc.lineTo(70, 50); cc.quadraticCurveTo(86, 20, 60, 10); cc.closePath(); }); }
+      EK.txt(c, s2, 0, 110, '700 24px Fredoka'); } }); });
   });
   fx('somebody', 'scratch', .5, .6);
   const nightWriter = (ctx, t, lt) => { ES.nile(ctx, t, 0, { v: 'night', near: false, h: 320 }); EP.deck(ctx, 560, .5); for (let i = 0; i < 5; i++) ES.ew(ctx, 80 + i * 150, 610 + (i % 2) * 14, 2.1, t, { pose: 'sleep', seed: i + 151 }); P2.lantern(ctx, 1040, 470, t, .8);

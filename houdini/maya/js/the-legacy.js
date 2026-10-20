@@ -319,8 +319,8 @@
   // ---------- g8: so let's go back to that night in 2012 — the calendar never "ran out" ----------
   function g8(ctx, lt, dur, t) {
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.05, 1.0), 640, 360); plaza(ctx, t, { tod: 0, doorGlow: true }); ctx.restore();
-    nightWash(ctx, .18);
     for (let i = 0; i < 9; i++) sil(ctx, 80 + i * 140, 790, 1.15 + (i % 2) * .15, '#1a1622');
+    nightWash(ctx, .45);
     FX.dateTag(ctx, 'DEC 20, 2012 · CHICHÉN ITZÁ');
     const ck = since(t, 'calendar') + .2; if (ck > 0) { tag(ctx, 'RUNS OUT TONIGHT?', 640, 160, ck, 34); const xk = clamp(since(t, 'never') / .35); if (xk > 0) line(ctx, [[460, 160], [lerp(460, 820, xk), 156]], 9, RED); }
     if (since(t, 'ran') > -.1) strip(ctx, 'IT NEVER "RAN OUT."', 640, 290, since(t, 'ran') + .1, { px: 52, color: GREEN });

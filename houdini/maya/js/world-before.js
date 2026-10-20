@@ -142,6 +142,7 @@
   const SK = ['#a8704a', '#7a4a2a', '#c08a5a', '#8a5a34', '#b07848'], CL = ['#e8dcc0', '#d8c49a', '#f0e6cc', '#c8b088'];
   // a Preclassic villager: cotton wrap, bare legs, beads
   const villager = (ctx, x, y, s, t, v, o = {}) => N.walker(ctx, x, y, s, t, v, Object.assign({ plain: true, beads: v % 2 === 0, coat: CL[v % 4], pants: SK[v % 5], skin: SK[v % 5], hair: '#1d1a17', hs: [0, 1, 2, 4][v % 4], shoe: SK[v % 5] }, o));
+  const sideVillager = (ctx, x, y, s, t, v, dir, o = {}) => M.sideWalker(ctx, x, y, s, t, v, Object.assign({ dir, coat: CL[v % 4], pants: SK[v % 5], skin: SK[v % 5], shoe: SK[v % 5], bun: v % 3 === 1 }, o));
   function basketOnHead(ctx, x, y, s, full = true, flip = false) { ctx.save(); ctx.translate(x, y - 352 * s); ctx.scale(s, s);
     shape(ctx, '#b88a4a', 3.5, poly([[-40, 0], [40, 0], [30, -40], [-30, -40]])); for (let i = 0; i < 4; i++) line(ctx, [[-36 + i * 2, -10 * i], [36 - i * 2, -10 * i]], 2, '#8a6030');
     if (full) shape(ctx, '#7a5434', 3, c => { c.moveTo(-32, -38); c.quadraticCurveTo(0, -78, 32, -38); c.closePath(); }); ctx.restore(); }
@@ -221,7 +222,7 @@
     { const x = 760 + Math.sin(t * .5) * 20, y = 570 + Math.sin(t * 1.3) * 3; shape(ctx, '#7a4a2a', 4, c => { c.moveTo(x - 110, y - 12); c.quadraticCurveTo(x, y + 26, x + 110, y - 12); c.lineTo(x + 100, y); c.quadraticCurveTo(x, y + 34, x - 100, y); c.closePath(); });
       villager(ctx, x - 20, y - 4, .42, t, 3, { still: true, reach: true }); ctx.save(); ctx.setLineDash([5, 5]); line(ctx, [[x + 14, y - 104], [x + 80, y - 20], [x + 130, y + 10]], 2.5, '#5a4a3a'); ctx.restore(); }
     // hunting: walks with a spear; gathering: a basket of fruit
-    const hx = 1060 + Math.sin(t * .4) * 30; villager(ctx, hx, 720, .78, t, 1, {}); line(ctx, [[hx + 40, 720 - 130], [hx + 60, 720 - 330]], 6, '#6a4a2a'); shape(ctx, '#8a8a8a', 2.5, poly([[hx + 58, 720 - 330], [hx + 70, 720 - 360], [hx + 66, 720 - 326]]));
+    const hx = 1060; villager(ctx, hx, 720, .78, t, 1, { still: true }); line(ctx, [[hx + 40, 720 - 130], [hx + 60, 720 - 330]], 6, '#6a4a2a'); shape(ctx, '#8a8a8a', 2.5, poly([[hx + 58, 720 - 330], [hx + 70, 720 - 360], [hx + 66, 720 - 326]]));
     villager(ctx, 520, 730, .8, t, 2, { still: true }); { const bx = 520 - 50 * .8, by = 730 - 150 * .8; shape(ctx, '#b88a4a', 3.5, poly([[bx - 34, by - 30], [bx + 30, by - 30], [bx + 22, by + 20], [bx - 26, by + 20]])); for (let i = 0; i < 5; i++) shape(ctx, ['#e8423a', '#f6a828', '#8ac040'][i % 3], 2, circle(bx - 22 + i * 11, by - 34 - (i % 2) * 6, 9)); }
     villager(ctx, 140, 740, .85, t, 4, { still: true });
     ctx.restore();
@@ -265,7 +266,7 @@
     mound(ctx, h, -80, 1500, 600);
     // a line of carriers: full baskets going right, empty ones coming back
     for (let i = 0; i < 9; i++) { const dir = i % 2 ? -1 : 1, x = dir > 0 ? ((t * 70 + i * 190) % 1600) - 160 : 1440 - ((t * 70 + i * 190) % 1600), y = 700 + (i % 3) * 20;
-      villager(ctx, x, y, .55, t, i, { flip: dir < 0 }); basketOnHead(ctx, x, y, .55, dir > 0); }
+      sideVillager(ctx, x, y, .55, t, i, dir); basketOnHead(ctx, x + dir * 2, y + 4, .55, dir > 0); }
     for (let i = 0; i < 4; i++) { const x = 200 + i * 300, y = 600 - h - 4; if (h < 40) continue; villager(ctx, x, y, .32, t, i + 5, { still: true, reach: true }); }
     ctx.restore();
     tag(ctx, 'YOU AND YOUR NEIGHBOURS', 640, 100, since(t, 'neighbor'), 26);
@@ -312,7 +313,7 @@
     cow(ctx, 320, 640, .9, t, 0); cow(ctx, 560, 620, .7, t, 1.3, true); cow(ctx, 860, 660, 1.0, t, 2.1); cow(ctx, 1110, 610, .6, t, .7, true); }
   function w7(ctx, lt, dur, t) {
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.06), 640, 420); ranch(ctx, t, { outline: clamp(since(t, 'flat') / .6) * .9 });
-    const wx = lerp(120, 1180, clamp((t - A.this) / (A.nobody - A.this))); N.walker(ctx, wx, 740, .62, t, 9, {});
+    const wx = lerp(120, 1180, clamp((t - A.this) / (A.nobody - A.this))); M.sideWalker(ctx, wx, 740, .62, t, 9, { dir: 1, coat: '#3a6ab8', pants: '#2a2a34', skin: '#e8b890', hair: '#5a3a20' });
     ctx.restore();
     FX.stamp(ctx, 'AGUADA FÉNIX', 640, 160, since(t, 'aguada') + .05, { color: '#a8582a', size: 52 });
     if (since(t, 'flat') > 0) tag(ctx, 'THE WHOLE PLATFORM: UNDER YOUR FEET', 640, 260, since(t, 'flat'), 24);
@@ -362,7 +363,7 @@
   // ---------- w11: Takeshi Inomata's team thinks this was communal work — not a ruler ordering them around ----------
   function w11(ctx, lt, dur, t) {
     M.sky(ctx, t, 2, 470); M.jungle(ctx, 430, 2, t); shape(ctx, '#7aa858', 0, rect(-600, 470, 2600, 600)); mound(ctx, 90, -100, 1400, 580);
-    for (let i = 0; i < 8; i++) { const x = 90 + i * 150, y = 740 + (i % 2) * 18; villager(ctx, x, y, .62, t + i * .3, i, {}); basketOnHead(ctx, x, y, .62, i % 2 === 0); }
+    for (let i = 0; i < 8; i++) { const x = 90 + i * 150, y = 740 + (i % 2) * 18; villager(ctx, x, y, .62, t + i * .3, i, { still: true }); basketOnHead(ctx, x, y, .62, i % 2 === 0); }
     // name card (no face)
     if (since(t, 'takeshi') > -.2) { const k = pop(since(t, 'takeshi') + .2); ctx.save(); ctx.translate(250, 170); ctx.scale(k, k); shape(ctx, 'rgba(0,0,0,.3)', 0, rect(-176, -56, 360, 120)); shape(ctx, '#fbf6ea', 4, rect(-180, -60, 360, 120, 6));
       txt(ctx, 'TAKESHI INOMATA', 0, -16, FX.DISPLAY(30)); txt(ctx, 'archaeologist · led the dig', 0, 24, FX.FONT(700, 18), '#5a4a3a'); ctx.restore(); }

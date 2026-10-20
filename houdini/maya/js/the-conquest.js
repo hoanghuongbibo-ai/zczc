@@ -177,7 +177,7 @@
     shape(ctx, '#e8d8b0', 0, poly([[0, 500], [1280, 470], [1280, 720], [0, 720]])); M.jungle(ctx, 470, 1.8, t);
     const back = clamp((since(t, 'disaster') + .2) / 2.0);
     caravel(ctx, lerp(760, 1000, back), 360, .7, t); caravel(ctx, lerp(1040, 1220, back), 380, .55, t, 1);
-    for (let i = 0; i < 5; i++) { const x = lerp(520 + i * 50, 700 + i * 60, back); ctx.save(); ctx.globalAlpha = 1 - back * .5; sil(ctx, x, 480 + (i % 2) * 10, .5, '#5a4a4a'); ctx.restore(); }
+    for (let i = 0; i < 5; i++) { const x = 520 + i * 50; ctx.save(); ctx.globalAlpha = 1 - back * .5; sil(ctx, x, 480 + (i % 2) * 10, .5, '#5a4a4a'); ctx.restore(); }
     for (let i = 0; i < 9; i++) sil(ctx, 60 + i * 50, 560 + (i % 3) * 12, .7, '#2a2228');
     FX.dateTag(ctx, 'YUCATÁN COAST · 1517');
     if (since(t, 'seventeen') > 0) counter(ctx, 640, 110, '1517', since(t, 'seventeen'), null, GOLD, 40);

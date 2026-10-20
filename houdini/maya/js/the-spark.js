@@ -141,10 +141,11 @@
   const M = G.Maya, { temple, palace, stelaSmall, king, mayaMap, site, MP, mix } = M;
   const SK = ['#a8704a', '#7a4a2a', '#c08a5a', '#8a5a34', '#b07848'], CL = ['#e8dcc0', '#d8c49a', '#f0e6cc', '#c8b088'];
   const villager = (ctx, x, y, s, t, v, o = {}) => N.walker(ctx, x, y, s, t, v, Object.assign({ plain: true, beads: v % 2 === 0, coat: CL[v % 4], pants: SK[v % 5], skin: SK[v % 5], hair: '#1d1a17', hs: [0, 1, 2, 4][v % 4], shoe: SK[v % 5] }, o));
+  const sideVillager = (ctx, x, y, s, t, v, dir, o = {}) => M.sideWalker(ctx, x, y, s, t, v, Object.assign({ dir, coat: CL[v % 4], pants: SK[v % 5], skin: SK[v % 5], shoe: SK[v % 5], bun: v % 3 === 1 }, o));
   function ground(ctx, t, tod = 2, hy = 470) { M.sky(ctx, t, tod, hy); M.jungle(ctx, hy - 40, tod, t); shape(ctx, '#7aa858', 0, rect(-600, hy, 2600, 600)); }
   function cross(ctx, x, y, k, r = 70) { if (k <= 0) return; const e = clamp(k / .3); ctx.save(); ctx.lineCap = 'round'; ctx.lineWidth = 12; ctx.strokeStyle = '#e8322a';
     ctx.beginPath(); ctx.moveTo(x - r, y - r); ctx.lineTo(x - r + 2 * r * clamp(e * 2), y - r + 2 * r * clamp(e * 2)); if (e > .5) { ctx.moveTo(x + r, y - r); ctx.lineTo(x + r - 2 * r * clamp(e * 2 - 1), y - r + 2 * r * clamp(e * 2 - 1)); } ctx.stroke(); ctx.restore(); }
-  function rain(ctx, t, x0, x1, y0, y1, a = 1) { ctx.save(); ctx.globalAlpha = a; for (let i = 0; i < 70; i++) { const x = x0 + ((i * 53) % (x1 - x0)), y = y0 + ((t * 600 + i * 97) % (y1 - y0)); line(ctx, [[x, y], [x - 6, y + 22]], 3, 'rgba(90,150,220,.8)'); } ctx.restore(); }
+  function rain(ctx, t, x0, x1, y0, y1, a = 1) { ctx.save(); ctx.globalAlpha = a; for (let i = 0, n = Math.round(Math.max(70, (x1 - x0) * .17)); i < n; i++) { const x = x0 + ((i * 53) % (x1 - x0)), y = y0 + ((t * 600 + i * 97) % (y1 - y0)); line(ctx, [[x, y], [x - 6, y + 22]], 3, 'rgba(90,150,220,.8)'); } ctx.restore(); }
   function cloud(ctx, x, y, s, col = '#f4f4f8') { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); shape(ctx, col, 4, smooth([[-140, 30], [-150, -10], [-100, -50], [-40, -60], [10, -90], [80, -70], [130, -40], [150, 10], [120, 40], [0, 50]])); ctx.restore(); }
   function cornSprout(ctx, x, y, s, k, t) { if (k <= 0) return; ctx.save(); ctx.translate(x, y); ctx.scale(s * k, s * k); const sw = Math.sin(t * 1.5 + x) * 3; line(ctx, [[0, 0], [sw, -90]], 7, '#4a8a2a'); for (const d of [-1, 1]) shape(ctx, '#6ab048', 2.5, c => { c.moveTo(sw * .5, -40); c.quadraticCurveTo(d * 40, -70, d * 60, -40); c.quadraticCurveTo(d * 30, -50, sw * .5, -30); c.closePath(); }); shape(ctx, '#f6c945', 2.5, ellipse(sw + 8, -70, 7, 18, .3)); ctx.restore(); }
   function pennant(ctx, x, y, s, name, col, k, rot = 0) { if (k <= 0) return; const e = pop(k); ctx.save(); ctx.translate(x, y); ctx.rotate(rot + Math.sin(k * 3) * .02); ctx.scale(s * e, s * e);
@@ -181,7 +182,7 @@
     ctx.restore();
     // the rain god's cloud
     const gk = clamp((since(t, 'gods') + .2) / .6); if (gk > 0) { ctx.save(); ctx.globalAlpha = gk; cloud(ctx, 1020, 120, .9, '#e8eef8'); for (const d of [-1, 1]) { shape(ctx, '#fff', 3, circle(1020 + d * 30, 110, 14)); shape(ctx, INK, 0, circle(1020 + d * 30, 112, 6)); } shape(ctx, '#2f7a9a', 3, c => { c.moveTo(1000, 140); c.quadraticCurveTo(1020, 152, 1040, 140); }); ctx.restore(); }
-    if (since(t, 'rain') > 0) rain(ctx, t, 900, 1260, 150, 640, clamp(since(t, 'rain') / .4));
+    if (since(t, 'rain') > 0) { const rk = clamp(since(t, 'rain') / .5); ctx.save(); ctx.globalAlpha = rk; shape(ctx, grad(ctx, 0, 0, 0, H, [[0, 'rgba(80,90,110,.55)'], [.55, 'rgba(80,90,110,.25)'], [1, 'rgba(80,90,110,.1)']]), 0, rect(0, 0, W, H)); ctx.restore(); rain(ctx, t, 0, W, 0, H, rk); }
     if (since(t, 'him') > -.2) { const k = clamp((since(t, 'him') + .2) / .5); ctx.save(); ctx.globalAlpha = k; ctx.setLineDash([12, 8]); line(ctx, [[960, 200], [760, 250]], 5, '#2f4a8a'); line(ctx, [[1000, 560], [760, 380]], 5, '#c88a10'); ctx.restore(); }
     tag(ctx, 'A NEW KIND OF PERSON AT THE TOP', 640, 80, since(t, 'top'), 26);
     if (since(t, 'holy') > 0) strip(ctx, 'HOLY LORD', 330, 170, since(t, 'holy'), { px: 50, color: '#2f7a46' });
@@ -233,7 +234,7 @@
     ctx.save(); ctx.translate(640 + 300, 470 - 50); shape(ctx, '#a89878', 5, ellipse(0, 0, 26, 30)); shape(ctx, '#5a4a3a', 0, ellipse(0, 0, 12, 16)); ctx.restore();
     // two teams, a bouncing rubber ball
     const bt = (t * .8) % 2, bx = 640 + Math.sin(t * 1.6) * 230, by = 640 - Math.abs(Math.sin(t * 3.2)) * 170; ball(ctx, bx, by, 18);
-    for (let i = 0; i < 4; i++) { const d = i < 2 ? -1 : 1, x = 640 + d * (110 + (i % 2) * 120); villager(ctx, x, 720, .55, t, i + 1, { flip: d > 0, coat: d < 0 ? '#c8322a' : '#2f4a8a' }); shape(ctx, '#e8dcc0', 3, rect(x - 28, 720 - 140 * .55 - 18, 56, 24, 8)); }
+    for (let i = 0; i < 4; i++) { const d = i < 2 ? -1 : 1, x = 640 + d * (110 + (i % 2) * 120); villager(ctx, x, 720, .55, t, i + 1, { still: true, flip: d > 0, coat: d < 0 ? '#c8322a' : '#2f4a8a' }); shape(ctx, '#e8dcc0', 3, rect(x - 28, 720 - 140 * .55 - 18, 56, 24, 8)); }
     // the "same" checklist
     const IT = [['SAME LANGUAGE FAMILY', 'language'], ['SAME GODS', 'gods2'], ['SAME CALENDAR', 'calendar'], ['SAME BALLGAME', 'ball']];
     for (let i = 0; i < 4; i++) { const k = since(t, IT[i][1]); if (k <= 0) continue; const s = pop(k); ctx.save(); ctx.translate(240 + (i % 2) * 800, 90 + Math.floor(i / 2) * 80); ctx.scale(s, s); ctx.font = FX.DISPLAY(26); const w = ctx.measureText(IT[i][0]).width + 80;
@@ -271,7 +272,7 @@
     ground(ctx, t, 1.9); shape(ctx, mix('#d8d0bc', '#a8a088', em), 4, poly([[-80, 600], [40, 520], [1240, 520], [1360, 600]]));
     temple(ctx, 330, 525, .8, { col: mix('#e0d4b8', '#b8ab90', em) }); temple(ctx, 960, 525, .95, { col: mix('#e0d4b8', '#b8ab90', em), h: 330 }); palace(ctx, 645, 525, .85, { col: mix('#e2d6bc', '#b8ab90', em) });
     if (em > 0) for (let i = 0; i < 14; i++) shape(ctx, '#4a8a3a', 2, ellipse(200 + (i * 83) % 900, 520 - (i * 61) % 300, 20 * em, 10 * em, i)); // vines creep in
-    for (let i = 0; i < 6; i++) { const x = 160 + i * 190 + em * (900 + i * 60); if (x < 1400) villager(ctx, x, 760 + (i % 2) * 12, .6, t, i, { still: em <= 0 }); }
+    for (let i = 0; i < 6; i++) { const x = 160 + i * 190 + em * (900 + i * 60); if (x < 1400) { if (em > 0) sideVillager(ctx, x, 760 + (i % 2) * 12, .6, t, i, 1); else villager(ctx, x, 760 + (i % 2) * 12, .6, t, i, { still: true }); } }
     FX.dateTag(ctx, 'c. AD 150 · NORTHERN GUATEMALA');
     if (since(t, 'century') > 0) tag(ctx, '2ND CENTURY AD', 640, 90, since(t, 'century'), 26);
     if (since(t, 'abandoned') > 0 && since(t, 'why') < 0) strip(ctx, 'LARGELY ABANDONED', 640, 170, since(t, 'abandoned'), { px: 44, color: '#c8322a' });
@@ -299,7 +300,7 @@
     shape(ctx, '#8a6a44', 3, rect(860, 580, 420, 70)); for (let i = 0; i < 6; i++) { const k = FX.settle(clamp(fk * 6 - i)); if (k <= 0) continue; ctx.save(); ctx.translate(890 + i * 66, 600); ctx.scale(k, k); line(ctx, [[0, 0], [0, -60]], 6, '#4a8a2a'); for (const d of [-1, 1]) shape(ctx, '#6ab048', 2, ellipse(d * 16, -40, 18, 6, d * .5)); ctx.restore(); }
     for (let i = 0; i < 2; i++) { const k = FX.settle(clamp(bk * 2 - i)); if (k <= 0) continue; ctx.save(); ctx.translate(1000 + i * 190, 560); ctx.scale(.6 * k, .6 * k); shape(ctx, '#e8dcc0', 4, rect(-90, -110, 180, 110, 30)); shape(ctx, '#5a3a20', 3, rect(-24, -70, 48, 70, 14)); shape(ctx, '#c8a050', 4, c => { c.moveTo(-120, -90); c.quadraticCurveTo(0, -250, 120, -90); c.quadraticCurveTo(0, -120, -120, -90); c.closePath(); }); ctx.restore(); }
     // families walking from the old city to the new village
-    const mk = clamp((t - A.moved + .5) / 3.5); for (let i = 0; i < 6; i++) { const x = lerp(300 + i * 60, 820 + i * 70, mk); villager(ctx, x, 740 + (i % 2) * 14, .55 - (i % 3) * .07, t, i, { still: mk <= 0 || mk >= 1 }); }
+    const mk = clamp((t - A.moved + .5) / 3.5); for (let i = 0; i < 6; i++) { const x = lerp(300 + i * 60, 820 + i * 70, mk); if (mk > 0 && mk < 1) sideVillager(ctx, x, 740 + (i % 2) * 14, .55 - (i % 3) * .07, t, i, 1); else villager(ctx, x, 740 + (i % 2) * 14, .55 - (i % 3) * .07, t, i, { still: true }); }
     ctx.restore();
     if (since(t, 'emptied') > 0) tag(ctx, 'THE BIG CITIES EMPTIED', 330, 110, since(t, 'emptied'), 26);
     if (since(t, 'vanish') > 0) strip(ctx, "THE PEOPLE DIDN'T VANISH", 760, 190, since(t, 'vanish'), { px: 38, color: '#2f7a46' });

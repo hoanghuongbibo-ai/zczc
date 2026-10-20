@@ -191,10 +191,11 @@
   function frontRow(ctx, t, yy, s, set, night) { for (const [x, v, kind] of set) { const o = { cam: kind === 'cam', reach: kind === 'party' };
       N.walker(ctx, x, yy, s, t, v, Object.assign({ still: true }, o)); if (kind === 'party') { glowStick(ctx, x, yy, s, t, v % 2 ? 'rgba(120,255,170,1)' : 'rgba(255,120,220,1)', v); if (v % 3 === 0) partyHat(ctx, x, yy, s, ['#e8423a', '#3a8ad8', '#f6a828'][v % 3]); }
       if (kind === 'pray') candle(ctx, x, yy, s, t, v); if (kind === 'sign') { endSign(ctx, x, yy, s, t); worried(ctx, x, yy, s); } } }
+  function nightLights(ctx, t, set, yy, s, dx = 0) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; for (const [x, v, kind] of set) { if (kind === 'party') glow(ctx, x + dx + 80 * s, yy - 270 * s, 40, v % 2 ? 'rgba(120,255,170,.5)' : 'rgba(255,120,220,.5)'); if (kind === 'pray') glow(ctx, x + dx + 50 * s, yy - 190 * s, 50, 'rgba(255,200,110,.55)'); } ctx.restore(); }
   function c1(ctx, lt, dur, t) {
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.07), 640, 360); plaza(ctx, t, { tod: 0, doorGlow: true }); ctx.restore();
-    nightWash(ctx, .18);
     frontRow(ctx, t, 790, .95, FRONT, 1);
+    nightWash(ctx, .45); nightLights(ctx, t, FRONT, 790, .95); // night over the whole frame, only the candles and glow sticks shine
     FX.dateTag(ctx, 'DEC 20, 2012 · CHICHÉN ITZÁ, YUCATÁN');
     if (since(t, 'standing') > 0) { const k = pop(since(t, 'standing')); ctx.save(); ctx.translate(640, 596); ctx.scale(k, k); shape(ctx, '#f6c945', 4, poly([[-16, -40], [16, -40], [16, -10], [30, -10], [0, 22], [-30, -10], [-16, -10]])); ctx.restore(); tag(ctx, 'YOU ARE HERE', 640, 540, since(t, 'standing') + .1, 22); }
     if (since(t, 'thousands') > 0) tag(ctx, 'THOUSANDS OF PEOPLE', 640, 120, since(t, 'thousands'), 26);
@@ -206,7 +207,6 @@
   function c2(ctx, lt, dur, t) {
     const fx = lerp(330, 1800, ease.inOut(clamp((lt - .2) / (dur - .6))));
     ctx.save(); ctx.translate(-(fx - 640) * .25, 0); plaza(ctx, t, { tod: 0, doorGlow: true }); ctx.restore();
-    nightWash(ctx, .2);
     ctx.save(); ctx.translate(-(fx - 640), 0);
     for (let i = 0; i < 20; i++) { const x = -100 + i * 130, v = i * 5 + 1; N.person(ctx, x, 640 + (i % 2) * 14, 1.9, ['#2f4a7a', '#7a4a8a', '#3a8a5a', '#c8322a'][i % 4], { v }); if (i % 3 === 0) { glow(ctx, x + 18, 490, 30, 'rgba(255,230,160,.55)'); shape(ctx, '#fff6d0', 0, circle(x + 18, 490, 4)); } }
     // the party: a boombox and confetti
@@ -215,6 +215,7 @@
     for (const [x, v, kind] of STRIP) { N.walker(ctx, x, 800, 1.0, t, v, { still: kind !== 'party', reach: kind === 'party', cam: kind === 'cam' });
       if (kind === 'party') { glowStick(ctx, x, 800, 1.0, t, v % 2 ? 'rgba(120,255,170,1)' : 'rgba(255,120,220,1)', v); partyHat(ctx, x, 800, 1.0, ['#e8423a', '#3a8ad8', '#f6a828'][v % 3]); }
       if (kind === 'pray') candle(ctx, x, 800, 1.0, t, v); if (kind === 'sign') { endSign(ctx, x, 800, 1.0, t); worried(ctx, x, 800, 1.0); } if (kind === 'still') worried(ctx, x, 800, 1.0); }
+    ctx.restore(); nightWash(ctx, .45); nightLights(ctx, t, STRIP, 800, 1.0, -(fx - 640)); ctx.save(); ctx.translate(-(fx - 640), 0);
     tag(ctx, 'SOME CAME TO PARTY', 330, 140, since(t, 'party') + .1, 30);
     tag(ctx, 'SOME CAME TO PRAY', 1060, 140, since(t, 'pray') + .1, 30);
     tag(ctx, 'A FEW CAME TO WATCH THE WORLD END', 1820, 140, since(t, 'watch') + .1, 30);
@@ -296,7 +297,7 @@
     shape(ctx, '#f6c945', 4, rect(1060, 430, 260, 96, 10)); for (let i = 0; i < 5; i++) shape(ctx, '#9ad0f0', 2.5, rect(1076 + i * 46, 446, 34, 30, 4)); txt(ctx, 'TOURS', 1180, 500, FX.DISPLAY(22), '#c8322a'); for (const d of [1100, 1270]) shape(ctx, INK, 0, circle(d, 528, 16));
     // the exit gate arch
     for (const x of [560, 800]) shape(ctx, '#8a5a34', 4, rect(x - 14, 300, 28, 260)); shape(ctx, '#a87a4a', 4, rect(530, 270, 300, 52, 6)); txt(ctx, 'SALIDA · EXIT', 680, 297, FX.DISPLAY(28), '#fbf6e0');
-    crowdBand(ctx, 540, t, { n: 18, x0: 300, x1: 1000, s: 1.0, drift: 22, thin: .3 });
+    crowdBand(ctx, 540, t, { n: 18, x0: 300, x1: 1000, s: 1.0, thin: .3 });
   }
   function c6(ctx, lt, dur, t) {
     ctx.save(); T.cam(ctx, FX.push(lt, dur, 1.0, 1.06), 640, 420); gateSet(ctx, t);
@@ -372,7 +373,7 @@
     const ER = [['1000 BC', 0], ['AD 1', .33], ['500', .5], ['1000', .66], ['1500', .83], ['2012', 1]];
     for (const [s, f] of ER) { const x = 120 + f * 1040; line(ctx, [[x, 460], [x, 500]], 4); txt(ctx, s, x, 522, FX.FONT(800, 20), '#3a2a1a'); }
     shape(ctx, grad(ctx, 120, 0, 1160, 0, [[0, '#7aa858'], [.5, '#e8a83a'], [.8, '#c8322a'], [1, '#3a8ad8']]), 0, rect(120, 470, 1040 * clamp(lt / (dur - .4)), 12, 4));
-    const wx = 120 + 1040 * ease.inOut(clamp(lt / (dur - .4))); N.walker(ctx, wx, 456, .62, t, 9, {});
+    const wx = 120 + 1040 * ease.inOut(clamp(lt / (dur - .4))); M.sideWalker(ctx, wx, 456, .62, t, 9, { dir: 1, coat: '#3a6ab8', pants: '#2a2a34', skin: '#e8b890', hair: '#5a3a20' });
     ctx.restore();
     strip(ctx, '3,000 YEARS', 640, 200, since(t, 'three') + .1, { px: 64, color: '#2f7a46' }); tag(ctx, 'IN ABOUT 20 MINUTES', 640, 300, since(t, 'twenty'), 26);
     vig(ctx);

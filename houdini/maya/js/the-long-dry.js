@@ -177,9 +177,11 @@
     const dk = clamp(since(t, 'dry') / .6), rk = clamp(since(t, 'rains') / .4), ck = clamp(since(t, 'corn') / .8);
     const h = lerp(lerp(.95, .15, dk), 1, ck), d = lerp(dk, 0, rk);
     M.sky(ctx, t, rk > 0 && ck < 1 ? lerp(2, 1.6, rk) : 2, 470); M.jungle(ctx, 430, 2, t); shape(ctx, '#7aa858', 0, rect(-600, 470, 2600, 300));
+    const wet = rk * (1 - ck);
     if (dk > 0 && rk < 1) sun(ctx, 1040, 120, 50, 1 - rk);
-    if (rk > 0) { cloud(ctx, 640, 120, 1.1 * pop(since(t, 'rains')), '#d8dce8'); rainfall(ctx, t, rk * (1 - ck * .8), 300, 1000, 160, 620); }
+    if (wet > 0) { ctx.save(); ctx.globalAlpha = wet; shape(ctx, grad(ctx, 0, 0, 0, 470, [[0, '#6a7688'], [1, '#a8b0bc']]), 0, rect(0, 0, W, 470)); for (const [cx, cy, cs] of [[80, 90, .9], [360, 60, 1.0], [640, 110, 1.1], [920, 60, 1.0], [1200, 100, .9]]) cloud(ctx, cx, cy, cs, '#7a8698'); ctx.restore(); }
     field(ctx, t, h, d, -100, 1380, 640); farmer(ctx, 200, 760, .7, t, { still: true });
+    if (wet > 0) rainfall(ctx, t, wet * 2.6, 0, W, 0, H);
     // the yearly wheel
     ctx.save(); ctx.translate(1110, 330); const seg = [['DRY', '#e8a83a', dk], ['RAINS', '#3a8ad8', rk], ['CORN', '#4a9a3a', ck]]; for (let i = 0; i < 3; i++) { const a0 = -Math.PI / 2 + i * 2 * Math.PI / 3; shape(ctx, seg[i][2] > 0 ? seg[i][1] : '#d8d0c0', 3, c => { c.moveTo(0, 0); c.arc(0, 0, 90, a0, a0 + 2 * Math.PI / 3); c.closePath(); }); const mx = Math.cos(a0 + Math.PI / 3) * 56, my = Math.sin(a0 + Math.PI / 3) * 56; txt(ctx, seg[i][0], mx, my, FX.DISPLAY(18), '#fff'); } shape(ctx, '#fbf6ea', 3, circle(0, 0, 20)); ctx.restore();
     tag(ctx, 'EVERY YEAR, THE SAME WAY', 640, 80, lt - .1, 26);
@@ -191,8 +193,11 @@
     const lk = clamp(since(t, 'late') / .6), wk = clamp(since(t, 'white') / .6), bk = clamp(since(t, 'nearly') / .8);
     const rainAmt = lerp(.9, .5, wk) * (1 - bk * .85) * clamp(1 - (1 - lk) * .9), h = lerp(.8, .25, bk) - wk * .2, d = lerp(.2, .9, bk);
     M.sky(ctx, t, 2, 470); M.jungle(ctx, 430, lerp(2, 2.4, bk), t); shape(ctx, mix('#7aa858', '#b8a868', bk), 0, rect(-600, 470, 2600, 300));
-    sun(ctx, 1080, 110, 46, .4 + bk * .6); cloud(ctx, 560, 120, lerp(1.0, .45, bk), mix('#c8ccd8', '#f4f4f8', bk)); rainfall(ctx, t, rainAmt, 380, 760, 160, 620);
+    const rv = clamp((rainAmt - .1) / .15);
+    if (rv < 1) sun(ctx, 1080, 110, 46, 1 - rv);
+    if (rv > 0) { ctx.save(); ctx.globalAlpha = rv; shape(ctx, grad(ctx, 0, 0, 0, 470, [[0, '#6a7688'], [1, '#a8b0bc']]), 0, rect(0, 0, W, 470)); for (const [cx, cy, cs] of [[80, 90, .9], [360, 60, 1.0], [640, 110, 1.1], [920, 60, 1.0], [1200, 100, .9]]) cloud(ctx, cx, cy, cs, '#7a8698'); ctx.restore(); }
     field(ctx, t, Math.max(.1, h), d, -100, 1380, 640); farmer(ctx, 200, 760, .7, t, { still: true });
+    if (rv > 0) rainfall(ctx, t, rainAmt * rv * 2.6, 0, W, 0, H);
     // a rain-gauge jar emptying
     ctx.save(); ctx.translate(1080, 520); shape(ctx, 'rgba(255,255,255,.6)', 4, rect(-50, -140, 100, 160, 14)); const lvl = lerp(.9, .15, (wk + bk) / 2); shape(ctx, '#5a96d8', 0, rect(-46, 16 - 150 * lvl, 92, 150 * lvl, 10)); for (let i = 1; i < 5; i++) line(ctx, [[-50, 20 - i * 32], [-30, 20 - i * 32]], 3); ctx.restore();
     tag(ctx, 'LATE', 300, 120, since(t, 'late'), 26); tag(ctx, 'LIGHT', 460, 170, since(t, 'white'), 26); tag(ctx, 'BARELY THERE', 640, 220, since(t, 'nearly'), 26);

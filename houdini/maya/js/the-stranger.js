@@ -153,6 +153,15 @@
     line(ctx, [[46, -150], [64, -330]], 5, '#6a4a2a'); for (const dx of [0, 8]) { line(ctx, [[56 + dx, -170], [74 + dx, -340]], 3, '#8a6a3a'); shape(ctx, '#9a9a9a', 0, poly([[74 + dx, -340], [78 + dx, -356], [70 + dx, -342]])); }
     ctx.save(); ctx.translate(-56, -180); shape(ctx, '#e8dcc0', 4, rect(-38, -44, 76, 88, 4)); for (let i = 0; i < 6; i++) shape(ctx, i % 2 ? '#2f9a8a' : '#e8a83a', 1.5, ellipse(-30 + i * 12, 50, 5, 12)); for (const d of [-1, 1]) { shape(ctx, '#fff', 2.5, circle(d * 13, -14, 11)); shape(ctx, INK, 0, circle(d * 13, -14, 4)); } shape(ctx, '#c8322a', 2, rect(-14, 6, 28, 16, 3)); ctx.restore();
     ctx.restore(); }
+  // a Teotihuacan warrior walking in profile (for any sideways march)
+  function teoSide(ctx, x, y, s, t, v) {
+    M.sideWalker(ctx, x, y, s, t, v, { dir: 1, coat: '#e8dcc0', pants: SK[v % 5], skin: SK[v % 5], hair: '#1d1a17', shoe: '#8a6a3a' });
+    ctx.save(); ctx.translate(x, y - Math.abs(Math.cos(t * 6.5 + v * 1.7)) * 6 * s); ctx.scale(s, s);
+    for (let i = 0; i < 5; i++) shape(ctx, i % 2 ? '#2f9a8a' : '#e8a83a', 2, ellipse(-22 + i * 9, -364 + Math.abs(i - 2) * 4, 6, 24, -.6 + i * .2)); shape(ctx, '#c8322a', 3, rect(-30, -346, 60, 16, 4));
+    ctx.lineWidth = 4; ctx.strokeStyle = '#1d1a17'; ctx.beginPath(); ctx.arc(21, -302, 11, 0, 7); ctx.stroke();
+    line(ctx, [[-20, -150], [-6, -340]], 5, '#6a4a2a'); shape(ctx, '#9a9a9a', 0, poly([[-6, -340], [-2, -358], [-10, -342]]));
+    ctx.save(); ctx.translate(40, -190); shape(ctx, '#e8dcc0', 4, rect(-16, -42, 32, 84, 4)); for (let i = 0; i < 3; i++) shape(ctx, i % 2 ? '#2f9a8a' : '#e8a83a', 1.5, ellipse(-8 + i * 8, 48, 4, 10)); shape(ctx, '#fff', 2.5, circle(0, -14, 9)); shape(ctx, INK, 0, circle(2, -14, 3.5)); ctx.restore();
+    ctx.restore(); }
   function owlEmblem(ctx, x, y, s, a = 1) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.globalAlpha = a;
     shape(ctx, '#5a4a3a', 4, smooth([[-80, 40], [-90, -40], [-60, -90], [0, -100], [60, -90], [90, -40], [80, 40], [0, 70]])); for (const d of [-1, 1]) { shape(ctx, '#f6c945', 4, circle(d * 34, -30, 26)); shape(ctx, INK, 0, circle(d * 34, -30, 11)); shape(ctx, '#5a4a3a', 3, poly([[d * 50, -80], [d * 76, -120], [d * 72, -74]])); }
     shape(ctx, '#e8a83a', 3, poly([[-10, -6], [10, -6], [0, 14]])); line(ctx, [[-100, 80], [100, -10]], 10, '#8a6a3a'); shape(ctx, '#8a6a3a', 3, circle(-100, 80, 12)); ctx.restore(); }
@@ -198,7 +207,7 @@
     ground(ctx, t, 1.6, 460); temple(ctx, 1040, 470, .6, { col: '#e0d4b8', paint: true, h: 300, w: 110 }); palace(ctx, 820, 470, .5, { paint: true });
     shape(ctx, '#e0d6c0', 4, poly([[-200, 720], [-120, 560], [1500, 520], [1500, 720]])); // the causeway (sacbe)
     for (let i = 0; i < 8; i++) villager(ctx, 900 + i * 50, 545, .28, t, i, { still: true });
-    for (let i = 0; i < 7; i++) { const x = lerp(-300, 520, march) - i * 120, y = 690 - i * 8; teoWarrior(ctx, x, y, i === 0 ? .62 : .5, t, i + 1, { still: march >= 1 }); }
+    for (let i = 0; i < 7; i++) { const x = lerp(-300, 520, march) - i * 120, y = 690 - i * 8; if (march < 1) teoSide(ctx, x, y, i === 0 ? .62 : .5, t, i + 1); else teoWarrior(ctx, x, y, i === 0 ? .62 : .5, t, i + 1, { still: true }); }
     ctx.restore();
     FX.dateTag(ctx, 'JANUARY, AD 378 · TIKAL');
     tag(ctx, 'SOMEONE ARRIVES', 640, 100, since(t, 'arrives'), 28);
@@ -276,7 +285,7 @@
     shape(ctx, '#7aa858', 0, rect(0, 420, W, 300));
     const fk = clamp((since(t, 'foot') + .2) / .5); if (fk > 0) { ctx.save(); ctx.globalAlpha = fk; shape(ctx, '#8a9aa8', 4, poly([[-40, 640], [160, 450], [300, 600], [460, 420], [640, 640]])); shape(ctx, '#f4f4f8', 0, poly([[430, 450], [460, 420], [490, 452]]));
       for (let i = 0; i < 8; i++) shape(ctx, mix('#2f6a3a', '#5aa04a', (i % 3) / 3), 3, smooth([[640 + i * 90, 640], [650 + i * 90, 560], [700 + i * 90, 520], [750 + i * 90, 560], [760 + i * 90, 640]]));
-      const wx = lerp(40, 1200, clamp((t - A.foot) / 3.0)); teoWarrior(ctx, wx, 690, .42, t, 2, {}); ctx.restore(); }
+      const wx = lerp(40, 1200, clamp((t - A.foot) / 3.0)); teoSide(ctx, wx, 690, .42, t, 2); ctx.restore(); }
     if (since(t, 'foot') > 0) strip(ctx, 'EXCEPT ON FOOT', 300, 460, since(t, 'foot'), { px: 36, color: '#c8322a' });
     if (since(t, 'mountains') > 0) tag(ctx, 'MOUNTAINS', 320, 700, since(t, 'mountains'), 22); if (since(t, 'forest') > 0) tag(ctx, 'RAINFOREST', 950, 700, since(t, 'forest'), 22);
     vig(ctx);
@@ -326,7 +335,7 @@
     ground(ctx, t, lerp(1.9, 1.5, rv), 470);
     // left: the rain king (from Beat 3) fades; right: two kings face off
     ctx.save(); ctx.globalAlpha = 1 - rv * .7; temple(ctx, 320, 560, .7, { col: '#e0d4b8', paint: true }); king(ctx, 320, 560 - .7 * 300 - 4, .3, t, { reach: true, cape: '#c8322a' }); for (let i = 0; i < 40; i++) { const x = 160 + (i * 41) % 320, y = 80 + ((t * 500 + i * 97) % 300); line(ctx, [[x, y], [x - 5, y + 18]], 2.5, 'rgba(90,150,220,.7)'); } ctx.restore();
-    if (rv > 0) { for (const d of [-1, 1]) { const x = 820 + d * lerp(260, 150, ease.out(rv)); king(ctx, x, 700, .62, t, { flip: d > 0, cape: d < 0 ? '#2f4a8a' : '#c8322a', plume: d < 0 ? '#2f9a6a' : '#7a4a8a', staff: true }); }
+    if (rv > 0) { for (const d of [-1, 1]) { const x = 820 + d * 150, e = pop(rv * 2, .5); ctx.save(); ctx.translate(x, 700); ctx.scale(e, e); ctx.translate(-x, -700); king(ctx, x, 700, .62, t, { flip: d > 0, cape: d < 0 ? '#2f4a8a' : '#c8322a', plume: d < 0 ? '#2f9a6a' : '#7a4a8a', staff: true }); ctx.restore(); }
       ctx.save(); ctx.translate(820, 330); const s = pop(since(t, 'rivals')); ctx.scale(s, s); for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; line(ctx, [[Math.cos(a) * 20, Math.sin(a) * 20], [Math.cos(a) * 46, Math.sin(a) * 46]], 6, '#e8322a'); } ctx.restore(); }
     if (since(t, 'rain') > 0) tag(ctx, "NOT JUST ABOUT RAIN", 320, 110, since(t, 'rain'), 26);
     if (since(t, 'rivals') > 0) strip(ctx, "IT'S ABOUT RIVALS", 820, 130, since(t, 'rivals'), { px: 46, color: '#c8322a' });

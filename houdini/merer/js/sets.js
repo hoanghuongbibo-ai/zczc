@@ -22,7 +22,7 @@
   // ================= skies =================
   const SKY = {
     dawn: [[0, '#4a5a8c'], [.38, '#b48aa6'], [.62, '#f2b086'], [1, '#ffdcae']], day: [[0, '#2a72c8'], [.45, '#62a6e0'], [.75, '#b4daf0'], [1, '#f2ead0']],
-    noon: [[0, '#2a6cc4'], [.45, '#5ea2e2'], [.78, '#b2d8f2'], [1, '#fbe6b4']], gold: [[0, '#c8706a'], [.32, '#ee9a6e'], [.62, '#ffc282'], [.85, '#ffd896'], [1, '#ffe6b0']],
+    noon: [[0, '#2a6cc4'], [.45, '#5ea2e2'], [.78, '#b2d8f2'], [1, '#fbe6b4']], gold: [[0, '#6a88c0'], [.3, '#c8a0b0'], [.55, '#f6b88a'], [.8, '#ffd496'], [1, '#ffe6b4']],
     dusk: [[0, '#2e2a6e'], [.3, '#7a4a94'], [.55, '#e0705a'], [.75, '#ff9e56'], [1, '#ffd48a']], night: [[0, '#0a1230'], [.55, '#1c2a55'], [1, '#34406a']] };
   const SUN = { dawn: [1040, 330], day: [980, 120], noon: [640, -60], gold: [340, 290], dusk: [960, 340], night: [1060, 110] };
   function skyFor(g, v) {
@@ -58,23 +58,23 @@
   // ================= the Nile (v2: the user's repainted frames — lush banks, reflective water, lotus, birds) =================
   const EF = () => G.EF;
   const WATER = { day: ['#c4dde0', '#78aec4', '#3e7898'], noon: ['#c4dde0', '#78aec4', '#3e7898'], gold: ['#ffd8a0', '#d8a26e', '#7a5a46'], dawn: ['#ecc0b8', '#a88ab4', '#56568e'], dusk: ['#f2ae80', '#b47486', '#4a3a6a'], night: ['#56689a', '#2a3a66', '#141c3a'] };
-  const farBank = (v, o) => layer(`nfar4-${v}-${o.cliff || ''}-${o.giza ? 1 : 0}-${o.h || 330}`, g => {
+  const farBank = (v, o) => layer(`nfar5-${v}-${o.cliff || ''}-${o.giza ? 1 : 0}-${o.h || 330}`, g => {
     skyFor(g, v); const hz = o.h || 330, dk = v === 'night' ? .38 : v === 'dusk' ? .72 : v === 'dawn' ? .82 : 1, r = rng(3);
     // distant desert hills in haze
     P.hills(g, hz, [[-PAD, hz - 36], [160, hz - 62], [480, hz - 40], [760, hz - 74], [1060, hz - 46], [W + PAD, hz - 60]], mul('#e8c89a', dk), mul('#d8b482', dk), 0);
     if (o.giza) { const gx = o.gizaX || 900; [[gx, 150], [gx - 150, 120], [gx - 260, 70]].forEach(([x, w]) => pyramid(g, x, hz - 22, w, { k: 1, col: mul('#e8d2a2', dk), fine: true })); P2.haze(g, hz - 140, hz, v === 'dusk' ? 'rgba(255,190,150,' : 'rgba(250,236,214,', .5); }
     if (o.cliff === 'far') { g.fillStyle = mul('#e6dac0', dk); g.beginPath(); g.moveTo(-PAD, hz); g.lineTo(-PAD, hz - 150); g.lineTo(300, hz - 160); g.lineTo(420, hz - 120); g.lineTo(520, hz - 20); g.lineTo(520, hz); g.closePath(); g.fill(); strataBands(g, -PAD, 520, hz - 150, hz, 4, mul('#e6dac0', dk)); }
     // far bank: a back row of small palms in haze, a band of shrubs, a front row of bigger palms + an acacia or two
-    for (let x = -PAD + 10; x < W + PAD; x += 36 + r() * 30) if (!(o.cliff === 'far' && x < 520)) EF().palm(g, x, hz - 10, .34 + r() * .1, 100 + Math.floor(x), { dark: dk * .82, dates: false, fronds: 7 });
+    for (let x = -PAD + 10; x < W + PAD; x += 22 + r() * 60) if (!(o.cliff === 'far' && x < 520)) EF().palm(g, x, hz - 6 - r() * 10, .24 + r() * .26, 100 + Math.floor(x), { dark: dk * (.72 + r() * .15), dates: false, fronds: 7 });
     P2.haze(g, hz - 70, hz + 4, v === 'dusk' ? 'rgba(255,180,140,' : v === 'night' ? 'rgba(60,70,110,' : 'rgba(246,232,206,', .55);
     for (let x = -PAD; x < W + PAD; x += 150) if (!(o.cliff === 'far' && x < 500)) EF().bushMass(g, x, hz + 6, 160, 44, 7 + Math.floor(x), dk * .92);
     for (let x = -PAD + 40; x < W + PAD; x += 110 + r() * 90) { if (o.cliff === 'far' && x < 540) continue; if (r() < .18) EF().acacia(g, x, hz + 4, .7, Math.floor(x), dk * .9); else EF().palm(g, x, hz + 6, .55 + r() * .35, 300 + Math.floor(x), { dark: dk * .95 }); }
     g.fillStyle = mul('#4e7a34', dk); g.fillRect(-PAD, hz + 2, W + PAD * 2, 6);
   });
-  const reflLayer = (v, o) => layer(`nrefl4-${v}-${o.cliff || ''}-${o.giza ? 1 : 0}-${o.h || 330}`, g => {   // the far bank mirrored in the water (soft, squashed)
+  const reflLayer = (v, o) => layer(`nrefl5-${v}-${o.cliff || ''}-${o.giza ? 1 : 0}-${o.h || 330}`, g => {   // the far bank mirrored in the water (soft, squashed)
     const far = farBank(v, o), hz = o.h || 330, hgt = 170; g.translate(-PAD, 0); g.save(); g.globalAlpha = .45; g.filter = 'blur(3px)'; g.translate(0, hz * 2 + 6); g.scale(1, -.55); g.translate(0, hz * .82);
     g.drawImage(far, 0, hz - hgt, far.width, hgt, 0, hz - hgt, far.width, hgt); g.restore(); });
-  const nearBank = (v, o) => layer(`nnear4-${v}-${o.cliff || ''}-${o.bankY || 600}`, g => {
+  const nearBank = (v, o) => layer(`nnear5-${v}-${o.cliff || ''}-${o.bankY || 600}`, g => {
     const y0 = o.bankY || 600, dk = v === 'night' ? .4 : v === 'dusk' ? .72 : v === 'dawn' ? .85 : 1, r = rng(17);
     if (o.cliff === 'near') {   // a tall weathered sandstone cliff with cracks + plants in the crevices
       const CL = [[-PAD, 30], [20, 18], [120, 12], [170, 50], [236, 62], [250, 150], [292, 170], [300, 268], [338, 292], [352, y0 - 120], [372, y0 - 60], [420, H]], sil = c => { c.moveTo(-PAD, H); CL.forEach(p => c.lineTo(p[0], p[1])); c.closePath(); };
@@ -266,7 +266,7 @@
     if (k < 1) { for (const [x, y, s2, st] of [[260, 530, .8, 0], [880, 520, .7, 1], [1080, 540, .75, 0]]) EF().tent(g, x, y, s2, { stripes: st, glow: night });
       for (const [x, y] of [[160, 540], [470, 530], [960, 532]]) for (let j = 0; j < 3; j++) for (let q = 0; q < 3 - j; q++) block(g, x + q * 26 + j * 13, y - j * 18, 24, 18);
       EF().cart(g, 560, 548, .8); EF().cart(g, 350, 560, .7); }
-    if (night) { for (const [x, y, s2, st] of [[140, 590, .9, 1], [330, 570, .8, 0], [500, 600, .85, 1]]) EF().tent(g, x, y, s2, { stripes: st, glow: true, col: '#c8a888' });
+    if (night) { for (const [x, y, s2, st] of [[150, 600, 1.5, 1], [370, 580, 1.25, 0], [540, 610, 1.3, 1]]) EF().tent(g, x, y, s2, { stripes: st, glow: true, col: '#b88a78' }); for (const [x, s2] of [[-40, 1.5], [60, 1.1]]) EF().palm(g, x, 660, s2, 1000 + x, { dark: .55, lean: .15 });
       EF().camel(g, 250, 640, .9, 0, { lie: true, saddle: true }); EF().camel(g, 610, 630, .8, 0, { lie: true, dir: -1 });
       for (const [x, y] of [[140, 560], [330, 540], [500, 570], [420, 610]]) { g.save(); g.globalCompositeOperation = 'lighter'; T.glow(g, x, y, 110, 'rgba(255,170,80,.42)'); g.restore(); } }
   });
@@ -411,7 +411,7 @@
     ctx.restore(); }
 
   // ================= maps of Egypt =================
-  const MW = 2700, MH = 2500, LON0 = 23.5, LAT0 = 33.6, SC = 230;
+  const MW = 4100, MH = 2600, LON0 = 22.0, LAT0 = 34.0, SC = 230;
   const px = (lon, lat) => [(lon - LON0) * SC * Math.cos(28 * PI / 180), (LAT0 - lat) * SC];
   const NILE = [[32.9, 23.9], [32.93, 24.45], [32.87, 24.98], [32.55, 25.29], [32.64, 25.69], [32.72, 26.16], [32.24, 26.05], [31.69, 26.56], [31.18, 27.18], [30.75, 28.1], [30.95, 28.7], [31.1, 29.07], [31.24, 30.04], [31.15, 30.4]];
   const ROSETTA = [[31.15, 30.4], [30.85, 30.8], [30.6, 31.2], [30.37, 31.46]], DAMIETTA = [[31.15, 30.4], [31.35, 30.9], [31.6, 31.2], [31.81, 31.42]];
@@ -432,10 +432,10 @@
     const R2 = rng(9);
     for (let i = 0; i < 5200; i++) {   // mountain ridges: Eastern Desert (east of the Nile), Sinai, Arabia — shaded SE, lit NW
       const zone = R2(), lon = zone < .55 ? 32.0 + R2() * 2.6 : zone < .8 ? 33.2 + R2() * 1.6 : 35.4 + R2() * 4, lat = zone < .55 ? 22 + R2() * 7.6 : zone < .8 ? 27.9 + R2() * 1.9 : 22 + R2() * 9, [x, y] = px(lon, lat);
-      if (zone < .55 && lon < 32.9 && lat > 27.5) continue; const L = 6 + R2() * 16, a = .9 + (R2() - .5) * .8;
-      g.strokeStyle = 'rgba(110,64,30,.45)'; g.lineWidth = 2.6; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L); g.stroke();
-      g.strokeStyle = 'rgba(255,236,200,.4)'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(x - 2, y - 2); g.lineTo(x - 2 + Math.cos(a) * L, y - 2 + Math.sin(a) * L); g.stroke(); }
-    for (let i = 0; i < 900; i++) { const [x, y] = px(24 + R2() * 6.2, 22 + R2() * 8.6), L = 30 + R2() * 70; g.strokeStyle = `rgba(170,110,50,${.12 + R2() * .12})`; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + L / 2, y - 8, x + L, y + 4); g.stroke(); }   // dune streaks
+      if (zone < .55 && lon < 32.9 && lat > 27.5) continue; const L = 14 + R2() * 34, a = .9 + (R2() - .5) * .8;
+      g.strokeStyle = 'rgba(100,56,24,.5)'; g.lineWidth = 6; g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * L, y + Math.sin(a) * L); g.stroke();
+      g.strokeStyle = 'rgba(255,236,200,.45)'; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 5, y - 5); g.lineTo(x - 5 + Math.cos(a) * L, y - 5 + Math.sin(a) * L); g.stroke(); }
+    for (let i = 0; i < 900; i++) { const [x, y] = px(23 + R2() * 7.2, 22 + R2() * 8.6), L = 50 + R2() * 110; g.strokeStyle = `rgba(160,100,44,${.16 + R2() * .14})`; g.lineWidth = 5; g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + L / 2, y - 8, x + L, y + 4); g.stroke(); }   // dune streaks
     for (let i = 0; i < 6; i++) { const [x, y] = px(26 + R2() * 4, 24 + R2() * 5); g.fillStyle = 'rgba(160,100,50,.18)'; g.beginPath(); g.ellipse(x, y, 60 + R2() * 90, 30 + R2() * 40, R2(), 0, TAU); g.fill(); }   // depressions
     g.restore(); for (const p of [EGY, SIN, ARB]) { g.lineWidth = 3; g.strokeStyle = 'rgba(70,50,30,.8)'; g.stroke(p); }
     // green valley + delta
@@ -452,7 +452,7 @@
   }
   const PLACES = { Giza: [31.13, 29.98], Tura: [31.29, 29.93], Aswan: [32.9, 24.09], Cairo: [31.24, 30.05], Memphis: [31.25, 29.85], 'Wadi al-Jarf': [32.64, 29.08], Suez: [32.55, 29.97], Sinai: [33.9, 28.9], Hatnub: [30.98, 27.56], 'Deir el-Bersha': [30.9, 27.75] };
   function toS(lon, lat, v) { const [x, y] = px(lon, lat), [fx, fy] = px(v.lon, v.lat); return [640 + (x - fx) * v.z, 360 + (y - fy) * v.z]; }
-  function map(ctx, t, v) { const c = mapCv(), [fx, fy] = px(v.lon, v.lat); ctx.save(); ctx.fillStyle = '#ddc898'; ctx.fillRect(0, 0, W, H); ctx.drawImage(c, 640 - fx * v.z, 360 - fy * v.z, MW * v.z, MH * v.z); ctx.restore();
+  function map(ctx, t, v) { const c = mapCv(), [fx, fy] = px(v.lon, v.lat); ctx.save(); ctx.fillStyle = '#d8b882'; ctx.fillRect(0, 0, W, H); ctx.drawImage(c, 640 - fx * v.z, 360 - fy * v.z, MW * v.z, MH * v.z); ctx.restore();
     ctx.save(); ctx.globalCompositeOperation = 'multiply'; const vg = ctx.createRadialGradient(640, 360, 300, 640, 360, 820); vg.addColorStop(0, 'rgba(255,255,255,0)'); vg.addColorStop(1, 'rgba(120,90,50,.35)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H); ctx.restore(); }
   function route(ctx, pts, v, k, o = {}) { if (k <= 0) return; const S = pts.map(p => toS(p[0], p[1], v)); let L = 0; const segs = []; for (let i = 1; i < S.length; i++) { const d = Math.hypot(S[i][0] - S[i - 1][0], S[i][1] - S[i - 1][1]); segs.push(d); L += d; }
     let rem = L * clamp(k); ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; const draw = (w, col, dash) => { let r2 = rem; ctx.beginPath(); ctx.moveTo(...S[0]); for (let i = 1; i < S.length && r2 > 0; i++) { const f = Math.min(1, r2 / segs[i - 1]); ctx.lineTo(lerp(S[i - 1][0], S[i][0], f), lerp(S[i - 1][1], S[i][1], f)); r2 -= segs[i - 1]; } ctx.lineWidth = w; ctx.strokeStyle = col; ctx.setLineDash(dash || []); ctx.stroke(); };

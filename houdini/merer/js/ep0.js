@@ -83,7 +83,7 @@
   });
   fx('block', 'rumble', .4);
   S('today', (ctx, lt, dur, t, R) => {   // today: move a block as heavy as a pickup truck across the river
-    ctx.save(); push(ctx, lt, dur, 1.0, 1.05); ES.nile(ctx, t, lt * 10, { v: 'day', near: false, h: 280 }); ES.boat(ctx, 640, 560, 1.0, t, { blocks: 1, rowers: 6, sail: .2 }); ctx.restore();
+    ctx.save(); push(ctx, lt, dur, 1.0, 1.05); ES.nile(ctx, t, lt * 10, { v: 'gold', near: false, h: 280 }); ES.boat(ctx, 640, 560, 1.0, t, { blocks: 1, rowers: 6, sail: .2 }); ctx.restore();
     const a = clamp((lt - R('block') - .8) / .5); if (a > 0) { pickup(ctx, 640, 360, .9, a); K.tag(ctx, '≈ one pickup truck', 640, 230, lt, R('block') + 1.1, { size: 28 }); }
   });
   fx('across', 'scratch', .8, 2.2);

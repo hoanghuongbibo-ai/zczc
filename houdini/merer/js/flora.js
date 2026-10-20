@@ -26,10 +26,14 @@
     for (let i = 0; i < 9; i++) { const cx = x - 60 * s + i * 15 * s + r() * 6, cy = y - 104 * s - Math.sin(i / 8 * PI) * 14 * s; sh(g, mul('#3e7a34', dk), LW, c => c.ellipse(cx, cy, 24 * s, 12 * s, 0, 0, TAU)); }
     for (let i = 0; i < 7; i++) { const cx = x - 50 * s + i * 15 * s, cy = y - 110 * s - Math.sin(i / 6 * PI) * 12 * s; sh(g, mul('#5a9a40', dk), 0, c => c.ellipse(cx, cy, 16 * s, 7 * s, 0, 0, TAU)); } }
   // a rounded mass of shrubs with lit tops (riverbank greenery)
-  function bushMass(g, x, y, w, h, seed = 3, dk = 1, cols) { const r = rng(seed), C = cols || ['#2e5e2a', '#3e7a32', '#5a9a3e', '#86bc52'];
-    const n = Math.max(4, Math.round(w / 34)); const B = []; for (let i = 0; i < n; i++) B.push([x + (i + .5) * w / n + (r() - .5) * 12, y - h * (.45 + r() * .4) * Math.sin((i + .5) / n * PI) - 6, (16 + r() * 16) * (h / 70)]);
-    for (const [bx, by, rr] of B) sh(g, null, 4.5, circ(bx, by, rr)); for (const [bx, by, rr] of B) sh(g, mul(C[0], dk), 0, circ(bx, by, rr)); g.fillStyle = mul(C[0], dk); g.fillRect(x, y - 10, w, 10);
-    for (const [bx, by, rr] of B) sh(g, mul(C[1], dk), 0, circ(bx - rr * .15, by - rr * .2, rr * .78)); for (const [bx, by, rr] of B) sh(g, mul(C[2], dk), 0, circ(bx - rr * .3, by - rr * .38, rr * .46)); for (const [bx, by, rr] of B) sh(g, mul(C[3], dk), 0, circ(bx - rr * .38, by - rr * .5, rr * .18)); }
+  function bushMass(g, x, y, w, h, seed = 3, dk = 1, cols) {   // leafy shrub mass: scalloped leaf-clump edge, 4 tones, lit from upper left
+    const r = rng(seed), C = cols || ['#2a5a26', '#3e7a32', '#5e9e40', '#8cc056'];
+    const n = Math.max(4, Math.round(w / 30)); const B = []; for (let i = 0; i < n; i++) B.push([x + (i + .5) * w / n + (r() - .5) * 14, y - h * (.4 + r() * .45) * Math.sin((i + .5) / n * PI) - 6, (14 + r() * 14) * (h / 70)]);
+    const leafy = (bx, by, rr, col, lw) => { g.beginPath(); for (let k = 0; k < 11; k++) { const a = k / 11 * TAU, lr = rr * .34; g.moveTo(bx + Math.cos(a) * rr * .78 + lr, by + Math.sin(a) * rr * .78); g.arc(bx + Math.cos(a) * rr * .78, by + Math.sin(a) * rr * .78, lr, 0, TAU); } g.moveTo(bx + rr * .8, by); g.arc(bx, by, rr * .8, 0, TAU);
+      if (lw) { g.lineWidth = lw; g.strokeStyle = OUT; g.stroke(); } if (col) { g.fillStyle = col; g.fill(); } };
+    for (const [bx, by, rr] of B) leafy(bx, by, rr, null, 4); for (const [bx, by, rr] of B) leafy(bx, by, rr, mul(C[0], dk)); g.fillStyle = mul(C[0], dk); g.fillRect(x, y - 10, w, 10);
+    for (const [bx, by, rr] of B) leafy(bx - rr * .14, by - rr * .2, rr * .74, mul(C[1], dk)); for (const [bx, by, rr] of B) leafy(bx - rr * .3, by - rr * .38, rr * .44, mul(C[2], dk));
+    for (const [bx, by, rr] of B) { g.fillStyle = mul(C[3], dk); for (let k = 0; k < 5; k++) { g.beginPath(); g.ellipse(bx - rr * .5 + r() * rr * .5, by - rr * .6 + r() * rr * .4, rr * .1, rr * .06, -.6, 0, TAU); g.fill(); } } }
   // papyrus clump: tall stems with umbrella heads; sways (t) when drawn live
   function papyrus(g, x, y, n, h, seed = 4, t = 0, dk = 1) { const r = rng(seed);
     for (let i = 0; i < n; i++) { const xx = x + (r() - .5) * n * 7, hh = h * (.55 + r() * .5), sw = Math.sin(t * 1.2 + i * .9 + seed) * 5 * (hh / 120), tx = xx + sw + (r() - .5) * 18, ty = y - hh;

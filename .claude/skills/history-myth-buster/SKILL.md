@@ -290,3 +290,22 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Everything else as in v8:
   - Bubbles in the reference style (cream card, thick brown outline, drop shadow, small tail), placed ABOVE the speaker's head or beside it in close-ups. Placement picks the spot covering the fewest heads drawn this frame (EP.mark stores the mouth, the head top at ≈625 units, the half-width at ≈215 units, and the frame stamp G.EP.frame set in show.js). Bubbles follow the voice word by word and vanish when the line ends.
   - `G.Guide.straight = true` for an upright body with no lean or sway. The head, face and lip-sync still act.
+
+### Merer's Diary episode (houdini/merer/, Oct '26): narrated "immersive" episode, no skits
+- Files:
+  - `merer/js/cast.js`: Old Kingdom costumes.
+    - Outfits: eWorker (bare chest, linen kilt, barefoot), eScribe (Merer and Ankhhaf: pleated kilt, sash, bead collar), eDress, eGreek (Herodotus), eLab.
+    - Hats: wigOK (Old Kingdom bob wig: `behind()` mass + cap with fringe; never an `under:` hat, which would cover the face), kerchief, petasos.
+    - Props: papyrus, pen, mallet, jar, bread.
+  - `sets.js` (G.ES):
+    - nile: far bank layer, live flood water, near bank, optional near cliff or Giza on the far bank.
+    - boat: Old Kingdom cargo boat with hogging truss, cobra prow, steering oar, billowing sail, blocks, rowers and sleepers.
+    - ew: mini Egyptian worker, poses pull/push/carry/chisel/row/pour/sleep.
+    - Also: cliff (Tura), pyramid (k = build level), giza, sphinx, town (Heit el-Ghurab), cemetery, jarf (sealed galleries), museum, lab, hatnub, chamber, desertRamp, sledge, and an Egypt map with toS/route/pin.
+  - `kit.js` (G.EK): hieratic squiggles, papyrus sheet, logCard (hieratic writes itself, then the translation types), onScreen strip, chapter strip, nameCard (real people without faces), timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, count (decimal counter).
+- Score: new moods nile / nileQuiet / nileWork in score2.js, in a D hijaz colour.
+- Living real people (Hawass, Lehner, Tallet, Sheisha, Bonn, Redding) appear only as name cards. Chapter 11 (the cost) has no characters and no jokes, as the script asked.
+- Gotchas:
+  - Anchor keys must be unique ("away" was used twice and silently moved a cold-open shot to 11 minutes). Check with `cut -d'|' -f1 anchors.txt | sort | uniq -d`.
+  - The map canvas must cover the whole view: fill outside the canvas with the land colour.
+  - P2.pebbles takes `cols: [...]`, not `col`. pcloud tones are day/grey/warm/dusk.

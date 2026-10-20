@@ -76,6 +76,10 @@
     campfire:  { bpm: 66,  prog: Ck, pent: Cp, parts: { arpG: .08, harp: .045, bass: .11, pad: .04 } },
     danger:    { bpm: 108, prog: Dm, pent: Dmp, parts: { fdrum: .13, twang: .1, bass: .2, pad: .06 } },
     saloon:    { bpm: 116, prog: [[48, 60, 64, 67], [41, 53, 57, 60], [43, 55, 59, 62], [48, 60, 64, 67]], pent: Cp, parts: { honky: .09, bass: .18, clop: .04 } },
+    // Egypt (Merer episode): D hijaz colour (D Eb F# G A Bb C) over D / Eb / D / Cm; low strings + harp plucks
+    nile:      { bpm: 72,  prog: [[38, 50, 54, 57], [39, 51, 55, 58], [38, 50, 54, 57], [36, 48, 51, 55]], pent: [62, 63, 66, 67, 69, 70, 72, 74, 75], parts: { pad: .08, arpG: .06, bass: .13, bell: .04 } },
+    nileQuiet: { bpm: 60,  prog: [[38, 50, 54, 57], [39, 51, 55, 58], [38, 50, 54, 57], [36, 48, 51, 55]], pent: [62, 63, 66, 67, 69, 70, 72, 74, 75], parts: { pad: .09, bell: .05, bass: .1 } },
+    nileWork:  { bpm: 96,  prog: [[38, 50, 54, 57], [39, 51, 55, 58], [38, 50, 54, 57], [36, 48, 51, 55]], pent: [62, 63, 66, 67, 69, 70, 72, 74, 75], parts: { ost: .12, fdrum: .1, bass: .19, pad: .05 } },
     rising:    { bpm: 92,  prog: Gk, pent: Gp,  parts: { ost: .15, mar: .09, fdrum: .1, bass: .22, pad: .08, cel: .07 } },
   };
   const RH = { mel: [1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0], pizz: [1, 0, 1, 1, 0, 1, 0, 1] };

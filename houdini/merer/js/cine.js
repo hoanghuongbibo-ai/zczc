@@ -6,7 +6,7 @@
   'use strict';
   G.Guide.straight = true;
   const T = G.Toon, EP = G.EP, EF = G.EF, TV = G.TV, { W, H, clamp, lerp, ease, rng } = T, TAU = Math.PI * 2;
-  const END = TV.hero, BAR_T = 40, BAR_B = 62, XF = .6;   // film ends where chapter 2 names Herodotus
+  const END = TV.hero, XF = .6;   // full frame: no letterbox bars, no burned-in subtitles (subtitles are exported as .srt)   // film ends where chapter 2 names Herodotus
   const keyOf = t => Object.keys(TV).reduce((b, k) => Math.abs(TV[k] - t) < Math.abs((TV[b] ?? 1e9) - t) ? k : b, 'wake');
   const list = EP.shots.filter(s => s.t < END - .5).sort((a, b) => a.t - b.t).map(s => Object.assign({ key: keyOf(s.t) }, s));
   // depth treatment per shot: fg = foreground silhouette layer, mist = dawn mist bands, rays = god-rays
@@ -15,10 +15,6 @@
     strange: { fg: 'none', dust: 1 }, fourthou: { fg: 'palm', dust: 1 }, oldest: { fg: 'none', dust: 1 }, written: { fg: 'palm', rays: 1 }, whips: { fg: 'none' },
     answer: { fg: 'reeds', mist: .4, rays: 1 }, king: { fg: 'none', mist: .25 }, khufu: { fg: 'reeds', rays: 1 }, people: { fg: 'reeds' }, dies: { fg: 'none', dust: 1 },
     orders: { fg: 'palm', rays: 1 }, time: { fg: 'none' }, thinking: { fg: 'palm' }, greek: { fg: 'palm', rays: 1 } };
-  // keep top-of-frame graphics clear of the letterbox: chapter banners + date tags drop below the top bar
-  const EK = G.EK, chap0 = EK.chapter, tag0 = EP.dateTag;
-  EK.chapter = (ctx, ...a) => { ctx.save(); ctx.translate(0, BAR_T + 6); chap0(ctx, ...a); ctx.restore(); };
-  EP.dateTag = (ctx, ...a) => { ctx.save(); ctx.translate(14, BAR_T + 4); tag0(ctx, ...a); ctx.restore(); };
   const buf = document.createElement('canvas'); buf.width = W; buf.height = H; const bctx = buf.getContext('2d');
   const fgc = document.createElement('canvas'); fgc.width = W; fgc.height = H; const fctx = fgc.getContext('2d');
   function cam(i, lt, dur, t) {   // a slow dolly: push-in along a per-shot drift direction + a hint of handheld float
@@ -62,7 +58,7 @@
     ['greek', "And for about 2,500 years, the world's answer"], ['greek', 'came from one Greek tourist.', 2.6]].map(([k, s, off = 0]) => ({ t: TV[k] + off - .1, s }));
   function subtitle(ctx, t) { let cur = null; for (let i = 0; i < SUB.length; i++) if (t >= SUB[i].t && t < Math.min((SUB[i + 1] || { t: END }).t, SUB[i].t + 6.5)) cur = SUB[i]; if (!cur) return;
     const a = clamp((t - cur.t) / .15); ctx.save(); ctx.globalAlpha = a; ctx.font = '600 25px Fredoka'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#f4ede0';
-    let sz = 25; while (ctx.measureText(cur.s).width > W - 120 && sz > 18) { sz--; ctx.font = `600 ${sz}px Fredoka`; } ctx.fillText(cur.s, W / 2, H - BAR_B / 2); ctx.restore(); }
+    let sz = 25; while (ctx.measureText(cur.s).width > W - 120 && sz > 18) { sz--; ctx.font = `600 ${sz}px Fredoka`; } ctx.fillText(cur.s, W / 2, H - 31); ctx.restore(); }
   G.TOON_FINISH = { grain: .045, vignette: .5 };
   const pb = document.createElement('canvas'), bl = document.createElement('canvas'); pb.width = W; pb.height = H; bl.width = 320; bl.height = 180;
   const pg = pb.getContext('2d'), blg = bl.getContext('2d');
@@ -73,9 +69,10 @@
     ctx.globalCompositeOperation = 'soft-light'; ctx.globalAlpha = .22; const g = ctx.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2a6a80'); g.addColorStop(.55, '#a08060'); g.addColorStop(1, '#ff9a4a'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .1; ctx.drawImage(G.Paint2.canvasTex(), 0, 0);
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
-    const ib = clamp(t / 1.2), ob = clamp((END - t) / 1.5); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, BAR_T); ctx.fillRect(0, H - BAR_B, W, BAR_B);
+    const ib = clamp(t / 1.2), ob = clamp((END - t) / 1.5); ctx.fillStyle = '#000';
     if (ib < 1 || ob < 1) { ctx.globalAlpha = 1 - Math.min(ib, ob); ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }   // fade from / to black
-    subtitle(ctx, t); };
+  };
+  G.CINE_SUBS = SUB.map((x, i) => ({ t0: x.t, t1: Math.min((SUB[i + 1] || { t: END }).t, x.t + 6.5), s: x.s }));
   G.Show = { duration: END, narration: 'assets/audio/narration.mp3', shots, sfx: EP.sfx.filter(s => s.t < END), moods: EP.moods.filter(m => m.t < END).sort((a, b) => a.t - b.t), images: {},
     fonts: ['700 26px Fredoka', '600 26px Fredoka', '500 26px Fredoka', '46px "Luckiest Guy"'] };
 })(window);

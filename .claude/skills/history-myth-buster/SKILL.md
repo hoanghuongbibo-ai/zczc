@@ -34,6 +34,14 @@ log's own wording). Never ask the user to filter text or data. Then reply with o
 4. **Data issues** found in the log, and script lines that will need a [MAP]/[DOCUMENT]/[DIAGRAM] even though unmarked.
 Then wait for the assets + voice (or "run").
 
+## Companion skills (the full pipeline)
+1. `historical-research`: fact sheet (claims, sources, hedges, pronunciations).
+2. `historical-storytelling`: the script.
+3. `documentary-voiceover`: speakable VO, recording spec, mp3 → anchors → `timing.js`.
+4. `cinematic-storyboard`: shot list and the Step 0 asset list.
+5. This skill: build and render the video.
+6. `youtube-optimization`: titles, thumbnails, description with chapters, Shorts.
+
 ## The working protocol (agreed with the user — follow it every time)
 
 1. **Intake.** Copy the voice into the episode's `assets/` folder. Transcribe and align the narration to the word

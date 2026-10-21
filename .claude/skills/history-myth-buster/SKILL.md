@@ -328,3 +328,19 @@ The user repainted Merer frames and asked that every frame look like those. What
 
 ### Lesson: mounted riders need the "@ride" outfit twins (3-legs bug, Merer 1990 horse shot)
 `Beasts.steed` draws the rider via `G.Guide.draw` with outfit `<name>@ride` and adds one near leg in the stirrup itself. The `@ride` twins (legs `kind: 'none'`, `feet: 'none'`) are only created in `cowboy/js/cast.js`. Any episode that borrows `cowboy/js/beasts.js` without that cast must create the twins itself (see the end of `merer/js/cast.js`). Otherwise the outfit lookup fails, the figure is drawn with both standing legs, and the rider shows three legs.
+
+### Lesson: eye-catching thumbnails (Merer v2, `merer/thumbs.js` + `tools/_thumbs.mjs`)
+The user rejected plain "scene + title" thumbnails. They asked for something unique and eye-catching, with a slogan that sums up the whole script.
+- **Slogan:** a 2–3 word punchline built on the script's thesis or most surprising true fact, e.g.:
+  - "THE PYRAMIDS HAD PAPERWORK"
+  - "NOT SLAVES. COWORKERS."
+  - "TEAM NAME: DRUNKARDS"
+
+  Don't use a literal title.
+- **Look:**
+  - The episode scene, lightly blurred (about 2.5 px) and darkened on the text side, with a vignette.
+  - A hot sunburst behind the hero.
+  - The hero, plus one key prop, as a white-outlined sticker with a drop shadow.
+  - Big Luckiest Guy text with a gradient fill and a heavy stroke. Keep it inside x ≥ 40.
+  - One short Fredoka pill underneath.
+- **Output:** render 3 options so the user can pick one.

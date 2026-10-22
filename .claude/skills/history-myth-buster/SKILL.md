@@ -269,6 +269,12 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 
 ### Storybook style (Rome series, `houdini/rome/`, `rome/js/paint.js`): the user's new editing method
 The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in `rome/assets/ref/style-ref-1..4.mp4`. Use this look for Rome and for any later video the user asks to make "in the new style".
+- **User's clips and plates (rules from the cold-open review).**
+  - **No black edges.** Frame every clip with `clipShot`'s clamped camera (`z`, `cx`, `cy` in clip pixels). It keeps the frame covering the screen and the baked marks (bottom-right sparkle, bottom-left caption) below `maxY`. After a render, check edge rows and columns for black.
+  - **Motion must run forward.** Before using a segment, check it in a frame strip. AI clips often show a figure facing one way while sliding the other (moonwalking). Play such a segment in reverse with `seg(key, f1, f0)`, or drop it. Never ping-pong.
+  - **One character for the whole film.** Pick one design (Rome: the hooded, bearded monk from `cowfield-cart-crowd`) and drop every shot showing a different version of him (clip A's tunic man, the chibi hauler plates, the chibi "you").
+  - **Realistic animals only.** Use the cows and goats from the clip; don't use drawn `cow()`/`goat()` or cartoon-animal plates.
+  - **One place, explored.** Build a sequence from one location, with the camera moving between its details as the narration names them. The references are a source to pick from, not a checklist.
 - **Look.** Painted backgrounds with real light:
   - golden-hour or blue-to-gold skies with soft cloud bands and shaded cumulus;
   - atmospheric haze on distant hills;

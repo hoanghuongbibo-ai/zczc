@@ -137,32 +137,56 @@
       ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = o.mist ?? .18; ctx.fillStyle = '#fff4dc'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 14) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, (o.mistY ?? 560) + (i % 2) * 30, 260, 26, 0, 0, 7); ctx.fill(); } ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 28; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H, a = .35 + .35 * Math.sin(t * 1.7 + i); ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, 7); ctx.fill(); } ctx.restore();
       if (o.extra) o.extra(ctx, lt, dur, t); }; }
-  const pGoats = plateShot('goats', { z0: 1.0, z1: 1.06, pan: 60, mistY: 520 });
-  const pColumn = plateShot('column', { z0: 1.0, z1: 1.1, fx: 620, fy: 380, mistY: 600, extra: (ctx, lt, dur, t) => { if (since(t, 'finger') > -.3) P.caption(ctx, '"like a giant\'s finger"', since(t, 'finger') + .3, { size: 26, x: 70, y: 120 }); } });
-  const pLaundry = plateShot('laundry', { z0: 1.06, z1: 1.0, fx: 670, fy: 380, mist: .1 });
-  const pCart = plateShot('cart', { z0: 1.0, z1: 1.07, fx: 610, fy: 380, pan: -50, mistY: 520 });
-  const pWall = plateShot('wall', { z0: 1.06, z1: 1.0, fx: 600, fy: 385, mist: .08, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.building) / .9); if (k > 0 && k < 1) { for (let i = 0; i < 12; i++) { const a = i * .55, r = 30 + k * 150; ctx.fillStyle = `rgba(232,220,196,${.75 * (1 - k)})`; ctx.beginPath(); ctx.arc(860 + Math.cos(a) * r, 690 + Math.sin(a) * r * .45 - k * 30, 16 + (i % 3) * 8, 0, 7); ctx.fill(); } }
-    if (since(t, 'thousand') > 0) P.caption(ctx, '1,000+ years old', since(t, 'thousand'), { size: 26, x: 1210, y: 120, align: 'right' }); } });
   const pCity = plateShot('city', { cover: 1.02, z0: 1.0, z1: 1.04, fx: 640, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, x: 1220, y: 60, align: 'right' }); } });
   // ---------- the user's generated clips (assets/clips/<name>/fNNN.jpg, 24 fps, mark removed) ----------
   // map(lt, t) -> seconds into the clip; neighbouring frames are blended so slowed-down clips stay smooth
-  function clipShot(key, map, o = {}) { return function plate(ctx, lt, dur, t) { const sec = Math.max(0, Math.min(9.95, map(lt, t))), f = sec * 24, i0 = Math.min(239, Math.floor(f)), fr = f - i0;
-      ctx.save(); P.camPush(ctx, lt, dur, o.z0 ?? 1.0, o.z1 ?? 1.04, o.fx ?? 640, o.fy ?? 360);
-      const a = T.IMG[key + (i0 + 1)], b = T.IMG[key + Math.min(240, i0 + 2)]; const Z = o.frame ?? 1.17; if (a) ctx.drawImage(a, 0, 0, W * Z, H * Z); if (b && fr > .05) { ctx.globalAlpha = fr; ctx.drawImage(b, 0, 0, W * Z, H * Z); ctx.globalAlpha = 1; } // framed from the top-left: the baked-in marks (bottom-right) stay out of shot
+  function clipShot(key, map, o = {}) { return function plate(ctx, lt, dur, t) { const sec = Math.max(0, Math.min(9.95, map(lt, t, dur))), f = sec * 24, i0 = Math.min(239, Math.floor(f)), fr = f - i0;
+      // camera in clip pixels: zoom z about (cx, cy), clamped so the frame always fills the screen (no black edges) and the baked marks
+      // (bottom-right sparkle, bottom-left caption) stay below maxY
+      const k = ease.inOut(clamp(lt / dur)), z = lerp(o.z0 ?? 1.2, o.z1 ?? o.z0 ?? 1.2, k), hw = 640 / z, hh = 360 / z;
+      const cx = clamp(lerp(o.cx0 ?? 640, o.cx1 ?? o.cx0 ?? 640, k), hw, 1280 - hw), maxY = cx + hw > 1100 ? 600 : (o.maxY ?? 600);
+      const cy = clamp(lerp(o.cy0 ?? 300, o.cy1 ?? o.cy0 ?? 300, k), hh, Math.max(hh, maxY - hh));
+      ctx.save(); ctx.translate(640, 360); ctx.scale(z, z); ctx.translate(-cx, -cy);
+      const a = T.IMG[key + (i0 + 1)], b = T.IMG[key + Math.min(240, i0 + 2)]; if (a) ctx.drawImage(a, 0, 0, 1280, 720); if (b && fr > .05) { ctx.globalAlpha = fr; ctx.drawImage(b, 0, 0, 1280, 720); ctx.globalAlpha = 1; }
       ctx.restore();
-      ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let k = 0; k < 20; k++) { const x = (k * 157 + Math.sin(t * .4 + k) * 30) % W, y = ((k * 97 - t * (8 + k % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.25 + .25 * Math.sin(t * 1.7 + k)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (k % 3), 0, 7); ctx.fill(); } ctx.restore();
+      if (o.dust !== false) { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let q = 0; q < 20; q++) { const x = (q * 157 + Math.sin(t * .4 + q) * 30) % W, y = ((q * 97 - t * (8 + q % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.25 + .25 * Math.sin(t * 1.7 + q)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (q % 3), 0, 7); ctx.fill(); } ctx.restore(); }
       if (o.extra) o.extra(ctx, lt, dur, t); }; }
-  // clip B (cow field → stone hauler → whirl → the AD 100 crowd); clip A (the hauler in the ruins → crumble → the AD 100 Forum)
-  const cCowField = clipShot('cB', lt => lt + .05, { z0: 1.0, z1: 1.03, fx: 600, fy: 340, extra: (ctx, lt, dur, t) => P.caption(ctx, 'Campo Vaccino', since(t, 'field') + .2, { size: 34, sub: '"the cow field"' }) });
-  const cCart = clipShot('cB', lt => 3.4 + lt * .42, { z0: 1.0, z1: 1.05, fx: 600, fy: 340 });
-  const cRewind = clipShot('cA', (lt, t) => t < A.same ? t - A.rewind + 3.4 : 4.6 + (t - A.same) * .43, { z0: 1.0, z1: 1.06, fx: 600, fy: 340, extra: (ctx, lt, dur, t) => P.caption(ctx, 'Same place · around AD 100', since(t, 'same') + .2, { size: 28 }) });
-  const cCrowd = clipShot('cB', lt => 6.6 + lt * .36, { z0: 1.0, z1: 1.04, fx: 600, fy: 340, extra: (ctx, lt, dur, t) => P.caption(ctx, 'senators in white wool', since(t, 'senators') + .3, { size: 24, x: 60, y: 90 }) });
-  const pTodayIll = plateShot('todayPlate', { cover: 1.0, z0: 1.0, z1: 1.04, fx: 640, fy: 360, mist: .05 });
-  const cTodayReal = clipShot('cA', (lt, t) => 8.2 + Math.max(0, t - A.full + .4) * .55, { z0: 1.0, z1: 1.05, fx: 600, fy: 340 });
-  // still here: the illustrated Forum today, dissolving into a real photograph of the crowds on "still full of people"
-  const pToday = function plate(ctx, lt, dur, t) { pTodayIll(ctx, lt, dur, t); const k = clamp((t - A.full + .4) / .8); if (k > 0) { ctx.save(); ctx.globalAlpha = ease.inOut(k); cTodayReal(ctx, lt, dur, t); ctx.restore(); }
-    if (k > 0) { P.caption(ctx, 'still here', 1, { size: 32, a: k }); P.caption(ctx, 'still a capital · still full of people', 1, { size: 24, y: 690, a: k }); } P.caption(ctx, 'today', since(t, 'today'), { size: 28, x: 1220, y: 90, align: 'right' }); };
-  const pCow = plateShot('cowClose', { cover: 1.0, z0: 1.0, z1: 1.03, fx: 640, fy: 360, mistY: 600 });
+  // ONE place, ONE man: every medieval shot is the same cow field from clip B (its real-looking cows and goats), and the only person
+  // is its hooded monk. His cart segment is played in reverse in the source (he faces left but slides right), so it runs backwards here.
+  // seg(key, f0, f1): frames f0 -> f1 (1-based) spread over the shot; f1 < f0 plays backwards
+  const seg = (key, f0, f1, o) => clipShot(key, (lt, t, dur) => (f0 - 1 + (f1 - f0) * clamp(lt / dur)) / 24, o);
+  const cap = (text, key, o) => (ctx, lt, dur, t) => { if (since(t, key) > -.3) P.caption(ctx, text, since(t, key) + .3, o); };
+  // 1. the pasture: wide on the grazing herd, then the camera settles down toward the mud
+  const cPasture = seg('cB', 1, 20, { z0: 1.3, z1: 1.6, cx0: 640, cx1: 430, cy0: 330, cy1: 420, extra: (ctx, lt) => P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }) });
+  // 2. the same goats, picking through the weeds
+  const cGoats = seg('cB', 20, 30, { z0: 2.0, z1: 2.15, cx0: 800, cx1: 830, cy0: 460 });
+  // 3. the half-buried column, the giant's finger
+  const cColumn = seg('cB', 30, 50, { z0: 1.75, z1: 1.95, cx0: 470, cx1: 430, cy0: 340, extra: cap('"like a giant\'s finger"', 'finger', { size: 26, x: 70, y: 110 }) });
+  // 4. the little house against the arch, laundry on the line; the monk stands by his door
+  const cHouse = seg('cB', 50, 78, { z0: 1.5, z1: 1.62, cx0: 860, cx1: 900, cy0: 360, extra: cap('a house built against an ancient arch', 'arch', { size: 24, x: 70, y: 110 }) });
+  // 5. the same monk hauling cut stone (reversed so he walks the way he faces)
+  const cCart = seg('cB', 134, 110, { z0: 1.2, z1: 1.26, cx0: 560, cy0: 400, maxY: 720, extra: cap('he didn\'t quarry it', 'didnt', { size: 26, x: 1060, y: 110, align: 'right' }) });
+  // 6. ...prying it off a building: push past him to the ruined colonnade the stone came from
+  const cPry = seg('cB', 110, 86, { z0: 1.26, z1: 1.6, cx0: 560, cx1: 840, cy0: 400, cy1: 280, maxY: 720, extra: cap('1,000+ years old ↓', 'thousand', { size: 26, x: 1000, y: 120, align: 'center' }) });
+  // 7. the whole field, named
+  const cField = seg('cB', 1, 78, { z0: 1.2, extra: (ctx, lt, dur, t) => { P.caption(ctx, 'Campo Vaccino', since(t, 'field') + .2, { size: 34, sub: '"the cow field"' }); if (since(t, 'hold') > 0) P.caption(ctx, 'hold this exact spot…', since(t, 'hold'), { size: 26, x: 1210, y: 90, align: 'right' }); } });
+  // 8. rewind: clip B's own time-whirl
+  const cRewind = seg('cB', 141, 156, { z0: 1.2, dust: false });
+  // 9. the same place, AD 100
+  const cAD100 = seg('cA', 118, 176, { z0: 1.2, z1: 1.26, cy0: 300, extra: (ctx, lt, dur, t) => { P.caption(ctx, 'Same place · around AD 100', since(t, 'same') + .2, { size: 28 }); if (since(t, 'marble') > 0) P.caption(ctx, 'marble everywhere', since(t, 'marble'), { size: 24, x: 1210, y: 90, align: 'right' }); if (since(t, 'temples') > 0) P.caption(ctx, 'gilded temple roofs', since(t, 'temples'), { size: 24, x: 1210, y: 140, align: 'right' }); } });
+  // 10. the crowd
+  const cCrowd = seg('cB', 157, 205, { z0: 1.2, z1: 1.25, extra: cap('senators in white wool', 'senators', { size: 24, x: 60, y: 90 }) });
+  // 11. back to the cow field: "a million people → cows"
+  const cBetween = seg('cB', 40, 78, { z0: 1.25, z1: 1.2, extra: cap('a million people → cows', 'million2', { size: 28, x: 1220, y: 90, align: 'right' }) });
+  // 12. the stranger question, over the lone column (framed left of the plate's drawn sheep)
+  const pWhy = plateShot('column', { z0: 1.3, z1: 1.38, fx: 640, fy: 300, mistY: 600, extra: cap('why didn\'t it just… end?', 'why', { size: 30 }) });
+  // 13. what it lost: the field at dusk
+  const cLost = seg('cB', 50, 78, { z0: 1.35, z1: 1.45, cx0: 820, cy0: 330, extra: (ctx, lt, dur, t) => { P.grade(ctx, '#5a4a7a', .25);
+    const L = [['its empire', 'empire'], ['its emperors', 'emperors'], ['its water', 'water2'], ['almost all its people', 'people']]; for (let i = 0; i < 4; i++) { const k = since(t, L[i][1]) + .1; if (k > 0) P.caption(ctx, 'lost ' + L[i][0], k, { size: 28, x: 70, y: 110 + i * 54, a: i === 3 || since(t, L[i + 1][1]) < 0 ? 1 : .55 }); } } });
+  // 14. today, the real place
+  const cToday = seg('cA', 193, 226, { z0: 1.2, z1: 1.26, extra: (ctx, lt, dur, t) => { P.caption(ctx, 'still here', since(t, 'still') + .3, { size: 32 }); if (since(t, 'capital') > 0) P.caption(ctx, 'still a capital · still full of people', since(t, 'capital'), { size: 24, y: 690 }); P.caption(ctx, 'today', since(t, 'today'), { size: 28, x: 1220, y: 90, align: 'right' }); } });
+  // 15. title over the same view at sunset
+  const cTitle = seg('cA', 226, 240, { z0: 1.26, z1: 1.2, extra: (ctx, lt, dur, t) => { P.grade(ctx, '#2a1810', .35); titleText(ctx, lt, t); } });
   // ---------- shots ----------
   function s1(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 380); forum(ctx, t, 'medieval'); P.grassFG(ctx, t, -40, 1320, 740, 90, '#55702e'); framing(ctx, t); ctx.restore(); P.shafts(ctx, 1100, -100, .12); P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }); }
   function boots(ctx, lt, dur, t) { // you, ankle-deep
@@ -235,7 +259,7 @@
     ctx.restore(); P.caption(ctx, 'senators in white wool', since(t, 'senators') + .3, { size: 24, x: 60, y: 90 }); }
   function underFeet(ctx, lt, dur, t) { const tilt = ease.inOut(clamp(lt / 1.4)); ctx.save(); ctx.translate(0, -tilt * 300);
     P.sky(ctx, 'gold', t, { y1: 420 }); P.hills(ctx, 380, '#7a8a6a', '#f6e4b4', .5); paving(ctx, 420);
-    for (let i = 0; i < 7; i++) { const c = CROWD[i % 6]; chibi(ctx, 100 + i * 180, 480, .32, t, Object.assign({ seed: i, walk: true, dir: i % 2 ? 1 : -1 }, c)); }
+    { const f = 150 + Math.min(26, Math.floor(lt * 6)), im = T.IMG['cA' + f]; if (im) ctx.drawImage(im, 0, 0, 1280, 600, -40, 482 - 640, 1360, 640); } // the AD 100 Forum street above, from the same clip
     const g = ctx.createLinearGradient(0, 480, 0, 1100); g.addColorStop(0, '#8a6a48'); g.addColorStop(1, '#5a4030'); ctx.fillStyle = g; ctx.fillRect(-100, 480, 1500, 700); ctx.strokeStyle = INK; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-100, 482); ctx.lineTo(1400, 482); ctx.stroke();
     for (let i = 0; i < 30; i++) { ctx.fillStyle = 'rgba(60,40,20,.35)'; ctx.beginPath(); ctx.ellipse((i * 173) % 1300, 520 + (i * 61) % 520, 14, 8, i, 0, 7); ctx.fill(); }
     // soil strata, buried stones and roots
@@ -299,8 +323,7 @@
     const L = [['its empire', 'empire'], ['its emperors', 'emperors'], ['its water', 'water2'], ['almost all its people', 'people']]; for (let i = 0; i < 4; i++) { const k = since(t, L[i][1]) + .1; if (k > 0) P.caption(ctx, 'lost ' + L[i][0], k, { size: 28, x: 70, y: 110 + i * 54, a: i === 3 || since(t, L[i + 1][1]) < 0 ? 1 : .55 }); } }
   function today(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.05, 1.0, 640, 380); forum(ctx, t, 'today'); ctx.restore();
     P.caption(ctx, 'still here', since(t, 'still') + .1, { size: 32 }); if (since(t, 'capital') > 0) P.caption(ctx, 'still a capital · still full of people', since(t, 'capital'), { size: 24, y: 690 }); P.caption(ctx, 'today', since(t, 'today'), { size: 28, x: 1220, y: 90, align: 'right' }); }
-  function title(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.08, 1.0, 640, 380); forum(ctx, t, 'medieval', { sky: 'gold', empty: true, noLaundry: true }); ctx.restore(); P.grade(ctx, '#2a1810', .25);
-    const k = clamp((lt - .3) / 1.2); ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 120px "Liberation Serif", serif'; ctx.lineJoin = 'round'; ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(30,15,10,.85)'; ctx.strokeText('ROME', 640, 280); ctx.fillStyle = '#f6e2b0'; ctx.fillText('ROME', 640, 280);
+  function titleText(ctx, lt, t) { const k = clamp((lt - .3) / 1.2); ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 120px "Liberation Serif", serif'; ctx.lineJoin = 'round'; ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(30,15,10,.85)'; ctx.strokeText('ROME', 640, 280); ctx.fillStyle = '#f6e2b0'; ctx.fillText('ROME', 640, 280);
     ctx.font = '700 30px "Liberation Serif", serif'; ctx.lineWidth = 7; ctx.strokeText('the city that should have died at least five times', 640, 370); ctx.fillStyle = '#fbf0d8'; ctx.fillText('the city that should have died at least five times', 640, 370); ctx.restore();
     for (let i = 0; i < 5; i++) { const kk = clamp((since(t, 'five') - i * .18) / .3); if (kk <= 0) continue; ctx.save(); ctx.translate(480 + i * 80, 450); ctx.scale(kk, kk); ink(ctx, '#a8322a', c => c.arc(0, 0, 22, 0, 7), 4); ctx.fillStyle = '#f6e2b0'; ctx.font = '700 22px "Liberation Serif", serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(['I', 'II', 'III', 'IV', 'V'][i], 0, 1); ctx.restore(); }
     if (since(t, 'didnt2') > -.1) P.caption(ctx, '…and didn\'t.', since(t, 'didnt2') + .1, { size: 34, x: 640, y: 530, align: 'center', col: '#f6c945' }); }
@@ -311,20 +334,20 @@
   function atmos(ctx, t) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(20px)'; ctx.globalAlpha = .16; ctx.fillStyle = '#fff2d6'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 12) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, 470 + (i % 2) * 40, 280, 24, 0, 0, 7); ctx.fill(); } ctx.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 22; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.3 + .3 * Math.sin(t * 1.7 + i)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (i % 3), 0, 7); ctx.fill(); } ctx.restore(); }
   const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .12, bloom: .2, tex: .15 }); P.grade(ctx, '#c86a30', .14, 'overlay'); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .42); };
-  const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(pGoats), .4], [A.over - .2, fin(pColumn), .5], [A.somebody - .2, fin(pLaundry), .5],
-    [A.man - .2, fin(cCart), .5], [A.prying - .3, fin(pWall), .4], [A.locals - .2, fin(cCowField), .4], [A.hold - .25, fin(cRewind), .5],
-    [A.senators - .2, fin(cCrowd), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
-    [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
-    [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(pToday), .7], [A.story - .3, fin(title), .8]];
+  const cut = [[0, fin(cPasture), 0], [A.goats - .3, fin(cGoats), .4], [A.over - .2, fin(cColumn), .5], [A.somebody - .2, fin(cHouse), .5],
+    [A.man - .2, fin(cCart), .5], [A.prying - .3, fin(cPry), 0], [A.locals - .2, fin(cField), .5], [A.rewind - .15, fin(cRewind), .2],
+    [A.same - .15, fin(cAD100), .3], [A.senators - .2, fin(cCrowd), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
+    [A.so + 1.3, fin(cBetween), 1.8], [A.stranger - .2, fin(pWhy), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
+    [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(cLost), .5], [A.still - .3, fin(cToday), .7], [A.story - .3, fin(cTitle), .8]];
   const shots = P.cutList(cut, A.end);
   const sfx = [
     { t: .2, type: 'wind', gain: .35 }, { t: A.pasture, type: 'clang', gain: .18 }, { t: A.mud, type: 'splash', gain: .3 }, { t: A.goats + .3, type: 'click', gain: .2 },
     { t: A.laundry, type: 'paper', gain: .25 }, { t: A.cart, type: 'creak', gain: .3 }, { t: A.building, type: 'thud', gain: .5 }, { t: A.field, type: 'clang', gain: .15 },
-    { t: A.rewind, type: 'whoosh', gain: .6 }, { t: A.rewind + .25, type: 'boom', gain: .35 }, { t: A.rewind + .6, type: 'rattle', gain: .3 }, { t: A.man + .2, type: 'creak', gain: .3 }, { t: A.senators + .3, type: 'rattle', gain: .25 }, { t: A.same, type: 'swell', gain: .45 }, { t: A.senators, type: 'rattle', gain: .2 }, { t: A.water, type: 'splash', gain: .3 },
+    { t: A.rewind, type: 'whoosh', gain: .6 }, { t: A.rewind + .25, type: 'boom', gain: .3 }, { t: A.same, type: 'swell', gain: .45 }, { t: A.senators, type: 'rattle', gain: .2 }, { t: A.water, type: 'splash', gain: .3 },
     { t: A.million, type: 'swell', gain: .35 }, { t: A.cows, type: 'thud', gain: .3 }, { t: A.babylon, type: 'wind', gain: .3 }, { t: A.carthage, type: 'wind', gain: .3 },
     { t: A.still, type: 'swell', gain: .4 }, { t: A.five, type: 'clang', gain: .25 }, { t: A.didnt2, type: 'thud', gain: .45 },
   ];
   const moods = [{ t: 0, mood: 'still' }, { t: A.rewind - .2, mood: 'silence' }, { t: A.same - .1, mood: 'under' }, { t: A.so - .2, mood: 'mystery' }, { t: A.still - .3, mood: 'still' }];
   G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-coldopen.mp3', shots, sfx, moods,
-    images: Object.assign({ goats: 'assets/img/plates/goats.jpg', column: 'assets/img/plates/column.jpg', laundry: 'assets/img/plates/laundry.jpg', cart: 'assets/img/plates/cart.jpg', wall: 'assets/img/plates/prying-wall.jpg', cowClose: 'assets/img/plates/cow-closeup.jpg', city: 'assets/img/plates/city.jpg' }, { todayPlate: 'assets/img/plates/today.jpg' }, ...['cA', 'cB'].map(k => Object.fromEntries(Array.from({ length: 240 }, (_, i) => [k + (i + 1), `assets/clips/${k === 'cA' ? 'forum-time-transition' : 'cowfield-cart-crowd'}/f${String(i + 1).padStart(3, '0')}.jpg`])))), fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
+    images: Object.assign({ column: 'assets/img/plates/column.jpg', city: 'assets/img/plates/city.jpg' }, ...['cA', 'cB'].map(k => Object.fromEntries(Array.from({ length: 240 }, (_, i) => [k + (i + 1), `assets/clips/${k === 'cA' ? 'forum-time-transition' : 'cowfield-cart-crowd'}/f${String(i + 1).padStart(3, '0')}.jpg`])))), fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
 })(window);

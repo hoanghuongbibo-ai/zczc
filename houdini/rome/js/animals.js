@@ -27,7 +27,7 @@
     // the barrel: straight back, hip bone, rump, deep belly, brisket
     const body = c => { c.moveTo(-132, -236); c.quadraticCurveTo(-10, -244, 96, -240); c.quadraticCurveTo(112, -258, 128, -244); c.quadraticCurveTo(170, -236, 172, -196); c.quadraticCurveTo(176, -150, 150, -120); c.quadraticCurveTo(120, -104, 60, -104); c.quadraticCurveTo(-30, -92, -112, -112); c.quadraticCurveTo(-158, -126, -164, -170); c.quadraticCurveTo(-162, -222, -132, -236); c.closePath(); };
     cel(ctx, body, W, { shade: SH, light: '#ffffff', dx: 0, dy: 16 });
-    ctx.save(); body(ctx); ctx.clip(); ctx.fillStyle = SP;
+    ctx.save(); body(ctx); ctx.clip(); ctx.fillStyle = o.plain ? 'rgba(0,0,0,0)' : SP;
     for (let i = 0; i < 5; i++) { const px = -120 + r() * 280, py = -230 + r() * 110, rx = 26 + r() * 34, ry = 18 + r() * 24, pts = []; for (let k = 0; k < 9; k++) { const a = k / 9 * 6.283, m = .75 + r() * .45; pts.push([px + Math.cos(a) * rx * m, py + Math.sin(a) * ry * m]); }
       ctx.beginPath(); const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; let q = mid(pts[8], pts[0]); ctx.moveTo(...q); for (let k = 0; k < 9; k++) { const n = mid(pts[k], pts[(k + 1) % 9]); ctx.quadraticCurveTo(...pts[k], ...n); } ctx.fill(); }
     ctx.restore(); ink(ctx, null, body, 5);
@@ -43,7 +43,7 @@
     ink(ctx, '#e8dcc0', c => { c.moveTo(-4, -22); c.quadraticCurveTo(-6, -46, 6, -48); c.quadraticCurveTo(2, -38, 6, -22); c.closePath(); }, 3);
     const head = c => { c.moveTo(-26, -18); c.quadraticCurveTo(-4, -34, 26, -20); c.quadraticCurveTo(30, 30, 22, 70); c.quadraticCurveTo(0, 84, -26, 70); c.quadraticCurveTo(-34, 30, -26, -18); c.closePath(); };
     cel(ctx, head, W, { shade: SH, light: '#ffffff', dx: 8, dy: 6 });
-    ctx.save(); head(ctx); ctx.clip(); ctx.fillStyle = SP; ctx.beginPath(); ctx.ellipse(-4, 6, 26, 24, .2, 0, 7); ctx.fill(); ctx.restore(); ink(ctx, null, head, 4.5);
+    ctx.save(); head(ctx); ctx.clip(); ctx.fillStyle = o.plain ? 'rgba(0,0,0,0)' : SP; ctx.beginPath(); ctx.ellipse(-4, 6, 26, 24, .2, 0, 7); ctx.fill(); ctx.restore(); ink(ctx, null, head, 4.5);
     cel(ctx, c => c.ellipse(-2, 72 + chew, 24, 16, 0, 0, 7), '#f0b0a8', { shade: '#c8807a', dx: 3, dy: 3, lw: 3.5 });
     ctx.fillStyle = INK; for (const d of [-1, 1]) { ctx.beginPath(); ctx.ellipse(-2 + d * 9, 74 + chew, 3, 4.5, 0, 0, 7); ctx.fill(); }
     // eye (half-lidded when unimpressed)

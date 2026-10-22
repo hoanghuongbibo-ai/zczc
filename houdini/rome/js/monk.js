@@ -35,7 +35,7 @@
     ctx.restore(); hand(ctx, H[0], H[1], skin, 15); }
   const POSES = { // [elbow, hand] of the front arm, then optional back arm; shoulder fixed
     stand: [[-12, -262], [-18, -206]], hold: [[-22, -262], [-66, -262]], wave: [[-52, -330], [-58, -436]], point: [[-74, -330], [-146, -350]],
-    up: [[-72, -372], [-92, -470], [44, -372], [58, -470]], chin: [[-26, -258], [-52, -330]], talk: [[-40, -276], [-84, -304]], photo: [[-56, -320], [-80, -392]],
+    up: [[-72, -372], [-92, -470], [44, -372], [58, -470]], chin: [[-26, -258], [-52, -330]], talk: [[-40, -276], [-84, -304]], photo: [[-56, -320], [-80, -392]], shade: [[-58, -330], [-74, -404]], shrug: [[-44, -270], [-92, -286], [40, -272], [74, -288]], strike: [[-40, -390], [-16, -478]], carry: [[-30, -300], [-70, -330], [24, -300], [-40, -334]],
     crossed: [[-20, -266], [16, -282], [30, -268], [-22, -280]], haul: [[2, -250], [20, -192]], pry: [[-62, -268], [-112, -228], [-30, -280], [-88, -246]] };
   function head(ctx, o, t, sw) { const look = o.brow || '', eyes = o.eyes || 'open', ph = o.seed || 0, blink = eyes !== 'closed' && ((t + ph * .7) % 3.9) < .12;
     const skin = o.skin, sh = mix(skin, '#8a4a3a', .22), hair = o.hair || '#3c2a1e', fem = o.kind === 'woman' || o.kind === 'stola' || o.fem;
@@ -59,6 +59,7 @@
       if (o.wreath) { ctx.save(); ctx.strokeStyle = '#d8b040'; ctx.lineWidth = 6; ctx.beginPath(); ctx.ellipse(-10, -104, 52, 12, -.08, 0, 7); ctx.stroke(); ctx.restore(); }
     }
     // nose, eye, brow
+    if (o.glasses) { ctx.save(); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(-44, -72, 13, 0, 7); ctx.moveTo(-31, -74); ctx.lineTo(10, -70); ctx.stroke(); ctx.restore(); }
     if (o.kind === 'monk' || o.scarf) ink(ctx, skin, c => { c.moveTo(-62, -76); c.quadraticCurveTo(-90, -78, -88, -58); c.quadraticCurveTo(-84, -44, -64, -50); }, L(3.5)); else ink(ctx, skin, c => { c.moveTo(-62, -74); c.quadraticCurveTo(-82, -74, -80, -58); c.quadraticCurveTo(-78, -48, -62, -52); }, L(3.5));
     const ex = -44, ey = -72, lk = eyes === 'side' ? 4 : -3;
     ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineCap = 'round'; ctx.lineWidth = 3;
@@ -123,7 +124,8 @@
     // cowl / collar, head
     if (o.kind === 'monk') cel(ctx, c => { c.moveTo(-50, -328); c.quadraticCurveTo(-62, -292, -34, -272); c.quadraticCurveTo(10, -262, 48, -278); c.quadraticCurveTo(68, -300, 52, -336); c.closePath(); }, o.cloth, { shade: mix(o.cloth, '#2a1810', .3), dx: 12, dy: 6, lw: L(5) });
     else ink(ctx, mix(o.skin, '#8a4a3a', .15), c => { c.moveTo(-22, -326); c.lineTo(-20, -350); c.lineTo(10, -350); c.lineTo(14, -326); c.closePath(); }, L(3.5));
-    if (pose === 'up') arm(ctx, [-4, -306], P0[0], P0[1], o, false); // both arms raised: they go up behind the head
+    if (pose === 'up' || pose === 'strike') arm(ctx, [-4, -306], P0[0], P0[1], o, false);
+    if (pose === 'strike' && o.prop) { ctx.save(); ctx.translate(P0[1][0], P0[1][1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); } // both arms raised: they go up behind the head
     ctx.save(); ctx.translate(-6, o.kind === 'monk' ? -330 : -318); ctx.rotate((pose === 'pry' ? -.08 : 0) + (o.tilt || 0) + (o.speak ? -beat(t)[0] * .05 : 0)); if (o.kind !== 'monk') ctx.scale(.92, .92);
     head(ctx, o, t, sw); ctx.restore();
     // the front arm and whatever it holds
@@ -131,8 +133,8 @@
     if (pose === 'wave') Hh[0] += Math.sin(t * 9) * 10;
     if (pose === 'talk') Hh[1] += Math.sin(t * 5 + (o.seed || 0)) * 12;
     if (o.speak && (pose === 'talk' || pose === 'stand' || pose === 'chin')) { const [b, k] = beat(t), g = [[-30, -18], [-10, -34], [-40, -6], [-20, -26]][k % 4]; if (pose !== 'chin') { E[0] = -40; E[1] = -276; Hh[0] = -84 + g[0] * b; Hh[1] = -300 + g[1] * b; } }
-    if (pose !== 'up') arm(ctx, [-4, -306], E, Hh, o, false);
-    if (o.prop) { ctx.save(); ctx.translate(Hh[0], Hh[1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); }
+    if (pose !== 'up' && pose !== 'strike') arm(ctx, [-4, -306], E, Hh, o, false);
+    if (o.prop && pose !== 'strike') { ctx.save(); ctx.translate(Hh[0], Hh[1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); }
     ctx.restore();
     if (!long) { leg(ctx, -12, -22 + fA, lA, hemY + 10, o.kind === 'tourist' ? o.skin : (o.legs || o.skin), false); foot(ctx, -22 + fA, lA, o, false); }
     ctx.restore(); K = 1; }

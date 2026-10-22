@@ -231,5 +231,30 @@
   function seal(ctx, text, x, y, k, col = '#a8322a', rot = -.08) { if (k <= 0) return; const s = k < .12 ? lerp(1.6, 1, k / .12) : 1; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(s, s); ctx.globalAlpha = Math.min(1, k / .12) * .92;
     ctx.font = '700 44px "Liberation Serif", serif'; const w = ctx.measureText(text).width + 50; ctx.lineWidth = 6; ctx.strokeStyle = col; ctx.strokeRect(-w / 2, -36, w, 72); ctx.lineWidth = 2.5; ctx.strokeRect(-w / 2 + 8, -28, w - 16, 56); ctx.fillStyle = col; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, 0, 3); ctx.restore(); }
 
-  G.Paint = { INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
+  // ---------- the "enhanced" finish (matched to the user's repainted plates) ----------
+  let BL = null, TX = null;
+  // sun-ray burst from the sun, slowly turning, screen-blended
+  function rays(ctx, sx, sy, t, a = .16) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; ctx.translate(sx, sy); ctx.rotate(t * .01);
+    for (let i = 0; i < 18; i++) { const an = i / 18 * Math.PI * 2, w = .05 + (i % 3) * .025, g = ctx.createRadialGradient(0, 0, 0, 0, 0, 1500); g.addColorStop(0, `rgba(255,236,180,${a * (1 + (i % 2))})`); g.addColorStop(.6, `rgba(255,226,160,${a * .4})`); g.addColorStop(1, 'rgba(255,226,160,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 1500, an, an + w); ctx.closePath(); ctx.fill(); }
+    const c = ctx.createRadialGradient(0, 0, 0, 0, 0, 260); c.addColorStop(0, 'rgba(255,250,225,.75)'); c.addColorStop(.35, 'rgba(255,236,170,.3)'); c.addColorStop(1, 'rgba(255,230,160,0)'); ctx.fillStyle = c; ctx.beginPath(); ctx.arc(0, 0, 260, 0, 7); ctx.fill(); ctx.restore(); }
+  // glow: a blurred, brightened copy of the frame screened back on top
+  function bloom(ctx, a = .28) { if (!BL) { BL = document.createElement('canvas'); BL.width = 320; BL.height = 180; } const g = BL.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, 320, 180); g.filter = 'blur(4px) brightness(1.15)'; g.drawImage(ctx.canvas, 0, 0, 320, 180); g.filter = 'none';
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = a; ctx.drawImage(BL, 0, 0, W, H); ctx.restore(); }
+  // painted texture: soft blotches + fine tooth, multiplied
+  function texture(ctx, a = .10) { if (!TX) { TX = document.createElement('canvas'); TX.width = 640; TX.height = 360; const g = TX.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, 640, 360); let sd = 11; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+      g.filter = 'blur(10px)'; for (let i = 0; i < 160; i++) { g.fillStyle = `rgba(${150 + r() * 60},${120 + r() * 50},${90 + r() * 40},${.25 + r() * .3})`; g.beginPath(); g.ellipse(r() * 640, r() * 360, 20 + r() * 60, 10 + r() * 30, r() * 3, 0, 7); g.fill(); }
+      g.filter = 'none'; for (let i = 0; i < 4000; i++) { g.fillStyle = `rgba(90,70,50,${r() * .18})`; g.fillRect(r() * 640, r() * 360, 1, 1 + r() * 2); } }
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'multiply'; ctx.globalAlpha = a; ctx.drawImage(TX, 0, 0, W, H); ctx.restore(); }
+  // low mist over the horizon and ground
+  function mist(ctx, t, y = 470, a = .22) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(22px)'; ctx.globalAlpha = a; ctx.fillStyle = '#fff3da'; for (let i = 0; i < 7; i++) { const x = ((i * 260 + t * 10) % 1800) - 260; ctx.beginPath(); ctx.ellipse(x, y + (i % 3) * 26, 300, 26, 0, 0, 7); ctx.fill(); } ctx.restore(); }
+  function enhance(ctx, t, o = {}) { if (o.sun) rays(ctx, o.sun[0], o.sun[1], t, o.rays ?? .07); mist(ctx, t, o.mistY ?? 470, o.mist ?? .2); texture(ctx, o.tex ?? .1); bloom(ctx, o.bloom ?? .26); }
+  // reeds and cattails at the marsh edge
+  function reeds(ctx, x, y, s, t, n = 7) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); for (let i = 0; i < n; i++) { const dx = (i - n / 2) * 14, h = 110 + (i * 37) % 70, sw = Math.sin(t * 1.3 + i + x) * 5;
+      ink(ctx, i % 2 ? '#6a7a34' : '#7a8a3c', c => { c.moveTo(dx - 3, 0); c.quadraticCurveTo(dx + sw * .4, -h * .5, dx + sw, -h); c.quadraticCurveTo(dx + sw * .4 + 3, -h * .5, dx + 3, 0); c.closePath(); }, 2.5);
+      if (i % 3 === 0) ink(ctx, '#7a4a2a', c => c.ellipse(dx + sw, -h + 6, 5, 16, 0, 0, 7), 2.5); } ctx.restore(); }
+  // a cloud with the warm glowing rim of the repaints
+  function rimClouds(ctx, t, o = {}) { ctx.save(); for (let i = 0; i < (o.n || 3); i++) { const x = ((i * 520 + t * 4 + (o.x0 || 0)) % 1900) - 300, y = (o.y || 110) + (i % 2) * 50, r = 90 + (i % 3) * 30, fn = lumps(x, y, r * 2.1, r * .6, 11, .3, i + 3);
+      ctx.save(); ctx.filter = 'blur(6px)'; ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(255,236,190,.55)'; path(ctx, fn); ctx.stroke(); ctx.restore();
+      cel(ctx, fn, o.col || '#f2e2cc', { shade: o.shade || '#d6bfa8', light: '#fff6e6', dx: 8, dy: -12, lw: 0 }); ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(160,120,90,.5)'; path(ctx, fn); ctx.stroke(); ctx.restore(); } ctx.restore(); }
+  G.Paint = { rays, bloom, texture, mist, enhance, reeds, rimClouds, INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
 })(window);

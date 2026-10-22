@@ -52,6 +52,7 @@
   // the arch of Septimius Severus (buried to its knees in the 1300s), the Column of Phocas, the three columns of Castor & Pollux
   function forum(ctx, t, era, o = {}) { const haze = era === 'ancient' ? '#f6e4b4' : era === 'today' ? '#cfe2ee' : '#efdcae';
     P.sky(ctx, era === 'ancient' ? 'gold' : era === 'today' ? 'noon' : (o.sky || 'dawn'), t, { sun: era === 'today' ? null : [980, 250] });
+    if (era !== 'today') P.rimClouds(ctx, t, { y: 90, x0: 120 });
     P.hills(ctx, 430, '#7a8a6a', haze, .65, 1);
     capitoline(ctx, era, haze); palatine(ctx, era, haze, t);
     const gy = 470; if (era === 'medieval') mudGround(ctx, t, gy); else if (era === 'ancient') paving(ctx, gy); else { paving(ctx, gy); ctx.fillStyle = 'rgba(140,150,90,.35)'; ctx.fillRect(-600, gy, 2600, 400); }
@@ -60,6 +61,7 @@
     else { P.castShadow(ctx, 880, 560, 330, 420, -2.9, .18); P.castShadow(ctx, 300, 600, 240, 420, -2.9, .18); }
     for (const [bx, by, br, bc] of [[30, 500, 60, '#8aa04a'], [470, 482, 40, '#93a84e'], [1010, 486, 54, '#86a046'], [1220, 500, 70, '#7f9a46'], [720, 478, 30, '#93a84e']]) P.bush(ctx, bx, by, br, { col: era === 'today' ? mix(bc, '#5a8a3a', .3) : bc });
     if (era === 'medieval') for (const [rx, ry, rr] of [[560, 640, 26], [990, 650, 34], [1150, 700, 22], [420, 700, 30], [700, 712, 18]]) { P.rock(ctx, rx, ry, rr, '#ddd2bc'); }
+    if (era === 'medieval') for (const [rx, ry, rs] of [[60, 600, .7], [520, 560, .5], [1000, 600, .6], [1240, 640, .8], [760, 700, .5]]) P.reeds(ctx, rx, ry, rs, t, 6);
     // the arch
     const buried = era === 'medieval' ? 1 : 0, ab = 600; P.arch(ctx, 300, ab, 260, 300, { col: era === 'ancient' ? '#efe6d4' : '#d8c8a6' });
     if (buried) { ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.moveTo(100, ab + 10); ctx.quadraticCurveTo(160, ab - 120, 300, ab - 118); ctx.quadraticCurveTo(440, ab - 122, 500, ab + 10); ctx.closePath(); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); ctx.restore(); hut(ctx, 130, ab - 70, .62); }
@@ -79,25 +81,26 @@
   function framing(ctx, t, side = 0) { ctx.save(); ctx.filter = 'blur(1.5px)'; if (side <= 0) { P.bush(ctx, -30, 740, 150, { col: '#55702e', seed: 1 }); P.bush(ctx, 110, 790, 120, { col: '#4c6628', seed: 4 }); } if (side >= 0) { P.bush(ctx, 1320, 750, 160, { col: '#55702e', seed: 2 }); P.bush(ctx, 1180, 800, 110, { col: '#4c6628', seed: 7 }); } ctx.restore(); }
   // ---------- the user's painted plates (assets/img/plates) ----------
   function plateShot(key, o = {}) { return function plate(ctx, lt, dur, t) { const im = T.IMG[key]; ctx.save(); P.camPush(ctx, lt, dur, o.z0 ?? 1.02, o.z1 ?? 1.08, o.fx ?? 640, o.fy ?? 360, o.pan || 0);
-      if (im) { const sc = Math.max(W / im.width, H / im.height) * 1.1; ctx.drawImage(im, 640 - im.width * sc / 2, 360 - im.height * sc / 2, im.width * sc, im.height * sc); }
+      if (im) { const sc = Math.max(W / im.width, H / im.height) * (o.cover ?? 1.1); ctx.drawImage(im, 640 - im.width * sc / 2, 360 - im.height * sc / 2, im.width * sc, im.height * sc); }
       ctx.restore();
       // drifting mist low over the ground, and dust motes in the light
       ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = o.mist ?? .18; ctx.fillStyle = '#fff4dc'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 14) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, (o.mistY ?? 560) + (i % 2) * 30, 260, 26, 0, 0, 7); ctx.fill(); } ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 28; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H, a = .35 + .35 * Math.sin(t * 1.7 + i); ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, 7); ctx.fill(); } ctx.restore();
       if (o.extra) o.extra(ctx, lt, dur, t); }; }
   const pGoats = plateShot('goats', { z0: 1.0, z1: 1.06, pan: 60, mistY: 520 });
-  const pColumn = plateShot('column', { z0: 1.0, z1: 1.1, fx: 620, fy: 420, mistY: 600, extra: (ctx, lt, dur, t) => { if (since(t, 'finger') > -.3) P.caption(ctx, '"like a giant\'s finger"', since(t, 'finger') + .3, { size: 26, x: 70, y: 120 }); } });
-  const pLaundry = plateShot('laundry', { z0: 1.06, z1: 1.0, fx: 700, fy: 400, mist: .1 });
-  const pCart = plateShot('cart', { z0: 1.0, z1: 1.07, fx: 560, fy: 420, pan: -50, mistY: 520 });
-  const pWall = plateShot('wall', { z0: 1.06, z1: 1.0, fx: 560, fy: 460, mist: .08, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.building) / .9); if (k > 0 && k < 1) { for (let i = 0; i < 12; i++) { const a = i * .55, r = 30 + k * 150; ctx.fillStyle = `rgba(232,220,196,${.75 * (1 - k)})`; ctx.beginPath(); ctx.arc(860 + Math.cos(a) * r, 690 + Math.sin(a) * r * .45 - k * 30, 16 + (i % 3) * 8, 0, 7); ctx.fill(); } }
+  const pColumn = plateShot('column', { z0: 1.0, z1: 1.1, fx: 620, fy: 380, mistY: 600, extra: (ctx, lt, dur, t) => { if (since(t, 'finger') > -.3) P.caption(ctx, '"like a giant\'s finger"', since(t, 'finger') + .3, { size: 26, x: 70, y: 120 }); } });
+  const pLaundry = plateShot('laundry', { z0: 1.06, z1: 1.0, fx: 670, fy: 380, mist: .1 });
+  const pCart = plateShot('cart', { z0: 1.0, z1: 1.07, fx: 610, fy: 380, pan: -50, mistY: 520 });
+  const pWall = plateShot('wall', { z0: 1.06, z1: 1.0, fx: 600, fy: 385, mist: .08, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.building) / .9); if (k > 0 && k < 1) { for (let i = 0; i < 12; i++) { const a = i * .55, r = 30 + k * 150; ctx.fillStyle = `rgba(232,220,196,${.75 * (1 - k)})`; ctx.beginPath(); ctx.arc(860 + Math.cos(a) * r, 690 + Math.sin(a) * r * .45 - k * 30, 16 + (i % 3) * 8, 0, 7); ctx.fill(); } }
     if (since(t, 'thousand') > 0) P.caption(ctx, '1,000+ years old', since(t, 'thousand'), { size: 26, x: 1210, y: 120, align: 'right' }); } });
-  const pCow = plateShot('cowClose', { z0: .91, z1: .95, fx: 640, fy: 380, mistY: 600 });
+  const pCity = plateShot('city', { cover: 1.0, z0: 1.0, z1: 1.04, fx: 660, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, x: 1220, y: 60, align: 'right' }); } });
+  const pCow = plateShot('cowClose', { cover: 1.0, z0: 1.0, z1: 1.03, fx: 640, fy: 360, mistY: 600 });
   // ---------- shots ----------
   function s1(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 380); forum(ctx, t, 'medieval'); P.grassFG(ctx, t, -40, 1320, 740, 90, '#55702e'); framing(ctx, t); ctx.restore(); P.shafts(ctx, 1100, -100, .12); P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }); }
   function boots(ctx, lt, dur, t) { // you, ankle-deep
     ctx.save(); ctx.filter = 'blur(5px)'; ctx.translate(640, 300); ctx.scale(1.5, 1.5); ctx.translate(-640, -380); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
     ctx.save(); P.camPush(ctx, lt, dur, 1.04, 1.1, 640, 470);
-    mudGround(ctx, t, 560); chibi(ctx, 640, 700, 1.25, t, Object.assign({}, YOU, { eyes: 'half', mouth: 'frown', tilt: .12, brow: 'sad' }));
+    mudGround(ctx, t, 560); for (const [rx, rs] of [[260, .9], [380, .7], [960, .8], [1080, 1.0]]) P.reeds(ctx, rx, 640, rs, t, 7); chibi(ctx, 640, 700, 1.25, t, Object.assign({}, YOU, { eyes: 'half', mouth: 'frown', tilt: .12, brow: 'sad' }));
     ctx.save(); ctx.fillStyle = '#5e4630'; ctx.beginPath(); ctx.ellipse(640, 700, 150, 30, 0, 0, 7); ctx.fill(); for (let i = 0; i < 6; i++) { const a = i * 1.05, k = clamp((lt - .2) / .5), r = 110 + k * 40; ctx.beginPath(); ctx.arc(640 + Math.cos(a) * r, 690 - Math.abs(Math.sin(a)) * 30 * (1 - k), 8 - k * 4, 0, 7); ctx.fill(); } ctx.restore();
     ctx.restore(); }
   function goatsShot(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420, 60);
@@ -198,14 +201,16 @@
     if (since(t, 'didnt2') > -.1) P.caption(ctx, '…and didn\'t.', since(t, 'didnt2') + .1, { size: 34, x: 640, y: 530, align: 'center', col: '#f6c945' }); }
 
   // every frame: paper grain + a soft vignette (the reference's painted finish)
+  const SUN = { s1: [1000, 250], boots: [1060, 180], holdShot: [1000, 250], ancientWide: [1000, 240], senators: [1050, 200], between: [1000, 250], puzzled: [1040, 200], babylonShot: [900, 380], lost: [980, 300], title: [1000, 260] };
+  const NOSUN = ['today', 'carthageShot', 'underFeet'], MISTY = { underFeet: 420, babylonShot: 470, carthageShot: 500, title: 470 };
   function atmos(ctx, t) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(20px)'; ctx.globalAlpha = .16; ctx.fillStyle = '#fff2d6'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 12) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, 470 + (i % 2) * 40, 280, 24, 0, 0, 7); ctx.fill(); } ctx.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 22; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.3 + .3 * Math.sin(t * 1.7 + i)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (i % 3), 0, 7); ctx.fill(); } ctx.restore(); }
-  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { atmos(ctx, t); P.shafts(ctx, 1150, -150, .1, 4); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .32); };
+  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .12, bloom: .2, tex: .15 }); P.grade(ctx, '#c86a30', .14, 'overlay'); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .42); };
   const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(pGoats), .4], [A.over - .2, fin(pColumn), .5], [A.somebody - .2, fin(pLaundry), .5],
     [A.man - .2, fin(pCart), .5], [A.prying - .3, fin(pWall), .4], [A.locals - .2, fin(pCow), .4], [A.hold - .25, fin(holdShot), .5],
-    [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(cityView), .6],
-    [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin((c, l, d, t) => ruinVignette(c, l, d, t, 'babylon')), .3],
-    [A.carthage - .1, fin((c, l, d, t) => ruinVignette(c, l, d, t, 'carthage')), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(today), .7], [A.story - .3, fin(title), .8]];
+    [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
+    [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
+    [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(today), .7], [A.story - .3, fin(title), .8]];
   const shots = P.cutList(cut, A.end);
   const sfx = [
     { t: .2, type: 'wind', gain: .35 }, { t: A.pasture, type: 'clang', gain: .18 }, { t: A.mud, type: 'splash', gain: .3 }, { t: A.goats + .3, type: 'click', gain: .2 },
@@ -216,5 +221,5 @@
   ];
   const moods = [{ t: 0, mood: 'still' }, { t: A.rewind - .2, mood: 'silence' }, { t: A.same - .1, mood: 'under' }, { t: A.so - .2, mood: 'mystery' }, { t: A.still - .3, mood: 'still' }];
   G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-coldopen.mp3', shots, sfx, moods,
-    images: { goats: 'assets/img/plates/goats.jpg', column: 'assets/img/plates/column.jpg', laundry: 'assets/img/plates/laundry.jpg', cart: 'assets/img/plates/cart.jpg', wall: 'assets/img/plates/prying-wall.jpg', cowClose: 'assets/img/plates/cow-closeup.jpg' }, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
+    images: { goats: 'assets/img/plates/goats.jpg', column: 'assets/img/plates/column.jpg', laundry: 'assets/img/plates/laundry.jpg', cart: 'assets/img/plates/cart.jpg', wall: 'assets/img/plates/prying-wall.jpg', cowClose: 'assets/img/plates/cow-closeup.jpg', city: 'assets/img/plates/city.jpg' }, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
 })(window);

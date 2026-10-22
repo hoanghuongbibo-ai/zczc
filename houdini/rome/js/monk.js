@@ -116,13 +116,14 @@
     // cowl / collar, head
     if (o.kind === 'monk') cel(ctx, c => { c.moveTo(-50, -328); c.quadraticCurveTo(-62, -292, -34, -272); c.quadraticCurveTo(10, -262, 48, -278); c.quadraticCurveTo(68, -300, 52, -336); c.closePath(); }, o.cloth, { shade: mix(o.cloth, '#2a1810', .3), dx: 12, dy: 6, lw: L(5) });
     else ink(ctx, mix(o.skin, '#8a4a3a', .15), c => { c.moveTo(-22, -326); c.lineTo(-20, -350); c.lineTo(10, -350); c.lineTo(14, -326); c.closePath(); }, L(3.5));
+    if (pose === 'up') arm(ctx, [-4, -306], P0[0], P0[1], o, false); // both arms raised: they go up behind the head
     ctx.save(); ctx.translate(-6, o.kind === 'monk' ? -330 : -318); ctx.rotate((pose === 'pry' ? -.08 : 0) + (o.tilt || 0)); if (o.kind !== 'monk') ctx.scale(.92, .92);
     head(ctx, o, t, sw); ctx.restore();
     // the front arm and whatever it holds
     const E = pose === 'walk' || (moving && pose === 'stand') ? [-12 + swing * .5, -262] : P0[0], Hh = pose === 'walk' || (moving && pose === 'stand') ? [-18 + swing, -206] : P0[1].slice();
     if (pose === 'wave') Hh[0] += Math.sin(t * 9) * 10;
     if (pose === 'talk') Hh[1] += Math.sin(t * 5 + (o.seed || 0)) * 12;
-    arm(ctx, [-4, -306], E, Hh, o, false);
+    if (pose !== 'up') arm(ctx, [-4, -306], E, Hh, o, false);
     if (o.prop) { ctx.save(); ctx.translate(Hh[0], Hh[1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); }
     ctx.restore();
     if (!long) leg(ctx, -12, -22 + fA, lA, hemY + 10, o.kind === 'tourist' ? o.skin : (o.legs || o.skin), false);

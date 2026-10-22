@@ -269,12 +269,13 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 
 ### Storybook style (Rome series, `houdini/rome/`, `rome/js/paint.js`): the user's new editing method
 The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in `rome/assets/ref/style-ref-1..4.mp4`. Use this look for Rome and for any later video the user asks to make "in the new style".
-- **User's clips and plates (rules from the cold-open review).**
-  - **No black edges.** Frame every clip with `clipShot`'s clamped camera (`z`, `cx`, `cy` in clip pixels). It keeps the frame covering the screen and the baked marks (bottom-right sparkle, bottom-left caption) below `maxY`. After a render, check edge rows and columns for black.
-  - **Motion must run forward.** Before using a segment, check it in a frame strip. AI clips often show a figure facing one way while sliding the other (moonwalking). Play such a segment in reverse with `seg(key, f1, f0)`, or drop it. Never ping-pong.
-  - **One character for the whole film.** Pick one design (Rome: the hooded, bearded monk from `cowfield-cart-crowd`) and drop every shot showing a different version of him (clip A's tunic man, the chibi hauler plates, the chibi "you").
-  - **Realistic animals only.** Use the cows and goats from the clip; don't use drawn `cow()`/`goat()` or cartoon-animal plates.
-  - **One place, explored.** Build a sequence from one location, with the camera moving between its details as the narration names them. The references are a source to pick from, not a checklist.
+- **Cast and drawing (rules from the cold-open reviews).**
+  - **Draw everything; keep every scene.** Each shot is drawn in the engine, so lines stay sharp. Blown-up clip frames look blurry. When the user asks for a change (for example, the character), change only that, and never cut scenes to get there. Their clips and plates are references for look, motion and composition.
+  - **One character style for the whole film.** Use `P.person` and `P.monk` in `rome/js/monk.js`, built from the monk the user circled most in the cow-field clip: ink outline, flat shading, profile face with a round nose and a dot eye. The monk is the main character ("you" and the stone hauler). Everyone else uses the same construction: `tunic`, `woman`, `toga` (with `trim`), `stola` or `tourist`. `P.chibi` is an adapter onto this cast; never draw the old white-head chibis.
+  - **Realistic animals.** Use `rome/js/animals.js`, after the user's circled clip animals: Holstein-like cows and lean white goats with swept-back horns.
+  - **No haze or blur.** Keep the finish light: `fin()` uses mist .04 and bloom .07, with no `blur()` filters on scenery. Cast shadows use gradients, not blur filters.
+  - **Motion runs forward.** Figures walk the way they face, and wheels turn with the distance travelled. Check any reference clip for moonwalking before copying its motion.
+  - **No black edges.** After a render, check the edge rows and columns.
 - **Look.** Painted backgrounds with real light:
   - golden-hour or blue-to-gold skies with soft cloud bands and shaded cumulus;
   - atmospheric haze on distant hills;

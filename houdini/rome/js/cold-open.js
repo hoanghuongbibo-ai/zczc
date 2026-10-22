@@ -130,7 +130,7 @@
   }
 
   // dark foliage framing the bottom corners (the reference's foreground depth)
-  function framing(ctx, t, side = 0) { ctx.save(); ctx.filter = 'blur(1.5px)'; if (side <= 0) { P.bush(ctx, -30, 740, 150, { col: '#55702e', seed: 1 }); P.bush(ctx, 110, 790, 120, { col: '#4c6628', seed: 4 }); } if (side >= 0) { P.bush(ctx, 1320, 750, 160, { col: '#55702e', seed: 2 }); P.bush(ctx, 1180, 800, 110, { col: '#4c6628', seed: 7 }); } ctx.restore(); }
+  function framing(ctx, t, side = 0) { ctx.save(); if (side <= 0) { P.bush(ctx, -30, 740, 150, { col: '#55702e', seed: 1 }); P.bush(ctx, 110, 790, 120, { col: '#4c6628', seed: 4 }); } if (side >= 0) { P.bush(ctx, 1320, 750, 160, { col: '#55702e', seed: 2 }); P.bush(ctx, 1180, 800, 110, { col: '#4c6628', seed: 7 }); } ctx.restore(); }
   // ---------- the user's painted plates (assets/img/plates) ----------
   function plateShot(key, o = {}) { return function plate(ctx, lt, dur, t) { const im = T.IMG[key]; ctx.save(); P.camPush(ctx, lt, dur, o.z0 ?? 1.02, o.z1 ?? 1.08, o.fx ?? 640, o.fy ?? 360, o.pan || 0);
       if (im) { const sc = Math.max(W / im.width, H / im.height) * (o.cover ?? 1.1); ctx.drawImage(im, 640 - im.width * sc / 2, 360 - im.height * sc / 2, im.width * sc, im.height * sc); }
@@ -192,10 +192,10 @@
   // ---------- shots ----------
   function s1(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 380); forum(ctx, t, 'medieval'); P.grassFG(ctx, t, -40, 1320, 740, 90, '#55702e'); framing(ctx, t); ctx.restore(); P.shafts(ctx, 1100, -100, .12); P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }); }
   function boots(ctx, lt, dur, t) { // you, ankle-deep
-    ctx.save(); ctx.filter = 'blur(5px)'; ctx.translate(640, 300); ctx.scale(1.5, 1.5); ctx.translate(-640, -380); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
+    ctx.save(); ctx.translate(640, 300); ctx.scale(1.5, 1.5); ctx.translate(-640, -380); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
     ctx.save(); P.camPush(ctx, lt, dur, 1.04, 1.1, 640, 470);
-    mudGround(ctx, t, 560); for (const [rx, rs] of [[260, .9], [380, .7], [960, .8], [1080, 1.0]]) P.reeds(ctx, rx, 640, rs, t, 7); chibi(ctx, 640, 700, 1.25, t, Object.assign({}, YOU, { eyes: 'half', mouth: 'frown', tilt: .12, brow: 'sad' }));
-    ctx.save(); ctx.fillStyle = '#5e4630'; ctx.beginPath(); ctx.ellipse(640, 700, 150, 30, 0, 0, 7); ctx.fill(); for (let i = 0; i < 6; i++) { const a = i * 1.05, k = clamp((lt - .2) / .5), r = 110 + k * 40; ctx.beginPath(); ctx.arc(640 + Math.cos(a) * r, 690 - Math.abs(Math.sin(a)) * 30 * (1 - k), 8 - k * 4, 0, 7); ctx.fill(); } ctx.restore();
+    mudGround(ctx, t, 560); for (const [rx, rs] of [[260, .9], [380, .7], [960, .8], [1080, 1.0]]) P.reeds(ctx, rx, 640, rs, t, 7); chibi(ctx, 640, 720, 1.25, t, Object.assign({}, YOU, { eyes: 'half', mouth: 'frown', tilt: .12, brow: 'sad' }));
+    ctx.save(); ink(ctx, '#6e5236', c => c.ellipse(640, 712, 150, 26, 0, 0, 7), 0); ctx.strokeStyle = 'rgba(160,130,90,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(640, 712, 132, 20, 0, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.fillStyle = 'rgba(255,240,210,.25)'; ctx.beginPath(); ctx.ellipse(600, 706, 50, 6, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#5e4630'; for (let i = 0; i < 6; i++) { const a = i * 1.05, k = clamp((lt - .2) / .5), r = 110 + k * 40; ctx.beginPath(); ctx.arc(640 + Math.cos(a) * r, 690 - Math.abs(Math.sin(a)) * 30 * (1 - k), 8 - k * 4, 0, 7); ctx.fill(); } ctx.restore();
     ctx.restore(); }
   function goatsShot(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420, 60);
     P.sky(ctx, 'dawn', t, { sun: [1100, 200], y1: 460 }); P.hills(ctx, 420, '#7a8a6a', '#efdcae', .6); mudGround(ctx, t, 460);
@@ -213,23 +213,36 @@
     hut(ctx, 360, 650, 1.6); laundry(ctx, 520, 360, 1000, 330, t);
     chibi(ctx, 760, 690, .62, t, Object.assign({}, WOMAN, { arms: 'up', eyes: 'happy', mouth: 'smile' }));
     P.grassFG(ctx, t, -40, 1320, 740, 90, '#4f6a2a'); framing(ctx, t, -1); ctx.restore(); P.shafts(ctx, 1200, -100, .1, 3); }
-  function cartShot(ctx, lt, dur, t) { const x = lerp(-120, 1500, lt / (dur + 1.5));
+  // the stone cart from the user's clip: plank sides, cut blocks, one big spoked wheel, long poles to the man pulling it
+  function handcart(ctx, x, y, t, roll) { ctx.save(); ctx.translate(x, y);
+    ctx.fillStyle = 'rgba(40,24,14,.28)'; ctx.beginPath(); ctx.ellipse(10, 0, 190, 16, 0, 0, 7); ctx.fill();
+    for (let i = 0; i < 5; i++) { const bx = -110 + (i % 3) * 78 + (i > 2 ? 38 : 0), by = -190 - (i > 2 ? 60 : 0); cel(ctx, c => c.rect(bx, by, 74, 60), '#e6dcc8', { shade: '#b8a88e', light: '#f6f0e4', dx: 8, dy: 6, lw: 4 }); ctx.strokeStyle = 'rgba(120,100,80,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bx + 12, by + 18); ctx.lineTo(bx + 30, by + 26); ctx.stroke(); }
+    cel(ctx, c => { c.moveTo(-140, -150); c.lineTo(160, -150); c.lineTo(150, -70); c.lineTo(-130, -70); c.closePath(); }, '#8a5e38', { shade: '#5e3e24', light: '#a8784a', dx: 0, dy: 10, lw: 5 });
+    ctx.strokeStyle = 'rgba(50,30,16,.7)'; ctx.lineWidth = 3; for (const yy of [-124, -98]) { ctx.beginPath(); ctx.moveTo(-136, yy); ctx.lineTo(154, yy); ctx.stroke(); } for (const xx of [-90, 10, 110]) ink(ctx, '#6e4a2c', c => c.rect(xx, -156, 14, 92), 3);
+    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 15; ctx.beginPath(); ctx.moveTo(-130, -96); ctx.lineTo(-330, -112); ctx.stroke(); ctx.strokeStyle = '#7a5232'; ctx.lineWidth = 9; ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.translate(30, -66); ink(ctx, '#7a5232', c => { c.arc(0, 0, 66, 0, 7); c.moveTo(52, 0); c.arc(0, 0, 52, 0, 7, true); }, 4); ctx.rotate(roll);
+    for (let i = 0; i < 8; i++) { ctx.rotate(Math.PI / 4); ctx.strokeStyle = INK; ctx.lineWidth = 9; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(54, 0); ctx.stroke(); ctx.strokeStyle = '#8a5e38'; ctx.lineWidth = 5; ctx.stroke(); }
+    ink(ctx, '#5e3e24', c => c.arc(0, 0, 13, 0, 7), 3.5); ctx.restore(); ctx.restore(); }
+  function cartShot(ctx, lt, dur, t) { const x = lerp(1180, 260, lt / dur);
     ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.03, 640, 400);
     P.sky(ctx, 'dawn', t, { sun: [900, 220], y1: 500 }); P.hills(ctx, 440, '#7a8a6a', '#efdcae', .6);
     for (let i = 0; i < 4; i++) P.column(ctx, 160 + i * 300, 560, 46, 160 + (i % 2) * 70, { broken: true }); mudGround(ctx, t, 540);
-    // the handcart, pushed side-on (he walks the way he faces)
-    ctx.save(); ctx.translate(x + 150, 690); for (const wx of [-50, 60]) { ink(ctx, '#8a6a44', c => c.arc(wx, -34, 34, 0, 7), 5); ctx.save(); ctx.translate(wx, -34); ctx.rotate(t * 3); for (let i = 0; i < 4; i++) { ctx.rotate(Math.PI / 4); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-30, 0); ctx.lineTo(30, 0); ctx.stroke(); } ctx.restore(); }
-      ink(ctx, '#a07a4e', c => c.rect(-110, -110, 220, 54), 5); for (let i = 0; i < 6; i++) cel(ctx, c => c.rect(-100 + (i % 3) * 66, -170 - Math.floor(i / 3) * 52 + 0, 60, 54), P.MARBLE, { shade: '#b8a993', dx: 6, dy: 6, lw: 4 }); ink(ctx, null, c => { c.moveTo(-110, -90); c.lineTo(-200, -130); }, 7); ctx.restore();
-    chibi(ctx, x, 690, .62, t, Object.assign({}, MAN, { walk: true, dir: 1, arms: 'point' }));
+    // he walks left, the way he faces, pulling the cart by its poles; the wheel turns with the distance travelled
+    handcart(ctx, x + 340, 690, t, -(x / 66));
+    P.monk(ctx, x, 690, .6, t, { pose: 'haul', look: 'effort', speed: .8 });
     P.grassFG(ctx, t, -40, 1320, 740, 80, '#4f6a2a'); framing(ctx, t, 1); ctx.restore(); }
   function prying(ctx, lt, dur, t) { const pop = clamp((t - A.building + .1) / .5);
     ctx.save(); P.camPush(ctx, lt, dur, 1.04, 1.0, 640, 380);
     P.sky(ctx, 'dawn', t, { sun: [1100, 120], y1: 300 }); cel(ctx, c => c.rect(260, 40, 900, 640), '#e4d8c0', { shade: '#b8a68a', dx: 0, dy: 0 });
     ctx.save(); ctx.strokeStyle = 'rgba(90,70,50,.5)'; ctx.lineWidth = 3; for (let r = 0; r < 6; r++) for (let c2 = 0; c2 < 5; c2++) ctx.strokeRect(260 + c2 * 180 + (r % 2) * 90, 40 + r * 106, 180, 106); ctx.restore();
+    P.weather(ctx, 260, 40, 900, 640, 11); P.weather(ctx, 260, 360, 900, 320, 23);
     ink(ctx, '#d0c0a0', c => c.rect(560, 180, 360, 90), 4); ctx.save(); ctx.strokeStyle = 'rgba(80,60,40,.6)'; ctx.lineWidth = 3; for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.arc(590 + i * 44, 226, 14, 0, Math.PI * 1.5); ctx.stroke(); } ctx.restore();
     const bx = 720 + pop * 60, by = 420 + pop * pop * 260, br = pop * .5; ctx.save(); ctx.translate(bx + 90, by + 55); ctx.rotate(br); cel(ctx, c => c.rect(-90, -55, 180, 110), P.MARBLE, { shade: '#b8a993', dx: 8, dy: 8 }); ctx.restore();
     if (pop > 0 && pop < 1) for (let i = 0; i < 10; i++) { const a = i * .63, r = pop * 120; ctx.fillStyle = `rgba(220,205,180,${1 - pop})`; ctx.beginPath(); ctx.arc(810 + Math.cos(a) * r, 470 + Math.sin(a) * r * .6, 14 + i % 3 * 6, 0, 7); ctx.fill(); }
-    chibi(ctx, 470, 720, .95, t, Object.assign({}, MAN, { arms: 'hold', eyes: pop > 0 ? 'happy' : 'half', mouth: 'grin', prop: (c, hx, hy) => crowbar(c, hx, hy) }));
+    // ground at the wall's foot, then the monk levering the block out with the bar wedged under it
+    cel(ctx, c => c.rect(-100, 680, 1500, 200), '#8a7a52', { shade: '#6a5a3a', dx: 0, dy: 0 }); for (let i = 0; i < 14; i++) P.weeds(ctx, 280 + i * 64, 684, .7, t);
+    const lift = pop > 0 ? 0 : Math.sin(t * 6) * 4; P.monk(ctx, 560, 720, .85, t, { pose: 'pry', dir: 1, look: pop > 0 ? 'calm' : 'effort', mouth: pop > 0 ? 'smile' : 'flat' });
+    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 13; ctx.beginPath(); ctx.moveTo(652, 560); ctx.lineTo(742, 470 + lift); ctx.stroke(); ctx.strokeStyle = '#6a6a72'; ctx.lineWidth = 7; ctx.stroke(); ctx.restore();
     ctx.restore(); if (since(t, 'thousand') > 0) P.caption(ctx, '1,000+ years old', since(t, 'thousand'), { size: 26, x: 1220, y: 640, align: 'right' }); }
   function cowClose(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 360);
     P.sky(ctx, 'dawn', t, { sun: [200, 260], y1: 480 }); P.hills(ctx, 470, '#7a8a6a', '#efdcae', .55); mudGround(ctx, t, 480);
@@ -246,7 +259,7 @@
     P.caption(ctx, 'Same place · around AD 100', since(t, 'same') + .2, { size: 28 }); }
   function senators(ctx, lt, dur, t) { const sx = lerp(1380, -120, clamp(lt / (dur + .6)));
     ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 420);
-    ctx.save(); ctx.filter = 'blur(3px)'; forum(ctx, t, 'ancient', { empty: true }); ctx.restore();
+    ctx.save(); forum(ctx, t, 'ancient', { empty: true }); ctx.restore();
     // middle distance: the stall crier, a quarrel, a porter
     stall(ctx, 190, 640, .55, t, { vendor: { eyes: sx < 420 ? 'wide' : 'happy' } });
     convo(ctx, 840, 640, .42, t, Object.assign({ arms: 'hips' }, CROWD[2]), Object.assign({ brow: 'angry' }, CROWD[3]), 2);
@@ -291,7 +304,7 @@
     if (since(t, 'cows') > -.4) { const c = clamp((since(t, 'cows') + .4) / .8); cow(ctx, lerp(-260, 220, ease.out(c)), 900, 1.3, t, { flip: true, unimpressed: true }); }
     P.caption(ctx, 'a million people → cows', since(t, 'million2'), { size: 28, x: 1220, y: 90, align: 'right' }); }
   function puzzled(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 400);
-    ctx.save(); ctx.filter = 'blur(4px)'; forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
+    ctx.save(); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
     chibi(ctx, 640, 860, 1.4, t, Object.assign({}, YOU, { arms: 'chin', eyes: since(t, 'why') > 0 ? 'side' : 'half', look: 1, mouth: 'frown', tilt: .1 })); ctx.restore(); }
   function palm(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .9 + x) * 4;
     cel(ctx, c => { c.moveTo(-10, 0); c.quadraticCurveTo(10, -120, sw + 20, -250); c.lineTo(sw + 34, -248); c.quadraticCurveTo(26, -120, 12, 0); c.closePath(); }, '#9a7048', { shade: '#6a4a2c', dx: 5, dy: 0, lw: 4 }); ctx.save(); ctx.strokeStyle = 'rgba(70,40,20,.5)'; ctx.lineWidth = 2; for (let i = 0; i < 10; i++) { ctx.beginPath(); ctx.moveTo(-6 + i * 2, -20 - i * 23); ctx.lineTo(12 + i * 2, -26 - i * 23); ctx.stroke(); } ctx.restore();
@@ -336,7 +349,7 @@
   const NOSUN = ['today', 'carthageShot', 'underFeet'], MISTY = { underFeet: 420, babylonShot: 470, carthageShot: 500, title: 470 };
   function atmos(ctx, t) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(20px)'; ctx.globalAlpha = .16; ctx.fillStyle = '#fff2d6'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 12) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, 470 + (i % 2) * 40, 280, 24, 0, 0, 7); ctx.fill(); } ctx.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 22; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.3 + .3 * Math.sin(t * 1.7 + i)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (i % 3), 0, 7); ctx.fill(); } ctx.restore(); }
-  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .12, bloom: .2, tex: .15 }); P.grade(ctx, '#c86a30', .14, 'overlay'); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .42); };
+  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .04, bloom: .07, tex: .06, rays: .05 }); P.grade(ctx, '#c86a30', .1, 'overlay'); } P.grade(ctx, '#ffb070', .1, 'soft-light'); P.grain(ctx, t, .03); P.vignette(ctx, .35); };
   const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(goatsShot), .4], [A.over - .2, fin(finger), .5], [A.somebody - .2, fin(laundryShot), .5],
     [A.man - .2, fin(cartShot), .5], [A.prying - .3, fin(prying), .4], [A.locals - .2, fin(cowClose), .4], [A.hold - .25, fin(holdShot), .5],
     [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],

@@ -38,13 +38,17 @@
     const C = ['#f4efe2', '#c8d8e8', '#e8c8a8', '#f4efe2', '#b8c89a']; for (let i = 0; i < 5; i++) { const u = (i + .7) / 5.6, x = lerp(x0, x1, u), y = lerp(y0, y1, u) + Math.sin(u * Math.PI) * 18, w = 34 + (i % 2) * 10, fl = Math.sin(t * 3 + i) * 6;
       ink(ctx, C[i], c => { c.moveTo(x - w / 2, y); c.lineTo(x + w / 2, y); c.quadraticCurveTo(x + w / 2 + fl, y + 30, x + w / 2 + fl * 1.5, y + 54); c.lineTo(x - w / 2 + fl * 1.5, y + 54); c.quadraticCurveTo(x - w / 2 + fl, y + 30, x - w / 2, y); c.closePath(); }, 3); } }
   function tower(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); cel(ctx, c => c.rect(-34, -220, 68, 220), '#b8987a', { shade: '#806048', dx: 10, dy: 0 }); for (let i = 0; i < 4; i++) ink(ctx, '#b8987a', c => c.rect(-34 + i * 19, -236, 12, 16), 3); ink(ctx, '#3a2a1a', c => c.rect(-7, -180, 14, 26), 3); ctx.restore(); }
-  function capitoline(ctx, era, haze) { ctx.save(); ctx.fillStyle = mix('#8a8a5a', haze, .35); ctx.beginPath(); ctx.moveTo(-200, 470); ctx.quadraticCurveTo(80, 250, 420, 300); ctx.lineTo(440, 470); ctx.closePath(); ctx.fill(); ctx.restore();
-    if (era === 'ancient') { P.temple(ctx, 180, 300, .42, { roof: '#d8b048' }); ink(ctx, '#e0d4bc', c => c.rect(260, 340, 200, 70), 4); for (let i = 0; i < 6; i++) ink(ctx, '#7a6a5a', c => { c.moveTo(272 + i * 32, 400); c.lineTo(272 + i * 32, 370); c.arc(284 + i * 32, 370, 12, Math.PI, 0); c.lineTo(296 + i * 32, 400); c.closePath(); }, 2.5); }
-    else if (era === 'medieval') { tower(ctx, 120, 300, .55); tower(ctx, 300, 320, .4); ink(ctx, '#c8b090', c => c.rect(170, 270, 90, 60), 4); cel(ctx, c => { c.moveTo(160, 272); c.lineTo(215, 236); c.lineTo(270, 272); c.closePath(); }, '#a8603a', { dx: -4, dy: 4 }); }
-    else { ink(ctx, '#f0ece2', c => c.rect(60, 250, 300, 80), 4); for (let i = 0; i < 9; i++) ink(ctx, '#f8f4ea', c => c.rect(74 + i * 32, 262, 14, 62), 2.5); cel(ctx, c => { c.moveTo(150, 250); c.quadraticCurveTo(210, 170, 270, 250); c.closePath(); }, '#9aa8a8', { dx: 6, dy: 6 }); } }
-  function palatine(ctx, era, haze, t) { ctx.save(); ctx.fillStyle = mix('#7a8a4a', haze, .3); ctx.beginPath(); ctx.moveTo(900, 470); ctx.quadraticCurveTo(1000, 300, 1500, 290); ctx.lineTo(1500, 470); ctx.closePath(); ctx.fill(); ctx.restore();
-    if (era === 'ancient') { for (let r = 0; r < 2; r++) { ink(ctx, '#e4d6bc', c => c.rect(1010 + r * 40, 260 + r * 50, 320, 60), 4); for (let i = 0; i < 8; i++) ink(ctx, '#8a6a4a', c => { const x = 1024 + r * 40 + i * 38; c.moveTo(x, 316 + r * 50); c.lineTo(x, 288 + r * 50); c.arc(x + 12, 288 + r * 50, 12, Math.PI, 0); c.lineTo(x + 24, 316 + r * 50); c.closePath(); }, 2.5); } cel(ctx, c => { c.moveTo(1000, 262); c.lineTo(1180, 220); c.lineTo(1360, 262); c.closePath(); }, '#c89a48', { dx: -4, dy: 6 }); }
-    else { for (let i = 0; i < 5; i++) P.tree(ctx, 980 + i * 80, 360 + (i % 2) * 30, .32 + (i % 3) * .05, t, { col: '#7f9a46' }); if (era === 'medieval') tower(ctx, 1180, 330, .5); } }
+  // the two hills are drawn solid (ink outline) so everything on them stands on visible ground
+  const HILL_L = c => { c.moveTo(-220, 490); c.lineTo(-220, 336); c.quadraticCurveTo(60, 318, 200, 336); c.quadraticCurveTo(320, 360, 440, 490); c.closePath(); };
+  const HILL_R = c => { c.moveTo(860, 490); c.quadraticCurveTo(960, 360, 1080, 340); c.quadraticCurveTo(1260, 326, 1500, 336); c.lineTo(1500, 490); c.closePath(); };
+  function hillPaint(ctx, fn, haze) { cel(ctx, fn, mix('#8fa45a', haze, .22), { shade: mix('#5e7a3c', haze, .2), light: mix('#b8c878', haze, .2), dx: -10, dy: 12, lw: 4 }); }
+  function capitoline(ctx, era, haze) { hillPaint(ctx, HILL_L, haze);
+    if (era === 'ancient') P.temple(ctx, 70, 334, .32, { roof: '#d8b048' });
+    else if (era === 'medieval') { ink(ctx, '#c8b090', c => c.rect(30, 270, 100, 62), 4); cel(ctx, c => { c.moveTo(20, 272); c.lineTo(80, 232); c.lineTo(140, 272); c.closePath(); }, '#a8603a', { dx: -4, dy: 4 }); ink(ctx, '#5a3a24', c => c.rect(70, 300, 20, 32), 3); }
+    else { ink(ctx, '#f0ece2', c => c.rect(-20, 270, 180, 64), 4); for (let i = 0; i < 6; i++) ink(ctx, '#f8f4ea', c => c.rect(-6 + i * 28, 280, 12, 50), 2.5); } }
+  function palatine(ctx, era, haze, t) { hillPaint(ctx, HILL_R, haze);
+    if (era === 'ancient') { ink(ctx, '#e4d6bc', c => c.rect(1070, 270, 260, 66), 4); for (let i = 0; i < 6; i++) ink(ctx, '#8a6a4a', c => { const x = 1086 + i * 40; c.moveTo(x, 330); c.lineTo(x, 300); c.arc(x + 12, 300, 12, Math.PI, 0); c.lineTo(x + 24, 330); c.closePath(); }, 2.5); cel(ctx, c => { c.moveTo(1058, 272); c.lineTo(1200, 236); c.lineTo(1342, 272); c.closePath(); }, '#c89a48', { dx: -4, dy: 6 }); }
+    else for (let i = 0; i < 5; i++) P.tree(ctx, 1000 + i * 78, 352 + (i % 2) * 6, .3 + (i % 3) * .04, t, { col: '#7f9a46' }); }
   // the arch of Septimius Severus (buried to its knees in the 1300s), the Column of Phocas, the three columns of Castor & Pollux
   function forum(ctx, t, era, o = {}) { const haze = era === 'ancient' ? '#f6e4b4' : era === 'today' ? '#cfe2ee' : '#efdcae';
     P.sky(ctx, era === 'ancient' ? 'gold' : era === 'today' ? 'noon' : (o.sky || 'dawn'), t, { sun: era === 'today' ? null : [980, 250] });
@@ -58,7 +62,7 @@
     if (era === 'medieval') for (const [rx, ry, rr] of [[560, 640, 26], [990, 650, 34], [1150, 700, 22], [420, 700, 30], [700, 712, 18]]) { P.rock(ctx, rx, ry, rr, '#ddd2bc'); }
     // the arch
     const buried = era === 'medieval' ? 1 : 0, ab = 600; P.arch(ctx, 300, ab, 260, 300, { col: era === 'ancient' ? '#efe6d4' : '#d8c8a6' });
-    if (buried) { ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.moveTo(100, ab + 10); ctx.quadraticCurveTo(160, ab - 120, 300, ab - 118); ctx.quadraticCurveTo(440, ab - 122, 500, ab + 10); ctx.closePath(); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); ctx.restore(); hut(ctx, 130, ab - 70, .62); if (!o.noLaundry) laundry(ctx, 196, 420, 330, 404, t); }
+    if (buried) { ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.moveTo(100, ab + 10); ctx.quadraticCurveTo(160, ab - 120, 300, ab - 118); ctx.quadraticCurveTo(440, ab - 122, 500, ab + 10); ctx.closePath(); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); ctx.restore(); hut(ctx, 130, ab - 70, .62); }
     // the Column of Phocas
     if (era === 'medieval') { P.column(ctx, 640, 520, 30, 120, {}); ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.ellipse(640, 522, 60, 14, 0, 0, 7); ctx.fill(); ctx.restore(); }
     else { ink(ctx, '#e0d4bc', c => c.rect(600, 520, 80, 40), 4); P.column(ctx, 640, 522, 30, 210, {}); }
@@ -73,6 +77,21 @@
 
   // dark foliage framing the bottom corners (the reference's foreground depth)
   function framing(ctx, t, side = 0) { ctx.save(); ctx.filter = 'blur(1.5px)'; if (side <= 0) { P.bush(ctx, -30, 740, 150, { col: '#55702e', seed: 1 }); P.bush(ctx, 110, 790, 120, { col: '#4c6628', seed: 4 }); } if (side >= 0) { P.bush(ctx, 1320, 750, 160, { col: '#55702e', seed: 2 }); P.bush(ctx, 1180, 800, 110, { col: '#4c6628', seed: 7 }); } ctx.restore(); }
+  // ---------- the user's painted plates (assets/img/plates) ----------
+  function plateShot(key, o = {}) { return function plate(ctx, lt, dur, t) { const im = T.IMG[key]; ctx.save(); P.camPush(ctx, lt, dur, o.z0 ?? 1.02, o.z1 ?? 1.08, o.fx ?? 640, o.fy ?? 360, o.pan || 0);
+      if (im) { const sc = Math.max(W / im.width, H / im.height) * 1.1; ctx.drawImage(im, 640 - im.width * sc / 2, 360 - im.height * sc / 2, im.width * sc, im.height * sc); }
+      ctx.restore();
+      // drifting mist low over the ground, and dust motes in the light
+      ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = o.mist ?? .18; ctx.fillStyle = '#fff4dc'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 14) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, (o.mistY ?? 560) + (i % 2) * 30, 260, 26, 0, 0, 7); ctx.fill(); } ctx.restore();
+      ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 28; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H, a = .35 + .35 * Math.sin(t * 1.7 + i); ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, 7); ctx.fill(); } ctx.restore();
+      if (o.extra) o.extra(ctx, lt, dur, t); }; }
+  const pGoats = plateShot('goats', { z0: 1.0, z1: 1.06, pan: 60, mistY: 520 });
+  const pColumn = plateShot('column', { z0: 1.0, z1: 1.1, fx: 620, fy: 420, mistY: 600, extra: (ctx, lt, dur, t) => { if (since(t, 'finger') > -.3) P.caption(ctx, '"like a giant\'s finger"', since(t, 'finger') + .3, { size: 26, x: 70, y: 120 }); } });
+  const pLaundry = plateShot('laundry', { z0: 1.06, z1: 1.0, fx: 700, fy: 400, mist: .1 });
+  const pCart = plateShot('cart', { z0: 1.0, z1: 1.07, fx: 560, fy: 420, pan: -50, mistY: 520 });
+  const pWall = plateShot('wall', { z0: 1.06, z1: 1.0, fx: 560, fy: 460, mist: .08, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.building) / .9); if (k > 0 && k < 1) { for (let i = 0; i < 12; i++) { const a = i * .55, r = 30 + k * 150; ctx.fillStyle = `rgba(232,220,196,${.75 * (1 - k)})`; ctx.beginPath(); ctx.arc(860 + Math.cos(a) * r, 690 + Math.sin(a) * r * .45 - k * 30, 16 + (i % 3) * 8, 0, 7); ctx.fill(); } }
+    if (since(t, 'thousand') > 0) P.caption(ctx, '1,000+ years old', since(t, 'thousand'), { size: 26, x: 1210, y: 120, align: 'right' }); } });
+  const pCow = plateShot('cowClose', { z0: .91, z1: .95, fx: 640, fy: 380, mistY: 600 });
   // ---------- shots ----------
   function s1(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 380); forum(ctx, t, 'medieval'); P.grassFG(ctx, t, -40, 1320, 740, 90, '#55702e'); framing(ctx, t); ctx.restore(); P.shafts(ctx, 1100, -100, .12); P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }); }
   function boots(ctx, lt, dur, t) { // you, ankle-deep
@@ -129,8 +148,8 @@
     if (since(t, 'temples') > 0) for (const [x, y] of [[880, 300], [180, 125], [1180, 225]]) { const k = clamp((since(t, 'temples') - x / 3000) / .7); if (k > 0 && k < 1) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; T.glow(ctx, x, y, 60 * Math.sin(k * Math.PI), 'rgba(255,240,180,.9)'); ctx.restore(); } }
     P.caption(ctx, 'Same place · around AD 100', since(t, 'same') + .2, { size: 28 }); }
   function senators(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 400);
-    ctx.save(); ctx.filter = 'blur(3px)'; ctx.translate(0, 120); forum(ctx, t, 'ancient', { empty: true }); ctx.restore();
-    for (let i = 0; i < 9; i++) { const c = CROWD[i % 6], x = 80 + i * 150 + Math.sin(t * 1.5 + i) * 10; chibi(ctx, x, 600, .5, t, Object.assign({ seed: i + 20, eyes: i % 3 ? 'side' : 'half', look: i % 2 ? 1 : -1 }, c)); }
+    ctx.save(); ctx.filter = 'blur(3px)'; forum(ctx, t, 'ancient', { empty: true }); ctx.restore();
+    for (let i = 0; i < 7; i++) { const c = CROWD[i % 6], x = 120 + i * 175 + Math.sin(t * 1.5 + i) * 10; chibi(ctx, x, 600, .5, t, Object.assign({ seed: i + 20, eyes: i % 3 ? 'side' : 'half', look: i % 2 ? 1 : -1 }, c)); }
     const sx = lerp(1320, -80, clamp(lt / (dur + 1))); chibi(ctx, sx, 690, .72, t, Object.assign({}, SENATOR, { walk: true, dir: -1, eyes: 'half', mouth: 'flat', brow: 'angry' }));
     for (let i = 0; i < 6; i++) { const c = CROWD[(i + 2) % 6], x = 40 + i * 240 + Math.sin(t * 2 + i) * 14; chibi(ctx, x, 800, .62, t, Object.assign({ seed: i + 40, eyes: Math.abs(x - sx) < 160 ? 'wide' : 'half', look: x > sx ? -1 : 1, mouth: Math.abs(x - sx) < 160 ? 'o' : 'flat' }, c)); }
     ctx.restore(); P.caption(ctx, 'senators in white wool', since(t, 'senators') + .3, { size: 24, x: 60, y: 90 }); }
@@ -179,9 +198,11 @@
     if (since(t, 'didnt2') > -.1) P.caption(ctx, '…and didn\'t.', since(t, 'didnt2') + .1, { size: 34, x: 640, y: 530, align: 'center', col: '#f6c945' }); }
 
   // every frame: paper grain + a soft vignette (the reference's painted finish)
-  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .32); };
-  const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(goatsShot), .4], [A.over - .2, fin(finger), .5], [A.somebody - .2, fin(laundryShot), .5],
-    [A.man - .2, fin(cartShot), .5], [A.prying - .3, fin(prying), .4], [A.locals - .2, fin(cowClose), .4], [A.hold - .25, fin(holdShot), .5],
+  function atmos(ctx, t) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(20px)'; ctx.globalAlpha = .16; ctx.fillStyle = '#fff2d6'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 12) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, 470 + (i % 2) * 40, 280, 24, 0, 0, 7); ctx.fill(); } ctx.restore();
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 22; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.3 + .3 * Math.sin(t * 1.7 + i)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (i % 3), 0, 7); ctx.fill(); } ctx.restore(); }
+  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { atmos(ctx, t); P.shafts(ctx, 1150, -150, .1, 4); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .32); };
+  const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(pGoats), .4], [A.over - .2, fin(pColumn), .5], [A.somebody - .2, fin(pLaundry), .5],
+    [A.man - .2, fin(pCart), .5], [A.prying - .3, fin(pWall), .4], [A.locals - .2, fin(pCow), .4], [A.hold - .25, fin(holdShot), .5],
     [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(cityView), .6],
     [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin((c, l, d, t) => ruinVignette(c, l, d, t, 'babylon')), .3],
     [A.carthage - .1, fin((c, l, d, t) => ruinVignette(c, l, d, t, 'carthage')), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(today), .7], [A.story - .3, fin(title), .8]];
@@ -194,5 +215,6 @@
     { t: A.still, type: 'swell', gain: .4 }, { t: A.five, type: 'clang', gain: .25 }, { t: A.didnt2, type: 'thud', gain: .45 },
   ];
   const moods = [{ t: 0, mood: 'still' }, { t: A.rewind - .2, mood: 'silence' }, { t: A.same - .1, mood: 'under' }, { t: A.so - .2, mood: 'mystery' }, { t: A.still - .3, mood: 'still' }];
-  G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-coldopen.mp3', shots, sfx, moods, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
+  G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-coldopen.mp3', shots, sfx, moods,
+    images: { goats: 'assets/img/plates/goats.jpg', column: 'assets/img/plates/column.jpg', laundry: 'assets/img/plates/laundry.jpg', cart: 'assets/img/plates/cart.jpg', wall: 'assets/img/plates/prying-wall.jpg', cowClose: 'assets/img/plates/cow-closeup.jpg' }, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
 })(window);

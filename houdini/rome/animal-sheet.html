@@ -1,0 +1,11 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Animal sheet</title></head><body style="margin:0;background:#111">
+<canvas id="c" width="1600" height="900"></canvas>
+<script src="../js/toon.js"></script><script src="js/paint.js"></script><script src="js/animals.js"></script>
+<script>
+const P = Paint, ctx = document.getElementById('c').getContext('2d');
+function draw(t) { ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#b8c88a'; ctx.fillRect(0, 0, 1600, 900);
+  P.cow(ctx, 300, 380, 1, t, {}); P.cow(ctx, 800, 380, 1, t, { graze: true, flip: true }); P.cow(ctx, 1250, 420, .7, t, { unimpressed: true });
+  P.goat(ctx, 200, 760, 1.6, t, { graze: false }); P.goat(ctx, 600, 760, 1.6, t, { graze: true }); P.goat(ctx, 1000, 760, 1.6, t, { flip: true, graze: false });
+  ctx.drawImage(REF, 300, 380, 400, 180, 1180, 560, 400, 180); }
+const REF = new Image(); REF.onload = () => { draw(0.3); window.READY = true; window.draw = draw; }; REF.src = 'assets/clips/cowfield-cart-crowd/f010.jpg';
+</script></body></html>

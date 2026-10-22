@@ -14,14 +14,16 @@
   const k01 = (t, k, d = .4) => clamp(since(t, k) / d);
 
   // cast
-  const YOU = { robe: '#7d5c40', hood: '#6a4a32', hair: '#5a3a24', hairStyle: 'short', seed: 3 };
-  const WOMAN = { robe: '#9fb4c6', robeSh: '#6a7e94', hood: '#efe6d2', hairStyle: 'long', hair: '#4a3020', seed: 5 };
-  const MAN = { robe: '#8a6a4c', hair: '#3a2a1a', hairStyle: 'short', beard: true, belt: '#5a3a24', seed: 7 };
-  const SENATOR = { robe: '#f4efe4', toga: '#fbf8ef', trim: '#7a2a62', hair: '#8a8a84', hairStyle: 'short', seed: 9 };
-  const CROWD = [{ robe: '#c87a4a', hair: '#2a1a14', hairStyle: 'curly' }, { robe: '#6a8aa8', hair: '#5a3a24', hairStyle: 'short' }, { robe: '#d8c49a', hair: '#1a1410', hairStyle: 'bun' },
-    { robe: '#8aa06a', hair: '#7a5a3a', hairStyle: 'short', beard: true }, { robe: '#b86a6a', hair: '#2a1a14', hairStyle: 'long' }, { robe: '#e8dcc0', hair: '#4a3020', hairStyle: 'curly' }];
-  const TOUR = [{ robe: '#3a6ab8', hair: '#d8b878', hairStyle: 'short' }, { robe: '#e84a6a', hair: '#2a1a14', hairStyle: 'long' }, { robe: '#f6c945', hair: '#5a3a24', hairStyle: 'bun' },
-    { robe: '#3a8a5a', hair: '#1a1410', hairStyle: 'short' }, { robe: '#f4efe6', hair: '#8a5a34', hairStyle: 'curly' }, { robe: '#7a4a8a', hair: '#3a2a20', hairStyle: 'short' }];
+  // the cast, all in the style of the user's clip monk (js/monk.js). The monk is the one main character: "you" in the 1300s and the
+  // man hauling the stone are both him.
+  const YOU = { kind: 'monk', seed: 3 };
+  const WOMAN = { kind: 'woman', robe: '#8fa4b8', scarf: '#efe6d2', hairStyle: 'long', hair: '#4a3020', seed: 5 };
+  const MAN = { kind: 'monk', seed: 3 };
+  const SENATOR = { kind: 'toga', robe: '#f4efe4', trim: '#7a2a62', hair: '#8a8a84', hairStyle: 'short', seed: 9 };
+  const CROWD = [{ kind: 'tunic', robe: '#c87a4a', hair: '#2a1a14', hairStyle: 'curly' }, { kind: 'tunic', robe: '#6a8aa8', hair: '#5a3a24', hairStyle: 'short', beard: true }, { kind: 'stola', robe: '#d8c49a', cloth2: '#b8604a', hair: '#1a1410', hairStyle: 'bun' },
+    { kind: 'tunic', robe: '#8aa06a', hair: '#7a5a3a', hairStyle: 'short', beard: true }, { kind: 'stola', robe: '#b86a6a', cloth2: '#efe0c0', hair: '#2a1a14', hairStyle: 'long' }, { kind: 'toga', robe: '#efe8da', hair: '#4a3020', hairStyle: 'curly' }];
+  const TOUR = [{ kind: 'tourist', robe: '#3a6ab8', hair: '#d8b878', hairStyle: 'short', cap: '#e84a3a' }, { kind: 'tourist', robe: '#e84a6a', cloth2: '#3a4a6a', hair: '#2a1a14', hairStyle: 'long', fem: true }, { kind: 'tourist', robe: '#f6c945', cloth2: '#5a6a7a', hair: '#5a3a24', hairStyle: 'bun', fem: true },
+    { kind: 'tourist', robe: '#3a8a5a', hair: '#1a1410', hairStyle: 'short', pack: '#3a3a40' }, { kind: 'tourist', robe: '#f4efe6', cloth2: '#8a6a4a', hair: '#8a5a34', hairStyle: 'curly', cap: '#2a5a8a' }, { kind: 'tourist', robe: '#7a4a8a', hair: '#3a2a20', hairStyle: 'short', beard: true }];
   const phone = (ctx, x, y) => { ink(ctx, '#2a2a30', c => c.rect(x - 8, y - 30, 16, 26), 3); ctx.fillStyle = '#9ad0f0'; ctx.fillRect(x - 5, y - 27, 10, 18); };
   const crowbar = (ctx, x, y) => { ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 11; ctx.beginPath(); ctx.moveTo(x - 10, y + 10); ctx.lineTo(x + 120, y - 70); ctx.stroke(); ctx.strokeStyle = '#6a6a72'; ctx.lineWidth = 6; ctx.stroke(); ctx.restore(); };
 
@@ -259,7 +261,7 @@
     ctx.restore(); P.caption(ctx, 'senators in white wool', since(t, 'senators') + .3, { size: 24, x: 60, y: 90 }); }
   function underFeet(ctx, lt, dur, t) { const tilt = ease.inOut(clamp(lt / 1.4)); ctx.save(); ctx.translate(0, -tilt * 300);
     P.sky(ctx, 'gold', t, { y1: 420 }); P.hills(ctx, 380, '#7a8a6a', '#f6e4b4', .5); paving(ctx, 420);
-    { const f = 150 + Math.min(26, Math.floor(lt * 6)), im = T.IMG['cA' + f]; if (im) ctx.drawImage(im, 0, 0, 1280, 600, -40, 482 - 640, 1360, 640); } // the AD 100 Forum street above, from the same clip
+    for (let i = 0; i < 7; i++) { const c = CROWD[i % 6]; chibi(ctx, 100 + i * 180, 480, .32, t, Object.assign({ seed: i, walk: true, dir: i % 2 ? 1 : -1 }, c)); }
     const g = ctx.createLinearGradient(0, 480, 0, 1100); g.addColorStop(0, '#8a6a48'); g.addColorStop(1, '#5a4030'); ctx.fillStyle = g; ctx.fillRect(-100, 480, 1500, 700); ctx.strokeStyle = INK; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(-100, 482); ctx.lineTo(1400, 482); ctx.stroke();
     for (let i = 0; i < 30; i++) { ctx.fillStyle = 'rgba(60,40,20,.35)'; ctx.beginPath(); ctx.ellipse((i * 173) % 1300, 520 + (i * 61) % 520, 14, 8, i, 0, 7); ctx.fill(); }
     // soil strata, buried stones and roots
@@ -323,6 +325,7 @@
     const L = [['its empire', 'empire'], ['its emperors', 'emperors'], ['its water', 'water2'], ['almost all its people', 'people']]; for (let i = 0; i < 4; i++) { const k = since(t, L[i][1]) + .1; if (k > 0) P.caption(ctx, 'lost ' + L[i][0], k, { size: 28, x: 70, y: 110 + i * 54, a: i === 3 || since(t, L[i + 1][1]) < 0 ? 1 : .55 }); } }
   function today(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.05, 1.0, 640, 380); forum(ctx, t, 'today'); ctx.restore();
     P.caption(ctx, 'still here', since(t, 'still') + .1, { size: 32 }); if (since(t, 'capital') > 0) P.caption(ctx, 'still a capital · still full of people', since(t, 'capital'), { size: 24, y: 690 }); P.caption(ctx, 'today', since(t, 'today'), { size: 28, x: 1220, y: 90, align: 'right' }); }
+  function title(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.08, 1.0, 640, 380); forum(ctx, t, 'medieval', { sky: 'gold', empty: true, noLaundry: true }); ctx.restore(); P.grade(ctx, '#2a1810', .25); titleText(ctx, lt, t); }
   function titleText(ctx, lt, t) { const k = clamp((lt - .3) / 1.2); ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 120px "Liberation Serif", serif'; ctx.lineJoin = 'round'; ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(30,15,10,.85)'; ctx.strokeText('ROME', 640, 280); ctx.fillStyle = '#f6e2b0'; ctx.fillText('ROME', 640, 280);
     ctx.font = '700 30px "Liberation Serif", serif'; ctx.lineWidth = 7; ctx.strokeText('the city that should have died at least five times', 640, 370); ctx.fillStyle = '#fbf0d8'; ctx.fillText('the city that should have died at least five times', 640, 370); ctx.restore();
     for (let i = 0; i < 5; i++) { const kk = clamp((since(t, 'five') - i * .18) / .3); if (kk <= 0) continue; ctx.save(); ctx.translate(480 + i * 80, 450); ctx.scale(kk, kk); ink(ctx, '#a8322a', c => c.arc(0, 0, 22, 0, 7), 4); ctx.fillStyle = '#f6e2b0'; ctx.font = '700 22px "Liberation Serif", serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(['I', 'II', 'III', 'IV', 'V'][i], 0, 1); ctx.restore(); }
@@ -334,11 +337,11 @@
   function atmos(ctx, t) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = 'blur(20px)'; ctx.globalAlpha = .16; ctx.fillStyle = '#fff2d6'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 12) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, 470 + (i % 2) * 40, 280, 24, 0, 0, 7); ctx.fill(); } ctx.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 22; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H; ctx.fillStyle = `rgba(255,236,190,${.3 + .3 * Math.sin(t * 1.7 + i)})`; ctx.beginPath(); ctx.arc(x, y, 1.5 + (i % 3), 0, 7); ctx.fill(); } ctx.restore(); }
   const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .12, bloom: .2, tex: .15 }); P.grade(ctx, '#c86a30', .14, 'overlay'); } P.grade(ctx, '#ffb070', .14, 'soft-light'); P.grain(ctx, t, .05); P.vignette(ctx, .42); };
-  const cut = [[0, fin(cPasture), 0], [A.goats - .3, fin(cGoats), .4], [A.over - .2, fin(cColumn), .5], [A.somebody - .2, fin(cHouse), .5],
-    [A.man - .2, fin(cCart), .5], [A.prying - .3, fin(cPry), 0], [A.locals - .2, fin(cField), .5], [A.rewind - .15, fin(cRewind), .2],
-    [A.same - .15, fin(cAD100), .3], [A.senators - .2, fin(cCrowd), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
-    [A.so + 1.3, fin(cBetween), 1.8], [A.stranger - .2, fin(pWhy), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
-    [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(cLost), .5], [A.still - .3, fin(cToday), .7], [A.story - .3, fin(cTitle), .8]];
+  const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(goatsShot), .4], [A.over - .2, fin(finger), .5], [A.somebody - .2, fin(laundryShot), .5],
+    [A.man - .2, fin(cartShot), .5], [A.prying - .3, fin(prying), .4], [A.locals - .2, fin(cowClose), .4], [A.hold - .25, fin(holdShot), .5],
+    [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
+    [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
+    [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(today), .7], [A.story - .3, fin(title), .8]];
   const shots = P.cutList(cut, A.end);
   const sfx = [
     { t: .2, type: 'wind', gain: .35 }, { t: A.pasture, type: 'clang', gain: .18 }, { t: A.mud, type: 'splash', gain: .3 }, { t: A.goats + .3, type: 'click', gain: .2 },
@@ -349,5 +352,5 @@
   ];
   const moods = [{ t: 0, mood: 'still' }, { t: A.rewind - .2, mood: 'silence' }, { t: A.same - .1, mood: 'under' }, { t: A.so - .2, mood: 'mystery' }, { t: A.still - .3, mood: 'still' }];
   G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-coldopen.mp3', shots, sfx, moods,
-    images: Object.assign({ column: 'assets/img/plates/column.jpg', city: 'assets/img/plates/city.jpg' }, ...['cA', 'cB'].map(k => Object.fromEntries(Array.from({ length: 240 }, (_, i) => [k + (i + 1), `assets/clips/${k === 'cA' ? 'forum-time-transition' : 'cowfield-cart-crowd'}/f${String(i + 1).padStart(3, '0')}.jpg`])))), fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
+    images: { city: 'assets/img/plates/city.jpg' }, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
 })(window);

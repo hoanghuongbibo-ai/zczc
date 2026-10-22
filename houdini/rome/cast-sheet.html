@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Cast sheet</title></head><body style="margin:0;background:#111">
+<canvas id="c" width="1600" height="900"></canvas>
+<script src="../js/toon.js"></script><script src="js/paint.js"></script><script src="js/monk.js"></script>
+<script>
+const P = Paint, ctx = document.getElementById('c').getContext('2d');
+function draw(t) { ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#efe2c8'; ctx.fillRect(0, 0, 1600, 900); ctx.fillStyle = '#c9b08a'; ctx.fillRect(0, 430, 1600, 30); ctx.fillRect(0, 860, 1600, 40);
+  const row1 = [['monk walk', {kind:'monk', pose:'walk'}], ['monk pry', {kind:'monk', pose:'pry', brow:'angry'}], ['monk chin', {kind:'monk', pose:'chin', eyes:'side', brow:'sad'}], ['peasant woman', {kind:'woman', scarf:'#efe6d2', cloth:'#8fa4b8', hairStyle:'long', hair:'#4a3020', pose:'hold', seed:5, mouth:'smile'}], ['working man', {kind:'tunic', hair:'#2a1a14', beard:true, pose:'talk', talk:true, seed:7}], ['senator', {kind:'toga', trim:'#7a2a62', hair:'#8a8a84', hairStyle:'short', pose:'point', seed:9, brow:'angry'}], ['Roman woman', {kind:'stola', cloth:'#c86a5a', cloth2:'#efe0c0', hairStyle:'bun', hair:'#1a1410', pose:'stand', mouth:'smile', seed:2}]];
+  const row2 = [['tourist photo', {kind:'tourist', cloth:'#3a6ab8', cap:'#e84a3a', hair:'#d8b878', pose:'photo', seed:1}], ['tourist wave', {kind:'tourist', cloth:'#f6c945', cloth2:'#3a4a6a', hairStyle:'long', hair:'#2a1a14', pose:'wave', eyes:'happy', mouth:'grin', seed:4, fem:true}], ['tourist walk', {kind:'tourist', cloth:'#3a8a5a', hairStyle:'curly', hair:'#1a1410', pose:'walk', seed:2, face:1}], ['commoner', {kind:'tunic', cloth:'#c87a4a', hairStyle:'curly', hair:'#2a1a14', pose:'up', mouth:'o', eyes:'wide', seed:8}], ['monk haul', {kind:'monk', pose:'haul', brow:'angry'}], ['monk stand', {kind:'monk', pose:'stand', mouth:'smile'}]];
+  row1.forEach(([n, o], i) => { P.person(ctx, 110 + i * 225, 430, .78, t, o); ctx.fillStyle = '#333'; ctx.font = '700 20px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(n, 110 + i * 225, 455); });
+  row2.forEach(([n, o], i) => { P.person(ctx, 110 + i * 225, 860, .78, t, o); ctx.fillStyle = '#333'; ctx.font = '700 20px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(n, 110 + i * 225, 885); });
+  ctx.drawImage(REF, 180, 120, 340, 600, 1390, 470, 200, 353); }
+const REF = new Image(); REF.onload = () => { draw(0.3); window.READY = true; window.draw = draw; }; REF.src = 'assets/clips/cowfield-cart-crowd/f110.jpg';
+</script></body></html>

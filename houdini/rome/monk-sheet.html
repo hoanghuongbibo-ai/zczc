@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Monk sheet</title></head><body style="margin:0;background:#111">
+<canvas id="c" width="1600" height="900"></canvas>
+<script src="../js/toon.js"></script><script src="js/paint.js"></script><script src="js/monk.js"></script>
+<script>
+const P = Paint, ctx = document.getElementById('c').getContext('2d');
+function draw(t) { ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle = '#efe2c8'; ctx.fillRect(0, 0, 1600, 900);
+  ctx.fillStyle = '#c9b08a'; ctx.fillRect(0, 760, 1600, 140);
+  const poses = [['stand','calm',0],['walk','calm',.0],['walk','calm',.3],['haul','effort',.15],['pry','effort',0],['point','worried',0]];
+  poses.forEach(([pose, look, dt], i) => { P.monk(ctx, 130 + i * 230, 760, 1.15, t + dt, { pose, look }); ctx.fillStyle = '#333'; ctx.font = '700 26px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(pose + ' · ' + look, 130 + i * 230, 820); });
+  ctx.drawImage(REF, 180, 120, 340, 600, 1310, 20, 270, 476); }
+const REF = new Image(); REF.onload = () => { draw(0); window.READY = true; window.draw = draw; }; REF.src = 'assets/clips/cowfield-cart-crowd/f110.jpg';
+</script></body></html>

@@ -205,7 +205,7 @@
   function finger(ctx, lt, dur, t) { const k = ease.inOut(clamp(lt / dur)); ctx.save(); ctx.translate(0, lerp(-60, 80, k));
     P.sky(ctx, 'dawn', t, { sun: [1000, 300], y1: 560 }); P.hills(ctx, 520, '#7a8a6a', '#efdcae', .6); mudGround(ctx, t, 560);
     P.column(ctx, 640, 600, 96, 420, { broken: false }); ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.ellipse(640, 602, 170, 30, 0, 0, 7); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); ctx.restore();
-    goat(ctx, 860, 660, .9, t, { flip: true }); P.grassFG(ctx, t, -40, 1320, 820, 150, '#4f6a2a', { blur: 2 }); ctx.restore();
+    goat(ctx, 860, 660, .9, t, { flip: true }); P.grassFG(ctx, t, -40, 1320, 820, 150, '#4f6a2a'); ctx.restore();
     if (since(t, 'finger') > -.3) P.caption(ctx, '"like a giant\'s finger"', since(t, 'finger') + .3, { size: 26, x: 70, y: 120 }); }
   function laundryShot(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 560, 400);
     P.sky(ctx, 'dawn', t, { sun: [1150, 220], y1: 520 }); P.hills(ctx, 470, '#7a8a6a', '#efdcae', .6); mudGround(ctx, t, 520);

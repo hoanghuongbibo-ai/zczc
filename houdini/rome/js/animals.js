@@ -12,7 +12,8 @@
     cel(ctx, c => { c.moveTo(x0 - w, y0); c.quadraticCurveTo(x0 - w, ky - 20, kneeX - kw, ky); c.lineTo(x1 - fw, -12); c.lineTo(x1 + fw, -12); c.lineTo(kneeX + kw, ky); c.quadraticCurveTo(x0 + w, ky - 20, x0 + w, y0); c.closePath(); }, col, { shade: mix(col, '#5a4a40', .3), dx: w * .35, dy: 0, lw: 4 });
     ink(ctx, hoof, c => { c.moveTo(x1 - fw - 1, -13); c.lineTo(x1 + fw + 1, -13); c.lineTo(x1 + fw + 3, 0); c.lineTo(x1 - fw - 4, 0); c.closePath(); }, 3.5); }
   function cow(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
-    const ph = x * .13, r = rnd(x * 7 + 11), W = o.col || '#f6f2ea', SH = mix(W, '#7a6a64', .3), SP = o.spot || '#5e3a26', step = o.walk ? Math.sin(t * 4 + ph) * 12 : 0;
+    const ph = (o.seed ?? y) * .13, r = rnd(o.seed ?? Math.round(y * 7 + s * 997 + 11)), // patches seeded by the cow, not its x: walking must not reshuffle them
+      W = o.col || '#f6f2ea', SH = mix(W, '#7a6a64', .3), SP = o.spot || '#5e3a26', step = o.walk ? Math.sin(t * 4 + ph) * 12 : 0;
     const chew = Math.sin(t * 5 + ph), blink = ((t + ph) % 4.3) < .13, tailSw = Math.sin(t * 1.7 + ph) * 12;
     shadow(ctx, 420, .4);
     // far legs (darker)
@@ -52,7 +53,7 @@
       if (o.unimpressed) { ink(ctx, SP, c => { c.moveTo(ex - 9, ey - 9); c.lineTo(ex + 9, ey - 9); c.lineTo(ex + 9, ey); c.lineTo(ex - 9, ey); c.closePath(); }, 0); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(ex - 9, ey); ctx.lineTo(ex + 9, ey); ctx.stroke(); } }
     ctx.restore(); ctx.restore(); }
   function goat(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
-    const ph = x * .21, W = o.col || '#f2eee6', SH = mix(W, '#7a6a5a', .3), nib = o.graze === false ? 0 : Math.max(0, Math.sin(t * 2.2 + ph)), g = o.graze !== false && (o.graze || (Math.floor(x) % 3 !== 0));
+    const ph = (o.seed ?? y) * .21, W = o.col || '#f2eee6', SH = mix(W, '#7a6a5a', .3), nib = o.graze === false ? 0 : Math.max(0, Math.sin(t * 2.2 + ph)), g = o.graze !== false && (o.graze || (Math.floor(o.seed ?? y) % 3 !== 0));
     shadow(ctx, 170, .38);
     const lg = (x0, x1, col) => { ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 15; ctx.beginPath(); ctx.moveTo(x0, -64); ctx.quadraticCurveTo(x0 + (x1 - x0) * .5 + 3, -30, x1, -6); ctx.stroke(); ctx.strokeStyle = col; ctx.lineWidth = 9.5; ctx.stroke(); ctx.restore(); ink(ctx, '#3a3030', c => c.rect(x1 - 6, -8, 12, 8), 2.5); };
     lg(-40, -44, SH); lg(48, 54, SH);

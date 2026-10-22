@@ -93,7 +93,7 @@
   const pCart = plateShot('cart', { z0: 1.0, z1: 1.07, fx: 610, fy: 380, pan: -50, mistY: 520 });
   const pWall = plateShot('wall', { z0: 1.06, z1: 1.0, fx: 600, fy: 385, mist: .08, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.building) / .9); if (k > 0 && k < 1) { for (let i = 0; i < 12; i++) { const a = i * .55, r = 30 + k * 150; ctx.fillStyle = `rgba(232,220,196,${.75 * (1 - k)})`; ctx.beginPath(); ctx.arc(860 + Math.cos(a) * r, 690 + Math.sin(a) * r * .45 - k * 30, 16 + (i % 3) * 8, 0, 7); ctx.fill(); } }
     if (since(t, 'thousand') > 0) P.caption(ctx, '1,000+ years old', since(t, 'thousand'), { size: 26, x: 1210, y: 120, align: 'right' }); } });
-  const pCity = plateShot('city', { cover: 1.0, z0: 1.0, z1: 1.04, fx: 660, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, x: 1220, y: 60, align: 'right' }); } });
+  const pCity = plateShot('city', { cover: 1.02, z0: 1.0, z1: 1.04, fx: 640, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, x: 1220, y: 60, align: 'right' }); } });
   const pCow = plateShot('cowClose', { cover: 1.0, z0: 1.0, z1: 1.03, fx: 640, fy: 360, mistY: 600 });
   // ---------- shots ----------
   function s1(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 380); forum(ctx, t, 'medieval'); P.grassFG(ctx, t, -40, 1320, 740, 90, '#55702e'); framing(ctx, t); ctx.restore(); P.shafts(ctx, 1100, -100, .12); P.caption(ctx, 'Rome, the mid-1300s', lt - .6, { size: 28, sub: 'the old Forum' }); }

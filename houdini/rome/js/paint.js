@@ -50,7 +50,22 @@
   // a far silhouette band (hills / distant city) faded into the sky colour
   function far(ctx, y, col, haze, fn, a = .55) { ctx.save(); ctx.fillStyle = mix(col, haze, a); ctx.beginPath(); fn(ctx, y); ctx.fill(); ctx.restore(); }
   function treeLine(ctx, y, haze, a = .45, seed = 0, x0 = -100, x1 = 1400) { ctx.save(); ctx.globalAlpha = 1; ctx.fillStyle = mix('#4a6a3a', haze, a); for (let x = x0; x < x1; x += 34 + ((x * 7 + seed) % 23)) { const h = 26 + ((x * 13 + seed) % 22), yy = y - 6 * Math.sin(x * .007 + seed); if ((x + seed) % 5 === 0) { ctx.beginPath(); ctx.ellipse(x, yy - h * .9, 7, h * .9, 0, 0, 7); ctx.fill(); } else { ctx.beginPath(); ctx.ellipse(x, yy - h * .45, h * .6, h * .45, 0, 0, 7); ctx.fill(); } } ctx.restore(); }
-  function hills(ctx, y, col, haze, a = .5, seed = 0) { far(ctx, y, col, haze, (c, yy) => { c.moveTo(-800, yy + 200); c.lineTo(-800, yy); for (let x = -800; x <= 2100; x += 160) c.quadraticCurveTo(x + 80, yy - 40 - 30 * Math.sin(x * .007 + seed), x + 160, yy - 6 * Math.cos(x * .01 + seed)); c.lineTo(2100, yy + 200); c.closePath(); }, a); }
+  function hills(ctx, y, col, haze, a = .5, seed = 0) { const hy = x => y - 40 * Math.max(0, Math.sin(x * .0055 + seed)) - 18 * Math.sin(x * .013 + seed * 2) - 6;
+    far(ctx, y, col, haze, (c, yy) => { c.moveTo(-800, yy + 260); c.lineTo(-800, hy(-800)); for (let x = -800; x <= 2100; x += 40) c.lineTo(x, hy(x)); c.lineTo(2100, yy + 260); c.closePath(); }, a);
+    // meadow bands and flora, fading with distance
+    let sd = Math.abs(Math.round(seed * 97 + y)) % 2147483646 + 1; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    ctx.save(); ctx.globalAlpha = 1 - a * .3;
+    for (let i = 0; i < 9; i++) { const x = -200 + r() * 1700, w = 80 + r() * 160; ctx.fillStyle = mix(r() < .5 ? '#a8b860' : '#7a9a48', haze, a * .8); ctx.beginPath(); ctx.ellipse(x, hy(x) + 26 + r() * 30, w, 10 + r() * 8, 0, 0, 7); ctx.fill(); }
+    for (let i = 0; i < 70; i++) { const x = -200 + r() * 1700, top = hy(x), yy = top + 6 + Math.pow(r(), 1.6) * 60, s2 = .9 + r() * .8;
+      if (r() < .22) { ctx.fillStyle = mix('#3f6a34', haze, a * .45); ctx.beginPath(); ctx.ellipse(x, yy - 12 * s2, 4 * s2, 13 * s2, 0, 0, 7); ctx.fill(); }
+      else { const g = mix(r() < .5 ? '#5f8a3a' : '#7a9a44', haze, a * .45); ctx.fillStyle = g; for (let k = 0; k < 3; k++) { ctx.beginPath(); ctx.arc(x + (k - 1) * 6 * s2, yy - 6 * s2 - (k === 1 ? 4 * s2 : 0), 7 * s2, 0, 7); ctx.fill(); } ctx.fillStyle = mix('#c8d888', haze, a * .7); ctx.beginPath(); ctx.arc(x - 2 * s2, yy - 10 * s2, 3 * s2, 0, 7); ctx.fill(); } }
+    for (let i = 0; i < 40; i++) { const x = -200 + r() * 1700, yy = hy(x) + 10 + r() * 50; ctx.fillStyle = mix(['#f0e080', '#f8f4f0', '#e8a0b0', '#c8a0e0'][i % 4], haze, a * .7); ctx.fillRect(x, yy, 2.5, 2.5); }
+    ctx.restore(); }
+  function slopeFlora(ctx, fn, pts, t) { ctx.save(); ctx.beginPath(); fn(ctx); ctx.clip();
+    for (const [x, y, k, sz] of pts) { if (k === 'c') cypress(ctx, x, y, sz, t); else if (k === 't') tree(ctx, x, y, sz, t, { col: '#86a046' }); else if (k === 'b') bush(ctx, x, y, 22 * sz, { col: '#7f9a46', inner: 2 }); else for (let i = 0; i < 9; i++) { ctx.fillStyle = ['#f0e070', '#fbf6f0', '#e890a8', '#b890e0'][i % 4]; ctx.beginPath(); ctx.arc(x + (i % 5) * 9 - 18, y + Math.floor(i / 5) * 6, 2.6, 0, 7); ctx.fill(); } }
+    ctx.restore(); }
+  // a loose flock of birds crossing the sky
+  function birds(ctx, t, n = 5, y0 = 160, x0 = 0, sp = 30) { ctx.save(); ctx.strokeStyle = '#4a3a34'; ctx.lineCap = 'round'; ctx.lineWidth = 2.5; for (let i = 0; i < n; i++) { const x = ((x0 + i * 46 + t * sp) % 1600) - 160, y = y0 + (i % 3) * 18 + Math.sin(t * .9 + i) * 8, f = Math.sin(t * 9 + i * 1.7) * 6; ctx.beginPath(); ctx.moveTo(x - 9, y - f); ctx.quadraticCurveTo(x - 4, y - 4, x, y); ctx.quadraticCurveTo(x + 4, y - 4, x + 9, y - f); ctx.stroke(); } ctx.restore(); }
   function shafts(ctx, x, y, a = .18, n = 4, ang = .5) { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < n; i++) { const g = ctx.createLinearGradient(x, y, x - 600, y + 900); g.addColorStop(0, `rgba(255,236,180,${a})`); g.addColorStop(1, 'rgba(255,236,180,0)'); ctx.fillStyle = g; ctx.beginPath(); const o = i * 150 - 200; ctx.moveTo(x + o, y); ctx.lineTo(x + o + 60, y); ctx.lineTo(x + o - 700 * ang + 160, y + 900); ctx.lineTo(x + o - 700 * ang, y + 900); ctx.fill(); } ctx.restore(); }
   // warm or cool grade over the whole frame (keeps darkness/light consistent across the frame)
   function grade(ctx, col, a, mode = 'multiply') { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalCompositeOperation = mode; ctx.globalAlpha = a; ctx.fillStyle = col; ctx.fillRect(0, 0, W, H); ctx.restore(); }
@@ -189,7 +204,7 @@
     hairBack(ctx, o, r);
     cel(ctx, c => c.arc(0, 0, r, 0, 7), SKIN, { shade: SKIN_SH, dx: dir ? -dir * 12 : 12, dy: 10 });
     beard(ctx, o, r);
-    ctx.save(); ctx.translate(dir * 18, 0); face(ctx, Object.assign({}, o, { mouth: o.beard ? (o.mouth === 'o' || o.mouth === 'grin' ? o.mouth : 'none') : o.mouth }), blink); ctx.restore();
+    ctx.save(); ctx.translate(dir * 18, 0); face(ctx, Object.assign({}, o, o.talk ? { mouth: Math.sin(t * 13 + ph) > -.2 ? 'o' : 'flat' } : {}, { mouth: o.talk ? (Math.sin(t * 13 + ph) > -.2 ? 'o' : 'flat') : o.beard ? (o.mouth === 'o' || o.mouth === 'grin' ? o.mouth : 'none') : o.mouth }), blink); ctx.restore();
     hairFront(ctx, o, r);
     ctx.restore();
     ctx.restore(); }
@@ -296,5 +311,5 @@
   // soft painted ground: blended colour patches (no hard edges), worn tracks, fine grain
   function softPatches(ctx, x0, x1, y0, y1, cols, n = 18, seed = 4) { let sd = seed; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647; ctx.save(); ctx.filter = 'blur(14px)'; for (let i = 0; i < n; i++) { const y = y0 + Math.pow(r(), .8) * (y1 - y0), k = (y - y0) / (y1 - y0), w = 60 + r() * 160 * (.5 + k); ctx.fillStyle = cols[i % cols.length]; ctx.globalAlpha = .55; ctx.beginPath(); ctx.ellipse(x0 + r() * (x1 - x0), y, w, w * (.12 + k * .1), 0, 0, 7); ctx.fill(); } ctx.restore(); }
   function track(ctx, pts, w0, w1, col = 'rgba(150,120,80,.55)') { ctx.save(); ctx.filter = 'blur(3px)'; ctx.fillStyle = col; ctx.beginPath(); const n = pts.length; for (let i = 0; i < n; i++) { const [x, y] = pts[i], w = lerp(w0, w1, i / (n - 1)); i ? ctx.lineTo(x - w, y) : ctx.moveTo(x - w, y); } for (let i = n - 1; i >= 0; i--) { const [x, y] = pts[i], w = lerp(w0, w1, i / (n - 1)); ctx.lineTo(x + w, y); } ctx.closePath(); ctx.fill(); ctx.restore(); }
-  G.Paint = { contact, footing, sideFace, softPatches, track, pine, cypress, grassField, weather, treeLine, archW, rays, bloom, texture, mist, enhance, reeds, rimClouds, INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
+  G.Paint = { slopeFlora, birds, contact, footing, sideFace, softPatches, track, pine, cypress, grassField, weather, treeLine, archW, rays, bloom, texture, mist, enhance, reeds, rimClouds, INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
 })(window);

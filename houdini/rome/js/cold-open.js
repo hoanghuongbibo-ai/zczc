@@ -25,6 +25,22 @@
   const phone = (ctx, x, y) => { ink(ctx, '#2a2a30', c => c.rect(x - 8, y - 30, 16, 26), 3); ctx.fillStyle = '#9ad0f0'; ctx.fillRect(x - 5, y - 27, 10, 18); };
   const crowbar = (ctx, x, y) => { ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 11; ctx.beginPath(); ctx.moveTo(x - 10, y + 10); ctx.lineTo(x + 120, y - 70); ctx.stroke(); ctx.strokeStyle = '#6a6a72'; ctx.lineWidth = 6; ctx.stroke(); ctx.restore(); };
 
+  // ---------- little scenes of people doing things together ----------
+  // two people talking: they face each other, take turns, gesture and nod
+  function convo(ctx, x, y, s, t, A, B, seed = 0) { const turn = Math.floor((t + seed) / 1.8) % 2;
+    chibi(ctx, x - 52 * s / .5 * .5, y, s, t, Object.assign({ seed: seed + 1, dir: 1, look: 1, talk: turn === 0, arms: turn === 0 ? 'point' : 'down', eyes: turn === 0 ? 'open' : 'happy', tilt: turn === 1 ? Math.sin(t * 4) * .06 : 0 }, A));
+    chibi(ctx, x + 52 * s / .5 * .5, y, s, t, Object.assign({ seed: seed + 2, dir: -1, look: -1, talk: turn === 1, arms: turn === 1 ? 'hips' : 'down', eyes: turn === 1 ? 'open' : 'half', tilt: turn === 0 ? Math.sin(t * 4 + 1) * .06 : 0 }, B)); }
+  const amphora = (ctx, hx, hy) => { ctx.save(); ctx.translate(hx - 6, hy - 40); ctx.rotate(-.5); cel(ctx, c => { c.moveTo(-14, -40); c.quadraticCurveTo(-30, 0, -10, 40); c.lineTo(10, 40); c.quadraticCurveTo(30, 0, 14, -40); c.closePath(); }, '#c8784a', { shade: '#8a4a2a', dx: 5, dy: 3, lw: 3.5 }); ink(ctx, '#c8784a', c => c.rect(-8, -52, 16, 14), 3); ctx.restore(); };
+  const flag = (ctx, hx, hy, t) => { ctx.save(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + 4, hy - 120); ctx.stroke(); const f = Math.sin(t * 6) * 6; ink(ctx, '#e84a3a', c => { c.moveTo(hx + 4, hy - 120); c.quadraticCurveTo(hx + 30, hy - 116 + f, hx + 54, hy - 112); c.lineTo(hx + 50, hy - 88); c.quadraticCurveTo(hx + 28, hy - 92 + f, hx + 4, hy - 94); c.closePath(); }, 3); ctx.restore(); };
+  const jug = (ctx, hx, hy) => { cel(ctx, c => { c.ellipse(hx, hy - 30, 18, 24, 0, 0, 7); }, '#b8784a', { shade: '#7a4a2a', dx: 4, dy: 3, lw: 3 }); };
+  const stick = (ctx, hx, hy) => { ctx.save(); ctx.strokeStyle = INK; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx - 70, hy + 70); ctx.stroke(); ctx.strokeStyle = '#8a6a44'; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); };
+  function stall(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); P.contact(ctx, 0, 4, 320, .45);
+    for (const d of [-1, 1]) ink(ctx, '#7a5434', c => c.rect(d * 120 - 6, -230, 12, 230), 3.5);
+    chibi(ctx, 0, -30, .62, t, Object.assign({ seed: 61, robe: '#c87a4a', hair: '#2a1a14', hairStyle: 'short', beard: true, arms: 'wave', talk: true, eyes: 'happy' }, o.vendor || {}));
+    cel(ctx, c => c.rect(-140, -110, 280, 26), '#a8784e', { shade: '#7a5434', dx: 0, dy: 8, lw: 4 }); ink(ctx, '#9a6a44', c => c.rect(-130, -84, 260, 84), 4);
+    for (let i = 0; i < 4; i++) { const bx = -100 + i * 66; ink(ctx, '#b8884a', c => c.ellipse(bx, -112, 28, 10, 0, 0, 7), 3); for (let k = 0; k < 5; k++) cel(ctx, c => c.arc(bx - 14 + k * 7, -120 - (k % 2) * 6, 8, 0, 7), ['#e8423a', '#f6a828', '#8ab040', '#c84a8a'][i], { dx: 2, dy: 2, lw: 2 }); }
+    for (let i = 0; i < 7; i++) cel(ctx, c => { c.moveTo(-150 + i * 43, -230); c.lineTo(-150 + (i + 1) * 43, -230); c.lineTo(-150 + (i + 1) * 43, -200 + Math.sin(t * 2 + i) * 2); c.quadraticCurveTo(-150 + i * 43 + 21, -190, -150 + i * 43, -200); c.closePath(); }, i % 2 ? '#f4efe2' : '#c8423a', { dx: 0, dy: 4, lw: 3 });
+    ctx.restore(); }
   // ---------- the fixed Forum shot ----------
   function mudGround(ctx, t, y) { const g = ctx.createLinearGradient(0, y, 0, 760); g.addColorStop(0, '#9a8a5a'); g.addColorStop(.3, '#86704a'); g.addColorStop(1, '#5a422c'); ctx.fillStyle = g; ctx.fillRect(-600, y, 2600, 900);
     let sd = 5; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
@@ -60,20 +76,20 @@
   const HILL_L = c => { c.moveTo(-220, 490); c.lineTo(-220, 336); c.quadraticCurveTo(60, 318, 200, 336); c.quadraticCurveTo(320, 360, 440, 490); c.closePath(); };
   const HILL_R = c => { c.moveTo(860, 490); c.quadraticCurveTo(960, 360, 1080, 340); c.quadraticCurveTo(1260, 326, 1500, 336); c.lineTo(1500, 490); c.closePath(); };
   function hillPaint(ctx, fn, haze) { cel(ctx, fn, mix('#8fa45a', haze, .22), { shade: mix('#5e7a3c', haze, .2), light: mix('#b8c878', haze, .2), dx: -10, dy: 12, lw: 4 }); ctx.save(); ctx.beginPath(); fn(ctx); ctx.clip(); P.grassField(ctx, 0, -220, 1500, 320, 500, { n: 200, seed: 21, dark: 'rgba(70,96,44,.45)', light: 'rgba(200,210,130,.45)' }); ctx.restore(); }
-  function capitoline(ctx, era, haze) { hillPaint(ctx, HILL_L, haze);
+  function capitoline(ctx, era, haze) { hillPaint(ctx, HILL_L, haze); P.slopeFlora(ctx, HILL_L, [[140, 372, 'b', .9], [90, 360, 'f'], [-30, 352, 'b', .8], [20, 366, 'f'], [150, 390, 'f']], 0);
     for (const [cx, cy, cs] of [[200, 352, .34], [262, 370, .3], [-60, 338, .36]]) P.cypress(ctx, cx, cy, cs, 0);
     if (era === 'ancient') { P.temple(ctx, 70, 334, .32, { roof: '#d8b048' }); P.footing(ctx, 70, 334, 180, 0, { earth: 'rgba(110,130,70,.6)' }); }
     else if (era === 'medieval') { ink(ctx, '#c8b090', c => c.rect(30, 270, 100, 62), 4); cel(ctx, c => { c.moveTo(20, 272); c.lineTo(80, 232); c.lineTo(140, 272); c.closePath(); }, '#a8603a', { dx: -4, dy: 4 }); ink(ctx, '#5a3a24', c => c.rect(70, 300, 20, 32), 3); }
     else { ink(ctx, '#f0ece2', c => c.rect(-20, 270, 180, 64), 4); for (let i = 0; i < 6; i++) ink(ctx, '#f8f4ea', c => c.rect(-6 + i * 28, 280, 12, 50), 2.5); } }
-  function palatine(ctx, era, haze, t) { hillPaint(ctx, HILL_R, haze);
+  function palatine(ctx, era, haze, t) { hillPaint(ctx, HILL_R, haze); P.slopeFlora(ctx, HILL_R, [[920, 460, 'b', 1.0], [1000, 420, 'f'], [1100, 440, 'b', 1.2], [1180, 410, 'f'], [1260, 450, 'b', 1.1], [1060, 470, 'f'], [1330, 420, 'f']], t);
     if (era === 'ancient') { ink(ctx, '#e4d6bc', c => c.rect(1070, 270, 260, 66), 4); for (let i = 0; i < 6; i++) ink(ctx, '#8a6a4a', c => { const x = 1086 + i * 40; c.moveTo(x, 330); c.lineTo(x, 300); c.arc(x + 12, 300, 12, Math.PI, 0); c.lineTo(x + 24, 330); c.closePath(); }, 2.5); cel(ctx, c => { c.moveTo(1058, 272); c.lineTo(1200, 236); c.lineTo(1342, 272); c.closePath(); }, '#c89a48', { dx: -4, dy: 6 }); }
     else { for (let i = 0; i < 4; i++) P.tree(ctx, 1010 + i * 90, 352 + (i % 2) * 6, .3 + (i % 3) * .04, t, { col: '#7f9a46' }); P.pine(ctx, 1380, 342, .42, t); }
     for (const [cx, cy, cs] of [[960, 410, .3], [1000, 372, .32]]) P.cypress(ctx, cx, cy, cs, t); }
   // the arch of Septimius Severus (buried to its knees in the 1300s), the Column of Phocas, the three columns of Castor & Pollux
   function forum(ctx, t, era, o = {}) { const haze = era === 'ancient' ? '#f6e4b4' : era === 'today' ? '#cfe2ee' : '#efdcae';
     P.sky(ctx, era === 'ancient' ? 'gold' : era === 'today' ? 'noon' : (o.sky || 'dawn'), t, { sun: era === 'today' ? null : [980, 250] });
-    if (era !== 'today') P.rimClouds(ctx, t, { y: 90, x0: 120 });
-    P.hills(ctx, 430, '#7a8a6a', haze, .65, 1); P.treeLine(ctx, 428, haze, .55, 3);
+    if (era !== 'today') P.rimClouds(ctx, t, { y: 90, x0: 120 }); P.birds(ctx, t, 5, 150, 200, 26);
+    P.hills(ctx, 400, '#6a7a8a', haze, .55, 5); P.hills(ctx, 430, '#7a8a6a', haze, .4, 1); P.treeLine(ctx, 428, haze, .45, 3);
     capitoline(ctx, era, haze); palatine(ctx, era, haze, t);
     const gy = 470; if (era === 'medieval') mudGround(ctx, t, gy); else if (era === 'ancient') paving(ctx, gy); else { paving(ctx, gy); ctx.fillStyle = 'rgba(140,150,90,.35)'; ctx.fillRect(-600, gy, 2600, 400); }
     // long dawn shadows, rubble and shrubs (painted density like the reference)
@@ -95,9 +111,20 @@
     if (era === 'ancient') { P.contact(ctx, 880, 562, 400, .5); P.sideFace(ctx, 880 - 260 * .62, 560 - 60 * .62, 560, 18, '#e0d4bc'); P.temple(ctx, 880, 560, .62, { n: 5, roof: '#d8b048' }); P.footing(ctx, 880, 562, 340, t, { earth: 'rgba(170,150,110,.45)' }); }
     else { for (let i = 0; i < 3; i++) P.column(ctx, 840 + i * 52, era === 'medieval' ? 540 : 580, 34, era === 'medieval' ? 150 : 290, { base: era !== 'medieval' }); ink(ctx, '#e0d4bc', c => c.rect(812, (era === 'medieval' ? 540 - 186 : 580 - 326), 160, 30), 4);
       P.footing(ctx, 892, era === 'medieval' ? 542 : 582, 200, t, era === 'medieval' ? {} : { earth: 'rgba(170,150,110,.45)' }); }
-    if (era === 'medieval' && !o.empty) { cow(ctx, 760, 640, .38, t, { graze: true }); cow(ctx, 1080, 600, .3, t, { flip: true, graze: true, spots: [[-40, -110, 30, 20]] }); goat(ctx, 520, 600, .5, t); goat(ctx, 470, 620, .45, t, { flip: true, col: '#bfae98' }); }
-    if (era === 'ancient' && !o.empty) { for (let i = 0; i < 26; i++) { const x = 60 + (i * 97) % 1220, y = 560 + ((i * 37) % 120), c = CROWD[i % 6]; chibi(ctx, x + Math.sin(t * .6 + i) * 8, y, .16 + (y - 560) / 1200, t, Object.assign({ seed: i, walk: i % 3 === 0, dir: i % 2 ? 1 : -1, toga: i % 4 === 0 ? '#fbf8ef' : null }, c)); } }
-    if (era === 'today' && !o.empty) { for (let i = 0; i < 22; i++) { const x = 40 + (i * 113) % 1240, y = 570 + ((i * 41) % 110), c = TOUR[i % 6]; chibi(ctx, x, y, .16 + (y - 560) / 1200, t, Object.assign({ seed: i, arms: i % 3 === 0 ? 'hold' : 'down', prop: i % 3 === 0 ? phone : null }, c)); } }
+    if (era === 'medieval' && !o.empty) { // a herder minding the cows, a woman fetching water
+      chibi(ctx, 905, 662, .26, t, Object.assign({}, MAN, { seed: 71, dir: -1, look: -1, arms: 'up', prop: stick, eyes: 'half' }));
+      const wx = ((t * 34) % 1700) - 200; chibi(ctx, wx, 600, .22, t, Object.assign({}, WOMAN, { seed: 72, walk: true, dir: 1, arms: 'up', prop: jug }));
+      cow(ctx, 760, 640, .38, t, { graze: true }); cow(ctx, 1080, 600, .3, t, { flip: true, graze: true, spots: [[-40, -110, 30, 20]] }); goat(ctx, 520, 600, .5, t); goat(ctx, 470, 620, .45, t, { flip: true, col: '#bfae98' }); }
+    if (era === 'ancient' && !o.empty) { // market life: a fruit stall, people chatting, a porter and passers-by going about their day
+      stall(ctx, 500, 650, .4, t);
+      convo(ctx, 190, 660, .3, t, CROWD[0], CROWD[1], 0); convo(ctx, 1010, 650, .28, t, CROWD[2], Object.assign({ toga: '#fbf8ef' }, CROWD[5]), 3); convo(ctx, 760, 708, .34, t, CROWD[3], CROWD[4], 5);
+      const px = ((t * 40) % 1700) - 200; chibi(ctx, px, 620, .22, t, Object.assign({ seed: 81, walk: true, dir: 1, arms: 'up', prop: amphora }, CROWD[3]));
+      const qx = 1450 - ((t * 30) % 1700); chibi(ctx, qx, 672, .25, t, Object.assign({ seed: 82, walk: true, dir: -1, toga: '#fbf8ef' }, CROWD[1])); }
+    if (era === 'today' && !o.empty) { // a guided tour following a flag, a selfie by the columns, two friends pointing at the arch
+      const gx = 120 + ((t * 26) % 600); chibi(ctx, gx + 120, 650, .25, t, Object.assign({ seed: 91, walk: true, dir: 1, arms: 'up', prop: flag, talk: true }, TOUR[3]));
+      for (let i = 0; i < 4; i++) chibi(ctx, gx - i * 46, 650 + (i % 2) * 10, .23, t, Object.assign({ seed: 92 + i, walk: true, dir: 1, arms: i % 2 ? 'hold' : 'down', prop: i % 2 ? phone : null }, TOUR[i]));
+      chibi(ctx, 1010, 690, .27, t, Object.assign({ seed: 97, arms: 'up', prop: phone, eyes: 'happy', mouth: 'grin', dir: -1 }, TOUR[4])); chibi(ctx, 1062, 690, .27, t, Object.assign({ seed: 98, arms: 'wave', eyes: 'happy', mouth: 'smile', dir: -1 }, TOUR[1]));
+      convo(ctx, 420, 700, .26, t, Object.assign({ arms: 'point' }, TOUR[5]), TOUR[2], 7); }
   }
 
   // dark foliage framing the bottom corners (the reference's foreground depth)
@@ -173,11 +200,20 @@
   function ancientWide(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.06, 1.0, 640, 380); forum(ctx, t, 'ancient'); ctx.restore(); P.shafts(ctx, 1100, -120, .14);
     if (since(t, 'temples') > 0) for (const [x, y] of [[880, 300], [180, 125], [1180, 225]]) { const k = clamp((since(t, 'temples') - x / 3000) / .7); if (k > 0 && k < 1) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; T.glow(ctx, x, y, 60 * Math.sin(k * Math.PI), 'rgba(255,240,180,.9)'); ctx.restore(); } }
     P.caption(ctx, 'Same place · around AD 100', since(t, 'same') + .2, { size: 28 }); }
-  function senators(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 400);
+  function senators(ctx, lt, dur, t) { const sx = lerp(1380, -120, clamp(lt / (dur + .6)));
+    ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 420);
     ctx.save(); ctx.filter = 'blur(3px)'; forum(ctx, t, 'ancient', { empty: true }); ctx.restore();
-    for (let i = 0; i < 7; i++) { const c = CROWD[i % 6], x = 120 + i * 175 + Math.sin(t * 1.5 + i) * 10; chibi(ctx, x, 600, .5, t, Object.assign({ seed: i + 20, eyes: i % 3 ? 'side' : 'half', look: i % 2 ? 1 : -1 }, c)); }
-    const sx = lerp(1320, -80, clamp(lt / (dur + 1))); chibi(ctx, sx, 690, .72, t, Object.assign({}, SENATOR, { walk: true, dir: -1, eyes: 'half', mouth: 'flat', brow: 'angry' }));
-    for (let i = 0; i < 6; i++) { const c = CROWD[(i + 2) % 6], x = 40 + i * 240 + Math.sin(t * 2 + i) * 14; chibi(ctx, x, 800, .62, t, Object.assign({ seed: i + 40, eyes: Math.abs(x - sx) < 160 ? 'wide' : 'half', look: x > sx ? -1 : 1, mouth: Math.abs(x - sx) < 160 ? 'o' : 'flat' }, c)); }
+    // middle distance: the stall crier, a quarrel, a porter
+    stall(ctx, 190, 640, .55, t, { vendor: { eyes: sx < 420 ? 'wide' : 'happy' } });
+    convo(ctx, 840, 640, .42, t, Object.assign({ arms: 'hips' }, CROWD[2]), Object.assign({ brow: 'angry' }, CROWD[3]), 2);
+    chibi(ctx, 560 + Math.sin(t) * 6, 650, .42, t, Object.assign({ seed: 33, arms: 'up', prop: amphora, eyes: Math.abs(sx - 560) < 200 ? 'wide' : 'half', look: sx < 560 ? -1 : 1 }, CROWD[1]));
+    // the senator, pushing through
+    chibi(ctx, sx, 712, .72, t, Object.assign({}, SENATOR, { walk: true, dir: -1, eyes: 'half', mouth: 'flat', brow: 'angry', arms: 'point' }));
+    // the front row: everyone in his path jumps aside, stares, and one basket of fruit goes flying
+    const FR = [[110, 0, 800], [350, 1, 840], [650, 2, 790], [930, 3, 850], [1180, 4, 805]];
+    for (const [x, k, fy] of FR) { const d = sx - x, near = Math.abs(d) < 170, past = d < -40; const lean = near ? (d > 0 ? -.18 : .18) : 0;
+      chibi(ctx, x + (near ? (d > 0 ? -30 : 30) : 0), fy, .58 + (fy - 790) / 400, t, Object.assign({ seed: 40 + k, eyes: near ? 'wide' : past ? 'side' : 'half', look: d > 0 ? 1 : -1, mouth: near ? 'o' : past ? 'frown' : 'flat', arms: near ? 'up' : 'down', tilt: lean, brow: past ? 'angry' : undefined }, CROWD[k % 6])); }
+    const drop = clamp((640 - sx) / 260); if (drop > 0) for (let i = 0; i < 6; i++) { const fx = 640 + (i - 2.5) * 30 + drop * (i - 2.5) * 90, fy = 700 + Math.min(1, drop * 2) * 70 - Math.sin(Math.min(1, drop * 2) * Math.PI) * 60; cel(ctx, c => c.arc(fx, fy, 11, 0, 7), ['#e8423a', '#f6a828', '#8ab040'][i % 3], { dx: 3, dy: 3, lw: 2.5 }); }
     ctx.restore(); P.caption(ctx, 'senators in white wool', since(t, 'senators') + .3, { size: 24, x: 60, y: 90 }); }
   function underFeet(ctx, lt, dur, t) { const tilt = ease.inOut(clamp(lt / 1.4)); ctx.save(); ctx.translate(0, -tilt * 300);
     P.sky(ctx, 'gold', t, { y1: 420 }); P.hills(ctx, 380, '#7a8a6a', '#f6e4b4', .5); paving(ctx, 420);

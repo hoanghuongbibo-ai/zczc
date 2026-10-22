@@ -240,23 +240,23 @@
   // 15. Varro works it out, centuries later
   function sVarro(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 400);
     study(ctx, t, 1180);
-    for (let i = 0; i < 3; i++) { ink(ctx, '#7a5a3e', c => c.rect(860 + i * 0, 140 + i * 110, 360, 16), 3); for (let k = 0; k < 7; k++) cel(ctx, c => c.ellipse(880 + k * 46, 120 + i * 110, 18, 22, 0, 0, 7), '#e8d8b0', { shade: '#b8a07a', dx: 3, dy: 0, lw: 3 }); }
+    cel(ctx, c => c.rect(850, 70, 380, 330), '#6a4a30', { shade: '#4a3220', dx: 0, dy: 0, lw: 4 }); for (let i = 0; i < 4; i++) for (let k = 0; k < 5; k++) { const bx = 866 + k * 72, by = 86 + i * 78; ink(ctx, '#3a2414', c => c.rect(bx, by, 64, 66), 2.5); for (let q = 0; q < 3; q++) { const sx = bx + 14 + (q % 2) * 22 + (q > 1 ? 11 : 0), sy = by + 46 - (q > 1 ? 22 : 0); cel(ctx, c => c.arc(sx, sy, 11, 0, 7), '#e8d8b0', { shade: '#b8a07a', dx: 2, dy: 2, lw: 2 }); ctx.strokeStyle = 'rgba(120,90,50,.7)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(sx, sy, 5, 0, 5); ctx.stroke(); } if ((i + k) % 3 === 0) { ctx.fillStyle = '#a8322a'; ctx.fillRect(bx + 26, by + 54, 12, 10); } }
     window(ctx, 200, 90, t);
     person(ctx, 480, 690, .62, t, VARRO, { pose: 'hold', face: 1, prop: stylus, eyes: 'half', brow: 'sad' });
     cel(ctx, c => c.rect(520, 470, 420, 30), '#8a6040', { shade: '#5a3e28', dx: 0, dy: 8, lw: 4 }); ink(ctx, '#6a4a30', c => c.rect(540, 500, 22, 200), 3.5); ink(ctx, '#6a4a30', c => c.rect(900, 500, 22, 200), 3.5);
-    ink(ctx, '#efe0bc', c => c.rect(600, 420, 220, 52), 3); ctx.fillStyle = '#5a2a1a'; ctx.font = '700 16px "Liberation Serif", serif'; const kings = ['Romulus 37', 'Numa 43', 'Tullus 32', 'Ancus 24', '…']; for (let i = 0; i < kings.length; i++) if (lt > .4 + i * .4) ctx.fillText(kings[i], 612 + (i % 3) * 70, 440 + Math.floor(i / 3) * 20);
+    ink(ctx, '#efe0bc', c => c.rect(600, 420, 220, 52), 3); ctx.fillStyle = '#5a2a1a'; ctx.font = '700 16px "Liberation Serif", serif'; const kings = ['Romulus 37', 'Numa 43', 'Tullus 32', 'Ancus 24', '…']; for (let i = 0; i < kings.length; i++) if (lt > .4 + i * .4) ctx.fillText(kings[i], 612 + (i % 2) * 104, 440 + Math.floor(i / 2) * 16);
     ctx.restore(); cap(ctx, 'worked out centuries later', t, 'worked', { size: 24 }); cap(ctx, 'by the Roman scholar Varro (1st century BC)', t, 'varro', { size: 22, y: 686 }); }
   // 16. that story is legend
   function sLegend(ctx, lt, dur, t) { sDate(ctx, lt + 10, dur, t); const k = clamp((t - A.legend + .15) / .25);
     if (k > 0) { ctx.save(); ctx.translate(640, 360); ctx.rotate(-.18); ctx.scale(1 + (1 - k) * .8, 1 + (1 - k) * .8); ctx.globalAlpha = k * .9; ctx.strokeStyle = '#b8282a'; ctx.lineWidth = 10; ctx.strokeRect(-250, -70, 500, 140); ctx.fillStyle = '#b8282a'; ctx.font = '700 96px "Liberation Serif", serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('LEGEND', 0, 6); ctx.restore(); } }
   // 17. Livy: writing more than 700 years after the founding
-  function sLivyLine(ctx, lt, dur, t) { ctx.fillStyle = '#efe4c8'; ctx.fillRect(0, 0, W, H); const k = ease.inOut(clamp((t - A.seven2 + .4) / 1.6));
+  function sLivyLine(ctx, lt, dur, t) { darkRoom(ctx, t); bigScroll(ctx, 640, 380, 1180, 520, 1); const k = ease.inOut(clamp((t - A.seven2 + .4) / 1.6));
     ctx.strokeStyle = INK; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(140, 470); ctx.lineTo(140 + 1000 * k, 470); ctx.stroke();
     ink(ctx, '#b8282a', c => c.arc(140, 470, 14, 0, 7), 4); label(ctx, '753 BC', 140, 520, 28); label(ctx, 'the founding (legend)', 140, 554, 18);
     if (k > .98) { ink(ctx, '#3a6aa8', c => c.arc(1140, 470, 14, 0, 7), 4); label(ctx, 'c. 27 BC', 1140, 520, 28); label(ctx, 'Livy starts writing', 1140, 554, 18); }
     if (since(t, 'seven2') > 0) { ctx.save(); ctx.globalAlpha = k01(t, 'seven2', .6); label(ctx, '700+ years', 640, 430, 40, '#8a2a1a'); ctx.restore(); }
     person(ctx, 1140, 456, .28, t, LIVY, { pose: 'hold', prop: stylus, face: -1, eyes: since(t, 'unsure') > 0 ? 'side' : 'open', brow: since(t, 'unsure') > 0 ? 'sad' : '' });
-    ctx.save(); ctx.textAlign = 'left'; ctx.fillStyle = '#3a2416'; ctx.font = '700 32px "Liberation Serif", serif'; ctx.globalAlpha = k01(t, 'livy', .4); ctx.fillText('the Roman historian Livy', 80, 100); if (since(t, 'unsure') > 0) { ctx.globalAlpha = k01(t, 'unsure', .4); ctx.font = 'italic 700 26px "Liberation Serif", serif'; ctx.fillText('…wasn\'t sure about it either', 80, 146); } ctx.restore(); }
+    ctx.save(); ctx.textAlign = 'left'; ctx.fillStyle = '#3a2416'; ctx.font = '700 32px "Liberation Serif", serif'; ctx.globalAlpha = k01(t, 'livy', .4); ctx.fillText('the Roman historian Livy', 140, 230); if (since(t, 'unsure') > 0) { ctx.globalAlpha = k01(t, 'unsure', .4); ctx.font = 'italic 700 26px "Liberation Serif", serif'; ctx.fillText('…wasn\'t sure about it either', 140, 274); } ctx.restore(); }
   // 18. Livy: "more poetry than reliable record"
   function sLivy(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 400);
     study(ctx, t, 300); window(ctx, 820, 90, t);
@@ -300,11 +300,20 @@
     ctx.restore(); cap(ctx, 'historians get into an actual fight', t, 'historians', { size: 26 }); }
   // 23. Carandini on the Palatine finds a wall he dates to the 700s BC
   function sWall(ctx, lt, dur, t, o = {}) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420);
-    landBehind(ctx, t, 360); ground(ctx, 352, '#8aa64a', '#7a9440');
-    cel(ctx, c => c.rect(180, 400, 920, 300), '#8a6a44', { shade: '#6a5034', dx: 0, dy: 0, lw: 4 }); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(180, 600, 920, 100);
-    const rev = clamp((t - A.wall + .8) / 1.4); for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) { const bx = 240 + i * 92 + (r % 2) * 46, by = 610 - r * 48; if (r * 9 + i > rev * 36) continue; cel(ctx, c => c.rect(bx, by, 88, 44), '#c8b490', { shade: '#9a8662', light: '#e0d0a8', dx: 6, dy: 6, lw: 3.5 }); }
-    for (let i = 0; i < 6; i++) P.weeds(ctx, 200 + i * 170, 400, .6, t);
-    if (!o.noMan) { person(ctx, 1150, 560, .5, t, CARANDINI, { pose: since(t, 'wall') > 0 ? 'point' : 'hold', prop: since(t, 'wall') > 0 ? null : trowel, face: -1, speak: false, mouth: since(t, 'wall') > 0 ? 'grin' : 'flat', eyes: since(t, 'wall') > 0 ? 'wide' : 'open' }); }
+    landBehind(ctx, t, 330); ground(ctx, 330, '#8aa64a', '#7a9440'); const GY = 420; // the ground surface the trench is cut into
+    // the trench: near edge (cut face) and far wall in shadow, floor of packed earth; spoil heap beside it
+    ctx.fillStyle = '#9ab454'; ctx.fillRect(-200, 330, 1700, GY - 330);
+    cel(ctx, c => { c.moveTo(150, GY); c.lineTo(1110, GY); c.lineTo(1080, GY + 40); c.lineTo(180, GY + 40); c.closePath(); }, '#6a4a2e', { shade: '#4a3220', dx: 0, dy: 0, lw: 4 });
+    cel(ctx, c => { c.moveTo(180, GY + 40); c.lineTo(1080, GY + 40); c.lineTo(1060, 690); c.lineTo(200, 690); c.closePath(); }, '#8a6a44', { shade: '#6a5034', dx: 0, dy: 0, lw: 4 });
+    const L2 = ['#9a7a50', '#7a5a3a', '#a8865a']; for (let i = 0; i < 3; i++) { ctx.fillStyle = L2[i]; ctx.globalAlpha = .45; ctx.fillRect(184, GY + 60 + i * 70, 892, 30); ctx.globalAlpha = 1; }
+    ctx.fillStyle = '#6a5034'; ctx.fillRect(200, 660, 860, 30);
+    cel(ctx, c => { c.moveTo(1130, GY + 2); c.quadraticCurveTo(1200, GY - 50, 1290, GY + 2); c.closePath(); }, '#8a6a44', { shade: '#6a5034', dx: 10, dy: 0, lw: 3 });
+    // the wall's foundation courses, exposed course by course at the bottom of the trench
+    const rev = clamp((t - A.wall + .8) / 1.4); for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) { const bx = 240 + i * 92 + (r % 2) * 46, by = 640 - r * 46; if (r * 9 + i > rev * 36 + (o.noMan ? 36 : 0)) continue; cel(ctx, c => c.rect(bx, by, 88, 44), '#c8b490', { shade: '#9a8662', light: '#e0d0a8', dx: 6, dy: 6, lw: 3.5 }); }
+    ctx.lineCap = 'round'; for (let i = 0; i < 60; i++) { const x = 140 + i * 17, h = 8 + (i * 7) % 12; ctx.strokeStyle = i % 2 ? '#5a7a2a' : '#7a9a3a'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x, GY + 2); ctx.lineTo(x + (i % 3 - 1) * 4, GY - h); ctx.stroke(); }
+    // measuring rod and string line along the trench, as on a real excavation
+    ctx.strokeStyle = '#f0f0f0'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(170, GY - 6); ctx.lineTo(1100, GY - 6); ctx.stroke(); for (let i = 0; i < 6; i++) { ctx.fillStyle = i % 2 ? '#c8322a' : '#f4f0e8'; ctx.fillRect(1090, GY + 50 + i * 20, 10, 20); }
+    if (!o.noMan) person(ctx, 1200, GY + 4, .46, t, CARANDINI, { pose: since(t, 'wall') > 0 ? 'point' : 'hold', prop: since(t, 'wall') > 0 ? null : trowel, face: -1, mouth: since(t, 'wall') > 0 ? 'grin' : 'flat', eyes: since(t, 'wall') > 0 ? 'wide' : 'open' });
     ctx.restore();
     if (!o.noCap) { cap(ctx, 'archaeologist Andrea Carandini', t, 'carandini', { size: 26 }); cap(ctx, 'the Palatine · a wall he dates to the 700s BC', t, 'wall', { size: 22, y: 686 }); } }
   // 24. his argument: a real king, maybe named Romulus, founded Rome in one ceremony (ploughing the boundary furrow)
@@ -386,10 +395,18 @@
   // 1. forget the marble: a river valley with marble temples on two hills; the marble fades away
   function cMarble(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.08, y: -10 }, { z: 1.0 }), k = 1 - ease.inOut(clamp((t - A.marble + .2) / 1.4));
     goldenLand(ctx, c, t, { sun: [640, 300], seed: 12 });
-    L(ctx, c, .6, () => { C.mound(ctx, 230, 560, 640, 230, { col: '#6e9440', sunX: 640, t, copses: 1, seed: 3 }); C.mound(ctx, 1060, 560, 660, 250, { col: '#6e9440', sunX: 640, t, copses: 1, seed: 4 });
-      if (k > 0) { ctx.save(); ctx.globalAlpha = k; P.temple(ctx, 230, 360, .52, { roof: '#e0c070' }); P.temple(ctx, 1060, 340, .56, { roof: '#e0c070' }); for (let i = 0; i < 5; i++) P.column(ctx, 520 + i * 60, 572, 34, 180); ctx.restore(); }
-      C.water(ctx, -300, 572, 1600, 650, t, { sunX: 640 }); });
-    L(ctx, c, 1, () => C.meadow(ctx, 646, 760, t, { col: '#7a9a36', n: 360 })); L(ctx, c, 1.3, () => C.foreground(ctx, t, { reeds: true }));
+    L(ctx, c, .6, () => {
+      // the valley floor between the two hills (the future Forum), then the hills themselves
+      C.meadow(ctx, 540, 640, t, { col: '#7a9a3a', n: 160, flowers: 30 });
+      const rL = C.mound(ctx, 230, 600, 680, 270, { col: '#6e9440', sunX: 640, t, copses: 0, seed: 3 }), rR = C.mound(ctx, 1060, 600, 700, 290, { col: '#6e9440', sunX: 640, t, copses: 0, seed: 4 });
+      // marble on real ground: temples on podiums levelled into the hilltops, a colonnade on a stepped base on the valley floor
+      if (k > 0) { ctx.save(); ctx.globalAlpha = k;
+        const yL = C.site(ctx, 200, 250, rL, t, { podium: 14, seed: 1 }); P.temple(ctx, 200, yL, .44, { roof: '#e0c070' });
+        const yR = C.site(ctx, 1010, 260, rR, t, { podium: 14, seed: 2 }); P.temple(ctx, 1010, yR, .46, { roof: '#e0c070' });
+        const yC = C.site(ctx, 640, 330, 600, t, { podium: 16, steps: false, seed: 3 }); for (let i = 0; i < 5; i++) P.column(ctx, 520 + i * 60, yC, 30, 150); ctx.restore(); }
+      for (const [bx, by] of [[60, 520], [400, 524], [880, 520], [1220, 530]]) C.copse(ctx, bx, by, .26, t, { n: 4, seed: bx }); });
+    L(ctx, c, .8, () => C.water(ctx, -400, 636, 1700, 690, t, { sunX: 640 }));
+    L(ctx, c, 1, () => C.meadow(ctx, 684, 800, t, { col: '#7a9a36', n: 300 })); L(ctx, c, 1.3, () => C.foreground(ctx, t, { reeds: true }));
     C.rays(ctx, 640, 300, t, .1); C.motes(ctx, t); C.finish(ctx, t, 'golden', { leakX: 640 }); cap(ctx, 'forget the marble', t, 'marble', { size: 28 }); }
   // 2. picture a river: a hand-painted map; the camera glides along the Tiber as it draws itself to the sea
   function mapBase(ctx, t, o = {}) { const R = C.rng(21); const g = ctx.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, '#9cc46a'); g.addColorStop(1, '#7eaa52'); ctx.fillStyle = g; ctx.fillRect(-400, -400, 2100, 1500);
@@ -401,12 +418,15 @@
     for (const [bx, by] of [[-20, 200], [20, 520], [-60, 760]]) { ink(ctx, '#8a5a34', c2 => { c2.moveTo(bx - 16, by); c2.lineTo(bx + 16, by); c2.lineTo(bx + 10, by + 8); c2.lineTo(bx - 10, by + 8); c2.closePath(); }, 2); ink(ctx, '#f6f0e0', c2 => { c2.moveTo(bx, by - 26); c2.lineTo(bx + 14, by - 2); c2.lineTo(bx, by - 2); c2.closePath(); }, 2); }
     // mountains, forests and villages as map symbols (painted, inked)
     for (let i = 0; i < 16; i++) { const x = 360 + R() * 1050, y = -120 + R() * 900; if (y > 220 && y < 470 && x > 480 && x < 980) continue; cel(ctx, c2 => { c2.moveTo(x - 46, y); c2.lineTo(x - 8, y - 56); c2.lineTo(x + 8, y - 40); c2.lineTo(x + 22, y - 62); c2.lineTo(x + 56, y); c2.closePath(); }, '#c8a070', { shade: '#9a7048', light: '#e8c890', dx: 12, dy: 0, lw: 3 }); }
-    for (let i = 0; i < 14; i++) { const x = 300 + R() * 1150, y = -150 + R() * 950; if (y > 230 && y < 460 && x > 480 && x < 980) continue; for (let k = 0; k < 9; k++) C.tree(ctx, x + (k % 3) * 26 - 26, y + Math.floor(k / 3) * 18, .22, t, { kind: k % 4 === 0 ? 'cypress' : 'oak', seed: i * 9 + k, low: true }); } }
+    const FC = ['#c8c070', '#a8bc60', '#d8b868', '#94b058']; for (let i = 0; i < 70; i++) { const u = R(), j = Math.min(RIV.length - 2, Math.floor(u * (RIV.length - 1))), f = u * (RIV.length - 1) - j, rx = RIV[j][0] + (RIV[j + 1][0] - RIV[j][0]) * f, ry = RIV[j][1] + (RIV[j + 1][1] - RIV[j][1]) * f, side = R() < .5 ? -1 : 1, fx = rx + (R() - .5) * 120, fy = ry + side * (40 + R() * 90), fw = 34 + R() * 40;
+      if (fx < 120) continue; ctx.fillStyle = FC[i % 4]; ctx.strokeStyle = 'rgba(90,70,30,.5)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx + fw, fy - 6); ctx.lineTo(fx + fw + 6, fy + 20); ctx.lineTo(fx + 4, fy + 24); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    for (let i = 0; i < 30; i++) { const x = 220 + R() * 1250, y = -180 + R() * 1000; let near = false; for (const [qx, qy] of RIV) if (Math.hypot(qx - x, qy - y) < 110) near = true; if (near) continue; for (let k = 0; k < 9; k++) C.tree(ctx, x + (k % 3) * 26 - 26, y + Math.floor(k / 3) * 18, .22, t, { kind: k % 4 === 0 ? 'cypress' : 'oak', seed: i * 9 + k, low: true }); }
+    for (let i = 0; i < 12; i++) { const u = .1 + R() * .8, j = Math.floor(u * (RIV.length - 1)), x = RIV[j][0] + (R() - .5) * 200, y = RIV[j][1] + (R() < .5 ? -1 : 1) * (70 + R() * 60); if (x < 160) continue; cel(ctx, c2 => c2.rect(x - 9, y - 9, 18, 12), '#e8d8b8', { shade: '#b8a888', dx: 4, dy: 0, lw: 2 }); ink(ctx, '#c86a3a', c2 => { c2.moveTo(x - 12, y - 9); c2.lineTo(x, y - 18); c2.lineTo(x + 12, y - 9); c2.closePath(); }, 2); } }
   const RIV = [[1500, 60], [1300, 120], [1120, 90], [980, 170], [860, 300], [720, 340], [640, 300], [560, 330], [500, 430], [360, 470], [230, 410], [120, 470], [40, 520]];
   function riverDraw(ctx, k, t) { const n = Math.max(2, Math.floor(k * (RIV.length - 1)) + 1); ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(...RIV[0]); for (let i = 1; i < n - 1; i++) ctx.quadraticCurveTo(...RIV[i], (RIV[i][0] + RIV[i + 1][0]) / 2, (RIV[i][1] + RIV[i + 1][1]) / 2); ctx.lineTo(...RIV[n - 1]);
     ctx.strokeStyle = INK; ctx.lineWidth = 34; ctx.stroke(); ctx.strokeStyle = '#4a98d0'; ctx.lineWidth = 26; ctx.stroke(); ctx.strokeStyle = '#8ad0f0'; ctx.lineWidth = 8; ctx.stroke(); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2.5; ctx.setLineDash([10, 22]); ctx.lineDashOffset = -t * 40; ctx.stroke(); ctx.restore(); }
   function hillVillage(ctx, x, y, s, t, seed) { cel(ctx, c2 => c2.ellipse(x, y, 60 * s, 30 * s, 0, 0, 7), '#b8a868', { shade: '#8a7a48', light: '#d8c888', dx: 8, dy: 6, lw: 3 }); for (let k = 0; k < 3; k++) roundHut(ctx, x - 24 * s + k * 24 * s, y - 2 * s - (k % 2) * 6 * s, .14 * s, t, seed * 3 + k); }
-  function cMap(ctx, lt, dur, t) { const c = C.cam(lt, dur, { x: 260, y: -40, z: 1.25 }, { x: -120, y: 60, z: 1.12 }), k = ease.inOut(clamp((t - A.river + .3) / 4));
+  function cMap(ctx, lt, dur, t) { const c = C.cam(lt, dur, { x: 40, y: 20, z: 1.02 }, { x: 40, y: -20, z: 1.5 }), k = .15 + .85 * ease.inOut(clamp((t - A.river + .3) / 4));
     L(ctx, c, 1, () => { mapBase(ctx, t); riverDraw(ctx, k, t); if (k > .6) { const a = clamp((k - .6) / .25); ctx.save(); ctx.globalAlpha = a; cel(ctx, c2 => c2.ellipse(640, 312, 20, 9, -.4, 0, 7), '#d8c890', { shade: '#a89a60', dx: 2, dy: 2, lw: 3 }); for (const [hx, hy] of [[700, 250], [760, 290], [790, 236], [700, 200], [830, 270], [740, 360], [650, 236]]) hillVillage(ctx, hx, hy, .5, t, hx); ctx.restore(); } });
     C.finish(ctx, t, 'dawn', { leak: false, vig: .4 });
     cap(ctx, 'the Tiber', t, 'tiber', { size: 30, x: 1000, y: 90, align: 'center' }); cap(ctx, '~15 miles (25 km) to the sea', t, 'fifteen', { size: 24, x: 70, y: 660 }); }
@@ -419,7 +439,8 @@
     L(ctx, c, .04, () => C.sky(ctx, 'dawn', t, { horizon: 380, sun: [980, 250], sunR: 40, seed: 31 }));
     L(ctx, c, .15, () => C.mounds(ctx, { y: 390, n: 5, seed: 32, col: '#8a9a78', far: .6, sunX: 980, t, w: 620, h: 120, copses: 2, haze: '#e8ecdc' }));
     L(ctx, c, .3, () => { C.mounds(ctx, { y: 440, n: 4, seed: 33, col: '#7e9a50', far: .35, sunX: 980, t, w: 560, h: 150, copses: 3, haze: '#e8ecdc' }); C.haze(ctx, 430, 40, '#f4f0e4', .25); });
-    L(ctx, c, .7, () => { C.water(ctx, -400, 450, 1700, 700, t, { pal: 'dawn', sunX: 980 }); cel(ctx, c2 => { c2.moveTo(420, 520); c2.quadraticCurveTo(470, 488, 620, 490); c2.quadraticCurveTo(760, 492, 820, 520); c2.quadraticCurveTo(640, 540, 420, 520); c2.closePath(); }, '#9aac5a', { shade: '#6a7c3a', dx: 0, dy: 6, lw: 3 }); C.copse(ctx, 620, 506, .3, t, { n: 6, seed: 4 }); });
+    L(ctx, c, .55, () => { C.meadow(ctx, 436, 470, t, { col: '#7e9a48', n: 120, flowers: 20, haze: '#e8ecdc' }); for (let i = 0; i < 7; i++) C.copse(ctx, -100 + i * 260, 462, .26, t, { n: 4, seed: 300 + i }); });
+    L(ctx, c, .7, () => { C.water(ctx, -400, 466, 1700, 700, t, { pal: 'dawn', sunX: 980 }); cel(ctx, c2 => { c2.moveTo(420, 520); c2.quadraticCurveTo(470, 488, 620, 490); c2.quadraticCurveTo(760, 492, 820, 520); c2.quadraticCurveTo(640, 540, 420, 520); c2.closePath(); }, '#9aac5a', { shade: '#6a7c3a', dx: 0, dy: 6, lw: 3 }); C.copse(ctx, 620, 506, .3, t, { n: 6, seed: 4 }); });
     const k = clamp((t - A.right) / 7);
     L(ctx, c, 1, () => { raft(ctx, lerp(380, 860, k), 650, t); person(ctx, lerp(380, 860, k) - 100, 632, .3, t, VILL[0], { pose: 'hold', face: 1, prop: (cc, x, y) => { cc.strokeStyle = INK; cc.lineWidth = 5; cc.beginPath(); cc.moveTo(x - 30, y + 140); cc.lineTo(x + 40, y - 120); cc.stroke(); } }); person(ctx, lerp(380, 860, k) + 110, 632, .28, t, VILL[1], { pose: 'stand', face: 1, mouth: 'smile' });
       const cx = lerp(120, 640, k); P.cow(ctx, cx, 690, .3, t, { flip: true, walk: true, seed: 3 }); person(ctx, cx + 70, 690, .3, t, VILL[2], { pose: 'walk', face: 1 }); ctx.fillStyle = 'rgba(90,140,180,.7)'; ctx.beginPath(); ctx.ellipse(cx + 40, 680, 160, 18, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(cx + 40, 674, 150 + Math.sin(t * 3) * 6, 10, 0, 0, 7); ctx.stroke(); });
@@ -435,14 +456,23 @@
     [['Capitoline', 170, 300], ['Palatine', 470, 280], ['Aventine', 800, 290], ['Caelian', 1110, 330]].forEach(([n, x, y], i) => { if (since(t, 'hills') > i * .2) P.caption(ctx, n, since(t, 'hills') - i * .2, { size: 22, x, y, align: 'center' }); });
     cap(ctx, 'a cluster of steep hills, right by the crossing', t, 'cluster', { size: 24, y: 690 }); }
   // 5. on top you can see trouble coming: lookout by his hut, the valley and its river far below; raiders on the plain
-  function cTop(ctx, lt, dur, t) { const c = C.cam(lt, dur, { x: -40, z: 1.0 }, { x: 50, z: 1.12 }), rk = clamp((t - A.trouble + .6) / 2);
-    L(ctx, c, .04, () => C.sky(ctx, 'golden', t, { horizon: 430, sun: [1060, 300], sunR: 44, seed: 51 }));
-    L(ctx, c, .15, () => C.mounds(ctx, { y: 440, n: 6, seed: 52, col: '#8aa070', far: .55, sunX: 1060, t, w: 520, h: 90, copses: 2 }));
-    L(ctx, c, .3, () => { C.mounds(ctx, { y: 500, n: 5, seed: 53, col: '#7e9c48', far: .3, sunX: 1060, t, w: 480, h: 110, copses: 3 }); ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = '#8ac0e0'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(700, 560); ctx.quadraticCurveTo(900, 520, 820, 480); ctx.quadraticCurveTo(760, 450, 980, 440); ctx.stroke(); ctx.restore();
-      for (let i = 0; i < 7; i++) person(ctx, lerp(1300, 1090, rk) + i * 18, 530 + (i % 2) * 3, .04, t, { kind: 'tunic', cloth: '#4a2a1a', hair: '#1a1410', seed: 30 + i }, { pose: 'walk', face: -1, prop: (cc, x, y) => { cc.strokeStyle = INK; cc.lineWidth = 5; cc.beginPath(); cc.moveTo(x, y + 30); cc.lineTo(x + 6, y - 100); cc.stroke(); } }); });
-    L(ctx, c, .85, () => { C.mound(ctx, 260, 820, 1300, 360, { col: '#7a9a3a', sunX: 1060, t, copses: 0, seed: 54 }); C.meadow(ctx, 600, 900, t, { col: '#86a43e', n: 200, flowers: 60 }); ctx.save(); ctx.fillStyle = '#b8945e'; ctx.beginPath(); ctx.moveTo(-100, 760); ctx.quadraticCurveTo(200, 640, 340, 600); ctx.lineTo(380, 606); ctx.quadraticCurveTo(260, 660, 60, 780); ctx.closePath(); ctx.fill(); ctx.restore();
-      roundHut(ctx, 240, 600, .8, t, 1); person(ctx, 560, 600, .5, t, VILL[0], { pose: 'shade', face: 1, eyes: since(t, 'trouble') > 0 ? 'wide' : 'open', brow: since(t, 'trouble') > 0 ? 'sad' : '' }); });
-    L(ctx, c, 1.3, () => C.foreground(ctx, t, { flowers: 18 })); C.rays(ctx, 1060, 300, t, .08); C.motes(ctx, t); C.finish(ctx, t, 'golden');
+  function cTop(ctx, lt, dur, t) { const c = C.cam(lt, dur, { x: -40, z: 1.0 }, { x: 50, z: 1.1 }), rk = clamp((t - A.trouble + .6) / 2.2);
+    L(ctx, c, .04, () => C.sky(ctx, 'golden', t, { horizon: 380, sun: [1060, 280], sunR: 44, seed: 51 }));
+    L(ctx, c, .12, () => C.mounds(ctx, { y: 390, n: 6, seed: 52, col: '#8a9a70', far: .5, sunX: 1060, t, w: 520, h: 70, copses: 1 }));
+    // the valley floor far below: a flat plain with fields and the river winding through it
+    L(ctx, c, .25, () => { const g = ctx.createLinearGradient(0, 392, 0, 600); g.addColorStop(0, '#a8b878'); g.addColorStop(1, '#8aa458'); ctx.fillStyle = g; ctx.fillRect(-300, 392, 1900, 300);
+      const FR = C.rng(57); for (let i = 0; i < 26; i++) { const fx = 400 + FR() * 1100, fy = 400 + FR() * 120, fw = 50 + FR() * 70; ctx.fillStyle = ['#c8c070', '#9ab060', '#b8a860', '#8aa858'][i % 4]; ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx + fw, fy - 4); ctx.lineTo(fx + fw + 10, fy + 14); ctx.lineTo(fx + 8, fy + 18); ctx.closePath(); ctx.fill(); }
+      ctx.save(); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(1500, 400); ctx.quadraticCurveTo(1150, 420, 1080, 450); ctx.quadraticCurveTo(980, 490, 760, 470); ctx.quadraticCurveTo(600, 455, 520, 520); ctx.strokeStyle = 'rgba(60,40,24,.6)'; ctx.lineWidth = 14; ctx.stroke(); ctx.strokeStyle = '#8ac4e4'; ctx.lineWidth = 10; ctx.stroke(); ctx.restore();
+      for (let i = 0; i < 5; i++) C.copse(ctx, 520 + i * 200, 440 + (i % 2) * 30, .16, t, { n: 4, seed: 58 + i }); C.haze(ctx, 470, 90, '#f4dcb0', .32);
+      // raiders crossing the plain toward the hill: a column of armed men, dust behind them
+      for (let i = 0; i < 9; i++) { const x = lerp(1380, 1050, rk) + i * 20 + (i % 3) * 6, y = 470 + (i % 3) * 7; ctx.fillStyle = 'rgba(200,180,140,.35)'; ctx.beginPath(); ctx.ellipse(x + 40, y, 30, 6, 0, 0, 7); ctx.fill(); person(ctx, x, y, .065, t, { kind: 'tunic', cloth: '#5a2a1a', hair: '#1a1410', seed: 30 + i }, { pose: 'walk', face: -1, prop: (cc, px, py) => { cc.strokeStyle = INK; cc.lineWidth = 6; cc.beginPath(); cc.moveTo(px, py + 40); cc.lineTo(px + 8, py - 130); cc.stroke(); } }); } });
+    // the hilltop he stands on: a crest close to camera that drops away steeply to the right
+    L(ctx, c, .9, () => { const crest = c2 => { c2.moveTo(-300, 900); c2.lineTo(-300, 560); c2.quadraticCurveTo(200, 520, 560, 560); c2.quadraticCurveTo(760, 590, 880, 720); c2.lineTo(900, 900); c2.closePath(); };
+      ctx.beginPath(); crest(ctx); const g = ctx.createLinearGradient(0, 520, 0, 760); g.addColorStop(0, '#9ab84c'); g.addColorStop(1, '#5e7c30'); ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke();
+      ctx.save(); ctx.beginPath(); crest(ctx); ctx.clip(); C.meadow(ctx, 540, 900, t, { col: '#86a43e', n: 220, flowers: 70 }); ctx.fillStyle = 'rgba(40,60,20,.35)'; ctx.beginPath(); ctx.moveTo(700, 580); ctx.quadraticCurveTo(820, 640, 880, 720); ctx.lineTo(900, 900); ctx.lineTo(760, 900); ctx.closePath(); ctx.fill(); ctx.restore();
+      ctx.fillStyle = '#b8945e'; ctx.beginPath(); ctx.moveTo(-100, 760); ctx.quadraticCurveTo(140, 620, 300, 574); ctx.lineTo(330, 578); ctx.quadraticCurveTo(200, 640, 40, 780); ctx.closePath(); ctx.fill();
+      roundHut(ctx, 230, 580, .8, t, 1); P.rock(ctx, 760, 618, 26, '#a89a80'); person(ctx, 620, 576, .5, t, VILL[0], { pose: 'shade', face: 1, eyes: since(t, 'trouble') > 0 ? 'wide' : 'open', brow: since(t, 'trouble') > 0 ? 'sad' : '' }); });
+    L(ctx, c, 1.3, () => C.foreground(ctx, t, { flowers: 14, h: 90 })); C.rays(ctx, 1060, 280, t, .08); C.motes(ctx, t); C.finish(ctx, t, 'golden');
     cap(ctx, 'live on top: see trouble coming', t, 'top', { size: 24 }); }
   // 6. at the bottom… you get wet: storm, rain, the hut's fire glowing in the doorway, water rising
   function cBottom(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.0 }, { z: 1.08, y: 10 }), w = ease.inOut(clamp((t - A.well) / 1.0)), splash = clamp((t - A.wet + .1) / .5);
@@ -462,7 +492,7 @@
     L(ctx, c, .8, () => { C.meadow(ctx, 520, 780, t, { col: '#6e8a38', n: 200, haze: '#f0b890' }); const lvl = 560 - (o.rise ? ease.inOut(clamp((t - A.floods) / 1.2)) * 30 : 0); ctx.save(); ctx.beginPath(); ctx.ellipse(640, 620, 470, 90 + (560 - lvl), 0, 0, 7); ctx.clip(); C.water(ctx, 100, 520, 1180, 720, t, { pal: 'sunset', sunX: 640 }); ctx.restore(); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(640, 620, 470, 90 + (560 - lvl), 0, 0, 7); ctx.stroke();
       for (let i = 0; i < 26; i++) P.reeds(ctx, 210 + i * 34, 600 + (i % 3) * 22, .55 + (i % 3) * .12, t, 4); for (const [lx, ly] of [[400, 650], [560, 680], [820, 660], [950, 640]]) { cel(ctx, c2 => c2.ellipse(lx, ly, 22, 8, 0, .3, 6.1), '#5a8a3a', { shade: '#3a6a2a', dx: 2, dy: 2, lw: 2 }); }
       for (const [fx, fy] of [[470, 660], [880, 676]]) { cel(ctx, c2 => c2.ellipse(fx, fy, 18, 11, 0, 0, 7), '#6a9a3a', { shade: '#4a7a2a', dx: 3, dy: 3, lw: 2.5 }); for (const d of [-7, 7]) { ink(ctx, '#fff', c2 => c2.arc(fx + d - 4, fy - 11, 4.5, 0, 7), 2); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(fx + d - 4, fy - 11, 2, 0, 7); ctx.fill(); } }
-      if (o.people) for (let i = 0; i < 3; i++) person(ctx, 380 + i * 110, 700, .34, t, VILL[i], { pose: i === 1 ? 'shrug' : 'stand', face: 1, eyes: 'half', mouth: 'frown' }); });
+      if (o.people) { ctx.fillStyle = '#7a8a3e'; ctx.beginPath(); ctx.moveTo(-300, 800); ctx.lineTo(-300, 690); ctx.quadraticCurveTo(140, 680, 300, 700); ctx.lineTo(300, 800); ctx.closePath(); ctx.fill(); ctx.beginPath(); ctx.moveTo(1000, 800); ctx.lineTo(1000, 700); ctx.quadraticCurveTo(1200, 682, 1600, 690); ctx.lineTo(1600, 800); ctx.closePath(); ctx.fill(); for (const [px, i] of [[110, 0], [220, 1], [1110, 2]]) person(ctx, px, 706, .34, t, VILL[i], { pose: i === 1 ? 'shrug' : 'stand', face: px < 640 ? 1 : -1, eyes: 'half', mouth: 'frown' }); } });
     L(ctx, c, 1.3, () => C.foreground(ctx, t, { reeds: true, flowers: 12 }));
     ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 24; i++) { const x = 300 + ((i * 113 + Math.sin(t + i) * 40) % 700), y = 520 + ((i * 47 + Math.cos(t * .8 + i) * 30) % 160), a = .5 + .5 * Math.sin(t * 3 + i * 2); ctx.fillStyle = `rgba(255,240,140,${a})`; ctx.beginPath(); ctx.arc(x, y, 2.5, 0, 7); ctx.fill(); } ctx.restore();
     P.birds(ctx, t, 6, 200, 300, 30); C.rays(ctx, 640, 330, t, .1); C.finish(ctx, t, 'sunset', { leakX: 640 }); }
@@ -515,23 +545,25 @@
     L(ctx, c, .2, () => C.mounds(ctx, { y: 440, n: 5, seed: 112, col: '#8aa070', far: .5, sunX: 640, t, w: 520, h: 80, copses: 2 }));
     L(ctx, c, .45, () => { C.mound(ctx, 150, 560, 560, 300, { col: '#6e9440', sunX: 640, t, copses: 2, seed: 113 }); C.mound(ctx, 1130, 560, 580, 320, { col: '#6e9440', sunX: 640, t, copses: 2, seed: 114 }); });
     L(ctx, c, 1, () => { C.meadow(ctx, 520, 780, t, { col: '#7a9a36', n: 320 });
-      person(ctx, 520, 720, .72, t, ROMULUS, { pose: argue && turn === 0 ? 'point' : 'talk', talk: !argue || turn === 0, face: -1, brow: argue ? 'angry' : '', mouth: argue && turn ? 'frown' : undefined });
-      person(ctx, 770, 720, .72, t, REMUS, { pose: argue && turn === 1 ? 'point' : 'crossed', talk: argue && turn === 1, face: 1, brow: argue ? 'angry' : '', mouth: argue && !turn ? 'frown' : undefined }); });
+      person(ctx, 520, 720, .72, t, ROMULUS, { pose: argue && turn === 0 ? 'point' : 'talk', talk: !argue || turn === 0, face: argue && turn === 0 ? -1 : 1, brow: argue ? 'angry' : '', mouth: argue && turn ? 'frown' : undefined });
+      person(ctx, 770, 720, .72, t, REMUS, { pose: argue && turn === 1 ? 'point' : 'crossed', talk: argue && turn === 1, face: argue && turn === 1 ? 1 : -1, brow: argue ? 'angry' : '', mouth: argue && !turn ? 'frown' : undefined }); });
     L(ctx, c, 1.3, () => C.foreground(ctx, t, { flowers: 14 })); C.rays(ctx, 640, 340, t, .1); C.motes(ctx, t); C.finish(ctx, t, 'golden', { leakX: 640 });
     cap(ctx, 'they grow up · decide to build a city', t, 'grow', { size: 24, x: 80, y: 90 }); if (argue) { P.caption(ctx, 'Palatine!', 1, { size: 26, x: 200, y: 300, align: 'center', a: turn === 0 ? 1 : .4 }); P.caption(ctx, 'Aventine!', 1, { size: 26, x: 1080, y: 300, align: 'center', a: turn === 1 ? 1 : .4 }); } }
   // 12. Romulus kills his brother — silhouettes on the wall against a blood-red sunset, embers in the air
   function cKill(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.06 }, { z: 1.0 }), f = ease.in(clamp((t - A.killed + .1) / .7));
     L(ctx, c, .04, () => C.sky(ctx, 'blood', t, { horizon: 500, sun: [700, 420], sunR: 120, seed: 121, clouds: 4 }));
     L(ctx, c, .25, () => C.mounds(ctx, { y: 510, n: 5, seed: 122, col: '#6a2a20', far: .3, sunX: 700, t, w: 520, h: 90, copses: 2, haze: '#e88a50' }));
-    L(ctx, c, 1, () => { ctx.fillStyle = '#1e0e0a'; ctx.fillRect(-200, 560, 1700, 400); for (let i = 0; i < 12; i++) ctx.fillRect(-60 + i * 120, 500, 80, 64); for (const tx of [40, 1180]) ctx.fillRect(tx - 60, 340, 120, 230);
-      ctx.save(); ctx.filter = 'brightness(0)'; person(ctx, 500, 560, .55, t, ROMULUS, { pose: 'strike', face: 1, prop: sword }); ctx.save(); ctx.translate(780, 560); ctx.rotate(f * 1.3); person(ctx, 0, 0, .55, t, REMUS, { pose: 'stand', face: -1 }); ctx.restore(); ctx.restore(); });
+    L(ctx, c, 1, () => { ctx.fillStyle = '#1e0e0a'; for (const tx of [40, 1180]) ctx.fillRect(tx - 60, 330, 120, 260);
+      // both brothers stand on the wall-walk; the parapet (drawn after) hides their legs, and Remus falls back out of sight behind it
+      ctx.save(); ctx.filter = 'brightness(0)'; person(ctx, 500, 640, .55, t, ROMULUS, { pose: 'strike', face: 1, prop: sword }); ctx.save(); ctx.translate(790 + f * 30, 640 + f * f * 160); ctx.rotate(f * 1.1); person(ctx, 0, 0, .55, t, REMUS, { pose: 'stand', face: -1 }); ctx.restore(); ctx.restore();
+      ctx.fillStyle = '#1e0e0a'; ctx.fillRect(-200, 560, 1700, 400); for (let i = 0; i < 13; i++) ctx.fillRect(-60 + i * 110, 512, 70, 52); });
     ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 30; i++) { const ph = (t * .4 + i * .07) % 1; ctx.fillStyle = `rgba(255,${150 + (i % 3) * 30},70,${(1 - ph) * .8})`; ctx.beginPath(); ctx.arc((i * 137) % 1280 + Math.sin(t + i) * 20, 720 - ph * 700, 2 + (i % 2), 0, 7); ctx.fill(); } ctx.restore();
     C.finish(ctx, t, 'blood', { leakX: 700, vig: .55 }); cap(ctx, 'Romulus kills his brother', t, 'killed', { size: 26, x: 80, y: 90 }); }
   // 13. the city gets his name: huts on the Palatine, smoke rising, ROMA
   function cRoma(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.1, y: 30 }, { z: 1.0 });
     L(ctx, c, .04, () => C.sky(ctx, 'golden', t, { horizon: 470, sun: [980, 360], sunR: 46, seed: 131 }));
     L(ctx, c, .2, () => C.mounds(ctx, { y: 480, n: 5, seed: 132, col: '#8aa070', far: .5, sunX: 980, t, w: 560, h: 90, copses: 2 }));
-    L(ctx, c, .8, () => { C.mound(ctx, 640, 800, 1300, 360, { col: '#6e9440', sunX: 980, t, copses: 0, seed: 133 }); C.meadow(ctx, 680, 900, t, { col: '#7a9a36', n: 120 }); for (let i = 0; i < 4; i++) roundHut(ctx, 330 + i * 200 + (i > 1 ? 60 : 0), 500 - (i % 2) * 8, .55, t, i); person(ctx, 640, 540, .4, t, ROMULUS, { pose: 'up', eyes: 'happy', mouth: 'grin', face: 1 }); });
+    L(ctx, c, .8, () => { const r = C.mound(ctx, 640, 820, 1300, 380, { col: '#6e9440', sunX: 980, t, copses: 0, seed: 133 }); C.meadow(ctx, 760, 900, t, { col: '#7a9a36', n: 120 }); for (const hx of [330, 520, 790, 980]) roundHut(ctx, hx, r(hx) + 14, .5, t, hx); person(ctx, 655, r(655) + 24, .4, t, ROMULUS, { pose: 'up', eyes: 'happy', mouth: 'grin', face: 1 }); });
     L(ctx, c, 1.3, () => C.foreground(ctx, t, { flowers: 16 })); C.rays(ctx, 980, 360, t, .1); C.motes(ctx, t); C.finish(ctx, t, 'golden');
     const k = ease.out(clamp((t - A.name + .5) / .8)); if (k > 0) { ctx.save(); ctx.globalAlpha = k; ctx.translate(640, 170); ctx.scale(.8 + .2 * k, .8 + .2 * k); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 120px "Liberation Serif", serif'; ctx.lineJoin = 'round'; ctx.lineWidth = 16; ctx.strokeStyle = '#4a2a16'; ctx.strokeText('ROMA', 0, 0); const g = ctx.createLinearGradient(0, -50, 0, 50); g.addColorStop(0, '#fbe2a0'); g.addColorStop(.55, '#e8a850'); g.addColorStop(1, '#b8702e'); ctx.fillStyle = g; ctx.fillText('ROMA', 0, 0); ctx.restore(); }
     cap(ctx, 'the city gets his name', t, 'name', { size: 24, x: 80, y: 650 }); }
@@ -554,7 +586,7 @@
     const m = ease.inOut(clamp((t - A.one + .9) / 1.4)); if (m > .5) P.caption(ctx, 'one Rome', clamp((m - .5) * 2), { size: 34, x: 640, y: 90, align: 'center' }); P.caption(ctx, 'separate little communities…', clamp((t - A.time) / .5), { size: 24, x: 60, y: 690 }); P.caption(ctx, '…grow into one', k01(t, 'one'), { size: 24, x: 1220, y: 690, align: 'right' }); }
   function cFarmers(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.12, y: 20 }, { z: 1.0 }), day = clamp(lt / dur), sun = [lerp(400, 1000, day), lerp(360, 300, day)];
     goldenLand(ctx, c, t, { sun, seed: 170 });
-    L(ctx, c, .55, () => { [[160, 560, 420, 220], [470, 590, 460, 260], [820, 570, 460, 250], [1130, 580, 420, 220]].forEach(([x, y, w2, h2], i) => { C.mound(ctx, x, y, w2, h2, { col: '#6e9440', sunX: sun[0], t, copses: 1, seed: 171 + i }); for (let k = 0; k < 2; k++) roundHut(ctx, x - 40 + k * 70, y - h2 * .8 + 26 + k * 8, .26, t, i * 2 + k); }); });
+    L(ctx, c, .55, () => { [[160, 560, 420, 220], [470, 590, 460, 260], [820, 570, 460, 250], [1130, 580, 420, 220]].forEach(([x, y, w2, h2], i) => { const r = C.mound(ctx, x, y, w2, h2, { col: '#6e9440', sunX: sun[0], t, copses: 1, seed: 171 + i }); for (let k = 0; k < 2; k++) { const hx = x - 70 + k * 80; roundHut(ctx, hx, r(hx) + 10, .26, t, i * 2 + k); } }); });
     L(ctx, c, 1, () => { C.meadow(ctx, 600, 800, t, { col: '#7a9a36', n: 300 }); for (let i = 0; i < 6; i++) person(ctx, 120 + i * 210, 700 - (i % 2) * 14, .28, t, VILL[i % 5], { pose: i % 3 === 0 ? 'walk' : i % 3 === 1 ? 'carry' : 'stand', face: i % 2 ? -1 : 1, prop: i % 3 === 1 ? jug : null }); P.goat(ctx, 300, 714, .36, t, { seed: 3 }); P.cow(ctx, 990, 716, .26, t, { graze: true, seed: 9 }); });
     L(ctx, c, 1.3, () => C.foreground(ctx, t, { flowers: 16 })); C.rays(ctx, sun[0], sun[1], t, .09); C.motes(ctx, t); C.finish(ctx, t, 'golden');
     cap(ctx, 'who founded Rome? the honest answer:', t, 'honest', { size: 24 }); cap(ctx, 'a lot of farmers · a lot of hills · a long time', t, 'farmers', { size: 24, y: 690 }); }

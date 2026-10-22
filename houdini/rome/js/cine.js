@@ -23,7 +23,7 @@
     if (p.sun && o.sunDisc !== false) { const r = o.sunR || 70, sg = ctx.createRadialGradient(sun[0], sun[1], r * .6, sun[0], sun[1], r * 6); sg.addColorStop(0, 'rgba(255,246,220,.9)'); sg.addColorStop(.25, 'rgba(255,224,160,.45)'); sg.addColorStop(1, 'rgba(255,210,140,0)'); ctx.fillStyle = sg; ctx.fillRect(sun[0] - r * 6, sun[1] - r * 6, r * 12, r * 12);
       ctx.fillStyle = p.sun; ctx.beginPath(); ctx.arc(sun[0], sun[1], r, 0, 7); ctx.fill(); }
     // cloud banks, far (small, hazy) to near (big, lit), drifting
-    const R = rng(o.seed ?? 3), n = o.clouds ?? 6; for (let i = 0; i < n; i++) { const far = 1 - i / Math.max(1, n - 1), x = ((R() * 1800 + t * (2 + (1 - far) * 6)) % 2200) - 450, y = (o.cloudY ?? 50) + (hy - 120 - (o.cloudY ?? 50)) * far * (.75 + R() * .25), s = .45 + (1 - far) * .75 + R() * .2;
+    const R = rng(o.seed ?? 3), n = o.clouds ?? 6; for (let i = 0; i < n; i++) { const far = 1 - i / Math.max(1, n - 1), x = (((i * 0.618 % 1) * 1900 + R() * 160 + t * (2 + (1 - far) * 6)) % 2200) - 450, y = (o.cloudY ?? 50) + (hy - 120 - (o.cloudY ?? 50)) * far * (.75 + R() * .25), s = .45 + (1 - far) * .75 + R() * .2;
       cloud(ctx, x, y, s, p, sun, R() * 1000, 1 - far * .35); } }
   function cloud(ctx, x, y, s, p, sun, seed, a = 1) { const R = rng(seed), w = (260 + R() * 260) * s, h = (26 + R() * 30) * s, n = 6 + Math.floor(R() * 5);
     // outline: flat base, a row of soft bumps along the top (bigger toward the middle), tapered ends
@@ -55,14 +55,37 @@
     list.sort((A, B) => A[1] - B[1]);
     for (const [mx, my, mw, mh] of list) mound(ctx, mx, my, mw, mh, { col, haze, far, sunX, t, copses, seed: seed * 7 + mx }); }
   // one rounded hill, lit from the sun side; copses tucked into its folds
-  function mound(ctx, mx, my, mw, mh, o = {}) { const { col = '#7a9a4a', haze = '#f4d6a6', far = .2, sunX = 900, t = 0, copses = 3, seed = 1 } = o, R = rng(seed); const shape = c => { c.moveTo(mx - mw / 2, my + 200); c.lineTo(mx - mw / 2, my); c.bezierCurveTo(mx - mw * .38, my - mh * 1.02, mx + mw * .2, my - mh * 1.08, mx + mw * .5, my - mh * .1); c.lineTo(mx + mw / 2, my + 200); c.closePath(); };
+  function mound(ctx, mx, my, mw, mh, o = {}) { const { col = '#7a9a4a', haze = '#f4d6a6', far = .2, sunX = 900, t = 0, copses = 3, seed = 1 } = o, R = rng(seed); const ridge = moundRidge(mx, my, mw, mh); const shape = c => { c.moveTo(mx - mw / 2, my + 200); c.lineTo(mx - mw / 2, my); c.bezierCurveTo(mx - mw * .38, my - mh * 1.02, mx + mw * .2, my - mh * 1.08, mx + mw * .5, my - mh * .1); c.lineTo(mx + mw / 2, my + 200); c.closePath(); };
       const lit = sunX < mx ? -1 : 1, base = mix(col, haze, far), g = ctx.createRadialGradient(mx + lit * mw * .2, my - mh * .9, 10, mx, my, mw * .75); g.addColorStop(0, mix(mix(col, '#f8e890', .55), haze, far * .7)); g.addColorStop(.5, mix(mix(col, '#c8c060', .15), haze, far)); g.addColorStop(1, mix(mix(col, '#1a2810', .5), haze, far * .65));
       ctx.beginPath(); shape(ctx); ctx.fillStyle = mix(mix(col, '#9aa83a', .2), haze, far * .85); ctx.fill();
       ctx.save(); ctx.beginPath(); shape(ctx); ctx.clip(); const lg = ctx.createLinearGradient(mx + lit * mw * .55, 0, mx - lit * mw * .45, 0); lg.addColorStop(0, `rgba(255,236,140,${.55 * (1 - far * .6)})`); lg.addColorStop(.6, 'rgba(255,236,140,0)'); ctx.fillStyle = lg; ctx.fillRect(mx - mw, my - mh * 1.2, mw * 2, mh * 2 + 200);
       const dg = ctx.createLinearGradient(0, my - mh * .5, 0, my + 60); dg.addColorStop(0, 'rgba(20,40,10,0)'); dg.addColorStop(1, `rgba(20,40,10,${.45 * (1 - far * .7)})`); ctx.fillStyle = dg; ctx.fillRect(mx - mw, my - mh, mw * 2, mh + 260);
       const sg = ctx.createLinearGradient(mx - lit * mw * .5, 0, mx + lit * mw * .1, 0); sg.addColorStop(0, `rgba(30,50,20,${.35 * (1 - far * .6)})`); sg.addColorStop(1, 'rgba(30,50,20,0)'); ctx.fillStyle = sg; ctx.fillRect(mx - mw, my - mh * 1.2, mw * 2, mh * 2 + 200); ctx.restore(); ctx.strokeStyle = `rgba(60,40,24,${.5 * (1 - far)})`; ctx.lineWidth = 2.5 * (1 - far * .5); ctx.stroke();
       ctx.save(); ctx.beginPath(); shape(ctx); ctx.clip(); ctx.strokeStyle = `rgba(50,60,24,${.18 * (1 - far)})`; ctx.lineWidth = 2; for (let k = 0; k < 5; k++) { ctx.beginPath(); ctx.moveTo(mx - mw * .4 + k * mw * .18, my - mh * .7 + k * 10); ctx.quadraticCurveTo(mx - mw * .3 + k * mw * .2, my - mh * .3, mx - mw * .35 + k * mw * .22, my + 10); ctx.stroke(); } ctx.restore();
-      for (let c = 0; c < copses; c++) { const u = .2 + R() * .6, cx = mx - mw / 2 + u * mw, cy = my - mh * Math.sin(u * Math.PI) * (.25 + R() * .45) + 14; copse(ctx, cx, cy, (.1 + (1 - far) * .2) * (.7 + R() * .5), t, { haze, far, seed: seed * 50 + c, n: 3 + Math.floor(R() * 5) }); } }
+      for (let c = 0; c < copses; c++) { const u = .2 + R() * .6, cx = mx - mw / 2 + u * mw, cy = ridge(cx) + 16 + R() * mh * .35; /* on the slope, below the ridge: never in the sky */ copse(ctx, cx, cy, (.1 + (1 - far) * .2) * (.7 + R() * .5), t, { haze, far, seed: seed * 50 + c, n: 3 + Math.floor(R() * 5) }); }  return ridge; }
+
+  // the exact top edge of a mound (same cubic as its outline): x -> y; outside the hill it returns its base line
+  function moundRidge(mx, my, mw, mh) { const P0 = [mx - mw / 2, my], P1 = [mx - mw * .38, my - mh * 1.02], P2 = [mx + mw * .2, my - mh * 1.08], P3 = [mx + mw * .5, my - mh * .1], pts = [];
+    for (let i = 0; i <= 80; i++) { const u = i / 80, a = (1 - u) ** 3, b = 3 * (1 - u) ** 2 * u, c = 3 * (1 - u) * u * u, d = u ** 3; pts.push([a * P0[0] + b * P1[0] + c * P2[0] + d * P3[0], a * P0[1] + b * P1[1] + c * P2[1] + d * P3[1]]); }
+    return x => { if (x <= pts[0][0] || x >= pts[80][0]) return my; for (let i = 1; i <= 80; i++) if (pts[i][0] >= x) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; return y0 + (y1 - y0) * (x - x0) / Math.max(1e-6, x1 - x0); } return my; }; }
+  // put a building on real ground: a stone podium levelled at the highest ground under its footprint, retaining walls down to
+  // the slope wherever the ground falls away, steps down the downhill side, a contact shadow and grass/bushes over the joins.
+  // ground: x -> y (a ridge function, or a constant). Returns the podium top y, where the building's base goes.
+  function site(ctx, x, w, ground, t, o = {}) { const g = typeof ground === 'function' ? ground : () => ground, R = rng(o.seed ?? x);
+    let top = Infinity, low = -Infinity; for (let k = 0; k <= 20; k++) { const gy = g(x - w / 2 + k * w / 20); top = Math.min(top, gy); low = Math.max(low, gy); }
+    const ph = o.podium ?? 18, py = top - ph, stone = o.stone || '#d8c8a4', sh = mix(stone, '#5a4630', .35);
+    // retaining wall / podium: from the podium top down to the ground line under it
+    ctx.beginPath(); ctx.moveTo(x - w / 2, py); ctx.lineTo(x + w / 2, py); for (let k = 20; k >= 0; k--) { const xx = x - w / 2 + k * w / 20; ctx.lineTo(xx, g(xx) + 6); } ctx.closePath();
+    ctx.fillStyle = stone; ctx.fill(); ctx.save(); ctx.clip(); ctx.fillStyle = sh; ctx.globalAlpha = .45; ctx.fillRect(x + w * .1, py, w, low - py + 20); ctx.globalAlpha = 1; ctx.strokeStyle = 'rgba(80,60,40,.45)'; ctx.lineWidth = 1.5;
+    for (let r = 0; r < 12; r++) { const yy = py + 8 + r * 14; ctx.beginPath(); ctx.moveTo(x - w / 2, yy); ctx.lineTo(x + w / 2, yy); ctx.stroke(); for (let k = 0; k < w / 34; k++) { const xx = x - w / 2 + k * 34 + (r % 2) * 17; ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx, yy + 14); ctx.stroke(); } } ctx.restore();
+    ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - w / 2, g(x - w / 2) + 6); ctx.lineTo(x - w / 2, py); ctx.lineTo(x + w / 2, py); ctx.lineTo(x + w / 2, g(x + w / 2) + 6); ctx.stroke();
+    // steps down the lower side
+    if (o.steps !== false) { const side = g(x - w / 2) > g(x + w / 2) ? -1 : 1, sx = x + side * w / 2, gy = g(sx + side * 40); if (gy > py + 10) { const n = Math.min(10, Math.round((gy - py) / 9)); for (let k = 0; k < n; k++) { const yy = py + k * (gy - py) / n, xx = sx + side * k * 8; ctx.fillStyle = k % 2 ? mix(stone, '#ffffff', .2) : stone; ctx.fillRect(Math.min(xx, xx + side * 46), yy, 46, (gy - py) / n + 1); ctx.strokeStyle = 'rgba(60,40,24,.6)'; ctx.lineWidth = 1.5; ctx.strokeRect(Math.min(xx, xx + side * 46), yy, 46, (gy - py) / n + 1); } } }
+    // contact shadow, grass and bushes hiding the joins with the hill
+    ctx.fillStyle = 'rgba(40,30,16,.25)'; ctx.beginPath(); ctx.ellipse(x + 20, g(x) + 8, w * .62, 14, 0, 0, 7); ctx.fill();
+    ctx.lineCap = 'round'; for (let k = 0; k < w / 6; k++) { const xx = x - w / 2 - 20 + R() * (w + 40), yy = g(xx) + 6; ctx.strokeStyle = R() < .5 ? '#5a7a2a' : '#8aa040'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx + (R() - .5) * 8, yy - 8 - R() * 14); ctx.stroke(); }
+    if (o.bushes !== false) for (const d of [-1, 1]) P.bush(ctx, x + d * (w / 2 + 4), g(x + d * (w / 2 + 4)) + 8, 16 + R() * 10, { col: '#6a8a3a', seed: x + d });
+    return py; }
   // a copse / hedgerow: a cluster of small overlapping bushy trees
   function copse(ctx, x, y, s, t, o = {}) { const R = rng(o.seed ?? x), n = o.n ?? 6; const pts = []; for (let i = 0; i < n; i++) pts.push([x + (i - n / 2) * 46 * s + (R() - .5) * 30 * s, y + (R() - .5) * 16 * s, s * (.7 + R() * .6), R() < (o.cypress ?? .08)]);
     pts.sort((A, B) => A[1] - B[1]); for (const [px, py, ps, cy] of pts) tree(ctx, px, py, ps, t, { kind: cy ? 'cypress' : 'oak', haze: o.haze, far: o.far, seed: px * 7 + py, low: true }); }
@@ -126,5 +149,5 @@
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = `saturate(${o.sat ?? 1.35}) contrast(${o.con ?? 1.1})`; ctx.drawImage(TMP, 0, 0); ctx.restore();
     P.grain(ctx, t, .035); P.vignette(ctx, o.vig ?? .45); }
   let TMP = null;
-  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
+  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, moundRidge, site, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
 })(window);

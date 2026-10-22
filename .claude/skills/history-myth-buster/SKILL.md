@@ -276,6 +276,21 @@ The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in
   - **No haze or blur.** Keep the finish light: `fin()` uses mist .04 and bloom .07, with no `blur()` filters on scenery. Cast shadows use gradients, not blur filters.
   - **Motion runs forward.** Figures walk the way they face, and wheels turn with the distance travelled. Check any reference clip for moonwalking before copying its motion.
   - **No black edges.** After a render, check the edge rows and columns.
+  - **Everything stands on real ground. The user has flagged floating buildings twice.**
+    - Place every building, hut, person and tree on the actual ground line under it. Use `C.mound()`'s returned ridge function and put things at `ridge(x)`; never pick a y by eye.
+    - Buildings on slopes go on `C.site()`: a podium levelled at the highest ground, retaining wall down to the slope, steps, a contact shadow, and grass and bushes over the joins.
+    - Nothing stands on water unless it floats (raft, basket) or wades (water drawn over the legs).
+    - People on walls stand behind the parapet, and a fall goes behind it.
+    - People in a conversation face each other.
+    - A distant place reads as distant: smaller detail, haze, and a clear drop from the near ground.
+  - **Audit before sending.** Render every shot at its start, middle and end (`audit.mjs`, contact sheets of 3 frames per shot) and check each frame for:
+    - floating objects;
+    - characters facing the wrong way;
+    - impossible placement (on water, through walls);
+    - unreadable captions;
+    - empty or illogical framing.
+
+    Fix everything found and re-audit. Don't send a render that hasn't been audited.
 - **Look.** Painted backgrounds with real light:
   - golden-hour or blue-to-gold skies with soft cloud bands and shaded cumulus;
   - atmospheric haze on distant hills;

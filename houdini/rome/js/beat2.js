@@ -89,11 +89,31 @@
     ctx.save(); ctx.strokeStyle = 'rgba(80,60,40,.35)'; ctx.lineWidth = 2.5; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x - w * .3 + i * w * .14, y - h * .78 + i * 8); ctx.lineTo(x - w * .34 + i * w * .16, y - h * .4); ctx.stroke(); } ctx.restore();
     for (let i = 0; i < 4; i++) P.bush(ctx, x - w * .36 + i * w * .24 + ((seed * 31 + i * 17) % 20), y - 10 - (i % 2) * 18, 28 + (i % 3) * 8, { col: '#6a8a3a', seed: seed * 10 + i }); }
   // a window with daylight falling into a study
+  function study(ctx, t, lampX = 1040) { const g = ctx.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, '#6a5440'); g.addColorStop(1, '#4a3828'); ctx.fillStyle = g; ctx.fillRect(-100, -100, 1500, 1000);
+    ctx.strokeStyle = 'rgba(40,26,16,.45)'; ctx.lineWidth = 3; for (let r = 0; r < 9; r++) for (let i = -1; i < 14; i++) { const x = i * 110 + (r % 2) * 55, y = r * 64; ctx.strokeRect(x, y, 110, 64); }
+    for (let i = 0; i < 40; i++) { ctx.fillStyle = `rgba(${i % 2 ? '255,230,190' : '30,20,12'},.06)`; ctx.beginPath(); ctx.ellipse((i * 211) % 1300, (i * 97) % 560, 60, 22, i, 0, 7); ctx.fill(); }
+    ctx.fillStyle = '#5a3e28'; ctx.fillRect(-100, 600, 1500, 200); ctx.strokeStyle = 'rgba(30,18,10,.5)'; ctx.lineWidth = 2; for (let i = 0; i < 16; i++) { ctx.beginPath(); ctx.moveTo(i * 90 - 40, 600); ctx.lineTo(i * 110 - 200, 760); ctx.stroke(); }
+    ctx.save(); ctx.globalCompositeOperation = 'screen'; const lg = ctx.createRadialGradient(lampX, 360, 10, lampX, 360, 520); lg.addColorStop(0, `rgba(255,190,110,${.42 + Math.sin(t * 9) * .03})`); lg.addColorStop(1, 'rgba(255,190,110,0)'); ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H); ctx.restore();
+    cel(ctx, c => c.rect(lampX - 10, 380, 20, 220), '#7a5a3a', { shade: '#5a3e28', dx: 4, dy: 0, lw: 3.5 }); cel(ctx, c => c.ellipse(lampX, 376, 34, 12, 0, 0, 7), '#b8884e', { shade: '#86602e', dx: 3, dy: 3, lw: 3.5 });
+    ctx.fillStyle = '#ffd890'; ctx.beginPath(); ctx.ellipse(lampX - 22, 356 + Math.sin(t * 11) * 1.5, 7, 14, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#fff4d0'; ctx.beginPath(); ctx.ellipse(lampX - 22, 360, 3, 7, 0, 0, 7); ctx.fill(); }
   function window(ctx, x, y, t) { cel(ctx, c => c.rect(x, y, 200, 240), '#f6e2b0', { shade: '#e0c48a', dx: 0, dy: 0, lw: 5 }); ctx.strokeStyle = INK; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(x + 100, y); ctx.lineTo(x + 100, y + 240); ctx.moveTo(x, y + 120); ctx.lineTo(x + 200, y + 120); ctx.stroke();
     ctx.save(); ctx.globalCompositeOperation = 'screen'; const g = ctx.createLinearGradient(x, y, x + 200, y + 600); g.addColorStop(0, 'rgba(255,220,150,.35)'); g.addColorStop(1, 'rgba(255,220,150,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y + 240); ctx.lineTo(x + 200, y + 240); ctx.lineTo(x + 420, y + 640); ctx.lineTo(x + 120, y + 640); ctx.closePath(); ctx.fill(); ctx.restore(); }
   const label = (ctx, text, x, y, size, col = '#3a2416') => { ctx.save(); ctx.font = `700 ${size}px "Liberation Serif", serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = col; ctx.fillText(text, x, y); ctx.restore(); };
   function sea(ctx, t, x0, x1, y, h) { water(ctx, x0, y, x1, y + h, t, '#3a8ab8'); }
 
+
+  // ---------- the user's enhanced plates (assets/img/plates/b2, AI mark reversed) ----------
+  function plateShot(key, o = {}) { return function plate(ctx, lt, dur, t) { const im = T.IMG[key]; ctx.save();
+      // camera push, clamped so the plate always covers the frame (no black edges whatever the focus point)
+      const k = ease.inOut(clamp(lt / dur)), z = lerp(o.z0 ?? 1.0, o.z1 ?? 1.06, k), sc = im ? Math.max(W / im.width, H / im.height) * (o.cover ?? 1.1) : 1, iw = im ? im.width * sc : W, ih = im ? im.height * sc : H;
+      const fx = clamp(lerp(o.fx ?? 640, o.fx1 ?? o.fx ?? 640, k) + (o.pan || 0) * (k - .5), 640 - iw / 2 + 640 / z, 640 + iw / 2 - 640 / z), fy = clamp(o.fy ?? 360, 360 - ih / 2 + 360 / z, 360 + ih / 2 - 360 / z);
+      ctx.translate(640, 360); ctx.scale(z, z); ctx.translate(-fx, -fy);
+      if (im) ctx.drawImage(im, 640 - iw / 2, 360 - ih / 2, iw, ih);
+      if (o.inside) o.inside(ctx, lt, dur, t); ctx.restore();
+      ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 24; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H, a = .25 + .25 * Math.sin(t * 1.7 + i); ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.beginPath(); ctx.arc(x, y, 1.4 + (i % 3), 0, 7); ctx.fill(); } ctx.restore();
+      if (o.extra) o.extra(ctx, lt, dur, t); }; }
+  // a painted background behind drawn foregrounds: the plate scaled to the frame width and shifted up by dy
+  function bgPlate(ctx, key, dy = 0, sc = 1.0) { const im = T.IMG[key]; if (!im) return; const w = W * sc, h = im.height * w / im.width; ctx.drawImage(im, 640 - w / 2, dy, w, h); }
   // ---------- shots ----------
   // 1. forget the marble: the AD 100 marble fades off the hills, leaving grass and the river
   function sMarble(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.05, 1.0, 640, 380);
@@ -218,7 +238,7 @@
     const k = ease.out(clamp((t - A.seven + .2) / .7)); ctx.globalAlpha = k; ctx.font = '700 150px "Liberation Serif", serif'; ctx.fillStyle = '#8a2a1a'; ctx.fillText('753 BC', 640, 420 + (1 - k) * 20); ctx.restore(); }
   // 15. Varro works it out, centuries later
   function sVarro(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 400);
-    const g = ctx.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, '#5a4030'); g.addColorStop(1, '#3a2818'); ctx.fillStyle = g; ctx.fillRect(-100, -100, 1500, 1000);
+    study(ctx, t, 1180);
     for (let i = 0; i < 3; i++) { ink(ctx, '#7a5a3e', c => c.rect(860 + i * 0, 140 + i * 110, 360, 16), 3); for (let k = 0; k < 7; k++) cel(ctx, c => c.ellipse(880 + k * 46, 120 + i * 110, 18, 22, 0, 0, 7), '#e8d8b0', { shade: '#b8a07a', dx: 3, dy: 0, lw: 3 }); }
     window(ctx, 200, 90, t);
     person(ctx, 480, 690, .62, t, VARRO, { pose: 'hold', face: 1, prop: stylus, eyes: 'half', brow: 'sad' });
@@ -238,14 +258,14 @@
     ctx.save(); ctx.textAlign = 'left'; ctx.fillStyle = '#3a2416'; ctx.font = '700 32px "Liberation Serif", serif'; ctx.globalAlpha = k01(t, 'livy', .4); ctx.fillText('the Roman historian Livy', 80, 100); if (since(t, 'unsure') > 0) { ctx.globalAlpha = k01(t, 'unsure', .4); ctx.font = 'italic 700 26px "Liberation Serif", serif'; ctx.fillText('…wasn\'t sure about it either', 80, 146); } ctx.restore(); }
   // 18. Livy: "more poetry than reliable record"
   function sLivy(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 400);
-    const g = ctx.createLinearGradient(0, 0, 0, 720); g.addColorStop(0, '#6a5038'); g.addColorStop(1, '#3a2818'); ctx.fillStyle = g; ctx.fillRect(-100, -100, 1500, 1000); window(ctx, 820, 90, t);
+    study(ctx, t, 300); window(ctx, 820, 90, t);
     person(ctx, 420, 700, .62, t, LIVY, { pose: since(t, 'poetry') > 0 ? 'shrug' : 'hold', prop: since(t, 'poetry') > 0 ? null : stylus, face: 1, eyes: since(t, 'poetry') > 0 ? 'half' : 'open', mouth: since(t, 'poetry') > 0 ? 'smile' : 'flat' });
     cel(ctx, c => c.rect(480, 480, 380, 28), '#8a6040', { shade: '#5a3e28', dx: 0, dy: 8, lw: 4 }); ink(ctx, '#6a4a30', c => c.rect(500, 508, 20, 200), 3.5); ink(ctx, '#6a4a30', c => c.rect(820, 508, 20, 200), 3.5); scroll(ctx, 680, 456, 220, 40, 1);
     ctx.restore();
     if (since(t, 'says') > -.2) { const k = k01(t, 'says', .5); ctx.save(); ctx.globalAlpha = k; ink(ctx, 'rgba(250,244,230,.94)', c => c.rect(700, 120, 520, 210), 4); ctx.fillStyle = '#3a2416'; ctx.font = 'italic 700 28px "Liberation Serif", serif'; ctx.fillText('"…more suited to the tales', 730, 180); ctx.fillText(' of poets than to a reliable', 730, 220); ctx.fillText(' record…"', 730, 260); ctx.font = '700 18px "Liberation Serif", serif'; ctx.fillText('— Livy, preface to his History of Rome', 730, 302); ctx.restore(); } }
   // 19. what archaeology actually shows: a trench through the layers
   function sDig(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 420);
-    P.sky(ctx, 'noon', t, { y1: 300 }); P.rimClouds(ctx, t, { y: 70, col: '#fbf6ee', shade: '#d8dce8' }); ground(ctx, 260, '#9aae5e', '#8aa050');
+    bgPlate(ctx, 'b2hills', -290); ground(ctx, 270, '#9aae5e', '#8aa050');
     const L = ['#8a6a44', '#a07a50', '#6a5034', '#b8905e', '#7a5a3a', '#5a4028']; for (let i = 0; i < L.length; i++) { ctx.fillStyle = L[i]; ctx.beginPath(); ctx.moveTo(-100, 300 + i * 70); for (let x = -100; x <= 1400; x += 100) ctx.lineTo(x, 300 + i * 70 + Math.sin(x * .01 + i) * 8); ctx.lineTo(1400, 1000); ctx.lineTo(-100, 1000); ctx.closePath(); ctx.fill(); }
     ctx.strokeStyle = INK; ctx.lineWidth = 4; for (let i = 0; i < L.length; i++) { ctx.beginPath(); ctx.moveTo(-100, 300 + i * 70); for (let x = -100; x <= 1400; x += 100) ctx.lineTo(x, 300 + i * 70 + Math.sin(x * .01 + i) * 8); ctx.stroke(); }
     // finds in the layers: pottery sherds, post-holes of a hut, a hearth
@@ -272,14 +292,14 @@
     P.caption(ctx, 'separate little communities…', clamp((t - A.time) / .5), { size: 24, x: 60, y: 690 }); P.caption(ctx, '…grow into one', k01(t, 'one'), { size: 24, x: 1220, y: 690, align: 'right' }); }
   // 22. historians get into an actual fight
   function sFight(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.04, 640, 400);
-    ctx.fillStyle = '#d8ccb4'; ctx.fillRect(-100, -100, 1500, 1000); for (let i = 0; i < 6; i++) ink(ctx, '#a8845a', c => c.rect(80 + i * 200, 80, 160, 220), 3); for (let i = 0; i < 6; i++) for (let k = 0; k < 8; k++) ink(ctx, ['#8a3a3a', '#3a5a8a', '#5a7a3a', '#c8a04a'][k % 4], c => c.rect(92 + i * 200 + k * 18, 96 + (k % 2) * 4, 14, 90), 2);
-    ctx.fillStyle = '#b89874'; ctx.fillRect(-100, 640, 1500, 200); cel(ctx, c => c.rect(500, 548, 280, 26), '#8a6040', { shade: '#5a3e28', dx: 0, dy: 8, lw: 4 }); for (const lx of [516, 744]) ink(ctx, '#6a4a30', c => c.rect(lx, 574, 18, 120), 3.5); papers(ctx, 600, 546); papers(ctx, 680, 540);
+    study(ctx, t, 1160); for (let i = 0; i < 6; i++) ink(ctx, '#8a6440', c => c.rect(80 + i * 200, 80, 160, 220), 3); for (let i = 0; i < 6; i++) for (let k = 0; k < 8; k++) ink(ctx, ['#8a3a3a', '#3a5a8a', '#5a7a3a', '#c8a04a'][k % 4], c => c.rect(92 + i * 200 + k * 18, 96 + (k % 2) * 4, 14, 90), 2);
+    cel(ctx, c => c.rect(500, 548, 280, 26), '#8a6040', { shade: '#5a3e28', dx: 0, dy: 8, lw: 4 }); for (const lx of [516, 744]) ink(ctx, '#6a4a30', c => c.rect(lx, 574, 18, 120), 3.5); papers(ctx, 600, 546); papers(ctx, 680, 540);
     const turn = Math.floor(t / .9) % 2; person(ctx, 400, 700, .58, t, PROF_A, { pose: turn ? 'point' : 'talk', talk: turn === 1, face: 1, brow: 'angry', prop: turn ? null : papers }); person(ctx, 880, 700, .58, t, PROF_B, { pose: turn ? 'crossed' : 'point', talk: turn === 0, face: -1, brow: 'angry' });
     for (let i = 0; i < 5; i++) { const ph = (t * .6 + i * .2) % 1; ctx.save(); ctx.translate(640 + Math.sin(i * 2) * 200 * ph, 480 - ph * 300); ctx.rotate(ph * 6 + i); papers(ctx, 0, 0); ctx.restore(); }
     ctx.restore(); cap(ctx, 'historians get into an actual fight', t, 'historians', { size: 26 }); }
   // 23. Carandini on the Palatine finds a wall he dates to the 700s BC
   function sWall(ctx, lt, dur, t, o = {}) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420);
-    P.sky(ctx, 'noon', t, { y1: 360 }); P.rimClouds(ctx, t, { y: 80, col: '#fbf6ee', shade: '#d8dce8' }); P.hills(ctx, 330, '#7a8a6a', '#cfe2ee', .5, 2); ground(ctx, 340, '#9aae5e', '#8aa050');
+    bgPlate(ctx, 'b2hills', -230); ground(ctx, 345, '#9aae5e', '#8aa050');
     cel(ctx, c => c.rect(180, 400, 920, 300), '#8a6a44', { shade: '#6a5034', dx: 0, dy: 0, lw: 4 }); ctx.fillStyle = '#7a5a3a'; ctx.fillRect(180, 600, 920, 100);
     const rev = clamp((t - A.wall + .8) / 1.4); for (let r = 0; r < 4; r++) for (let i = 0; i < 9; i++) { const bx = 240 + i * 92 + (r % 2) * 46, by = 610 - r * 48; if (r * 9 + i > rev * 36) continue; cel(ctx, c => c.rect(bx, by, 88, 44), '#c8b490', { shade: '#9a8662', light: '#e0d0a8', dx: 6, dy: 6, lw: 3.5 }); }
     for (let i = 0; i < 6; i++) P.weeds(ctx, 200 + i * 170, 400, .6, t);
@@ -298,7 +318,7 @@
   function sDoubt(ctx, lt, dur, t) { sFightBg(ctx, t); const sh = Math.sin(t * 6) * .08;
     person(ctx, 420, 700, .58, t, PROF_A, { pose: 'crossed', face: 1, tilt: sh, eyes: 'half', mouth: 'frown' }); person(ctx, 860, 700, .58, t, PROF_B, { pose: 'shrug', face: -1, tilt: -sh, eyes: 'half', brow: 'sad' });
     cap(ctx, 'most historians: reading way too much into a wall', t, 'most', { size: 24 }); }
-  function sFightBg(ctx, t) { ctx.fillStyle = '#d8ccb4'; ctx.fillRect(0, 0, W, H); for (let i = 0; i < 6; i++) ink(ctx, '#a8845a', c => c.rect(80 + i * 200, 80, 160, 220), 3); for (let i = 0; i < 6; i++) for (let k = 0; k < 8; k++) ink(ctx, ['#8a3a3a', '#3a5a8a', '#5a7a3a', '#c8a04a'][k % 4], c => c.rect(92 + i * 200 + k * 18, 96 + (k % 2) * 4, 14, 90), 2); ctx.fillStyle = '#b89874'; ctx.fillRect(0, 640, W, 200); }
+  function sFightBg(ctx, t) { study(ctx, t, 1160); for (let i = 0; i < 6; i++) ink(ctx, '#8a6440', c => c.rect(80 + i * 200, 80, 160, 220), 3); for (let i = 0; i < 6; i++) for (let k = 0; k < 8; k++) ink(ctx, ['#8a3a3a', '#3a5a8a', '#5a7a3a', '#c8a04a'][k % 4], c => c.rect(92 + i * 200 + k * 18, 96 + (k % 2) * 4, 14, 90), 2); }
   // 26. a wall is a wall
   function sJustWall(ctx, lt, dur, t) { sWall(ctx, lt + 20, dur, t, { noMan: true, noCap: true }); cap(ctx, 'a wall is a wall', t, 'wallis', { size: 30 }); cap(ctx, 'it doesn\'t prove who built it · or that his name was Romulus', t, 'prove', { size: 22, y: 686 }); }
   // 27. the honest answer: a lot of farmers, a lot of hills, a long time
@@ -311,19 +331,63 @@
   // 28. their first big problem: not an enemy — the swamp
   function sProblem(ctx, lt, dur, t) { sSwamp(ctx, lt, dur, t, { people: true, cap: false, dusk: true }); cap(ctx, 'the first big problem: not an enemy', t, 'problem', { size: 26 }); cap(ctx, 'the swamp', t, 'swamp2', { size: 34, y: 680 }); }
 
+
+  // ---------- shots built on the user's plates ----------
+  const pMarble = plateShot('b2marble', { z0: 1.06, z1: 1.0, inside: (ctx, lt, dur, t) => { const k = ease.inOut(clamp((t - A.marble + .2) / 1.4)); if (k > 0) { ctx.save(); ctx.globalAlpha = k; const im = T.IMG.b2hills; if (im) { const sc = Math.max(W / im.width, H / im.height) * 1.1; ctx.drawImage(im, 640 - im.width * sc / 2, 360 - im.height * sc / 2, im.width * sc, im.height * sc); } ctx.restore(); } },
+    extra: (ctx, lt, dur, t) => cap(ctx, 'forget the marble', t, 'marble', { size: 28 }) });
+  const pMap = plateShot('b2map', { z0: 1.0, z1: 1.1, fx: 560, fy: 380, extra: (ctx, lt, dur, t) => { cap(ctx, 'the Tiber', t, 'tiber', { size: 30, x: 900, y: 80, align: 'center' }); cap(ctx, '~15 miles (25 km) to the sea', t, 'fifteen', { size: 24, x: 70, y: 660 }); } });
+  const pCrossing = plateShot('b2crossing', { z0: 1.0, z1: 1.06, fx: 560, fy: 420, extra: (ctx, lt, dur, t) => { cap(ctx, 'a bend in the river · an island', t, 'island', { size: 26 }); cap(ctx, 'the easiest crossing for miles', t, 'cross', { size: 24, y: 686 }); } });
+  const HILLNAMES = [['Capitoline', 190, 250], ['Palatine', 470, 340], ['Aventine', 830, 300], ['Caelian', 1110, 300]];
+  const pHills = plateShot('b2hills', { z0: 1.0, z1: 1.04, extra: (ctx, lt, dur, t) => { HILLNAMES.forEach(([n, x, y], i) => { if (since(t, 'hills') > i * .2) P.caption(ctx, n, since(t, 'hills') - i * .2, { size: 22, x, y, align: 'center' }); }); cap(ctx, 'a cluster of steep hills, right by the crossing', t, 'cluster', { size: 24, y: 686 }); } });
+  const pTop = plateShot('b2top', { z0: 1.0, z1: 1.07, fx: 520, fy: 400, inside: (ctx, lt, dur, t) => { const rk = clamp((t - A.trouble + .6) / 2);
+      for (let i = 0; i < 6; i++) person(ctx, lerp(1240, 1080, rk) + i * 20, 560 + (i % 2) * 4, .045, t, { kind: 'tunic', cloth: '#5a3a2a', hair: '#1a1410', seed: 30 + i }, { pose: 'walk', face: -1, prop: (c, x, y) => { c.strokeStyle = INK; c.lineWidth = 4; c.beginPath(); c.moveTo(x, y + 30); c.lineTo(x + 6, y - 90); c.stroke(); } }); },
+    extra: (ctx, lt, dur, t) => { cap(ctx, 'live on top: see trouble coming', t, 'top', { size: 24 }); if (since(t, 'trouble') > 0) { ctx.save(); ctx.globalAlpha = k01(t, 'trouble', .4); ctx.strokeStyle = 'rgba(255,240,210,.9)'; ctx.lineWidth = 3; ctx.setLineDash([8, 6]); ctx.beginPath(); ctx.ellipse(1150, 545, 110, 34, 0, 0, 7); ctx.stroke(); ctx.restore(); } } });
+  const pBottom = plateShot('b2bottom', { z0: 1.0, z1: 1.05, fx: 600, fy: 420, inside: (ctx, lt, dur, t) => { const w = ease.inOut(clamp((t - A.well) / 1.0)), splash = clamp((t - A.wet + .1) / .5), lvl = 760 - w * 120;
+      ctx.save(); ctx.globalAlpha = .55; water(ctx, -100, lvl, 1400, 800, t, '#5a7a98'); ctx.restore(); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 3; ctx.beginPath(); for (let x = -100; x <= 1400; x += 40) ctx.lineTo(x, lvl + Math.sin(x * .05 + t * 4) * 4); ctx.stroke();
+      if (splash > 0 && splash < 1) for (let i = 0; i < 14; i++) { const a = -Math.PI * (i / 13), r = splash * 130; ctx.fillStyle = `rgba(210,230,245,${1 - splash})`; ctx.beginPath(); ctx.arc(720 + Math.cos(a) * r, 600 + Math.sin(a) * r * .9, 10 - i % 3 * 2, 0, 7); ctx.fill(); } },
+    extra: (ctx, lt, dur, t) => { cap(ctx, 'live at the bottom…', t, 'bottom', { size: 24 }); cap(ctx, '…you get wet', t, 'wet', { size: 30, y: 690 }); } });
+  const pSwamp = plateShot('b2swamp', { z0: 1.0, z1: 1.06, extra: (ctx, lt, dur, t) => { cap(ctx, 'the valley: a swamp that floods', t, 'swamp', { size: 26 }); cap(ctx, '(the future Forum)', t, 'floods', { size: 22, y: 686 }); } });
+  const pLegend = plateShot('b2legend', { z0: 1.08, z1: 1.0, extra: (ctx, lt, dur, t) => cap(ctx, 'a much better origin story', t, 'origin', { size: 24, y: 690, x: 640, align: 'center' }) });
+  const pTwins = plateShot('b2twins', { z0: 1.0, z1: 1.06, extra: (ctx, lt, dur, t) => { cap(ctx, 'Romulus and Remus', t, 'romulus', { size: 30, x: 80, y: 90 }); cap(ctx, 'thrown into the river', t, 'thrown', { size: 22, x: 80, y: 130 }); } });
+  const pWolf = plateShot('b2wolf', { z0: 1.0, z1: 1.06, extra: (ctx, lt, dur, t) => { cap(ctx, 'rescued by a she-wolf', t, 'wolf', { size: 26, x: 80, y: 90 }); cap(ctx, 'raised by a shepherd', t, 'shepherd', { size: 24, x: 80, y: 130 }); } });
+  const pArgue = plateShot('b2argue', { z0: 1.0, z1: 1.06, extra: (ctx, lt, dur, t) => { cap(ctx, 'they grow up · decide to build a city', t, 'grow', { size: 24, x: 80, y: 90 }); if (since(t, 'argue') > 0) { const turn = Math.floor((t - A.argue) / 1.1) % 2; P.caption(ctx, 'Palatine!', 1, { size: 24, x: 300, y: 300, align: 'center', a: turn === 0 ? 1 : .45 }); P.caption(ctx, 'Aventine!', 1, { size: 24, x: 980, y: 300, align: 'center', a: turn === 1 ? 1 : .45 }); } } });
+  const pKill = plateShot('b2kill', { z0: 1.0, z1: 1.05, extra: (ctx, lt, dur, t) => cap(ctx, 'Romulus kills his brother', t, 'killed', { size: 26, x: 80, y: 90 }) });
+  const pRoma = plateShot('b2roma', { z0: 1.04, z1: 1.0, fx: 640, fy: 300, extra: (ctx, lt, dur, t) => { const k = ease.out(clamp((t - A.name + .5) / .8)); if (k > 0) { ctx.save(); ctx.globalAlpha = k; ctx.translate(640, 168); ctx.scale(.8 + .2 * k, .8 + .2 * k); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 120px "Liberation Serif", serif'; ctx.lineJoin = 'round';
+      ctx.lineWidth = 16; ctx.strokeStyle = '#4a2a16'; ctx.strokeText('ROMA', 0, 0); const g = ctx.createLinearGradient(0, -50, 0, 50); g.addColorStop(0, '#fbe2a0'); g.addColorStop(.55, '#e8a850'); g.addColorStop(1, '#b8702e'); ctx.fillStyle = g; ctx.fillText('ROMA', 0, 0); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(255,248,220,.7)'; ctx.strokeText('ROMA', 0, -2); ctx.restore(); }
+      cap(ctx, 'the city gets his name', t, 'name', { size: 24, x: 80, y: 650 }); } });
+  const pDate = plateShot('b2date', { z0: 1.0, z1: 1.04 });
+  const pLegendStamp = plateShot('b2date', { z0: 1.04, z1: 1.06, extra: (ctx, lt, dur, t) => { const k = clamp((t - A.legend + .15) / .25); if (k > 0) { ctx.save(); ctx.translate(640, 380); ctx.rotate(-.16); ctx.scale(1 + (1 - k) * .8, 1 + (1 - k) * .8); ctx.globalAlpha = k * .92; ctx.strokeStyle = '#b8282a'; ctx.lineWidth = 12; ctx.strokeRect(-270, -76, 540, 152); ctx.fillStyle = '#b8282a'; ctx.font = '700 104px "Liberation Serif", serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('LEGEND', 0, 8); ctx.restore(); } } });
+  // drawn foregrounds over the painted plates
+  const pHuts = plateShot('b2hills', { z0: 1.0, z1: 1.05, inside: (ctx, lt, dur, t) => { cel(ctx, c => { c.moveTo(-100, 760); c.lineTo(-100, 560); c.quadraticCurveTo(640, 500, 1400, 560); c.lineTo(1400, 760); c.closePath(); }, '#8aa64e', { shade: '#6a8a3a', light: '#a8c060', dx: 0, dy: 16, lw: 4 });
+      for (const [x, y, s2] of [[180, 600, .5], [420, 580, .56], [700, 584, .54], [960, 596, .5], [1170, 612, .46]]) roundHut(ctx, x, y, s2, t, x);
+      person(ctx, 320, 676, .32, t, VILL[1], { pose: 'carry', prop: jug, face: 1, walk: true }); person(ctx, 830, 684, .32, t, VILL[0], { pose: 'talk', talk: true, face: -1 }); person(ctx, 720, 686, .3, t, VILL[3], { pose: 'stand', face: 1, mouth: 'smile' });
+      P.goat(ctx, 1040, 700, .45, t); P.goat(ctx, 1110, 708, .4, t, { flip: true }); P.cow(ctx, 540, 704, .26, t, { graze: true }); P.grassFG(ctx, t, -40, 1320, 760, 50, '#4f6a2a'); },
+    extra: (ctx, lt, dur, t) => { cap(ctx, 'huts on these hills', t, 'huts', { size: 26 }); cap(ctx, 'well before 753 BC', t, 'before', { size: 22, y: 690 }); } });
+  const pMerge = plateShot('b2map', { cover: 1.1, z0: 1.04, z1: 1.04, inside: (ctx, lt, dur, t) => { ctx.fillStyle = 'rgba(240,230,200,.35)'; ctx.fillRect(0, 0, W, H);
+      const V = [[640, 330, 'Capitoline'], [760, 420, 'Palatine'], [900, 330, 'Quirinal'], [960, 460, 'Esquiline'], [800, 530, 'Aventine'], [820, 250, 'Viminal']];
+      const m = ease.inOut(clamp((t - A.one + .9) / 1.4)), sep = clamp((t - A.communities + .6) / 1);
+      if (m > 0) { ctx.save(); ctx.globalAlpha = m; ctx.strokeStyle = '#8a2a1a'; ctx.lineWidth = 6; ctx.setLineDash([14, 10]); ctx.beginPath(); ctx.ellipse(800, 395, 250 - m * 10, 210 - m * 6, 0, 0, 7); ctx.stroke(); ctx.restore(); }
+      V.forEach(([x, y, n], i) => { ctx.save(); ctx.globalAlpha = 1 - m * .6; ctx.strokeStyle = '#3a2416'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.arc(x, y, 54 * sep, 0, 7); ctx.stroke(); ctx.restore(); for (let k = 0; k < 3; k++) roundHut(ctx, x - 24 + k * 24, y + 14 - (k % 2) * 8, .12, t, i * 3 + k); P.caption(ctx, n, 1, { size: 17, x, y: y + 52, align: 'center' }); }); },
+    extra: (ctx, lt, dur, t) => { const m = ease.inOut(clamp((t - A.one + .9) / 1.4)); if (m > .5) P.caption(ctx, 'one Rome', clamp((m - .5) * 2), { size: 34, x: 800, y: 110, align: 'center' }); P.caption(ctx, 'separate little communities…', clamp((t - A.time) / .5), { size: 24, x: 60, y: 690 }); P.caption(ctx, '…grow into one', k01(t, 'one'), { size: 24, x: 1220, y: 690, align: 'right' }); } });
+  const pFarmers = plateShot('b2hills', { z0: 1.08, z1: 1.0, inside: (ctx, lt, dur, t) => { for (const [x, y, s2] of [[150, 352, .2], [210, 360, .18], [520, 410, .2], [880, 420, .22], [940, 428, .2], [1150, 380, .18]]) roundHut(ctx, x, y, s2, t, x);
+      for (let i = 0; i < 6; i++) person(ctx, 140 + i * 200, 650 - (i % 2) * 12, .22, t, VILL[i % 5], { pose: i % 3 === 0 ? 'walk' : i % 3 === 1 ? 'carry' : 'stand', face: i % 2 ? -1 : 1, prop: i % 3 === 1 ? jug : null });
+      P.goat(ctx, 300, 664, .3, t); P.cow(ctx, 990, 668, .22, t, { graze: true }); },
+    extra: (ctx, lt, dur, t) => { cap(ctx, 'who founded Rome? the honest answer:', t, 'honest', { size: 24 }); cap(ctx, 'a lot of farmers · a lot of hills · a long time', t, 'farmers', { size: 24, y: 690 }); } });
+  const pProblem = plateShot('b2swamp', { z0: 1.0, z1: 1.06, inside: (ctx, lt, dur, t) => { for (let i = 0; i < 3; i++) person(ctx, 360 + i * 90, 720, .3, t, VILL[i], { pose: i === 1 ? 'shrug' : 'stand', face: 1, eyes: 'half', mouth: 'frown' }); },
+    extra: (ctx, lt, dur, t) => { cap(ctx, 'the first big problem: not an enemy', t, 'problem', { size: 26 }); cap(ctx, 'the swamp', t, 'swamp2', { size: 34, y: 680 }); } });
   // finish: same light touch as the cold open (no haze, no blur)
-  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); P.enhance(ctx, t, { sun: null, mistY: 600, mist: .03, bloom: .06, tex: .06 }); P.grade(ctx, '#ffb070', .08, 'soft-light'); P.grain(ctx, t, .03); P.vignette(ctx, .32); };
-  const cut = [[0, fin(sMarble), 0], [A.picture - .2, fin(sMap), .6], [A.right - .2, fin(sCrossing), .5], [A.crossing - .4, fin(sHills), .5], [A.top - .6, fin(sTop), .4],
-    [A.bottom - .5, fin(sBottom), .4], [A.valley - .2, fin(sSwamp), .5], [A.now - .2, fin(sStory), .6], [A.twin - .3, fin(sTwins), .5], [A.rescued - .2, fin(sWolf), .4],
-    [A.grow - .2, fin(sArgue), .4], [A.killed - .5, fin(sKill), .3], [A.name - .9, fin(sName), .4], [A.writers - .3, fin(sDate), .5], [A.worked - .3, fin(sVarro), .5],
-    [A.legend - .3, fin(sLegend), .3], [A.livy - .2, fin(sLivyLine), .5], [A.says - .3, fin(sLivy), .5], [A.archaeology - .2, fin(sDig), .5], [A.huts - .5, fin(sHuts), .5],
-    [A.time - .4, fin(sMerge), .5], [A.historians - .4, fin(sFight), .4], [A.italian - .2, fin(sWall), .5], [A.argues - .3, fin(sCeremony), .3], [A.most - .2, fin(sDoubt), .4],
-    [A.wallis - .2, fin(sJustWall), .4], [A.honest - .4, fin(sFarmers), .5], [A.first - .4, fin(sProblem), .5]];
+  const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') P.enhance(ctx, t, { sun: null, mistY: 600, mist: .03, bloom: .06, tex: .06 }); P.grade(ctx, '#ffb070', .08, 'soft-light'); P.grain(ctx, t, .03); P.vignette(ctx, .32); };
+  const cut = [[0, fin(pMarble), 0], [A.picture - .2, fin(pMap), .6], [A.right - .2, fin(pCrossing), .5], [A.crossing - .4, fin(pHills), .5], [A.top - .6, fin(pTop), .4],
+    [A.bottom - .5, fin(pBottom), .4], [A.valley - .2, fin(pSwamp), .5], [A.now - .2, fin(pLegend), .6], [A.twin - .3, fin(pTwins), .5], [A.rescued - .2, fin(pWolf), .4],
+    [A.grow - .2, fin(pArgue), .4], [A.killed - .5, fin(pKill), .3], [A.name - .9, fin(pRoma), .4], [A.writers - .3, fin(pDate), .5], [A.worked - .3, fin(sVarro), .5],
+    [A.legend - .3, fin(pLegendStamp), .3], [A.livy - .2, fin(sLivyLine), .5], [A.says - .3, fin(sLivy), .5], [A.archaeology - .2, fin(sDig), .5], [A.huts - .5, fin(pHuts), .5],
+    [A.time - .4, fin(pMerge), .5], [A.historians - .4, fin(sFight), .4], [A.italian - .2, fin(sWall), .5], [A.argues - .3, fin(sCeremony), .3], [A.most - .2, fin(sDoubt), .4],
+    [A.wallis - .2, fin(sJustWall), .4], [A.honest - .4, fin(pFarmers), .5], [A.first - .4, fin(pProblem), .5]];
   const shots = P.cutList(cut, A.end);
   const sfx = [{ t: .2, type: 'wind', gain: .3 }, { t: A.river, type: 'bubbles', gain: .3 }, { t: A.island, type: 'splash', gain: .25 }, { t: A.hills, type: 'thud', gain: .25 }, { t: A.trouble, type: 'clang', gain: .2 },
     { t: A.wet, type: 'splash', gain: .5 }, { t: A.floods, type: 'bubbles', gain: .35 }, { t: A.now, type: 'paper', gain: .4 }, { t: A.thrown, type: 'splash', gain: .35 }, { t: A.killed, type: 'hit', gain: .35 },
     { t: A.name, type: 'swell', gain: .4 }, { t: A.seven, type: 'press', gain: .4 }, { t: A.legend, type: 'thud', gain: .55 }, { t: A.seven2, type: 'slide', gain: .3 }, { t: A.archaeology, type: 'scratch', gain: .3 },
     { t: A.fight, type: 'rattle', gain: .35 }, { t: A.wall, type: 'thud', gain: .35 }, { t: A.argues, type: 'swell', gain: .3 }, { t: A.wallis, type: 'thud', gain: .3 }, { t: A.swamp2, type: 'bubbles', gain: .4 }];
   const moods = [{ t: 0, mood: 'still' }, { t: A.now - .3, mood: 'mystery' }, { t: A.legend, mood: 'still' }, { t: A.historians - .3, mood: 'tense' }, { t: A.most - .3, mood: 'still' }, { t: A.first - .4, mood: 'under' }];
-  G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-beat2.mp3', shots, sfx, moods, images: {}, fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
+  G.Show = { duration: A.end, narration: 'rome/assets/audio/narration-beat2.mp3', shots, sfx, moods, images: Object.fromEntries(['marble', 'map', 'crossing', 'hills', 'top', 'bottom', 'swamp', 'legend', 'twins', 'wolf', 'argue', 'kill', 'roma', 'date'].map(k => ['b2' + k, `assets/img/plates/b2/${k}.jpg`])), fonts: ['700 20px Nunito', '700 30px "Liberation Serif"'] };
 })(window);

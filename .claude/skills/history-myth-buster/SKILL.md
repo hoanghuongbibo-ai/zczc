@@ -266,3 +266,24 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Characters who appear (kings and so on) pop or rise into place rather than sliding in while standing still.
 - Bystanders react: their eyes follow the main character (`look:` on `N.walker`), and the nearest ones wave.
 - Weather is all-or-nothing: rain covers the whole frame under an overcast sky with clouds edge to edge. The sun only appears after the rain has fully stopped. Night is dark across the whole frame. Never show rain and sunshine together.
+
+### Storybook style (Rome series, `houdini/rome/`, `rome/js/paint.js`): the user's new editing method
+The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in `rome/assets/ref/style-ref-1..4.mp4`. Use this look for Rome and for any later video the user asks to make "in the new style".
+- **Look.** Painted backgrounds with real light:
+  - golden-hour or blue-to-gold skies with soft cloud bands and shaded cumulus;
+  - atmospheric haze on distant hills;
+  - long cast shadows and light shafts;
+  - dark foliage framing the bottom corners (`framing()`).
+  All shapes are cel-shaded (`P.cel`: one shadow tone and one light tone) with **warm brown ink** (`#2b1d16`), not black. Every frame gets a soft-light warm grade, paper grain and a vignette.
+- **Characters** (`P.chibi`): big pure-white round heads, tiny line eyes with lids (half-lidded, closed, side-glance, wide), a small mouth, big dark hair, small bodies in tunics and togas. They **act** (sigh, glance, blink, tilt, cross their arms) more than they move. Anyone walking across the frame walks side-on (`dir`).
+- **Animals:** a big soft cow (`P.cow`, unimpressed lids for comedy) and goats (`P.goat`).
+- **Editing:**
+  - fewer, longer shots (3–8 s), each with a slow push or drift (`P.camPush`);
+  - **cross-dissolves** between shots (`P.cutList` with a fade per cut);
+  - reaction close-ups;
+  - a fixed "anchor" shot the story returns to (the Forum: `forum(era)`).
+- **Text is quiet.**
+  - Lower-left serif captions (`P.caption`, Liberation Serif, since the CDN fonts are blocked here).
+  - A teal name-tag subtitle for dialogue (`P.subtitle`).
+  - Painted ring seals for LEGEND / MYTH / DEBATED / NEAR-DEATH (`P.seal`).
+  - No big sticker strips or bouncy pops.

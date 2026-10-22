@@ -30,19 +30,26 @@
     let sd = 5; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
     // soil: furrow strokes and clods, denser toward the camera
     ctx.save(); ctx.lineCap = 'round'; for (let i = 0; i < 180; i++) { const yy = y + Math.pow(r(), .7) * (760 - y), k = (yy - y) / (760 - y), x = -60 + r() * 1400; ctx.strokeStyle = r() < .5 ? 'rgba(60,40,24,.35)' : 'rgba(170,140,100,.3)'; ctx.lineWidth = 1 + k * 2.5; ctx.beginPath(); ctx.moveTo(x, yy); ctx.lineTo(x + 10 + k * 30, yy + (r() - .5) * 3); ctx.stroke(); } ctx.restore();
-    for (let i = 0; i < 16; i++) { const x = (i * 211) % 1500 - 60, yy = y + 30 + (i * 53) % 230, w = 60 + (i % 4) * 46; ctx.fillStyle = i % 3 ? 'rgba(118,148,70,.9)' : 'rgba(146,168,88,.88)'; ctx.beginPath(); ctx.ellipse(x, yy, w, w * .2, 0, 0, 7); ctx.fill(); }
+    P.softPatches(ctx, -100, 1400, y, 760, ['#7f9a4a', '#98a85a', '#6a5a3a', '#a89464', '#5e7a3a'], 26, 7);
+    P.track(ctx, [[640, y + 6], [600, y + 80], [520, y + 170], [420, 780]], 10, 90);
     P.grassField(ctx, t, -40, 1320, y + 10, 760, { n: 420, seed: 9 });
     for (let i = 0; i < 7; i++) { const x = (i * 337) % 1300 + 20, yy = y + 70 + (i * 71) % 200, w = 52 + (i % 3) * 30;
       const pg = ctx.createLinearGradient(0, yy - w * .16, 0, yy + w * .16); pg.addColorStop(0, 'rgba(250,236,200,.85)'); pg.addColorStop(1, 'rgba(150,180,200,.75)'); ctx.fillStyle = pg; ctx.beginPath(); ctx.ellipse(x, yy, w, w * .16, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(60,40,20,.45)'; ctx.lineWidth = 2; ctx.stroke();
       ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - w * .4, yy - 2); ctx.lineTo(x - w * .05, yy - 3); ctx.stroke(); }
     for (let i = 0; i < 26; i++) { const x = r() * 1300, yy = y + 20 + r() * 280; ctx.fillStyle = 'rgba(225,215,190,.9)'; ctx.beginPath(); ctx.ellipse(x, yy, 3 + r() * 4, 2 + r() * 2, 0, 0, 7); ctx.fill(); ctx.strokeStyle = 'rgba(60,40,24,.5)'; ctx.lineWidth = 1.2; ctx.stroke(); } }
-  function paving(ctx, y) { const g = ctx.createLinearGradient(0, y, 0, 760); g.addColorStop(0, '#e8dcc4'); g.addColorStop(1, '#c8b28c'); ctx.fillStyle = g; ctx.fillRect(-600, y, 2600, 900);
+  function paving(ctx, y) { pavingBase(ctx, y); P.softPatches(ctx, -100, 1400, y, 760, ['rgba(150,120,80,.5)', 'rgba(250,240,220,.6)', 'rgba(120,140,80,.35)'], 20, 11); }
+  function pavingBase(ctx, y) { const g = ctx.createLinearGradient(0, y, 0, 760); g.addColorStop(0, '#e8dcc4'); g.addColorStop(1, '#c8b28c'); ctx.fillStyle = g; ctx.fillRect(-600, y, 2600, 900);
     let sd = 3; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
-    // irregular slabs in perspective, each with its own tone, worn edges and the odd crack
-    for (let row = 0; row < 12; row++) { const y0 = y + row * row * 2.2 + row * 4, y1 = y + (row + 1) * (row + 1) * 2.2 + (row + 1) * 4, n = 14 + row; for (let i = -n; i < n * 2; i++) { const w = 1500 / n, xa = -100 + i * w + (row % 2) * w * .5, sc = (y0 - y + 40) / 300;
-      const x0 = 640 + (xa - 640) * (.6 + sc), x1 = 640 + (xa + w - 640) * (.6 + sc); const tone = r(); ctx.fillStyle = `rgba(${200 + tone * 40},${184 + tone * 36},${150 + tone * 30},.55)`; ctx.fillRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2);
-      ctx.strokeStyle = 'rgba(110,86,60,.45)'; ctx.lineWidth = 1 + sc; ctx.strokeRect(x0, y0, x1 - x0, y1 - y0); if (r() < .08) { ctx.beginPath(); ctx.moveTo(x0 + (x1 - x0) * .3, y0); ctx.lineTo(x0 + (x1 - x0) * .45, (y0 + y1) / 2); ctx.lineTo(x0 + (x1 - x0) * .4, y1); ctx.stroke(); } } } }
+    // flagstones in one-point perspective: joints converge on a vanishing point at the horizon
+    const vx = 640, vy = y - 160, X = (u, yy) => vx + u * (yy - vy) / (760 - vy);  // u = position on the bottom edge
+    const rows = []; for (let k = 0; k <= 12; k++) rows.push(y + (760 - y) * Math.pow(k / 12, 1.7));
+    for (let k = 0; k < 12; k++) { const y0 = rows[k], y1 = rows[k + 1], cols = 22, off = (k % 2) * .5;
+      for (let i = -cols; i <= cols; i++) { const u0 = (i + off) * 120, u1 = (i + 1 + off) * 120; const q = [[X(u0, y0), y0], [X(u1, y0), y0], [X(u1, y1), y1], [X(u0, y1), y1]]; if (q[1][0] < -100 || q[0][0] > 1380) continue;
+        const tone = r(); ctx.fillStyle = `rgba(${196 + tone * 44},${180 + tone * 38},${146 + tone * 32},.6)`; ctx.beginPath(); ctx.moveTo(...q[0]); ctx.lineTo(...q[1]); ctx.lineTo(...q[2]); ctx.lineTo(...q[3]); ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = 'rgba(110,86,60,.42)'; ctx.lineWidth = .6 + 2 * (y1 - y) / (760 - y); ctx.stroke();
+        if (r() < .07) { ctx.beginPath(); ctx.moveTo(lerp(q[0][0], q[1][0], .3), y0); ctx.lineTo(lerp(q[3][0], q[2][0], .5), (y0 + y1) / 2); ctx.lineTo(lerp(q[3][0], q[2][0], .42), y1); ctx.stroke(); } } } }
   function hut(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    P.sideFace(ctx, -80, -110, 0, 26, '#b89a72');
     cel(ctx, c => c.rect(-80, -110, 160, 110), '#b89a72', { shade: '#7a6040', dx: 10, dy: 0 }); ink(ctx, '#5a3a24', c => c.rect(-22, -70, 44, 70), 4); ink(ctx, '#3a2a1a', c => c.rect(36, -84, 24, 22), 3);
     cel(ctx, c => { c.moveTo(-104, -100); c.lineTo(0, -190); c.lineTo(104, -100); c.closePath(); }, '#c8a660', { shade: '#8a6a34', light: '#e8cc88', dx: -6, dy: 8 }); ctx.save(); ctx.strokeStyle = 'rgba(90,60,30,.6)'; ctx.lineWidth = 2; for (let i = 0; i < 9; i++) { ctx.beginPath(); ctx.moveTo(-90 + i * 22, -104); ctx.lineTo(-40 + i * 10, -170); ctx.stroke(); } ctx.restore(); ctx.restore(); }
   function laundry(ctx, x0, y0, x1, y1, t) { ctx.save(); ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo((x0 + x1) / 2, Math.max(y0, y1) + 18, x1, y1); ctx.stroke(); ctx.restore();
@@ -55,7 +62,7 @@
   function hillPaint(ctx, fn, haze) { cel(ctx, fn, mix('#8fa45a', haze, .22), { shade: mix('#5e7a3c', haze, .2), light: mix('#b8c878', haze, .2), dx: -10, dy: 12, lw: 4 }); ctx.save(); ctx.beginPath(); fn(ctx); ctx.clip(); P.grassField(ctx, 0, -220, 1500, 320, 500, { n: 200, seed: 21, dark: 'rgba(70,96,44,.45)', light: 'rgba(200,210,130,.45)' }); ctx.restore(); }
   function capitoline(ctx, era, haze) { hillPaint(ctx, HILL_L, haze);
     for (const [cx, cy, cs] of [[200, 352, .34], [262, 370, .3], [-60, 338, .36]]) P.cypress(ctx, cx, cy, cs, 0);
-    if (era === 'ancient') P.temple(ctx, 70, 334, .32, { roof: '#d8b048' });
+    if (era === 'ancient') { P.temple(ctx, 70, 334, .32, { roof: '#d8b048' }); P.footing(ctx, 70, 334, 180, 0, { earth: 'rgba(110,130,70,.6)' }); }
     else if (era === 'medieval') { ink(ctx, '#c8b090', c => c.rect(30, 270, 100, 62), 4); cel(ctx, c => { c.moveTo(20, 272); c.lineTo(80, 232); c.lineTo(140, 272); c.closePath(); }, '#a8603a', { dx: -4, dy: 4 }); ink(ctx, '#5a3a24', c => c.rect(70, 300, 20, 32), 3); }
     else { ink(ctx, '#f0ece2', c => c.rect(-20, 270, 180, 64), 4); for (let i = 0; i < 6; i++) ink(ctx, '#f8f4ea', c => c.rect(-6 + i * 28, 280, 12, 50), 2.5); } }
   function palatine(ctx, era, haze, t) { hillPaint(ctx, HILL_R, haze);
@@ -72,19 +79,22 @@
     // long dawn shadows, rubble and shrubs (painted density like the reference)
     if (era !== 'ancient') { P.castShadow(ctx, 300, 600, 240, 520, -2.9, .22); P.castShadow(ctx, 640, 522, 30, 360, -2.9, .2); P.castShadow(ctx, 892, 545, 150, 460, -2.9, .2); }
     else { P.castShadow(ctx, 880, 560, 330, 420, -2.9, .18); P.castShadow(ctx, 300, 600, 240, 420, -2.9, .18); }
-    for (const [bx, by, br, bc] of [[30, 500, 60, '#8aa04a'], [470, 482, 40, '#93a84e'], [1010, 486, 54, '#86a046'], [1220, 500, 70, '#7f9a46'], [720, 478, 30, '#93a84e']]) P.bush(ctx, bx, by, br, { col: era === 'today' ? mix(bc, '#5a8a3a', .3) : bc });
-    if (era === 'medieval') for (const [rx, ry, rr] of [[560, 640, 26], [990, 650, 34], [1150, 700, 22], [420, 700, 30], [700, 712, 18]]) { P.rock(ctx, rx, ry, rr, '#ddd2bc'); }
+    for (const [bx, by, br, bc] of [[30, 500, 60, '#8aa04a'], [470, 482, 40, '#93a84e'], [1010, 486, 54, '#86a046'], [1220, 500, 70, '#7f9a46'], [720, 478, 30, '#93a84e']]) { P.contact(ctx, bx, by + br * .7, br * 2.2, .45); P.bush(ctx, bx, by, br, { col: era === 'today' ? mix(bc, '#5a8a3a', .3) : bc }); }
+    if (era === 'medieval') for (const [rx, ry, rr] of [[560, 640, 26], [990, 650, 34], [1150, 700, 22], [420, 700, 30], [700, 712, 18]]) { P.contact(ctx, rx, ry + 2, rr * 2.6, .4); P.rock(ctx, rx, ry, rr, '#ddd2bc'); }
     if (era === 'medieval') for (const [rx, ry, rs] of [[60, 600, .7], [520, 560, .5], [1000, 600, .6], [1240, 640, .8], [760, 700, .5]]) P.reeds(ctx, rx, ry, rs, t, 6);
     // the arch
     const buried = era === 'medieval' ? 1 : 0, ab = 600; P.archW(ctx, 300, ab, 260, 300, { col: era === 'ancient' ? '#efe6d4' : '#d8c8a6' });
-    if (buried) { ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.moveTo(100, ab + 10); ctx.quadraticCurveTo(160, ab - 120, 300, ab - 118); ctx.quadraticCurveTo(440, ab - 122, 500, ab + 10); ctx.closePath(); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); ctx.restore(); hut(ctx, 130, ab - 70, .62); }
+    if (buried) { const bank = c => { c.moveTo(60, ab + 16); c.quadraticCurveTo(150, ab - 110, 300, ab - 118); c.quadraticCurveTo(450, ab - 112, 540, ab + 16); c.closePath(); }; P.contact(ctx, 300, ab + 14, 520, .5);
+      cel(ctx, bank, '#8a7448', { shade: '#5e4a2c', light: '#a89060', dx: -12, dy: 10, lw: 4 }); ctx.save(); ctx.beginPath(); bank(ctx); ctx.clip(); P.softPatches(ctx, 60, 540, ab - 120, ab + 16, ['#7f9a4a', '#98a85a', '#6a8a3e'], 10, 17); P.grassField(ctx, t, 60, 540, ab - 118, ab + 16, { n: 160, seed: 31 }); ctx.restore(); P.footing(ctx, 300, ab + 12, 480, t, { ao: .3 });
+      P.contact(ctx, 130, ab - 68, 150, .5); hut(ctx, 130, ab - 70, .62); P.footing(ctx, 130, ab - 70, 110, t, { ao: .2 }); }
+    else P.footing(ctx, 300, ab, 270, t, { earth: era === 'ancient' ? 'rgba(170,150,110,.5)' : 'rgba(120,96,64,.6)' });
     // the Column of Phocas
-    if (era === 'medieval') { P.column(ctx, 640, 520, 30, 120, {}); ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.ellipse(640, 522, 60, 14, 0, 0, 7); ctx.fill(); ctx.restore(); }
-    else { ink(ctx, '#e0d4bc', c => c.rect(600, 520, 80, 40), 4); P.column(ctx, 640, 522, 30, 210, {}); }
+    if (era === 'medieval') { P.column(ctx, 640, 520, 30, 120, { base: false }); P.footing(ctx, 640, 522, 70, t); }
+    else { ink(ctx, '#e0d4bc', c => c.rect(600, 520, 80, 40), 4); P.column(ctx, 640, 522, 30, 210, {}); P.footing(ctx, 640, 560, 90, t, { earth: 'rgba(170,150,110,.5)' }); }
     // Castor & Pollux
-    if (era === 'ancient') P.temple(ctx, 880, 560, .62, { n: 5, roof: '#d8b048' });
+    if (era === 'ancient') { P.contact(ctx, 880, 562, 400, .5); P.sideFace(ctx, 880 - 260 * .62, 560 - 60 * .62, 560, 18, '#e0d4bc'); P.temple(ctx, 880, 560, .62, { n: 5, roof: '#d8b048' }); P.footing(ctx, 880, 562, 340, t, { earth: 'rgba(170,150,110,.45)' }); }
     else { for (let i = 0; i < 3; i++) P.column(ctx, 840 + i * 52, era === 'medieval' ? 540 : 580, 34, era === 'medieval' ? 150 : 290, { base: era !== 'medieval' }); ink(ctx, '#e0d4bc', c => c.rect(812, (era === 'medieval' ? 540 - 186 : 580 - 326), 160, 30), 4);
-      if (era === 'medieval') { ctx.save(); ctx.fillStyle = '#7e6644'; ctx.beginPath(); ctx.ellipse(892, 542, 120, 18, 0, 0, 7); ctx.fill(); ctx.restore(); } }
+      P.footing(ctx, 892, era === 'medieval' ? 542 : 582, 200, t, era === 'medieval' ? {} : { earth: 'rgba(170,150,110,.45)' }); }
     if (era === 'medieval' && !o.empty) { cow(ctx, 760, 640, .38, t, { graze: true }); cow(ctx, 1080, 600, .3, t, { flip: true, graze: true, spots: [[-40, -110, 30, 20]] }); goat(ctx, 520, 600, .5, t); goat(ctx, 470, 620, .45, t, { flip: true, col: '#bfae98' }); }
     if (era === 'ancient' && !o.empty) { for (let i = 0; i < 26; i++) { const x = 60 + (i * 97) % 1220, y = 560 + ((i * 37) % 120), c = CROWD[i % 6]; chibi(ctx, x + Math.sin(t * .6 + i) * 8, y, .16 + (y - 560) / 1200, t, Object.assign({ seed: i, walk: i % 3 === 0, dir: i % 2 ? 1 : -1, toga: i % 4 === 0 ? '#fbf8ef' : null }, c)); } }
     if (era === 'today' && !o.empty) { for (let i = 0; i < 22; i++) { const x = 40 + (i * 113) % 1240, y = 570 + ((i * 41) % 110), c = TOUR[i % 6]; chibi(ctx, x, y, .16 + (y - 560) / 1200, t, Object.assign({ seed: i, arms: i % 3 === 0 ? 'hold' : 'down', prop: i % 3 === 0 ? phone : null }, c)); } }

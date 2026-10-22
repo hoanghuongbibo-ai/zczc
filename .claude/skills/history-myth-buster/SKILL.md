@@ -283,6 +283,8 @@ The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in
     - People on walls stand behind the parapet, and a fall goes behind it.
     - People in a conversation face each other.
     - A distant place reads as distant: smaller detail, haze, and a clear drop from the near ground.
+  - **No empty or rudimentary screens.** Every interior and dig is a full set dressed with period-correct detail. Roman rooms get fresco walls, a mosaic floor, a scroll cabinet, a lampstand, a bust and a garden doorway. Modern offices get full bookshelves, a window view, a desk lamp, books and a globe. Excavations get a canopy, strings, tools, a sieve, a wheelbarrow, finds and workers. Never use a flat-coloured background with one prop.
+  - **Water logic:** people and animals cross water on a raft or boat. Never put anyone underwater; wade only at the edge.
   - **Audit before sending.** Render every shot at its start, middle and end (`audit.mjs`, contact sheets of 3 frames per shot) and check each frame for:
     - floating objects;
     - characters facing the wrong way;

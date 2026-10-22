@@ -139,7 +139,7 @@
       ctx.save(); ctx.filter = 'blur(18px)'; ctx.globalAlpha = o.mist ?? .18; ctx.fillStyle = '#fff4dc'; for (let i = 0; i < 5; i++) { const x = ((i * 330 + t * 14) % 1700) - 200; ctx.beginPath(); ctx.ellipse(x, (o.mistY ?? 560) + (i % 2) * 30, 260, 26, 0, 0, 7); ctx.fill(); } ctx.restore();
       ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 28; i++) { const x = (i * 157 + Math.sin(t * .4 + i) * 30) % W, y = ((i * 97 - t * (8 + i % 5)) % H + H) % H, a = .35 + .35 * Math.sin(t * 1.7 + i); ctx.fillStyle = `rgba(255,236,190,${a})`; ctx.beginPath(); ctx.arc(x, y, 1.6 + (i % 3), 0, 7); ctx.fill(); } ctx.restore();
       if (o.extra) o.extra(ctx, lt, dur, t); }; }
-  const pCity = plateShot('city', { cover: 1.02, z0: 1.0, z1: 1.04, fx: 640, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, x: 1220, y: 60, align: 'right' }); } });
+  const pCity = plateShot('city', { cover: 1.02, z0: 1.0, z1: 1.04, fx: 640, fy: 360, mist: .1, mistY: 640, extra: (ctx, lt, dur, t) => { if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, y: 686 }); } });
   // ---------- the user's generated clips (assets/clips/<name>/fNNN.jpg, 24 fps, mark removed) ----------
   // map(lt, t) -> seconds into the clip; neighbouring frames are blended so slowed-down clips stay smooth
   function clipShot(key, map, o = {}) { return function plate(ctx, lt, dur, t) { const sec = Math.max(0, Math.min(9.95, map(lt, t, dur))), f = sec * 24, i0 = Math.min(239, Math.floor(f)), fr = f - i0;
@@ -194,7 +194,7 @@
   function boots(ctx, lt, dur, t) { // you, ankle-deep
     ctx.save(); ctx.translate(640, 300); ctx.scale(1.5, 1.5); ctx.translate(-640, -380); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
     ctx.save(); P.camPush(ctx, lt, dur, 1.04, 1.1, 640, 470);
-    mudGround(ctx, t, 560); for (const [rx, rs] of [[260, .9], [380, .7], [960, .8], [1080, 1.0]]) P.reeds(ctx, rx, 640, rs, t, 7); chibi(ctx, 640, 720, 1.25, t, Object.assign({}, YOU, { eyes: 'half', mouth: 'frown', tilt: .12, brow: 'sad' }));
+    mudGround(ctx, t, 560); for (const [rx, rs] of [[260, .9], [380, .7], [960, .8], [1080, 1.0]]) P.reeds(ctx, rx, 640, rs, t, 7); chibi(ctx, 640, 720, 1.25, t, Object.assign({}, YOU, { eyes: 'half', speak: true, tilt: .06, brow: 'sad' }));
     ctx.save(); ink(ctx, '#6e5236', c => c.ellipse(640, 712, 150, 26, 0, 0, 7), 0); ctx.strokeStyle = 'rgba(160,130,90,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(640, 712, 132, 20, 0, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); ctx.fillStyle = 'rgba(255,240,210,.25)'; ctx.beginPath(); ctx.ellipse(600, 706, 50, 6, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#5e4630'; for (let i = 0; i < 6; i++) { const a = i * 1.05, k = clamp((lt - .2) / .5), r = 110 + k * 40; ctx.beginPath(); ctx.arc(640 + Math.cos(a) * r, 690 - Math.abs(Math.sin(a)) * 30 * (1 - k), 8 - k * 4, 0, 7); ctx.fill(); } ctx.restore();
     ctx.restore(); }
   function goatsShot(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420, 60);
@@ -251,7 +251,7 @@
     P.caption(ctx, 'Campo Vaccino', since(t, 'field') + .2, { size: 34, sub: '"the cow field"' }); }
   function holdShot(ctx, lt, dur, t) { const rw = clamp((t - A.rewind) / 1.1);
     ctx.save(); P.camPush(ctx, lt, dur, 1.06, 1.06, 640, 380); forum(ctx, t - rw * rw * 40, 'medieval'); ctx.restore();
-    chibi(ctx, 190, 760, .95, t, Object.assign({}, YOU, { eyes: since(t, 'move') > 0 ? 'wide' : 'open', mouth: since(t, 'move') > 0 ? 'o' : 'flat', arms: since(t, 'hold') > 0 && since(t, 'move') < 0 ? 'point' : 'down' }));
+    chibi(ctx, 190, 760, .95, t, Object.assign({}, YOU, { eyes: since(t, 'move') > 0 ? 'wide' : 'open', speak: true, arms: since(t, 'hold') > 0 && since(t, 'move') < 0 ? 'point' : 'down' }));
     if (rw > 0) { P.grade(ctx, '#8a7a9a', .35 * rw, 'saturation'); ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < 6; i++) { const y = ((t * 900 + i * 157) % 760) - 20; ctx.fillStyle = `rgba(255,240,210,${.25 * rw})`; ctx.fillRect(0, y, W, 6 + i % 3 * 4); } ctx.restore();
       ctx.save(); ctx.translate(640, 360); ctx.rotate(-rw * 6); ctx.strokeStyle = `rgba(255,236,180,${.6 * rw})`; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(0, 0, 120 + rw * 300, 0, Math.PI * 1.4); ctx.stroke(); ctx.restore(); } }
   function ancientWide(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.06, 1.0, 640, 380); forum(ctx, t, 'ancient'); ctx.restore(); P.shafts(ctx, 1100, -120, .14);
@@ -287,17 +287,50 @@
     cel(ctx, c => c.rect(-60, 600, 1420, 36), '#8a8a92', { shade: '#5a5a62', light: '#c0c0c8', dx: 0, dy: 8 }); for (let x = 0; x < 1360; x += 160) { ink(ctx, '#7a7a84', c => c.rect(x - 8, 596, 16, 44), 3); }
     ctx.restore();
     if (since(t, 'mountains') > -.3) { const k = clamp((since(t, 'mountains') + .3) / .5); ctx.save(); ctx.globalAlpha = k; ctx.translate(1010, 120); ink(ctx, '#efe2c4', c => c.rect(-210, -90, 420, 200), 5); ctx.save(); ctx.beginPath(); ctx.rect(-210, -90, 420, 200); ctx.clip(); P.sky(ctx, 'noon', t, { y0: -90, y1: 110, clouds: 0 }); P.hills(ctx, 40, '#6a7a8a', '#cfe2ee', .2, 3); ctx.fillStyle = '#4a8ac0'; ctx.fillRect(-210, 60, 420, 12); ctx.restore(); ink(ctx, null, c => c.rect(-210, -90, 420, 200), 5); ctx.restore(); P.caption(ctx, 'springs dozens of miles away', k, { size: 22, x: 1010, y: 340, align: 'center' }); } }
-  function cityView(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.08, 640, 400, 80);
-    P.sky(ctx, 'gold', t, { sun: [1050, 230], y1: 420 }); P.hills(ctx, 350, '#7a8a6a', '#f6e4b4', .6, 2);
-    // roofs to the horizon (atmospheric: farther = paler)
-    for (let row = 0; row < 9; row++) { const y = 360 + row * 44, s = .5 + row * .12, fade = 1 - row / 9; for (let i = 0; i < 22; i++) { const x = (i * 97 + row * 53) % 1500 - 100, w = (40 + (i * 13) % 40) * s, h = (30 + (i * 7) % 50) * s, col = mix(['#d89a6a', '#e8cba0', '#c88a5a', '#e0d0b0'][(i + row) % 4], '#f6e4b4', fade * .6);
-      ink(ctx, col, c => c.rect(x, y - h, w, h), 2 + row * .3); ink(ctx, mix('#b8603a', '#f6e4b4', fade * .6), c => { c.moveTo(x - 4, y - h); c.lineTo(x + w / 2, y - h - w * .3); c.lineTo(x + w + 4, y - h); c.closePath(); }, 2 + row * .3); } }
-    // the Colosseum and an aqueduct striding in
-    ctx.save(); ctx.translate(820, 470); cel(ctx, c => c.ellipse(0, 0, 150, 70, 0, 0, 7), '#e4d4b4', { shade: '#b89a74', dx: 10, dy: 8 }); for (let r = 0; r < 3; r++) for (let i = 0; i < 12; i++) { const a = Math.PI * (.05 + i / 12 * .9); ink(ctx, '#7a5a40', c => c.rect(Math.cos(a) * -140 - 5, 10 - r * 22 + Math.sin(a) * 30 - 30, 10, 14), 1.5); } ctx.restore();
-    for (let i = 0; i < 14; i++) { const x = 1300 - i * 60, y = 330 + i * 6; ink(ctx, '#d8c8a6', c => { c.moveTo(x, y); c.lineTo(x, y - 60); c.lineTo(x - 60, y - 60); c.lineTo(x - 60, y); c.lineTo(x - 46, y); c.arc(x - 30, y - 20, 16, Math.PI, 0); c.lineTo(x - 14, y); c.closePath(); }, 3); }
-    P.temple(ctx, 300, 420, .5, { roof: '#d8b048' }); ctx.restore(); P.shafts(ctx, 1150, -120, .14);
+  // the million-person city, drawn in the series style after the user's city image: temple on its cliff with cypresses and
+  // umbrella pines, an aqueduct striding across, the Colosseum, and tiled roofs to the horizon
+  function house(ctx, x, y, s, seed) { const r = (k => () => (k = (k * 16807) % 2147483647) / 2147483647)(seed * 977 + 13);
+    const w = (70 + r() * 50) * s, h = (56 + r() * 60) * s, wall = ['#ead6b6', '#e4c8a0', '#efdcc0', '#dcc09a'][seed % 4], roof = ['#c8643a', '#b8582e', '#d4703f'][seed % 3];
+    cel(ctx, c => c.rect(x - w / 2, y - h, w, h), wall, { shade: mix(wall, '#7a5a3a', .3), dx: w * .18, dy: 0, lw: 2.5 + s * 1.5 });
+    ink(ctx, roof, c => { c.moveTo(x - w / 2 - 6 * s, y - h); c.lineTo(x - w * .3, y - h - 26 * s); c.lineTo(x + w * .3, y - h - 26 * s); c.lineTo(x + w / 2 + 6 * s, y - h); c.closePath(); }, 2.5 + s * 1.5);
+    ctx.strokeStyle = 'rgba(90,30,10,.35)'; ctx.lineWidth = 1.2 * s; for (let k = 1; k < 4; k++) { ctx.beginPath(); ctx.moveTo(x - w / 2 + k * w / 4 - 4 * s, y - h); ctx.lineTo(x - w * .3 + k * w * .15, y - h - 24 * s); ctx.stroke(); }
+    ctx.fillStyle = '#6a4630'; const rows = Math.max(1, Math.floor(h / (26 * s))); for (let rr = 0; rr < rows; rr++) for (let k = 0; k < 3; k++) if (r() > .2) ctx.fillRect(x - w / 2 + (12 + k * (w / s - 24) / 2.4) * s, y - h + (12 + rr * 26) * s, 9 * s, 12 * s);
+    if (r() > .88) { ctx.fillStyle = 'rgba(240,235,225,.3)'; for (let k = 0; k < 4; k++) { ctx.beginPath(); ctx.arc(x + w * .2 + k * 4 * s, y - h - 30 * s - k * 12 * s, (5 + k * 2) * s, 0, 7); ctx.fill(); } } }
+  function colosseum(ctx, x, y, rx, ry, H) {
+    ink(ctx, '#cdb48a', c => c.ellipse(x, y, rx, ry, 0, 0, 7), 4); // the bowl: tiers of seating ringing the arena
+    for (let k = 1; k <= 5; k++) { ctx.strokeStyle = k % 2 ? 'rgba(120,90,60,.55)' : 'rgba(250,236,210,.5)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.ellipse(x, y + k * 4, rx * (1 - k * .1), ry * (1 - k * .1), 0, Math.PI, 0); ctx.stroke(); }
+    ink(ctx, '#e2cfa8', c => c.ellipse(x, y + 22, rx * .42, ry * .36, 0, 0, 7), 3);
+    // the outer wall's front half, three storeys of arches following the curve
+    const wall = c => { c.ellipse(x, y, rx, ry, 0, 0, Math.PI); c.lineTo(x - rx, y + H); c.ellipse(x, y + H, rx, ry, 0, Math.PI, 0, true); c.closePath(); };
+    cel(ctx, wall, '#e6d2ac', { shade: '#b8996e', light: '#f4e6c8', dx: 22, dy: 0, lw: 4.5 });
+    for (let tier = 0; tier < 3; tier++) { const ty = y + 18 + tier * H / 3.2, th = H / 3.2 * .62;
+      ctx.strokeStyle = 'rgba(110,80,50,.6)'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.ellipse(x, ty - 10, rx, ry, 0, .05, Math.PI - .05); ctx.stroke();
+      for (let i = 1; i < 22; i++) { const a = Math.PI * i / 22, ax = x + Math.cos(a) * rx, ay = ty + Math.sin(a) * ry, sw = 13 * Math.sin(a) + 3; ink(ctx, '#7a5636', c => { c.moveTo(ax - sw / 2, ay + th); c.lineTo(ax - sw / 2, ay + th * .4); c.arc(ax, ay + th * .4, sw / 2, Math.PI, 0); c.lineTo(ax + sw / 2, ay + th); c.closePath(); }, 1.5); } } }
+  function aqueduct(ctx, x0, x1, y, h) { const bay = 62;
+    cel(ctx, c => c.rect(x0, y - 16, x1 - x0, 16), '#dcc49c', { shade: '#b09468', dx: 0, dy: 5, lw: 3.5 });
+    for (let x = x0; x < x1; x += bay) { cel(ctx, c => { c.moveTo(x, y); c.lineTo(x + bay, y); c.lineTo(x + bay, y + h); c.lineTo(x + bay - 12, y + h); c.lineTo(x + bay - 12, y + 40); c.arc(x + bay / 2 + 0, y + 40, bay / 2 - 12, 0, Math.PI, true); c.lineTo(x + 12, y + h); c.lineTo(x, y + h); c.closePath(); }, '#e2cba2', { shade: '#b8996e', dx: 6, dy: 0, lw: 3 }); } }
+  function cityView(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.05, 640, 420, 60);
+    P.sky(ctx, 'gold', t, { sun: [930, 330], y1: 430 }); P.rimClouds(ctx, t, { y: 120, col: '#f0d0b0', shade: '#c8988a' });
+    P.hills(ctx, 410, '#8a9a6a', '#f6d8a8', .55, 2); P.treeLine(ctx, 412, '#f6d8a8', .45, 3, 560, 1400);
+    aqueduct(ctx, 560, 1400, 330, 170);
+    const g = ctx.createLinearGradient(0, 420, 0, 760); g.addColorStop(0, '#c8a070'); g.addColorStop(1, '#8a6040'); ctx.fillStyle = g; ctx.fillRect(-200, 430, 1700, 400);
+    // rows of houses, far (small, hazy) to near; the Colosseum sits among them
+    const rowsY = [452, 480, 512, 548, 590, 636, 690, 750], rowS = [.32, .38, .45, .53, .62, .72, .84, .98];
+    for (let rI = 0; rI < rowsY.length; rI++) { if (rI === 3) colosseum(ctx, 890, 470, 215, 58, 140);
+      for (let i = 0; i < 26; i++) { const x = 520 + i * 74 * rowS[rI] + ((rI * 37 + i * 13) % 30) - (rI > 3 ? 600 : 0); if ((rI < 3 && x > 680 && x < 1130) || (rI >= 3 && rI <= 5 && x > 640 && x < 1140)) continue; if (x < -80 || x > 1360) continue; if (rI < 3 && x < 600) continue; house(ctx, x, rowsY[rI], rowS[rI], rI * 31 + i); }
+      if (rI === 2) { // the Capitoline cliff with its temple, cypresses and umbrella pines
+        cel(ctx, c => { c.moveTo(-100, 640); c.lineTo(-100, 330); c.lineTo(470, 330); c.quadraticCurveTo(520, 360, 530, 420); c.quadraticCurveTo(560, 520, 640, 600); c.closePath(); }, '#c89a64', { shade: '#9a7048', light: '#e0b47a', dx: 18, dy: 0, lw: 5 });
+        ctx.strokeStyle = 'rgba(110,70,40,.45)'; ctx.lineWidth = 3; for (let k = 0; k < 6; k++) { ctx.beginPath(); ctx.moveTo(380 + k * 20, 350 + k * 40); ctx.quadraticCurveTo(450 + k * 18, 380 + k * 40, 520 + k * 12, 400 + k * 44); ctx.stroke(); }
+        cel(ctx, c => { c.moveTo(-100, 336); c.quadraticCurveTo(200, 316, 474, 332); c.lineTo(470, 352); c.quadraticCurveTo(200, 340, -100, 360); c.closePath(); }, '#7a9a4a', { shade: '#5a7a34', dx: 0, dy: 6, lw: 4 });
+        P.temple(ctx, 240, 336, .44, { roof: '#c8a050' });
+        ink(ctx, '#e4d2b0', c => { c.moveTo(380, 340); c.lineTo(420, 340); c.lineTo(600, 600); c.lineTo(540, 600); c.closePath(); }, 3.5); ctx.strokeStyle = 'rgba(120,90,60,.5)'; ctx.lineWidth = 2; for (let k = 1; k < 16; k++) { const f = k / 16; ctx.beginPath(); ctx.moveTo(380 + f * 160, 340 + f * 260); ctx.lineTo(420 + f * 180, 340 + f * 260); ctx.stroke(); }
+        for (const [cx, cy, cs] of [[30, 360, .9], [480, 370, .8], [530, 470, .7], [80, 360, .75]]) P.cypress(ctx, cx, cy, cs, t); for (const [px, py, ps] of [[-20, 350, .8], [500, 400, .7]]) P.pine(ctx, px, py, ps, t);
+        for (let k = 0; k < 5; k++) P.person(ctx, 412 + k * 30, 380 + k * 44, .07, t, { kind: k % 2 ? 'toga' : 'tunic', pose: 'walk', seed: k, face: 1 }); }
+    }
+    for (const [cx, cy, cs] of [[30, 760, 1.1], [1250, 740, .9]]) P.cypress(ctx, cx, cy, cs, t);
+    ctx.restore();
     if (since(t, 'million') > -.3) P.caption(ctx, 'maybe a million people', since(t, 'million') + .3, { size: 32 });
-    if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, y: 690 }); }
+    if (since(t, 'europe') > -.2) P.caption(ctx, 'no European city that big again until London, c. 1800', since(t, 'europe') + .2, { size: 22, y: 686 }); }
   function between(ctx, lt, dur, t) { const k = ease.inOut(clamp((lt - .6) / 3.0));
     ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.03, 640, 380); forum(ctx, t, 'ancient'); ctx.restore();
     ctx.save(); ctx.globalAlpha = k; P.camPush(ctx, lt, dur, 1.0, 1.03, 640, 380); forum(ctx, t, 'medieval'); ctx.restore();
@@ -305,7 +338,7 @@
     P.caption(ctx, 'a million people → cows', since(t, 'million2'), { size: 28, x: 1220, y: 90, align: 'right' }); }
   function puzzled(ctx, lt, dur, t) { ctx.save(); P.camPush(ctx, lt, dur, 1.0, 1.06, 640, 400);
     ctx.save(); forum(ctx, t, 'medieval', { empty: true }); ctx.restore();
-    chibi(ctx, 640, 860, 1.4, t, Object.assign({}, YOU, { arms: 'chin', eyes: since(t, 'why') > 0 ? 'side' : 'half', look: 1, mouth: 'frown', tilt: .1 })); ctx.restore(); }
+    chibi(ctx, 640, 860, 1.4, t, Object.assign({}, YOU, { arms: since(t, 'why') > 0 ? 'down' : 'chin', eyes: since(t, 'why') > 0 ? 'wide' : 'half', look: 1, speak: true, brow: since(t, 'why') > 0 ? '' : 'sad', tilt: .04 })); ctx.restore(); }
   function palm(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .9 + x) * 4;
     cel(ctx, c => { c.moveTo(-10, 0); c.quadraticCurveTo(10, -120, sw + 20, -250); c.lineTo(sw + 34, -248); c.quadraticCurveTo(26, -120, 12, 0); c.closePath(); }, '#9a7048', { shade: '#6a4a2c', dx: 5, dy: 0, lw: 4 }); ctx.save(); ctx.strokeStyle = 'rgba(70,40,20,.5)'; ctx.lineWidth = 2; for (let i = 0; i < 10; i++) { ctx.beginPath(); ctx.moveTo(-6 + i * 2, -20 - i * 23); ctx.lineTo(12 + i * 2, -26 - i * 23); ctx.stroke(); } ctx.restore();
     for (let i = 0; i < 7; i++) { const a = -Math.PI + i * Math.PI / 6 + Math.sin(t + i) * .05; ctx.save(); ctx.translate(sw + 27, -250); ctx.rotate(a); cel(ctx, c => { c.moveTo(0, 0); c.quadraticCurveTo(60, -30, 120, 20); c.quadraticCurveTo(60, -6, 0, 10); c.closePath(); }, '#6f8a3a', { shade: '#4a6428', light: '#9ab45a', dx: 4, dy: 6, lw: 3 }); ctx.restore(); } ctx.restore(); }
@@ -352,7 +385,7 @@
   const fin = draw => (ctx, lt, dur, t) => { draw(ctx, lt, dur, t); if (draw.name !== 'plate') { const nm = draw.name || 'x'; P.enhance(ctx, t, { sun: NOSUN.includes(nm) ? null : (SUN[nm] || [1000, 250]), mistY: MISTY[nm] ?? 480, mist: .04, bloom: .07, tex: .06, rays: .05 }); P.grade(ctx, '#c86a30', .1, 'overlay'); } P.grade(ctx, '#ffb070', .1, 'soft-light'); P.grain(ctx, t, .03); P.vignette(ctx, .35); };
   const cut = [[0, fin(s1), 0], [A.mud - .2, fin(boots), .35], [A.goats - .3, fin(goatsShot), .4], [A.over - .2, fin(finger), .5], [A.somebody - .2, fin(laundryShot), .5],
     [A.man - .2, fin(cartShot), .5], [A.prying - .3, fin(prying), .4], [A.locals - .2, fin(cowClose), .4], [A.hold - .25, fin(holdShot), .5],
-    [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(pCity), .6],
+    [A.same - .15, fin(ancientWide), .7], [A.senators - .2, fin(senators), .5], [A.under - .1, fin(underFeet), .5], [A.around - .2, fin(cityView), .6],
     [A.so - .2, fin(between), .6], [A.stranger - .4, fin(puzzled), .5], [A.babylon - .15, fin(function babylonShot(c, l, d, t) { ruinVignette(c, l, d, t, 'babylon'); }), .3],
     [A.carthage - .1, fin(function carthageShot(c, l, d, t) { ruinVignette(c, l, d, t, 'carthage'); }), .3], [A.but - .1, fin(lost), .5], [A.still - .3, fin(today), .7], [A.story - .3, fin(title), .8]];
   const shots = P.cutList(cut, A.end);

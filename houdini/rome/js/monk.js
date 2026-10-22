@@ -22,9 +22,9 @@
     ink(ctx, skin, c => { c.moveTo(-30, -12); c.quadraticCurveTo(-28, -26, -10, -26); c.lineTo(12, -24); c.lineTo(14, -12); c.closePath(); }, L(3));
     ctx.strokeStyle = back ? '#3a2416' : '#5a3a26'; ctx.lineWidth = 5; ctx.lineCap = 'round'; for (const sx of [-18, -2]) { ctx.beginPath(); ctx.moveTo(sx - 4, -12); ctx.lineTo(sx + 6, -26); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(-4, -36); ctx.lineTo(12, -32); ctx.stroke();
     ctx.restore(); }
-  function leg(ctx, hipX, footX, lift, top, col, back) { const y0 = top, y1 = -22 - lift; ctx.save(); ctx.lineCap = 'round';
-    ctx.strokeStyle = INK; ctx.lineWidth = 30 + L(5); ctx.beginPath(); ctx.moveTo(hipX, y0); ctx.lineTo(footX + 2, y1); ctx.stroke();
-    ctx.strokeStyle = back ? mix(col, '#5a3a30', .22) : col; ctx.lineWidth = 30; ctx.stroke(); ctx.restore(); }
+  function leg(ctx, hipX, footX, lift, top, col, back, w = 30) { const y0 = top, y1 = -22 - lift; ctx.save(); ctx.lineCap = 'round';
+    ctx.strokeStyle = INK; ctx.lineWidth = w + L(5); ctx.beginPath(); ctx.moveTo(hipX, y0); ctx.lineTo(footX + 2, y1); ctx.stroke();
+    ctx.strokeStyle = back ? mix(col, '#5a3a30', .22) : col; ctx.lineWidth = w; ctx.stroke(); ctx.restore(); }
   function hand(ctx, x, y, skin, r = 15) { ink(ctx, skin, c => c.ellipse(x, y, r, r * .9, 0, 0, 7), L(3.5)); ctx.strokeStyle = 'rgba(120,70,50,.55)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - r * .5, y - r * .1); ctx.lineTo(x + r * .4, y - r * .1); ctx.stroke(); }
   // an arm in two segments; long sleeves cover both, short sleeves stop at the elbow and the forearm is bare skin
   function arm(ctx, S, E, H, o, back) { const cloth = back ? mix(o.cloth, '#3a2418', .2) : o.cloth, skin = back ? mix(o.skin, '#6a4a3a', .2) : o.skin, long = o.kind === 'monk' || o.kind === 'woman' || o.kind === 'stola';
@@ -71,11 +71,16 @@
     if (look === 'sad') { ctx.moveTo(-56, -84); ctx.lineTo(-32, -92); } else if (look === 'angry') { ctx.moveTo(-56, -92); ctx.lineTo(-32, -82); } else { ctx.moveTo(-56, -88); ctx.quadraticCurveTo(-44, -94, -32, -88); } ctx.stroke();
     // beard (monk always), then the mouth
     if (o.beard) cel(ctx, c => { c.moveTo(-68, -46); c.quadraticCurveTo(-74, -4, -50, 26); c.lineTo(-44, 16); c.lineTo(-36, 32); c.lineTo(-26, 18); c.lineTo(-14, 30); c.lineTo(-6, 12); c.quadraticCurveTo(14, -10, 14, -46); c.quadraticCurveTo(-4, -30, -20, -40); c.quadraticCurveTo(-48, -50, -68, -46); c.closePath(); }, o.beardCol || hair, { shade: mix(o.beardCol || hair, '#000', .3), light: mix(o.beardCol || hair, '#fff', .15), dx: 8, dy: 0, lw: L(3.5) });
-    const m = o.talk ? (Math.sin(t * 13 + ph) > -.2 ? 'o' : 'flat') : (o.mouth || 'flat'), mx = -50, my = -30;
+    const open = o.speak ? lip(t) : 0, m = o.speak ? (open > 0 ? 'speak' : 'flat') : o.talk ? (Math.sin(t * 13 + ph) > -.2 ? 'o' : 'flat') : (o.mouth || 'flat'), mx = -50, my = -30;
+    if (m === 'speak') { const h = 3 + open * 1.6, w = 7 + Math.min(open, 5) * .8; ink(ctx, '#5a2220', c => c.ellipse(mx - 1, my + h * .35, w, h, 0, 0, 7), L(2.5)); if (open > 4) { ctx.fillStyle = '#f4f0e8'; ctx.fillRect(mx - w * .6, my + h * .35 - h + 1.5, w * 1.2, 3); } return; }
     ctx.strokeStyle = o.beard ? '#c07a5a' : '#8a4a3a'; ctx.lineWidth = 3; ctx.beginPath();
     if (m === 'o') { ink(ctx, '#6a2a24', c => c.ellipse(mx, my + 2, 6, 7, 0, 0, 7), L(2.5)); }
     else if (m === 'grin') { ink(ctx, '#fff', c => { c.moveTo(mx - 12, my - 3); c.quadraticCurveTo(mx, my + 14, mx + 10, my - 4); c.closePath(); }, L(2.5)); }
     else { if (m === 'smile') { ctx.moveTo(mx - 10, my - 2); ctx.quadraticCurveTo(mx, my + 6, mx + 8, my - 3); } else if (m === 'frown') { ctx.moveTo(mx - 10, my + 3); ctx.quadraticCurveTo(mx, my - 5, mx + 8, my + 3); } else { ctx.moveTo(mx - 9, my); ctx.lineTo(mx + 7, my); } ctx.stroke(); } }
+  // lip-sync: mouth openness 0-9 from the narration (js/lipsync-*.js); beat: 1 right on a spoken word, falling off over ~0.4 s
+  const lip = t => { const Ls = G.LIPSYNC; if (!Ls) return Math.max(0, Math.round(Math.sin(t * 13) * 4)); const i = Math.floor(t * Ls.fps); return +(Ls.env[i] || 0); };
+  function beat(t) { const W = (G.LIPSYNC || {}).words || []; let lo = 0, hi = W.length - 1, k = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (W[m] <= t) { k = m; lo = m + 1; } else hi = m - 1; }
+    return k < 0 ? [0, 0] : [Math.exp(-(t - W[k]) * 5), k]; }
   function person(ctx, x, y, s, t, o = {}) {
     o = Object.assign({ kind: 'tunic' }, o); if (o.kind === 'monk') o = Object.assign({ cloth: '#76503a', beard: true, hair: '#3c2a1e' }, o);
     o.skin = o.skin || SKINS[(o.seed || 0) % 3]; o.cloth = o.cloth || { tunic: '#9a7a54', woman: '#8fa4b8', toga: '#f4efe4', stola: '#c88a6a', tourist: '#3a6ab8' }[o.kind] || '#9a7a54';
@@ -89,7 +94,9 @@
     const lA = moving ? Math.max(0, -Math.cos(ph)) * 16 : 0, lB = moving ? Math.max(0, Math.cos(ph)) * 16 : 0;
     // back leg and foot
     if (!long) leg(ctx, 10, 22 + fB, lB, hemY + 10, o.kind === 'tourist' ? o.skin : (o.legs || o.skin), true);
+    else leg(ctx, 12, 22 + fB, lB, -150, o.skin, true, 18); // shins run up inside the robe, so the feet stay joined to the body
     foot(ctx, 22 + fB, lB, o, true);
+    if (long) { leg(ctx, -10, -22 + fA, lA, -150, o.skin, false, 18); foot(ctx, -22 + fA, lA, o, false); }
     ctx.save(); ctx.rotate(lean); ctx.translate(0, -bob);
     const P0 = POSES[pose === 'walk' ? 'stand' : pose] || POSES.stand, swing = moving && pose !== 'haul' ? sw * 22 : 0;
     // backpack and the back arm sit behind the body
@@ -117,17 +124,17 @@
     if (o.kind === 'monk') cel(ctx, c => { c.moveTo(-50, -328); c.quadraticCurveTo(-62, -292, -34, -272); c.quadraticCurveTo(10, -262, 48, -278); c.quadraticCurveTo(68, -300, 52, -336); c.closePath(); }, o.cloth, { shade: mix(o.cloth, '#2a1810', .3), dx: 12, dy: 6, lw: L(5) });
     else ink(ctx, mix(o.skin, '#8a4a3a', .15), c => { c.moveTo(-22, -326); c.lineTo(-20, -350); c.lineTo(10, -350); c.lineTo(14, -326); c.closePath(); }, L(3.5));
     if (pose === 'up') arm(ctx, [-4, -306], P0[0], P0[1], o, false); // both arms raised: they go up behind the head
-    ctx.save(); ctx.translate(-6, o.kind === 'monk' ? -330 : -318); ctx.rotate((pose === 'pry' ? -.08 : 0) + (o.tilt || 0)); if (o.kind !== 'monk') ctx.scale(.92, .92);
+    ctx.save(); ctx.translate(-6, o.kind === 'monk' ? -330 : -318); ctx.rotate((pose === 'pry' ? -.08 : 0) + (o.tilt || 0) + (o.speak ? -beat(t)[0] * .05 : 0)); if (o.kind !== 'monk') ctx.scale(.92, .92);
     head(ctx, o, t, sw); ctx.restore();
     // the front arm and whatever it holds
-    const E = pose === 'walk' || (moving && pose === 'stand') ? [-12 + swing * .5, -262] : P0[0], Hh = pose === 'walk' || (moving && pose === 'stand') ? [-18 + swing, -206] : P0[1].slice();
+    const E = pose === 'walk' || (moving && pose === 'stand') ? [-12 + swing * .5, -262] : P0[0].slice(), Hh = pose === 'walk' || (moving && pose === 'stand') ? [-18 + swing, -206] : P0[1].slice();
     if (pose === 'wave') Hh[0] += Math.sin(t * 9) * 10;
     if (pose === 'talk') Hh[1] += Math.sin(t * 5 + (o.seed || 0)) * 12;
+    if (o.speak && (pose === 'talk' || pose === 'stand' || pose === 'chin')) { const [b, k] = beat(t), g = [[-30, -18], [-10, -34], [-40, -6], [-20, -26]][k % 4]; if (pose !== 'chin') { E[0] = -40; E[1] = -276; Hh[0] = -84 + g[0] * b; Hh[1] = -300 + g[1] * b; } }
     if (pose !== 'up') arm(ctx, [-4, -306], E, Hh, o, false);
     if (o.prop) { ctx.save(); ctx.translate(Hh[0], Hh[1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); }
     ctx.restore();
-    if (!long) leg(ctx, -12, -22 + fA, lA, hemY + 10, o.kind === 'tourist' ? o.skin : (o.legs || o.skin), false);
-    foot(ctx, -22 + fA, lA, o, false);
+    if (!long) { leg(ctx, -12, -22 + fA, lA, hemY + 10, o.kind === 'tourist' ? o.skin : (o.legs || o.skin), false); foot(ctx, -22 + fA, lA, o, false); }
     ctx.restore(); K = 1; }
   function monk(ctx, x, y, s, t, o = {}) { const look = o.look; person(ctx, x, y, s, t, Object.assign({ kind: 'monk', face: o.dir === 1 ? 1 : -1, brow: look === 'worried' ? 'sad' : look === 'effort' ? 'angry' : '', mouth: look === 'effort' ? 'flat' : 'frown', seed: 3 }, o)); }
   // adapter: the old chibi calls (same x, y, scale and options) now draw this cast at the same height

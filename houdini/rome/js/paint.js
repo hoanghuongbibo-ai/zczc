@@ -49,6 +49,7 @@
       ctx.restore(); } }
   // a far silhouette band (hills / distant city) faded into the sky colour
   function far(ctx, y, col, haze, fn, a = .55) { ctx.save(); ctx.fillStyle = mix(col, haze, a); ctx.beginPath(); fn(ctx, y); ctx.fill(); ctx.restore(); }
+  function treeLine(ctx, y, haze, a = .45, seed = 0, x0 = -100, x1 = 1400) { ctx.save(); ctx.globalAlpha = 1; ctx.fillStyle = mix('#4a6a3a', haze, a); for (let x = x0; x < x1; x += 34 + ((x * 7 + seed) % 23)) { const h = 26 + ((x * 13 + seed) % 22), yy = y - 6 * Math.sin(x * .007 + seed); if ((x + seed) % 5 === 0) { ctx.beginPath(); ctx.ellipse(x, yy - h * .9, 7, h * .9, 0, 0, 7); ctx.fill(); } else { ctx.beginPath(); ctx.ellipse(x, yy - h * .45, h * .6, h * .45, 0, 0, 7); ctx.fill(); } } ctx.restore(); }
   function hills(ctx, y, col, haze, a = .5, seed = 0) { far(ctx, y, col, haze, (c, yy) => { c.moveTo(-800, yy + 200); c.lineTo(-800, yy); for (let x = -800; x <= 2100; x += 160) c.quadraticCurveTo(x + 80, yy - 40 - 30 * Math.sin(x * .007 + seed), x + 160, yy - 6 * Math.cos(x * .01 + seed)); c.lineTo(2100, yy + 200); c.closePath(); }, a); }
   function shafts(ctx, x, y, a = .18, n = 4, ang = .5) { ctx.save(); ctx.globalCompositeOperation = 'screen'; for (let i = 0; i < n; i++) { const g = ctx.createLinearGradient(x, y, x - 600, y + 900); g.addColorStop(0, `rgba(255,236,180,${a})`); g.addColorStop(1, 'rgba(255,236,180,0)'); ctx.fillStyle = g; ctx.beginPath(); const o = i * 150 - 200; ctx.moveTo(x + o, y); ctx.lineTo(x + o + 60, y); ctx.lineTo(x + o - 700 * ang + 160, y + 900); ctx.lineTo(x + o - 700 * ang, y + 900); ctx.fill(); } ctx.restore(); }
   // warm or cool grade over the whole frame (keeps darkness/light consistent across the frame)
@@ -59,12 +60,35 @@
   function vignette(ctx, a = .35) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const g = ctx.createRadialGradient(640, 380, 300, 640, 380, 860); g.addColorStop(0, 'rgba(30,15,10,0)'); g.addColorStop(1, `rgba(30,15,10,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); ctx.restore(); }
 
   // ---------- nature ----------
-  function bush(ctx, x, y, r, o = {}) { const base = o.col || '#8aa04a', seed = o.seed || x; cel(ctx, lumps(x, y, r, r * .78, o.n || 9, .22, seed), base, { shade: mix(base, '#2a3a20', .45), light: mix(base, '#f6f0a0', .35), dx: 14, dy: 12 });
-    ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = mix(base, '#1a2a10', .5); for (let i = 0; i < (o.inner ?? 5); i++) { const a = i * 2.1 + seed, rx = x + Math.cos(a) * r * .45, ry = y + Math.sin(a) * r * .35; ctx.beginPath(); ctx.arc(rx, ry, r * .2, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); } ctx.restore(); }
-  function tree(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .8 + x) * 3;
-    ink(ctx, '#7a5236', c => { c.moveTo(-14, 0); c.quadraticCurveTo(-8, -90, -30, -170); c.lineTo(-14, -176); c.quadraticCurveTo(2, -120, 14, -180); c.lineTo(28, -172); c.quadraticCurveTo(16, -90, 16, 0); c.closePath(); });
-    for (const [bx, by, r] of [[-70, -200, 90], [60, -210, 95], [0, -280, 110], [-20, -190, 80]]) bush(ctx, bx + sw, by, r, { col: o.col || '#93a84e', seed: bx });
+  // foliage: overlapping lumps, each cel-shaded, with leaf flecks and light dots (painted density)
+  function bush(ctx, x, y, r, o = {}) { const base = o.col || '#8aa04a', seed = o.seed || x, sh = mix(base, '#2a3a20', .45), li = mix(base, '#f6f0a0', .4);
+    cel(ctx, lumps(x, y, r, r * .78, o.n || 10, .24, seed), base, { shade: sh, light: li, dx: 14, dy: 12 });
+    for (let k = 0; k < 4; k++) { const a = seed * .7 + k * 1.6, rx = x + Math.cos(a) * r * .4, ry = y - r * .15 + Math.sin(a) * r * .3; cel(ctx, lumps(rx, ry, r * .42, r * .34, 7, .3, seed + k), mix(base, '#c8d070', .12 + k * .05), { shade: sh, light: li, dx: 8, dy: 7, lw: 2.5 }); }
+    ctx.save(); ctx.beginPath(); lumps(x, y, r, r * .78, o.n || 10, .24, seed)(ctx); ctx.clip(); ctx.lineCap = 'round';
+    for (let k = 0; k < Math.round(r * .5); k++) { const a = (k * 2.39 + seed) % 6.28, d = ((k * 37) % 100) / 100 * r * .9, px = x + Math.cos(a) * d, py = y + Math.sin(a) * d * .75;
+      ctx.strokeStyle = py < y - r * .2 ? 'rgba(255,250,200,.45)' : 'rgba(30,50,20,.35)'; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.moveTo(px, py); ctx.quadraticCurveTo(px + 4, py - 5, px + 8, py - 2); ctx.stroke(); }
     ctx.restore(); }
+  function tree(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .8 + x) * 3, col = o.col || '#93a84e';
+    ctx.fillStyle = 'rgba(40,30,20,.18)'; ctx.beginPath(); ctx.ellipse(10, 2, 110, 18, 0, 0, 7); ctx.fill();
+    cel(ctx, c => { c.moveTo(-16, 0); c.quadraticCurveTo(-10, -80, -40, -160); c.lineTo(-24, -168); c.quadraticCurveTo(-4, -120, 2, -150); c.quadraticCurveTo(12, -110, 40, -176); c.lineTo(54, -168); c.quadraticCurveTo(18, -90, 18, 0); c.closePath(); }, '#8a5e3c', { shade: '#5a3a24', light: '#b88a5a', dx: 6, dy: 0, lw: 4.5 });
+    for (const [bx, by, r, k] of [[-80, -190, 80, 0], [70, -200, 86, 1], [-10, -270, 104, 2], [-60, -260, 70, 3], [60, -280, 70, 4], [0, -190, 74, 5]]) bush(ctx, bx + sw * (k % 2 ? 1 : -.5), by, r, { col: mix(col, k % 2 ? '#7a9a3a' : '#b0c060', .2), seed: x + k * 5 });
+    ctx.restore(); }
+  // Roman umbrella pine and Italian cypress
+  function pine(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .6 + x) * 2;
+    cel(ctx, c => { c.moveTo(-8, 0); c.quadraticCurveTo(-4, -120, -30, -230); c.lineTo(-18, -236); c.quadraticCurveTo(6, -150, 10, -200); c.lineTo(22, -196); c.quadraticCurveTo(10, -100, 10, 0); c.closePath(); }, '#7a4e34', { shade: '#4a2e1c', dx: 5, dy: 0, lw: 4 });
+    cel(ctx, lumps(sw - 10, -250, 140, 46, 13, .25, x), '#5f7f3a', { shade: '#3a5428', light: '#9ab45a', dx: 10, dy: 14 }); cel(ctx, lumps(sw + 30, -276, 90, 30, 9, .3, x + 3), '#6f8f42', { shade: '#3a5428', light: '#a8c060', dx: 8, dy: 10, lw: 3 }); ctx.restore(); }
+  function cypress(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const sw = Math.sin(t * .9 + x) * 3;
+    cel(ctx, c => { c.moveTo(-26, 0); c.quadraticCurveTo(-34, -110, sw * .3 - 10, -210); c.quadraticCurveTo(sw, -250, sw + 6, -262); c.quadraticCurveTo(sw + 12, -240, sw + 18, -210); c.quadraticCurveTo(38, -110, 26, 0); c.closePath(); }, '#3f6a34', { shade: '#264a24', light: '#6a9a4a', dx: 8, dy: 4 });
+    ctx.save(); ctx.strokeStyle = 'rgba(20,40,20,.45)'; ctx.lineWidth = 2; for (let i = 0; i < 9; i++) { const yy = -20 - i * 24; ctx.beginPath(); ctx.moveTo(-18 + i, yy); ctx.quadraticCurveTo(0, yy - 8, 16 - i, yy); ctx.stroke(); } ctx.restore(); ctx.restore(); }
+  // a field of short painted grass strokes over a ground band
+  function grassField(ctx, t, x0, x1, y0, y1, o = {}) { const n = o.n || 260; ctx.save(); ctx.lineCap = 'round'; let sd = Math.abs(Math.round(o.seed || 3)) % 2147483646 + 1; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < n; i++) { const x = x0 + r() * (x1 - x0), y = y0 + Math.pow(r(), .8) * (y1 - y0), k = (y - y0) / (y1 - y0), h = 4 + k * 16, sw = Math.sin(t * 1.5 + i) * k * 2;
+      ctx.strokeStyle = r() < .5 ? (o.dark || 'rgba(70,90,40,.55)') : (o.light || 'rgba(190,200,110,.5)'); ctx.lineWidth = 1 + k * 1.8; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + sw + (r() - .5) * 4, y - h); ctx.stroke(); } ctx.restore(); }
+  // weathering on stone: stains running down, cracks, moss at the foot
+  function weather(ctx, x, y, w, h, seed = 1) { ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); let sd = Math.abs(Math.round(seed)) % 2147483646 + 1; const r = () => (sd = (sd * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < Math.max(2, w / 40); i++) { const sx = x + r() * w, g = ctx.createLinearGradient(0, y, 0, y + h); g.addColorStop(0, 'rgba(90,70,50,.18)'); g.addColorStop(1, 'rgba(90,70,50,0)'); ctx.fillStyle = g; ctx.fillRect(sx, y + r() * h * .3, 4 + r() * 10, h * (.3 + r() * .6)); }
+    ctx.strokeStyle = 'rgba(60,40,30,.5)'; ctx.lineWidth = 1.8; for (let i = 0; i < Math.max(1, w / 60); i++) { let cx = x + r() * w, cy = y + r() * h * .6; ctx.beginPath(); ctx.moveTo(cx, cy); for (let k = 0; k < 4; k++) { cx += (r() - .5) * 18; cy += 6 + r() * 12; ctx.lineTo(cx, cy); } ctx.stroke(); }
+    ctx.fillStyle = 'rgba(110,140,60,.5)'; for (let i = 0; i < w / 14; i++) { ctx.beginPath(); ctx.ellipse(x + r() * w, y + h - r() * 8, 6 + r() * 8, 3 + r() * 3, 0, 0, 7); ctx.fill(); } ctx.restore(); }
   // foreground grass blades (dark, framing the bottom edge); dir = which side they lean
   function grassFG(ctx, t, x0, x1, y, h = 160, col = '#4f6a2a', o = {}) { const n = Math.round((x1 - x0) / 26); ctx.save(); if (o.blur) ctx.filter = `blur(${o.blur}px)`;
     for (let i = 0; i < n; i++) { const x = x0 + i * 26 + (i * 13) % 11, hh = h * (.55 + ((i * 37) % 10) / 22), sw = Math.sin(t * 1.4 + i * .7) * 8, lean = ((i * 29) % 9 - 4) * 6;
@@ -79,12 +103,14 @@
       ctx.strokeStyle = 'rgba(80,60,40,.45)'; ctx.lineWidth = 2; for (let i = 1; i < 5; i++) { const fx = x - w / 2 + i * w / 5; ctx.beginPath(); ctx.moveTo(fx, top); ctx.lineTo(fx, y); ctx.stroke(); } ctx.restore(); ink(ctx, null, c => c.rect(x - w / 2, top, w, h));
     if (o.broken) ink(ctx, col, c => { c.moveTo(x - w / 2 - 2, top + 2); c.lineTo(x - w * .2, top - 22); c.lineTo(x, top - 6); c.lineTo(x + w * .25, top - 30); c.lineTo(x + w / 2 + 2, top + 2); c.closePath(); });
     else { ink(ctx, col, c => c.rect(x - w * .7, top - 16, w * 1.4, 18)); ink(ctx, col, c => c.rect(x - w * .62, top - 30, w * 1.24, 14)); }
-    if (o.base !== false) ink(ctx, col, c => c.rect(x - w * .66, y - 14, w * 1.32, 16)); }
+    if (o.base !== false) ink(ctx, col, c => c.rect(x - w * .66, y - 14, w * 1.32, 16));
+    weather(ctx, x - w / 2, top, w, h, Math.round(x * 7 + h)); }
   function arch(ctx, x, y, w, h, o = {}) { const col = o.col || '#d8c8a8', sh = mix(col, '#4a3020', .4), r = w * .32;
     ink(ctx, col, c => { c.moveTo(x - w / 2, y); c.lineTo(x - w / 2, y - h); c.lineTo(x + w / 2, y - h); c.lineTo(x + w / 2, y); c.lineTo(x + r, y); c.lineTo(x + r, y - h * .55); c.arc(x, y - h * .55, r, 0, Math.PI, true); c.lineTo(x - r, y); c.closePath(); });
     ctx.save(); ctx.fillStyle = sh; ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + r, y - h * .55); ctx.arc(x, y - h * .55, r, 0, Math.PI, true); ctx.lineTo(x - r, y); ctx.lineTo(x - r + 26, y); ctx.lineTo(x - r + 26, y - h * .55); ctx.arc(x, y - h * .55, r - 26, Math.PI, 0); ctx.lineTo(x + r - 26, y); ctx.closePath(); ctx.globalAlpha = .55; ctx.fill(); ctx.restore();
     ctx.save(); ctx.strokeStyle = 'rgba(80,60,40,.35)'; ctx.lineWidth = 2; for (let i = 1; i < 6; i++) { ctx.beginPath(); ctx.moveTo(x - w / 2, y - h + i * h / 6); ctx.lineTo(x - r - 4, y - h + i * h / 6); ctx.moveTo(x + r + 4, y - h + i * h / 6); ctx.lineTo(x + w / 2, y - h + i * h / 6); ctx.stroke(); } ctx.restore();
     for (let i = 0; i < 7; i++) { const a = Math.PI + i * Math.PI / 6; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * r, y - h * .55 + Math.sin(a) * r); ctx.lineTo(x + Math.cos(a) * (r + 26), y - h * .55 + Math.sin(a) * (r + 26)); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke(); } }
+  function archW(ctx, x, y, w, h, o = {}) { arch(ctx, x, y, w, h, o); weather(ctx, x - w / 2, y - h, w, h, Math.round(x + h)); }
   function temple(ctx, x, y, s, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const col = o.col || MARBLE, roof = o.roof || '#c9a24a', n = o.n || 6;
     ink(ctx, mix(col, '#7a6040', .15), c => c.rect(-260, -40, 520, 40)); ink(ctx, col, c => c.rect(-240, -60, 480, 22));
     for (let i = 0; i < n; i++) column(ctx, -200 + i * 400 / (n - 1), -60, 34, 230, { col });
@@ -256,5 +282,5 @@
   function rimClouds(ctx, t, o = {}) { ctx.save(); for (let i = 0; i < (o.n || 3); i++) { const x = ((i * 520 + t * 4 + (o.x0 || 0)) % 1900) - 300, y = (o.y || 110) + (i % 2) * 50, r = 90 + (i % 3) * 30, fn = lumps(x, y, r * 2.1, r * .6, 11, .3, i + 3);
       ctx.save(); ctx.filter = 'blur(6px)'; ctx.lineWidth = 14; ctx.strokeStyle = 'rgba(255,236,190,.55)'; path(ctx, fn); ctx.stroke(); ctx.restore();
       cel(ctx, fn, o.col || '#f2e2cc', { shade: o.shade || '#d6bfa8', light: '#fff6e6', dx: 8, dy: -12, lw: 0 }); ctx.save(); ctx.lineWidth = 3; ctx.strokeStyle = 'rgba(160,120,90,.5)'; path(ctx, fn); ctx.stroke(); ctx.restore(); } ctx.restore(); }
-  G.Paint = { rays, bloom, texture, mist, enhance, reeds, rimClouds, INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
+  G.Paint = { pine, cypress, grassField, weather, treeLine, archW, rays, bloom, texture, mist, enhance, reeds, rimClouds, INK, LW, mix, ink, cel, blob, lumps, castShadow, rock, sky, far, hills, shafts, grade, grain, vignette, bush, tree, grassFG, weeds, column, arch, temple, MARBLE, chibi, face, cow, goat, dissolve, cutList, camPush, subtitle, caption, seal, SKIN };
 })(window);

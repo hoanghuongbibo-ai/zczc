@@ -11,6 +11,7 @@
     sunset: { top: '#5a6a9a', mid: '#e89a88', low: '#f8b070', hor: '#fdd290', sun: '#fff0c0', cloud: '#f8c8b0', cloudSh: '#b07a8a', haze: '#f0b890', grade: '#ff8a50' },
     dawn: { top: '#8ab4d8', mid: '#dfe4d8', low: '#f6dcb0', hor: '#fbe8c4', sun: '#fffbe8', cloud: '#fbf4ea', cloudSh: '#b8c0d0', haze: '#e8ecdc', grade: '#ffd8a0' },
     storm: { top: '#3e4a5a', mid: '#6a7686', low: '#8a96a2', hor: '#a4aeb6', sun: null, cloud: '#7a8494', cloudSh: '#4a5462', haze: '#8a94a0', grade: '#5a7088' },
+    night: { top: '#0e1630', mid: '#1e2a4a', low: '#2c3a5a', hor: '#3a4868', sun: null, cloud: '#3a4460', cloudSh: '#1a2238', haze: '#2a3450', grade: '#3a5a9a' },
     blood: { top: '#3a1418', mid: '#8a2a20', low: '#d8602e', hor: '#f8a050', sun: '#ffd890', cloud: '#c8604a', cloudSh: '#6a2420', haze: '#e88a50', grade: '#ff6a30' },
   };
   // ---------- camera with depth layers ----------
@@ -100,6 +101,10 @@
     for (let i = 0; i < (o.pads ?? 6); i++) { const px = cx + (R() - .5) * w * .6, py = cy + (R() - .3) * h * .5; ctx.fillStyle = '#5a8a3a'; ctx.beginPath(); ctx.ellipse(px, py, 10 + R() * 8, 4 + R() * 2, 0, .3, 6.1); ctx.lineTo(px, py); ctx.fill(); ctx.strokeStyle = '#2a4a1a'; ctx.lineWidth = 1.5; ctx.stroke(); } }
   // ground under a footprint: the lowest point under it, so a flat-based object never hangs off a slope
   const footY = (ridge, x, w) => { let y = -Infinity; for (let k = 0; k <= 8; k++) y = Math.max(y, ridge(x - w / 2 + k * w / 8)); return y; };
+
+  // a soft rising smoke column: overlapping radial-gradient puffs that grow, drift and thin out as they rise
+  function smoke(ctx, x, y, s, t, o = {}) { const col = o.col || '60,52,52', n = o.n ?? 9; for (let k = 0; k < n; k++) { const ph = (t * (o.speed ?? .18) + k / n) % 1, px = x + Math.sin(ph * 4 + k + x * .01) * 40 * s + ph * (o.drift ?? 60) * s, py = y - ph * (o.h ?? 420) * s, r = (24 + ph * 80) * s, a = (o.a ?? .55) * (1 - ph) * Math.min(1, ph * 6);
+      const g = ctx.createRadialGradient(px, py, r * .1, px, py, r); g.addColorStop(0, `rgba(${col},${a})`); g.addColorStop(1, `rgba(${col},0)`); ctx.fillStyle = g; ctx.fillRect(px - r, py - r, r * 2, r * 2); } }
   // a copse / hedgerow: a cluster of small overlapping bushy trees
   function copse(ctx, x, y, s, t, o = {}) { const R = rng(o.seed ?? x), n = o.n ?? 6; const pts = []; for (let i = 0; i < n; i++) pts.push([x + (i - n / 2) * 46 * s + (R() - .5) * 30 * s, y + (R() - .5) * 16 * s, s * (.7 + R() * .6), R() < (o.cypress ?? .08)]);
     pts.sort((A, B) => A[1] - B[1]); for (const [px, py, ps, cy] of pts) tree(ctx, px, py, ps, t, { kind: cy ? 'cypress' : 'oak', haze: o.haze, far: o.far, seed: px * 7 + py, low: true }); }
@@ -163,5 +168,5 @@
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = `saturate(${o.sat ?? 1.35}) contrast(${o.con ?? 1.1})`; ctx.drawImage(TMP, 0, 0); ctx.restore();
     P.grain(ctx, t, .035); P.vignette(ctx, o.vig ?? .45); }
   let TMP = null;
-  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, moundRidge, site, marsh, footY, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
+  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, moundRidge, site, marsh, footY, smoke, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
 })(window);

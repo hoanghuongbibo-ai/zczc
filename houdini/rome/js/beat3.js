@@ -92,9 +92,9 @@
   function sFirst(ctx, lt, dur, t) { const c = C.cam(lt, dur, { z: 1.0, x: -20 }, { z: 1.08, x: 20 });
     L(ctx, c, .04, () => C.sky(ctx, 'sunset', t, { horizon: 400, sun: [980, 330], sunR: 44, seed: 311 }));
     L(ctx, c, .2, () => C.mounds(ctx, { y: 410, n: 5, seed: 312, col: '#8a9a70', far: .45, sunX: 980, t, w: 560, h: 90, copses: 2, haze: '#f0b890' }));
-    L(ctx, c, .55, () => { C.meadow(ctx, 430, 470, t, { col: '#7a8a3e', n: 80, haze: '#f0b890' }); C.water(ctx, -400, 466, 1700, 640, t, { pal: 'sunset', sunX: 980 }); for (let i = 0; i < 30; i++) P.reeds(ctx, -40 + i * 48, 520 + (i % 4) * 26, .6 + (i % 3) * .1, t, 4);
-      // a hut standing in the flood: water lapping round its walls
-      roundHut(ctx, 300, 560, .55, t, 2); ctx.save(); ctx.globalAlpha = .8; ctx.fillStyle = '#7a8aa8'; ctx.beginPath(); ctx.ellipse(300, 556, 80, 10, 0, 0, 7); ctx.fill(); ctx.restore(); });
+    // the marsh lies in the valley floor; the hut stands on dry ground at its edge, the water creeping up to its doorstep
+    L(ctx, c, .55, () => { C.meadow(ctx, 430, 760, t, { col: '#7a8a3e', n: 160, flowers: 20, haze: '#f0b890' }); C.marsh(ctx, 760, 560, 1000, 150, t, { pal: 'sunset', sunX: 980, reeds: 30, reedScale: .55, pads: 7, seed: 41 });
+      ctx.fillStyle = '#6a6038'; ctx.beginPath(); ctx.ellipse(210, 586, 150, 22, 0, 0, 7); ctx.fill(); roundHut(ctx, 200, 590, .55, t, 2); C.copse(ctx, 60, 596, .3, t, { n: 4, seed: 7 }); ink(ctx, '#8a6a44', cc => { cc.moveTo(250, 596); cc.lineTo(330, 602); cc.lineTo(330, 606); cc.lineTo(250, 600); cc.closePath(); }, 1.5); });
     L(ctx, c, 1, () => { ctx.fillStyle = '#7e8a3a'; ctx.beginPath(); ctx.moveTo(-300, 900); ctx.lineTo(-300, 650); ctx.quadraticCurveTo(640, 620, 1600, 660); ctx.lineTo(1600, 900); ctx.closePath(); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke(); C.meadow(ctx, 650, 800, t, { col: '#7e8a3a', n: 160, flowers: 10 });
       person(ctx, 560, 704, .5, t, VILL[0], { pose: 'hold', prop: spade, face: 1, brow: 'sad', mouth: 'frown' }); person(ctx, 760, 704, .48, t, VILL[1], { pose: 'shrug', face: -1, eyes: 'half', mouth: 'frown' });
       ctx.fillStyle = '#2a2a2a'; for (let i = 0; i < 24; i++) { const x = 660 + Math.sin(t * 3 + i * 1.7) * 110, y = 420 + Math.cos(t * 2.4 + i * 2.1) * 50; ctx.beginPath(); ctx.arc(x, y, 2.2, 0, 7); ctx.fill(); } });

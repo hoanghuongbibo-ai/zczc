@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Rome — Thumbnails</title>
+<style>@font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Nunito; font-weight: 800; src: url(assets/fonts/nunito-latin-800-normal.woff2) format('woff2'); }
+html, body { margin: 0; background: #111; } canvas { display: block; }</style></head>
+<body><canvas id="stage" width="1280" height="720"></canvas>
+<script src="../js/toon.js"></script><script src="js/paint.js"></script><script src="js/monk.js"></script><script src="js/animals.js"></script><script src="js/cine.js"></script><script src="js/kit.js"></script><script src="js/thumb.js"></script>
+<script>document.fonts.load('100px "Luckiest Guy"').then(() => { const v = +(new URLSearchParams(location.search).get('v') || 1); drawThumb(document.getElementById('stage').getContext('2d'), v); window.READY = true; });</script>
+</body></html>

@@ -73,5 +73,28 @@
     ink(ctx, mix(W, '#a89a84', .5), c => { c.moveTo(-16, 26); c.lineTo(-12, 46); c.lineTo(-4, 24); c.closePath(); }, 2.5);
     ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(-2, -8, 3, 4, 0, 0, 7); ctx.fill(); ctx.beginPath(); ctx.arc(-24, 22, 2, 0, 7); ctx.fill();
     ctx.restore(); ctx.restore(); }
-  P.cow = cow; P.goat = goat;
+  // horse: same build as the cow (jointed legs, ink outline, flat shading) but leaner and taller, arched neck, long head, mane and flowing tail.
+  // horse(ctx, x, y, s, t, { flip, walk, col, mane, rider: (ctx) => draws the rider's body BEFORE the barrel so the legs straddle it, saddle })
+  function horse(ctx, x, y, s, t, o = {}) { ctx.save(); ctx.translate(x, y); ctx.scale(o.flip ? -s : s, s);
+    const ph = (o.seed ?? 3) * .17, W = o.col || '#8a5a36', SH = mix(W, '#2a1a10', .35), MN = o.mane || '#2a1a12', step = o.walk ? Math.sin(t * 5 + ph) * 16 : 0, tailSw = Math.sin(t * 1.5 + ph) * 10, nod = o.walk ? Math.sin(t * 5 + ph) * 3 : 0;
+    shadow(ctx, 400, .4);
+    leg(ctx, -100, -150, -100 - step, -96, SH, 13, '#1a1410'); leg(ctx, 120, -150, 124 + step, 140, SH, 14, '#1a1410');
+    ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = 26; ctx.beginPath(); ctx.moveTo(160, -262); ctx.quadraticCurveTo(196 + tailSw * .4, -200, 184 + tailSw, -110); ctx.stroke(); ctx.strokeStyle = MN; ctx.lineWidth = 19; ctx.stroke(); ctx.restore();
+    if (o.rider) o.rider(ctx);
+    // neck rising to the head, mane along its crest
+    cel(ctx, c => { c.moveTo(-70, -276); c.quadraticCurveTo(-130, -350, -160, -406 + nod); c.lineTo(-226, -372 + nod); c.quadraticCurveTo(-200, -260, -156, -170); c.closePath(); }, W, { shade: SH, dx: 12, dy: 0, lw: 5 });
+    cel(ctx, c => { c.moveTo(-90, -272); c.quadraticCurveTo(-140, -340, -168, -400 + nod); c.quadraticCurveTo(-150, -356, -110, -300); c.quadraticCurveTo(-100, -286, -90, -272); c.closePath(); }, MN, { shade: mix(MN, '#000', .3), dx: 4, dy: 0, lw: 3.5 });
+    leg(ctx, -128, -150, -132 + step, -124, W, 14, '#1a1410'); leg(ctx, 100, -152, 102 - step, 122, W, 15, '#1a1410');
+    const body = c => { c.moveTo(-140, -270); c.quadraticCurveTo(-20, -262, 100, -270); c.quadraticCurveTo(160, -288, 178, -240); c.quadraticCurveTo(184, -180, 150, -156); c.quadraticCurveTo(80, -138, 0, -142); c.quadraticCurveTo(-90, -136, -130, -160); c.quadraticCurveTo(-176, -190, -160, -244); c.quadraticCurveTo(-154, -264, -140, -270); c.closePath(); };
+    cel(ctx, body, W, { shade: SH, light: mix(W, '#ffffff', .25), dx: 0, dy: 16 });
+    if (o.saddle !== false) { cel(ctx, c => { c.moveTo(-60, -272); c.quadraticCurveTo(0, -282, 60, -272); c.lineTo(52, -200); c.lineTo(-52, -200); c.closePath(); }, o.saddle || '#a8322a', { shade: '#6a1a14', dx: 8, dy: 0, lw: 3.5 }); ink(ctx, '#d8a040', c => c.rect(-56, -212, 112, 10), 2); }
+    // the long head with ears, eye, nostril and bridle
+    ctx.save(); ctx.translate(-196, -384 + nod); ctx.rotate(-.5);
+    for (const d of [0, 14]) cel(ctx, c => { c.moveTo(4 + d, -20); c.lineTo(10 + d, -54); c.lineTo(20 + d, -18); c.closePath(); }, d ? SH : W, { shade: SH, dx: 2, dy: 0, lw: 3 });
+    const head = c => { c.moveTo(0, -22); c.quadraticCurveTo(30, -20, 30, 10); c.lineTo(22, 104); c.quadraticCurveTo(10, 124, -10, 116); c.quadraticCurveTo(-24, 100, -18, 60); c.quadraticCurveTo(-26, 0, 0, -22); c.closePath(); };
+    cel(ctx, head, W, { shade: SH, light: mix(W, '#ffffff', .25), dx: 8, dy: 0, lw: 4.5 }); ctx.fillStyle = INK; ctx.beginPath(); ctx.ellipse(-4, 104, 4, 6, 0, 0, 7); ctx.fill();
+    ink(ctx, '#fffaf0', c => c.ellipse(4, 16, 6, 7, 0, 0, 7), 2.5); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(2, 17, 4, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#3a2414'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-22, 70); ctx.lineTo(26, 74); ctx.moveTo(-14, 10); ctx.lineTo(28, 2); ctx.stroke(); ctx.restore();
+    ctx.restore(); }
+  P.cow = cow; P.goat = goat; P.horse = horse;
 })(window);

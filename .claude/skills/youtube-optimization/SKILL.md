@@ -75,3 +75,7 @@ The user's preferred cartoon thumbnail look, modelled on the @TwoSideHistory cha
   - one overjoyed (eyes happy, mouth grin, blush) with `cheer` or `thumbsUp`
   - never `facepalm`: it covers the eye and reads as pain
 - **One hero prop in the centre** with a hand-drawn red ring, a red arrow, a small black tag such as "c. 2560 BC", and a red stamp ("MYTH").
+- **Surprise/panic variant** (user request, `houdini/merer/thumbs3.js`): both characters react. Each gets a comic shock effect around the head:
+  - **Surprised:** `presentBoth` pose, eyes wide, mouth `o`, brows up, a yellow starburst behind the head, and a yellow "!?".
+  - **Panicking:** `cheer` pose (it reads as a hand on the head), eyes wide, mouth `shock`, brows worried, sweat, an orange starburst, a red "!!" and flying sweat drops.
+  - End slogans with "?!".

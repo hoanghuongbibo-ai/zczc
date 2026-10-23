@@ -65,11 +65,11 @@
     L(ctx, c, .04, () => C.sky(ctx, pal, t, { horizon: 410, sun, sunR: 46, seed: o.seed ?? 301 }));
     L(ctx, c, .14, () => C.mounds(ctx, { y: 420, n: 5, seed: 302, col: '#8a9a70', far: .45, sunX: sun[0], t, w: 560, h: 80, copses: 2, haze: hz }));
     const r = {}; L(ctx, c, .5, () => { C.meadow(ctx, 470, 640, t, { col: dry > .5 ? '#8aa244' : '#7a8a3e', n: 160, flowers: dry > .5 ? 40 : 10, haze: hz });
+      // the marsh lies on the valley floor; the hills are drawn after it, so their slopes overlap its edges
+      const wet = 1 - dry; if (wet > .02) { ctx.save(); ctx.globalAlpha = Math.min(1, wet * 1.6); C.marsh(ctx, 640, 590, 560 * (.45 + .55 * wet), 70 * (.45 + .55 * wet), t, { pal, sunX: sun[0], glint: wet > .5, reeds: Math.round(26 * wet), seed: 21 }); ctx.restore(); }
       r.L = C.mound(ctx, 140, 620, 560, 340, { col: '#6a9040', sunX: sun[0], t, copses: 2, seed: 303, haze: hz }); r.R = C.mound(ctx, 1150, 620, 580, 360, { col: '#6a9040', sunX: sun[0], t, copses: 2, seed: 304, haze: hz });
-      if (o.huts !== false) { for (const hx of [70, 190]) roundHut(ctx, hx, r.L(hx) + 12, .3, t, hx); for (const hx of [1090, 1210]) roundHut(ctx, hx, r.R(hx) + 12, .3, t, hx); }
-      // the marsh on the valley floor, shrinking as it drains
-      const wet = 1 - dry; if (wet > .02) { ctx.save(); ctx.globalAlpha = Math.min(1, wet * 1.6); ctx.beginPath(); ctx.ellipse(640, 560, 300 * (.4 + .6 * wet), 50 * (.4 + .6 * wet), 0, 0, 7); ctx.save(); ctx.clip(); C.water(ctx, 300, 500, 980, 620, t, { pal, sunX: sun[0], glint: wet > .5 }); ctx.restore(); ctx.beginPath(); ctx.ellipse(640, 560, 300 * (.4 + .6 * wet), 50 * (.4 + .6 * wet), 0, 0, 7); ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.stroke();
-        for (let i = 0; i < Math.round(14 * wet); i++) { const rx = 400 + ((i * 197) % 480); P.reeds(ctx, rx, 548 + ((i * 7) % 4) * 12, .32 + (i % 4) * .07, t, 3); } ctx.restore(); }
+      // huts near the hilltops, each standing on the lowest ground under it (no corner hanging off the slope)
+      if (o.huts !== false) { for (const hx of [70, 170]) roundHut(ctx, hx, C.footY(r.L, hx, 50) + 4, .3, t, hx); for (const hx of [1060, 1160]) roundHut(ctx, hx, C.footY(r.R, hx, 50) + 4, .3, t, hx); }
       if (o.inside) o.inside(ctx, r); });
     L(ctx, c, .8, () => { C.meadow(ctx, 628, 700, t, { col: '#7e9a3a', n: 120, flowers: 30, haze: hz }); C.water(ctx, -400, 690, 1700, 760, t, { pal, sunX: sun[0] }); });
     return r; }

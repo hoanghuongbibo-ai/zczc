@@ -86,6 +86,20 @@
     ctx.lineCap = 'round'; for (let k = 0; k < w / 6; k++) { const xx = x - w / 2 - 20 + R() * (w + 40), yy = g(xx) + 6; ctx.strokeStyle = R() < .5 ? '#5a7a2a' : '#8aa040'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(xx, yy); ctx.lineTo(xx + (R() - .5) * 8, yy - 8 - R() * 14); ctx.stroke(); }
     if (o.bushes !== false) for (const d of [-1, 1]) P.bush(ctx, x + d * (w / 2 + 4), g(x + d * (w / 2 + 4)) + 8, 16 + R() * 10, { col: '#6a8a3a', seed: x + d });
     return py; }
+
+  // a marsh pool lying in the ground: an irregular outline (never a perfect oval), a band of wet mud and dark rushes round its
+  // banks, the water inside it reflecting the sky. Draw it on the valley floor BEFORE the hills, so their slopes overlap its edges.
+  function marsh(ctx, cx, cy, w, h, t, o = {}) { const R = rng(o.seed ?? 11), n = 16, pts = [];
+    for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = .78 + R() * .34; pts.push([cx + Math.cos(a) * w / 2 * k, cy + Math.sin(a) * h / 2 * (k * .9 + .1)]); }
+    const shape = (sc = 1) => { ctx.beginPath(); const P0 = pts.map(([x, y]) => [cx + (x - cx) * sc, cy + (y - cy) * sc]), m = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]; ctx.moveTo(...m(P0[n - 1], P0[0])); for (let i = 0; i < n; i++) ctx.quadraticCurveTo(...P0[i], ...m(P0[i], P0[(i + 1) % n])); ctx.closePath(); };
+    shape(1.12); ctx.fillStyle = '#5e6a30'; ctx.fill(); shape(1.05); ctx.fillStyle = '#7a6a44'; ctx.fill();
+    ctx.save(); shape(1); ctx.clip(); water(ctx, cx - w, cy - h, cx + w, cy + h, t, { pal: o.pal || 'golden', sunX: o.sunX ?? cx, glint: o.glint, n: 40 }); ctx.fillStyle = 'rgba(60,50,20,.25)'; ctx.fillRect(cx - w, cy - h, w * 2, h * .25); ctx.restore();
+    shape(1); ctx.strokeStyle = 'rgba(60,40,20,.7)'; ctx.lineWidth = 2.5; ctx.stroke();
+    // rushes and cattails growing out of the banks (back edge smaller, sides and front larger), lily pads on the water
+    for (let i = 0; i < (o.reeds ?? 22); i++) { const a = R() * Math.PI * 2, rx = cx + Math.cos(a) * w / 2 * (.95 + R() * .12), ry = cy + Math.sin(a) * h / 2 * (.95 + R() * .12), sc = (o.reedScale ?? .5) * (.7 + .3 * (ry - cy + h) / h); P.reeds(ctx, rx, ry + 2, sc, t, 3 + Math.floor(R() * 3)); }
+    for (let i = 0; i < (o.pads ?? 6); i++) { const px = cx + (R() - .5) * w * .6, py = cy + (R() - .3) * h * .5; ctx.fillStyle = '#5a8a3a'; ctx.beginPath(); ctx.ellipse(px, py, 10 + R() * 8, 4 + R() * 2, 0, .3, 6.1); ctx.lineTo(px, py); ctx.fill(); ctx.strokeStyle = '#2a4a1a'; ctx.lineWidth = 1.5; ctx.stroke(); } }
+  // ground under a footprint: the lowest point under it, so a flat-based object never hangs off a slope
+  const footY = (ridge, x, w) => { let y = -Infinity; for (let k = 0; k <= 8; k++) y = Math.max(y, ridge(x - w / 2 + k * w / 8)); return y; };
   // a copse / hedgerow: a cluster of small overlapping bushy trees
   function copse(ctx, x, y, s, t, o = {}) { const R = rng(o.seed ?? x), n = o.n ?? 6; const pts = []; for (let i = 0; i < n; i++) pts.push([x + (i - n / 2) * 46 * s + (R() - .5) * 30 * s, y + (R() - .5) * 16 * s, s * (.7 + R() * .6), R() < (o.cypress ?? .08)]);
     pts.sort((A, B) => A[1] - B[1]); for (const [px, py, ps, cy] of pts) tree(ctx, px, py, ps, t, { kind: cy ? 'cypress' : 'oak', haze: o.haze, far: o.far, seed: px * 7 + py, low: true }); }
@@ -149,5 +163,5 @@
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.filter = `saturate(${o.sat ?? 1.35}) contrast(${o.con ?? 1.1})`; ctx.drawImage(TMP, 0, 0); ctx.restore();
     P.grain(ctx, t, .035); P.vignette(ctx, o.vig ?? .45); }
   let TMP = null;
-  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, moundRidge, site, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
+  G.Cine = { PAL, cam, layer, sky, cloud, hills, mounds, mound, moundRidge, site, marsh, footY, copse, tree, meadow, foreground, water, rays, haze, motes, finish, rng };
 })(window);

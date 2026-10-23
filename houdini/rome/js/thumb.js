@@ -66,9 +66,9 @@
     ctx.fillStyle = 'rgba(240,110,110,.5)'; for (const d of [-1, 1]) { ctx.beginPath(); ctx.ellipse(d * 104, -10, 22, 14, 0, 0, 7); ctx.fill(); } ctx.restore(); }
 
   // ---------- title text: chunky font, thick dark outline, drop shadow ----------
-  function title(ctx, text, x, y, size, fill, o = {}) { ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); ctx.font = `${size}px "Luckiest Guy", "Nunito", sans-serif`; ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round';
-    ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillText(text, 6, 10); ctx.lineWidth = size * .24; ctx.strokeStyle = o.stroke || '#1a1210'; ctx.strokeText(text, 0, 0); if (Array.isArray(fill)) { const g = ctx.createLinearGradient(0, -size * .8, 0, 0); g.addColorStop(0, fill[0]); g.addColorStop(1, fill[1]); ctx.fillStyle = g; } else ctx.fillStyle = fill; ctx.fillText(text, 0, 0); ctx.restore(); }
-  function stamp(ctx, text, x, y, size, rot) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.font = `${size}px "Luckiest Guy", sans-serif`; const w = ctx.measureText(text).width + size * .8; ctx.fillStyle = '#d8322a'; ctx.strokeStyle = '#1a1210'; ctx.lineWidth = 8; ctx.beginPath(); ctx.roundRect(-w / 2, -size * .95, w, size * 1.25, 14); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText(text, 0, size * .12); ctx.restore(); }
+  function _title(ctx, text, x, y, size, fill, o = {}) { ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); ctx.font = `${size}px "Luckiest Guy", "Nunito", sans-serif`; ctx.textAlign = o.align || 'center'; ctx.textBaseline = 'alphabetic'; ctx.lineJoin = 'round';
+    ctx.lineWidth = size * .3; ctx.strokeStyle = '#000'; ctx.strokeText(text, 7, 11); ctx.fillStyle = '#000'; ctx.fillText(text, 7, 11); ctx.lineWidth = size * .26; ctx.strokeStyle = o.stroke || '#1a1210'; ctx.strokeText(text, 0, 0); if (Array.isArray(fill)) { const g = ctx.createLinearGradient(0, -size * .8, 0, 0); g.addColorStop(0, fill[0]); g.addColorStop(1, fill[1]); ctx.fillStyle = g; } else ctx.fillStyle = fill; ctx.fillText(text, 0, 0); ctx.restore(); }
+  function _stamp(ctx, text, x, y, size, rot) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.font = `${size}px "Luckiest Guy", sans-serif`; const w = ctx.measureText(text).width + size * .8; ctx.fillStyle = '#d8322a'; ctx.strokeStyle = '#1a1210'; ctx.lineWidth = 8; ctx.beginPath(); ctx.roundRect(-w / 2, -size * .95, w, size * 1.25, 14); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText(text, 0, size * .12); ctx.restore(); }
   function burst(ctx, x, y, r, col, n = 14) { ctx.save(); ctx.translate(x, y); ctx.beginPath(); for (let i = 0; i < n * 2; i++) { const a = i * Math.PI / n, rr = i % 2 ? r * .62 : r; ctx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } ctx.closePath(); ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = '#1a1210'; ctx.lineWidth = 6; ctx.stroke(); ctx.restore(); }
   function rays(ctx, x, y, col, a = .25) { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = col; for (let i = 0; i < 18; i++) { const a0 = i * Math.PI / 9; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + Math.cos(a0) * 1600, y + Math.sin(a0) * 1600); ctx.lineTo(x + Math.cos(a0 + .16) * 1600, y + Math.sin(a0 + .16) * 1600); ctx.closePath(); ctx.fill(); } ctx.restore(); }
   // a jagged diagonal split: left(ctx) and right(ctx) draw the two halves
@@ -87,12 +87,12 @@
   function v1(ctx) { split(ctx, c => { K.fireSky(c, t, 1); K.cityscape(c, t, { dusk: true }); const R = C.rng(5); for (let i = 0; i < 9; i++) K.flames(c, R() * 700, 470 + R() * 200, .7, t + i, { smoke: true }); P.grade(c, '#ff5020', .15, 'screen'); },
       c => { C.sky(c, 'golden', t, { horizon: 430, sun: [1100, 220], sunR: 60, seed: 7 }); rays(c, 1100, 220, '#fff4c0', .2); C.mounds(c, { y: 440, n: 5, seed: 8, col: '#8aa070', far: .4, sunX: 1100, t, w: 560, h: 90, copses: 2 }); K.colosseum(c, 1020, 440, 200, 46, 120); C.meadow(c, 520, 800, t, { col: '#8acc44', n: 140, flowers: 40 }); for (const [x, h] of [[740, 240], [800, 200]]) P.column(c, x, 600, 30, h, { col: '#efe6d2' }); });
     bust(ctx, 290, 520, 1.08, Object.assign({}, SENATOR, { face: 'panic', hands: 'cheeks' })); cowFace(ctx, 1010, 520, 1.0, { face: 'joy' });
-    title(ctx, 'ROME SHOULD', 640, 112, 96, ['#ffffff', '#f4e4c0'], { rot: -.03 }); title(ctx, "HAVE DIED", 640, 210, 104, ['#ffe060', '#ff9a20'], { rot: -.03 }); stamp(ctx, '5 TIMES!', 640, 660, 74, -.06);
+    title(ctx, 'ROME SHOULD', 640, 112, 96, ['#ffffff', '#ffffff'], { rot: -.03 }); title(ctx, "HAVE DIED", 640, 210, 104, ['#fff200', '#ffb000'], { rot: -.03 }); stamp(ctx, '5 TIMES!', 640, 660, 74, -.06);
     C.finish(ctx, t, 'golden', { leak: false, vig: .25, grain: false }); }
   // 2. "1,000,000 → 20,000": a shocked tourist in today's Forum | the medieval cow pasture, the population crashing
   function v2(ctx) { split(ctx, c => { C.sky(c, 'golden', t, { horizon: 440, sun: [300, 200], sunR: 50, seed: 11 }); K.cityscape(c, t); rays(c, 300, 200, '#fff4c0', .18); },
       c => { C.sky(c, 'storm', t, { horizon: 440, seed: 12, clouds: 3 }); C.mounds(c, { y: 450, n: 5, seed: 13, col: '#7a8a68', far: .4, sunX: 900, t, w: 560, h: 80, copses: 2 }); K.colosseum(c, 1000, 460, 180, 40, 100); C.meadow(c, 520, 800, t, { col: '#7a9a3a', n: 120 }); for (const [x, h] of [[760, 200], [830, 150], [1180, 220]]) P.column(c, x, 620, 28, h, { col: '#d8ccb0' }); P.cow(c, 1040, 700, .5, t, { graze: true, seed: 3 }); });
-    title(ctx, '1,000,000', 300, 140, 110, ['#ffffff', '#f0e0b8'], { rot: -.04 }); title(ctx, '20,000', 990, 150, 110, ['#ff8a70', '#e8322a'], { rot: .03 });
+    title(ctx, '1,000,000', 300, 140, 110, ['#ffffff', '#ffffff'], { rot: -.04 }); title(ctx, '20,000', 990, 150, 110, ['#ff4a3a', '#e8180a'], { rot: .03 });
     ctx.save(); ctx.translate(640, 150); ctx.strokeStyle = '#1a1210'; ctx.lineWidth = 40; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-90, -40); ctx.quadraticCurveTo(0, -30, 90, 30); ctx.stroke(); ctx.strokeStyle = '#e8322a'; ctx.lineWidth = 24; ctx.stroke(); ink(ctx, '#e8322a', c => { c.moveTo(70, -10); c.lineTo(140, 60); c.lineTo(40, 70); c.closePath(); }, 8, '#1a1210'); ctx.restore();
     bust(ctx, 330, 560, 1.0, Object.assign({}, TOURIST, { face: 'surprise', hands: 'cheeks', look: 18 })); cowFace(ctx, 1030, 540, .78, { face: 'shock' });
     stamp(ctx, 'WHAT HAPPENED?!', 640, 670, 58, -.04); C.finish(ctx, t, 'golden', { leak: false, vig: .25 }); }
@@ -102,7 +102,7 @@
     for (let i = 0; i < 3; i++) { ctx.strokeStyle = 'rgba(140,210,245,.95)'; ctx.lineWidth = 46 - i * 12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(640, 330); ctx.quadraticCurveTo(700 + i * 40, 420, 660 + i * 70, 720); ctx.stroke(); } for (let i = 0; i < 26; i++) { const a = -1.4 + i * .11, r = 60 + (i * 37) % 90; cel(ctx, c => c.arc(640 + Math.cos(a) * r, 330 + Math.sin(a) * r * .8, 8 + (i % 3) * 4, 0, 7), '#a8e0ff', { dx: 2, dy: 2, lw: 3 }); }
     for (let i = 0; i < 6; i++) P.rock(ctx, 560 + i * 40, 716, 26, '#d8bc8a');
     bust(ctx, 1000, 560, 1.0, Object.assign({}, GOTH, { face: 'grin', hands: 'thumb' })); bust(ctx, 250, 560, 1.0, Object.assign({}, LEGION, { face: 'panic', hands: 'cheeks' }));
-    title(ctx, 'THEY CUT', 640, 120, 104, ['#ffffff', '#e0f0ff'], { rot: -.03 }); title(ctx, 'THE WATER', 640, 222, 112, ['#9ae0ff', '#2a98e8'], { rot: -.03 }); stamp(ctx, 'AD 537', 640, 670, 60, .05);
+    title(ctx, 'THEY CUT', 640, 120, 104, ['#ffffff', '#ffffff'], { rot: -.03 }); title(ctx, 'THE WATER', 640, 222, 112, ['#40d8ff', '#0a8cff'], { rot: -.03 }); stamp(ctx, 'AD 537', 640, 670, 60, .05);
     C.finish(ctx, t, 'storm', { leak: false, vig: .25 }); }
 
   const MATRON = { kind: 'tunic', cloth: '#c86a5a', skin: '#e8b48c', hair: '#2a1a14', hairStyle: 'bun', fem: true };
@@ -114,14 +114,14 @@
     ctx.save(); ctx.beginPath(); ctx.rect(574, 330, 132, 230); ctx.clip(); ctx.fillStyle = '#ff9a40'; ctx.fillRect(560, 320, 160, 260); for (let i = 0; i < 4; i++) { ctx.fillStyle = '#2a1414'; ctx.beginPath(); ctx.arc(600 + i * 30, 520, 18, Math.PI, 0); ctx.fill(); ctx.fillRect(582 + i * 30, 520, 36, 40); ctx.beginPath(); ctx.arc(600 + i * 30, 492, 13, 0, 7); ctx.fill(); ctx.strokeStyle = '#2a1414'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(612 + i * 30, 520); ctx.lineTo(620 + i * 30, 420); ctx.stroke(); } ctx.restore();
     rays(ctx, 640, 450, '#ffb060', .22); const R = C.rng(9); for (let i = 0; i < 5; i++) K.flames(ctx, 80 + i * 280, 600, .9, t + i, { smoke: true });
     bust(ctx, 250, 560, 1.06, Object.assign({}, SENATOR, { face: 'panic', hands: 'head' })); bust(ctx, 1030, 570, 1.0, Object.assign({}, MATRON, { face: 'surprise', hands: 'cheeks', shock: true, look: -16 }));
-    title(ctx, 'BARBARIANS', 640, 112, 104, ['#ffffff', '#f4e4c0'], { rot: -.02 }); title(ctx, 'INSIDE ROME!', 640, 214, 96, ['#ffe060', '#ff8a20'], { rot: -.02 }); stamp(ctx, 'AD 410', 640, 676, 58, .04);
+    title(ctx, 'BARBARIANS', 640, 112, 104, ['#ffffff', '#ffffff'], { rot: -.02 }); title(ctx, 'INSIDE ROME!', 640, 214, 96, ['#fff200', '#ffb000'], { rot: -.02 }); stamp(ctx, 'AD 410', 640, 676, 58, .04);
     C.finish(ctx, t, 'blood', { leak: false, vig: .25 }); }
   // 5. "COWS IN THE FORUM?!" — a shocked senator and a stunned monk find cattle grazing among the ruins of the Forum
   function v5(ctx) { C.sky(ctx, 'golden', t, { horizon: 430, sun: [640, 260], sunR: 60, seed: 41 }); rays(ctx, 640, 300, '#fff4c0', .22); C.mounds(ctx, { y: 440, n: 5, seed: 42, col: '#8aa070', far: .4, sunX: 640, t, w: 560, h: 90, copses: 2 });
     K.colosseum(ctx, 640, 440, 200, 46, 110); C.meadow(ctx, 500, 800, t, { col: '#8acc44', n: 160, flowers: 40 }); for (const [x, h] of [[420, 230], [480, 190], [820, 240], [880, 210]]) P.column(ctx, x, 600, 30, h, { col: '#efe6d2' }); cel(ctx, c => c.rect(400, 360, 100, 22), '#efe6d2', { shade: '#c0b8a8', dx: 0, dy: 5, lw: 3 });
     P.cow(ctx, 560, 680, .6, t, { graze: true, seed: 3 }); P.cow(ctx, 780, 700, .55, t, { seed: 6, flip: true, unimpressed: true }); P.goat(ctx, 660, 720, .5, t, { seed: 4 });
     bust(ctx, 220, 570, 1.06, Object.assign({}, SENATOR, { face: 'surprise', hands: 'cheeks', shock: true, look: 16 })); bust(ctx, 1060, 570, 1.0, Object.assign({}, MONK, { face: 'panic', hands: 'head' }));
-    title(ctx, 'COWS IN', 640, 112, 108, ['#ffffff', '#f4e4c0'], { rot: -.03 }); title(ctx, 'THE FORUM?!', 640, 218, 104, ['#ffe060', '#ff8a20'], { rot: -.03 });
+    title(ctx, 'COWS IN', 640, 112, 108, ['#ffffff', '#ffffff'], { rot: -.03 }); title(ctx, 'THE FORUM?!', 640, 218, 104, ['#fff200', '#ffb000'], { rot: -.03 });
     C.finish(ctx, t, 'golden', { leak: false, vig: .25 }); }
   // 6. "THE WATER STOPPED" — a panicked legionary and a shocked matron over a bone-dry fountain, the broken aqueduct behind
   function v6(ctx) { C.sky(ctx, 'storm', t, { horizon: 460, seed: 51, clouds: 4 }); rays(ctx, 640, 420, '#c8d8f0', .14); C.mounds(ctx, { y: 470, n: 5, seed: 52, col: '#7a8a68', far: .4, sunX: 900, t, w: 560, h: 90, copses: 2 });
@@ -129,8 +129,10 @@
     ctx.save(); ctx.translate(640, 640); cel(ctx, c => c.rect(-170, -70, 340, 70), '#d8ccb0', { shade: '#a89a78', dx: 0, dy: 10, lw: 5 }); ctx.fillStyle = '#8a7a5a'; ctx.fillRect(-156, -64, 312, 14); for (let i = 0; i < 6; i++) { ctx.strokeStyle = '#5a4a3a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-140 + i * 50, -60); ctx.lineTo(-130 + i * 50, -52); ctx.lineTo(-138 + i * 50, -46); ctx.stroke(); } cel(ctx, c => c.rect(-24, -240, 48, 170), '#d8ccb0', { shade: '#a89a78', dx: 8, dy: 0, lw: 5 }); cel(ctx, c => c.arc(0, -210, 26, 0, 7), '#c8b890', { shade: '#988a68', dx: 4, dy: 4, lw: 4 }); ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(0, -202, 7, 0, 7); ctx.fill();
       cel(ctx, c => { c.moveTo(6, -196); c.quadraticCurveTo(12, -180, 6, -172); c.quadraticCurveTo(0, -180, 6, -196); c.closePath(); }, '#8ad0f4', { dx: 2, dy: 0, lw: 3 }); ctx.restore();
     bust(ctx, 240, 570, 1.06, Object.assign({}, LEGION, { face: 'panic', hands: 'head' })); bust(ctx, 1040, 570, 1.0, Object.assign({}, MATRON, { face: 'surprise', hands: 'cheeks', shock: true, look: -16, hair: '#5a3a24', cloth: '#5a8aa8' }));
-    title(ctx, 'THE WATER', 640, 112, 108, ['#ffffff', '#e0f0ff'], { rot: -.03 }); title(ctx, 'STOPPED!', 640, 220, 116, ['#9ae0ff', '#2a98e8'], { rot: -.03 }); stamp(ctx, 'AD 537', 640, 690, 50, .04);
+    title(ctx, 'THE WATER', 640, 112, 108, ['#ffffff', '#ffffff'], { rot: -.03 }); title(ctx, 'STOPPED!', 640, 220, 116, ['#40d8ff', '#0a8cff'], { rot: -.03 }); stamp(ctx, 'AD 537', 640, 690, 50, .04);
     C.finish(ctx, t, 'storm', { leak: false, vig: .25 }); }
 
-  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6 })[v](ctx); };
+  // titles and stamps are queued and painted after the colour grade / vignette, so the grade never dims them
+  const Q = [], title = (...a) => Q.push(() => _title(...a)), stamp = (...a) => Q.push(() => _stamp(...a));
+  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

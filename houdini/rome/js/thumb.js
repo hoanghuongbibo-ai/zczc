@@ -132,7 +132,30 @@
     title(ctx, 'THE WATER', 640, 112, 108, ['#ffffff', '#ffffff'], { rot: -.03 }); title(ctx, 'STOPPED!', 640, 220, 116, ['#40d8ff', '#0a8cff'], { rot: -.03 }); stamp(ctx, 'AD 537', 640, 690, 50, .04);
     C.finish(ctx, t, 'storm', { leak: false, vig: .25 }); }
 
+  const icon = (ctx, kind, x, y, s, t) => { ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    if (kind === 'gauls') { cel(ctx, c => c.ellipse(0, 0, 40, 56, 0, 0, 7), '#3a6a4a', { shade: '#2a4a34', dx: 8, dy: 0, lw: 3.5 }); ink(ctx, '#d8b048', c => c.arc(0, 0, 12, 0, 7), 2.5); }
+    else if (kind === 'alaric') { cel(ctx, c => { c.moveTo(-40, 30); c.quadraticCurveTo(-44, -40, 0, -46); c.quadraticCurveTo(44, -40, 40, 30); c.closePath(); }, '#b8893a', { shade: '#8a6020', dx: 8, dy: 0, lw: 3.5 }); ink(ctx, '#8a6020', c => c.rect(-4, -10, 8, 40), 2); }
+    else if (kind === 'water') { cel(ctx, c => { c.moveTo(0, -50); c.quadraticCurveTo(36, 0, 28, 22); c.quadraticCurveTo(0, 50, -28, 22); c.quadraticCurveTo(-36, 0, 0, -50); c.closePath(); }, '#6ab0e0', { shade: '#3a80b0', dx: 6, dy: 0, lw: 3.5 }); ctx.strokeStyle = '#c8322a'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(-36, -40); ctx.lineTo(36, 40); ctx.stroke(); }
+    else if (kind === 'popes') { cel(ctx, c => { c.moveTo(-26, 30); c.quadraticCurveTo(-30, -30, 0, -46); c.quadraticCurveTo(30, -30, 26, 30); c.closePath(); }, '#f4efe2', { shade: '#c8c0b0', dx: 6, dy: 0, lw: 3 }); for (const yy of [16, -4, -22]) ink(ctx, '#d8b048', c => c.rect(-26, yy, 52, 6), 1.5); }
+    else if (kind === 'sack') { ctx.strokeStyle = INK; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(0, 50); ctx.lineTo(0, -40); ctx.stroke(); ctx.strokeStyle = '#7a5232'; ctx.lineWidth = 4; ctx.stroke(); ink(ctx, '#c8c8d0', c => { c.moveTo(0, -30); c.lineTo(30, -40); c.quadraticCurveTo(34, -14, 0, -6); c.closePath(); }, 2.5); ink(ctx, '#c8c8d0', c => { c.moveTo(-6, -40); c.lineTo(0, -66); c.lineTo(6, -40); c.closePath(); }, 2.5); }
+    else if (kind === 'raft') { cel(ctx, c => c.rect(-50, -10, 100, 20), '#8a6040', { shade: '#5a3a20', dx: 0, dy: 4, lw: 3 }); ctx.strokeStyle = '#4a8ab8'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-60, 20); ctx.quadraticCurveTo(0, 30, 60, 20); ctx.stroke(); }
+    else if (kind === 'aqueduct') K.aqueduct(ctx, -60, 60, -30, () => 30, t, { bay: 40 });
+    else if (kind === 'world') { K.colosseum(ctx, 0, -20, 60, 16, 40); }
+    else if (kind === 'holy') { ctx.scale(.16, .16); K.basilica(ctx, 0, 220, 1, t); }
+    else if (kind === 'nation') tricolore(ctx, -50, 50, .7, t);
+    ctx.restore(); };
+
+  // 7. "5 TIMES ROME ALMOST DIED": one huge panicking senator in a burning city, the five near-deaths stacked beside him as numbered badges
+  function v7(ctx) { K.fireSky(ctx, t, 1); rays(ctx, 380, 470, '#ffc060', .28); K.cityscape(ctx, t, { dusk: true }); const R = C.rng(17); for (let i = 0; i < 7; i++) K.flames(ctx, R() * 1280, 480 + R() * 200, .8, t + i, { smoke: true }); P.grade(ctx, '#ff5020', .12, 'screen');
+    // smoke-dark panel behind the badges so they read
+    ctx.fillStyle = 'rgba(30,14,14,.55)'; ctx.beginPath(); ctx.roundRect(800, 250, 440, 460, 30); ctx.fill();
+    const ITEMS = [['gauls', 'THE GAULS', '390 BC'], ['alaric', 'THE GOTHS', 'AD 410'], ['water', 'NO WATER', 'AD 537'], ['popes', 'POPES LEAVE', '1309'], ['sack', 'THE SACK', '1527']];
+    ITEMS.forEach(([k, lab, yr], i) => { const y = 300 + i * 88, x = 860; cel(ctx, c => c.arc(x, y, 38, 0, 7), '#fbf4e2', { shade: '#d8ccb0', dx: 0, dy: 4, lw: 5 }); icon(ctx, k, x, y, .58, t); ctx.strokeStyle = '#e8180a'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x - 30, y - 30); ctx.lineTo(x + 30, y + 30); ctx.stroke();
+      title(ctx, lab, 912, y + 6, 40, ['#ffffff', '#ffffff'], { align: 'left' }); title(ctx, yr, 912, y + 36, 24, ['#fff200', '#ffb000'], { align: 'left' }); });
+    bust(ctx, 370, 520, 1.2, Object.assign({}, SENATOR, { face: 'panic', hands: 'head', shock: true }));
+    title(ctx, '5 TIMES', 640, 128, 130, ['#fff200', '#ffb000'], { rot: -.04 }); title(ctx, 'ROME ALMOST DIED', 640, 226, 84, ['#ffffff', '#ffffff'], { rot: -.04 });
+    C.finish(ctx, t, 'blood', { leak: false, vig: .25 }); }
   // titles and stamps are queued and painted after the colour grade / vignette, so the grade never dims them
   const Q = [], title = (...a) => Q.push(() => _title(...a)), stamp = (...a) => Q.push(() => _stamp(...a));
-  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
+  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

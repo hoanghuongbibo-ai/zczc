@@ -65,3 +65,13 @@ SOURCES
 - Each chapter should end on an open loop.
 - The thumbnail and title promise should be paid off by about 1:00.
 - Report problems as `mm:ss — risk — fix`.
+
+## Thumbnail style B: "Two Sides" reference (user, 2026-10-23); code in `houdini/merer/thumbs2.js`
+The user's preferred cartoon thumbnail look, modelled on the @TwoSideHistory channel and made with our own characters and content:
+- A **crisp, bright scene** from the episode with no blur, plus a soft-light boost and a dark gradient behind the top text.
+- **The slogan sits at the top on one line**: 2–3 words in Luckiest Guy, white with a heavy black outline, and one word in yellow or red. Examples: "THE PYRAMID DIARY", "NOT SLAVES?!", "PAID IN BEER", "TEAM NAME: DRUNKARDS".
+- **Two characters waist-up at the bottom corners (scale about 1.3, feet below the frame) with exaggerated, opposite emotions**:
+  - one shocked or panicking (eyes wide, mouth shock/o, brows up/worried, sweat), using the palms-up `presentBoth` pose
+  - one overjoyed (eyes happy, mouth grin, blush) with `cheer` or `thumbsUp`
+  - never `facepalm`: it covers the eye and reads as pain
+- **One hero prop in the centre** with a hand-drawn red ring, a red arrow, a small black tag such as "c. 2560 BC", and a red stamp ("MYTH").

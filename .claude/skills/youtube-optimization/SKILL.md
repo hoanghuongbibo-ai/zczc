@@ -80,9 +80,9 @@ The user's preferred cartoon thumbnail look, modelled on the @TwoSideHistory cha
   - **Panicking:** `cheer` pose (it reads as a hand on the head), eyes wide, mouth `shock`, brows worried, sweat, an orange starburst, a red "!!" and flying sweat drops.
   - End slogans with "?!".
 - **Keep it clean** (user feedback, `houdini/merer/thumbs4.js`): the FX-heavy v4 was "too many unnecessary details". The approved minimum is:
-  - one simple backdrop: sky, one pyramid and sand, or a plain stone wall
+  - a **detailed, lively episode scene** as the backdrop, such as Red Sea galleries, Giza building site, bakery town or Nile at dawn (`thumbs5.js`). The user wants rich landscapes; "too many details" meant the comic FX, tags and stamps, NOT the scenery.
   - two characters reacting with their faces only
   - ONE prop, with at most one red ring or X
   - the slogan
 
-  No starbursts, "!?" marks, flying drops, tags, stamps, camps or crowds unless the user asks for them.
+  No starbursts, "!?" marks, flying drops, tags or stamps unless the user asks for them.

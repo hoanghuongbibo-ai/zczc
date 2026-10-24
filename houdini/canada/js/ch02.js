@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 225);
+  const a = (ph, from = 225) => F.at(ph, from);
   const A = { start: 225.1, y1535: a('in 1535'), cartier: a('jacques cartier'), sails: a('sails up the giant'), board: a('on board are two'), stad: a('stadacona'), taken: a('cartier had taken'), tell: a('they tell him'), iroq: a('in their iroquoian'),
     talking: a('they were talking'), though: a('cartier though'), land: a('the land around'), chief: a('its chief donnacona'), decade: a('within about a decade'), second: a('so the second largest'), honestly: a('which honestly') };
   const SAILOR = { coat: '#3a3a5a', hat: 'cap', hatCol: '#5a2a2a', beard: '#5a3a24' };
@@ -12,7 +12,7 @@
   function sRiver(ctx, lt, dur, t) { const k = ease.inOut(clamp((t - A.sails) / 6)); const v = S.view({ lon: -62, lat: 48.5, s: 3200, y: 380 }, { lon: -69, lat: 47.5, s: 3600, y: 380 }, k); const pr = C.map(ctx, v, { fill: () => null, riverW: 7 });
     const [sx, sy] = pr(lerp(-61, -70.5, k), lerp(49.3, 47.2, k)); C.ship(ctx, sx, sy, .55, t, { flag: '#f4f0e4', sail: '#f4ecd8' });
     C.pin(ctx, pr, -71.2, 46.8, 'Stadacona (today: Quebec City)', k01(t, A.stad, .5), { dy: -60 }); S.date(ctx, '1535', k01(t, A.y1535, .4));
-    ctx.save(); C.shadow(ctx, true, 10, .4); ctx.fillStyle = '#fbf8f0'; ctx.fillRect(40, 380, 300, 320); C.shadow(ctx, false); C.fig(ctx, 190, 690, .95, t, { coat: '#3a1a2a', pants: '#2a1a1a', face: 'cartier', headS: .55, pose: since(t, A.sails) > 0 ? 'point' : 'stand', seed: 7 }); ctx.restore(); C.label(ctx, 'Jacques Cartier · "zhahk kar-tee-AY"', 190, 380, 18, { rot: -.03 });
+    C.photo(ctx, 'jacques-cartier', 200, 500, 240, 290, { rot: -.04, tape: true, seed: 17 }); C.label(ctx, 'Jacques Cartier · "zhahk kar-tee-AY"', 210, 680, 18, { rot: -.03 });
     C.finish(ctx, t); }
   const since = (t, x) => t - x;
   // 2. on board: two young men from Stadacona; the painting of Cartier's meeting; they had been taken to France and are guiding him home

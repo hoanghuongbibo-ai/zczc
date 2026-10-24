@@ -38,7 +38,7 @@
     japanese: i => ({ kind: 'coat', cloth: ['#3a4a5a', '#5a4a3a', '#2a3a4a'][i % 3], legs: '#3a3a40', hat: i % 2 ? 'flatcap' : null, hair: '#1a1410', skin: '#e8c090', seed: 320 + i }),
     soldier1917: i => ({ kind: 'coat', cloth: '#7a7a50', legs: '#6a6a44', hat: 'brodie', hatCol: '#6a6a4a', belt: '#5a3a24', seed: 330 + i }),
     modern: i => ({ kind: 'coat', cloth: ['#3a6ab8', '#c23a2c', '#5a8a4a', '#e8b030', '#7a5a9a'][i % 5], legs: ['#3a3a44', '#4a5a7a'][i % 2], hair: ['#5a3a24', '#c8a050', '#1a1410'][i % 3], skin: ['#f2c9a2', '#c98e66', '#e8b48c', '#6a3e2a', '#a8724e'][i % 5], seed: 340 + i }),
-    child: i => ({ kind: i % 2 ? 'woman' : 'tunic', cloth: ['#8a6a4a', '#6a7a8a', '#9a7a5a'][i % 3], scarf: '#d8c8a8', hair: '#1a1410', hairStyle: 'long', skin: ['#b88060', '#c08868', '#c89070'][i % 3], seed: 350 + i }),
-    quebecer: i => ({ kind: i % 2 ? 'woman' : 'coat', cloth: ['#2a4a8a', '#5a6a7a', '#8a3a3a'][i % 3], legs: '#3a3a44', scarf: '#e8e0d0', hair: ['#3a2416', '#8a6a3a'][i % 2], seed: 360 + i }),
+    child: i => ({ kind: i % 2 ? 'woman' : 'tunic', cloth: ['#8a6a4a', '#6a7a8a', '#9a7a5a'][i % 3], hair: '#1a1410', hairStyle: 'long', skin: ['#b88060', '#c08868', '#c89070'][i % 3], seed: 350 + i }),
+    quebecer: i => ({ kind: i % 2 ? 'woman' : 'coat', cloth: ['#2a4a8a', '#5a6a7a', '#8a3a3a'][i % 3], legs: '#3a3a44', hair: ['#3a2416', '#8a6a3a'][i % 2], seed: 360 + i }),
   };
 })(window);

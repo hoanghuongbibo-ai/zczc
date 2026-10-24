@@ -4,7 +4,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 748);
+  const a = (ph, from = 748) => F.at(ph, from);
   const A = { start: a('now where were we'), french: a('the french and english signed'), bought: a('and then it bought'), without: a('without asking'), leader: a('those people had'), name: a('his name was louis'), loo: a('loo-ee'), was25: a('he was 25'), montreal: a('educated in montreal'), mood: a('and absolutely not'),
     y1869: a('in 1869 riel'), prov: a('provisional government'), blocked: a('and blocked canada'), works: a('and it works'), forced: a('canada is forced'), withRR: a('this time with'), act: a('in 1870 the manitoba'), prot: a('with protections'),
     did: a('and canada did what canada does', 793), deal: a('it made a deal', 793), except: a('except this time'), somebody: a('somebody forced'), ends: a("but that's not where"), during: a('during the resistance'), scott: a('thomas scott'), hated: a('and that made riel'),

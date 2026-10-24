@@ -4,7 +4,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 886);
+  const a = (ph, from = 886) => F.at(ph, from);
   const A = { start: a('that railway was'), dangerous: a('most dangerous sections'), china: a('workers from china'), soon: a('and as soon as'), tax: a('head tax'), noother: a('no other group'), y1903: a('in 1903 it went'), wages: a('two years'), families: a('families were split'),
     july: a('then on july'), banned: a('banned almost all'), humiliation: a('humiliation day'), lasted: a('the ban lasted'), apol: a('formally apologized'), same: a('and at the same time'), reserves: a('onto reserves'), broken: a('often broken'), system: a('another system'),
     schools: a('residential schools'), n150: a('more than 150,000'), taken: a('were taken from'), purpose: a('main purpose'), abused: a('many were abused'), died: a('thousands died'), records: a('poor records'), last: a('the last school'), not: a('not 1896'),

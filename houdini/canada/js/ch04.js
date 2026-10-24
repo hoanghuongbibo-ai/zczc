@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 352);
+  const a = (ph, from = 352) => F.at(ph, from);
   const A = { start: 352.3, france: a('france and britain'), hate: a('and they hate'), turns: a('that turns into a world'), americans: a('americans call it'), everyone: a('everyone else'), key: a('the key moment'), cliffs: a('the city sits'), wolfe: a('the british commander'),
     summer: a('has spent all summer'), night: a('so on the night'), sneak: a('his troops sneak'), morning: a('by morning'), k4400: a('4,400 british'), martin: a('on land once'), plains: a('the plains of abraham'), montcalm: a('the french commander'), rushes: a('rushes out'),
     battle: a('the battle itself'), hour: a('well under an hour'), shot: a('wolfe is shot'), wounded: a('montcalm is wounded'), both: a('both generals'), each: a('each side took'), five: a('five days later'), y1763: a('in 1763'), problem: a('and now britain has'),

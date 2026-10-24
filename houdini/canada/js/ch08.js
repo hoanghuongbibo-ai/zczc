@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 705);
+  const a = (ph, from = 705) => F.at(ph, from);
   const A = { start: a('so canada goes shopping'), hands: a("hands rupert's"), crown: a('back to the british crown'), passes: a('which passes it'), pays: a('canada pays'), plus: a('plus millions'), largest: a("it's the largest land"),
     did: a('and canada did what canada does', 727), deal: a('it made a deal', 727), problem: a("there's just one problem"), nobody: a('nobody asked'), people: a('11,000 people'), red: a('red river settlement'), mixed: a('people of mixed'), own: a('with their own language') };
   // the deed: a rolled scroll marked RUPERT'S LAND

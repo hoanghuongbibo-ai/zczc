@@ -1,1 +1,36 @@
-/* placeholder */
+/* Canada — Beat 15, the night Canada almost stopped existing (1263.8–1313.7 s): 30 October 1995, the Quebec referendum, ~93% turnout;
+ * the numbers swing all night; No 50.58 / Yes 49.42 — 54,288 votes, fewer than a big college football stadium; no new deal, just tape. */
+(function (G) {
+  'use strict';
+  const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
+  const a = (ph, from = 1262) => F.at(ph, from);
+  const A = { start: a('which brings us'), oct30: a('october 30 1995'), ref: a('holds a referendum'), sov: a('sovereign country'), turnout: a('turnout'), p93: a('93 percent'), highest: a('highest in'), night: a('all night'), swing: a('the numbers swing'), final: a('then the final'), no: a('50.58'), yes: a('49.42'),
+    survived: a('survived by'), n54: a('54,288'), fewer: a('fewer people'), football: a('football game'), nonew: a('no new deal'), tape: a('held together with tape'), whether: a('whether quebec'), live: a('live question'), them: a('for them not'), end: a('four years later') };
+  // a living room at night: a sofa, a family watching the TV results
+  function sTV(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.08, y: -10 }); Cn.layer(ctx, c, 1, () => { S.room(ctx, t, { wall: '#5a6a7a', window: true, wx: 1120, sky: 'night' }); ctx.fillStyle = 'rgba(10,14,30,.35)'; ctx.fillRect(-300, -300, 1900, 1400);
+      // the TV on a cabinet, glowing
+      P.cel(ctx, cc => cc.rect(470, 470, 340, 120), '#6a4428', { shade: '#4a2e18', dx: 0, dy: 8, lw: 4 }); P.cel(ctx, cc => cc.rect(480, 230, 320, 240), '#3a3a40', { shade: '#2a2a2e', dx: 10, dy: 0, lw: 4 }); ctx.save(); ctx.beginPath(); ctx.rect(500, 250, 280, 200); ctx.clip(); ctx.fillStyle = '#1e2a4a'; ctx.fillRect(500, 250, 280, 200);
+      let no = 50, yes = 50; if (t < A.final) { const sw = Math.sin((t - A.night) * 2.3) * 2 + Math.sin((t - A.night) * 5.1) * .8; no = 50 - sw; yes = 50 + sw; } else { const k = ease.out(k01(t, A.no - .4, 1)); no = lerp(50, 50.58, k); yes = lerp(50, 49.42, k); }
+      ctx.fillStyle = '#fff'; ctx.font = '900 26px Anton'; ctx.textAlign = 'left'; ctx.fillText('NON', 515, 300); ctx.fillText('OUI', 515, 380); ctx.fillStyle = '#d84a3a'; ctx.fillRect(580, 278, 180 * no / 60, 28); ctx.fillStyle = '#3a8ad8'; ctx.fillRect(580, 358, 180 * yes / 60, 28); ctx.fillStyle = '#fff'; ctx.font = '900 20px Anton'; ctx.textAlign = 'right'; ctx.fillText(no.toFixed(2) + '%', 772, 330); ctx.fillText(yes.toFixed(2) + '%', 772, 410); ctx.restore();
+      const g = ctx.createRadialGradient(640, 350, 40, 640, 450, 520); g.addColorStop(0, 'rgba(120,170,255,.25)'); g.addColorStop(1, 'rgba(120,170,255,0)'); ctx.fillStyle = g; ctx.fillRect(-300, -300, 1900, 1400);
+      const shock = t > A.final; for (let i = 0; i < 4; i++) C.fig(ctx, 260 + i * 260 - (i > 1 ? -60 : 60) * 0, 710, .7, t + i, Object.assign(PP.quebecer(i), { pose: shock && i % 2 ? 'up' : (i === 2 ? 'chin' : 'stand'), mood: shock ? (i % 2 ? 'shock' : 'happy') : 'shock', flip: i > 1 })); });
+    S.date(ctx, '30 OCTOBER 1995 · QUEBEC', 1); if (t < A.night && t > A.ref) S.fact(ctx, t > A.turnout ? 'turnout ≈ 93% — the highest in the province\'s history' : 'a referendum on becoming a sovereign country', k01(t, t > A.turnout ? A.turnout : A.ref, .4)); if (t > A.night && t < A.final) S.fact(ctx, 'all night, the numbers swing', k01(t, A.night, .4));
+    if (t > A.no) { C.headline(ctx, 'NO — STAY IN CANADA: 50.58%', 640, 620, 34, { rot: -.02, bg: '#fbf8f0', col: '#c23a2c' }); } if (t > A.yes) C.headline(ctx, 'YES: 49.42%', 640, 670, 28, { rot: .02, bg: '#fbf8f0', col: '#2a5aa8' }); C.finish(ctx, t); }
+  // 2. 54,288 votes: the results map on the board; then a football stadium
+  function sMargin(ctx, lt, dur, t) { if (t < A.fewer) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.05 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft'); C.photo(ctx, 'results-tables-for-the-1948-newfoundland', 380, 300, 480, 309, { rot: -.03, tape: true, seed: 181, caption: '1995 results by riding (red = No, blue = Yes)', capSize: 14 }); });
+      S.bigNum(ctx, '54,288', 940, 260, 90, k01(t, A.n54, .3)); if (t > A.n54 + .5) C.scrawl(ctx, 'votes', 940, 360, 50); C.finish(ctx, t); return; }
+    const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.04 }); Cn.layer(ctx, c, .1, () => Cn.sky(ctx, 'golden', t, { horizon: 400, seed: 571 })); Cn.layer(ctx, c, 1, () => { const R = rng(5);
+      P.cel(ctx, cc => { cc.moveTo(-300, 760); cc.lineTo(-300, 260); cc.quadraticCurveTo(640, 180, 1600, 260); cc.lineTo(1600, 760); cc.closePath(); }, '#8a8a98', { shade: '#6a6a78', dx: 0, dy: 10, lw: 4 });
+      for (let r = 0; r < 12; r++) for (let i = 0; i < 70; i++) { const x = -260 + i * 26 + (r % 2) * 13, y = 270 + r * 26 - Math.sin(i / 70 * Math.PI) * 50 + r * 2; ctx.fillStyle = ['#c8322a', '#2a5aa8', '#f4c44a', '#e8e4dc', '#3a3a40'][Math.floor(R() * 5)]; ctx.beginPath(); ctx.arc(x, y, 7, 0, 7); ctx.fill(); ctx.fillStyle = '#e8b48c'; ctx.beginPath(); ctx.arc(x, y - 9, 5, 0, 7); ctx.fill(); }
+      P.cel(ctx, cc => cc.rect(-300, 600, 1900, 200), '#5aa84a', { dx: 0, dy: 0, lw: 3 }); ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; for (let x = -100; x < 1500; x += 140) { ctx.beginPath(); ctx.moveTo(x, 600); ctx.lineTo(x - 60, 760); ctx.stroke(); } });
+    S.bigNum(ctx, '54,288', 640, 130, 80, 1); S.fact(ctx, 'fewer people than fit in the stadium at a big college football game', k01(t, A.fewer, .4)); C.finish(ctx, t); }
+  // 3. no new deal — just the old one, taped together; a live question for Quebecers
+  function sTape(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.04 }, { z: 1.0 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft'); const k = ease.out(k01(t, A.tape - .8, 1));
+      for (const d of [-1, 1]) { ctx.save(); ctx.translate(640 + d * (1 - k) * 60, 320); ctx.rotate(d * (1 - k) * .08); ctx.beginPath(); ctx.moveTo(0, -220); for (let y = -220; y <= 220; y += 20) ctx.lineTo((y / 20 % 2 ? 10 : -10), y); ctx.lineTo(d * 300, 220); ctx.lineTo(d * 300, -220); ctx.closePath(); ctx.clip(); C.shadow(ctx, true, 8, .4); ctx.fillStyle = '#f4ecd8'; ctx.fillRect(-260, -200, 520, 400); C.shadow(ctx, false); ctx.fillStyle = INK; ctx.font = '900 46px Anton'; ctx.textAlign = 'center'; ctx.fillText('THE DEAL', 0, -120); ctx.globalAlpha = .35; for (let i = 0; i < 8; i++) ctx.fillRect(-200, -70 + i * 26, 400 - (i % 3) * 50, 5); ctx.restore(); }
+      if (k > .9) for (let i = 0; i < 4; i++) C.tape(ctx, 640, 180 + i * 90, 120, (i % 2 ? .3 : -.3), 30 + i); });
+    if (t > A.nonew && t < A.whether) S.fact(ctx, 'no new deal — just the realization the old one was held together with tape', k01(t, A.nonew, .4)); if (t > A.whether) S.fact(ctx, 'still a live question for some Quebecers — a debate for them, not for us', k01(t, A.whether, .4)); C.finish(ctx, t); }
+
+  const cut = [[A.start, sTV, .4], [A.survived - .1, sMargin, .4], [A.nonew - .1, sTape, .4]];
+  F.chapter({ cut, sfx: [{ t: A.oct30, type: 'click', gain: .35 }, { t: A.final, type: 'swell', gain: .4 }, { t: A.no, type: 'hit', gain: .4 }, { t: A.n54, type: 'thud', gain: .4 }, { t: A.fewer, type: 'swell', gain: .3 }, { t: A.tape - .8, type: 'paper', gain: .4 }, { t: A.tape + .2, type: 'paper', gain: .35 }],
+    moods: [{ t: A.start, mood: 'tense' }, { t: A.nonew, mood: 'still' }] });
+})(window);

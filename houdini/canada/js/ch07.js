@@ -4,7 +4,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 600);
+  const a = (ph, from = 600) => F.at(ph, from);
   const A = { start: a('british north america is a set') - 1.6, biggest: a('the biggest the province'), two: a('is actually two'), stuck: a('parliament is permanently'), fenians: a('and then come the fenians'), irish: a("they're irish"), veterans: a('many of them civil'),
     plan: a('invade canada hold it'), several: a('between 1866'), flop: a('most of the raids'), ridgeway: a('but at ridgeway'), beat: a('they beat a canadian'), push: a('how much did that push'), argue: a('historians still argue', 640), some: a('some say the fenian'), others: a('others say the deal'),
     clear: a("what's clear is"), sit: a('so they sit down'), leading: a('the leading figure'), lawyer: a('a lawyer a brilliant'), drinker: a('a heavy drinker'), july1: a('on july 1 1867'), law: a('under a british law'), split: a('now split into'), nova: a('plus nova scotia'),

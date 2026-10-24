@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 441);
+  const a = (ph, from = 441) => F.at(ph, from);
   const A = { start: 441.1, y1774: a('in 1774'), lets: a('it lets the people'), basically: a('basically you can'), dont: a("just don't join"), did: a('and canada did what'), deal: a('it made a deal'), hate: a('the thirteen colonies hate'), prot: a("they're protestant"),
     y1775: a('in 1775 the new'), plan: a('the plan march'), invite: a('and invite the locals'), first: a('at first it works'), montreal: a('american troops take montreal'), lastnight: a('then on the last night'), montgomery: a('general richard montgomery'), yes: a('yes that benedict'),
     badly: a('it goes badly'), killed: a('montgomery is killed'), spring: a('by the next spring'), most: a('most of the people'), held: a('the deal held'), revolution: a('then when the revolution'), shapes: a('something happens that'), tens: a('tens of thousands'),

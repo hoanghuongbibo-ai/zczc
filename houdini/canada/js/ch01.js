@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 92);
+  const a = (ph, from = 92) => F.at(ph, from);
   const A = { start: 92.4, ice: a('during the last ice'), siberia: a('but siberia'), walked: a('and people walked'), when: a('when historians'), mainstream: a('the mainstream view'), k14: a('14,000 years'), site: a('but at a site'), researchers: a('researchers lauriane'),
     dated: a('dated cut marks'), k24: a('24,000 years ago'), some: a('some archaeologists'), others: a("others aren't"), many: a('many indigenous'), immemorial: a('we have been here'), nobody: a('what nobody debates'), over: a('over thousands'), hundreds: a('built hundreds'),
     haud: a('the haudenosaunee'), cree: a('the cree across'), inuit: a('the inuit in'), phone: a('your phone battery'), keep: a('keep that in mind'), every: a('every map'), fast: a('fast forward'), vikings: a('vikings sail'), camp: a('set up camp'),

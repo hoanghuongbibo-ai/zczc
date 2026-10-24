@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 277);
+  const a = (ph, from = 277) => F.at(ph, from);
   const A = { start: 277.1, why: a('now why would'), hats: a('one word hats'), europe: a('in europe the hottest'), felt: a('the best felt'), early: a('so the early history'), france: a('france builds'), small: a("it's small catholic"), trade: a('it lives on the fur'),
     england: a('then england joins'), may2: a('on may 2 1670'), charles: a('king charles'), gov: a('the governor and company'), sole: a('they get the sole'), rupert: a("they name it rupert's"), prince: a('prince rupert'), pause: a('pause on that'), king: a('a king in london'),
     hands: a('hands a private'), people: a('land full of people'), lasted: a('that company lasted'), dept: a('it became a department'), hold: a('hold onto it'), tag: a('with a price tag') };
@@ -52,16 +52,16 @@
     if (t > A.prince) C.label(ctx, '…named after the king\'s cousin, Prince Rupert', 640, 660, 22); C.label(ctx, 'every piece of land whose rivers drain into Hudson Bay', 640, 60, 22); C.finish(ctx, t); }
   // 7. pause: a king in London hands a tiny merchant a slice of continent bigger than any European country; people there look up — who?
   function sKing(ctx, lt, dur, t) { ctx.save(); C.cam(ctx, lt, dur, { z: 1.04 }, { z: 1.0 }); C.bg(ctx, 'cream'); const hk = k01(t, A.hands, 1.2);
-      C.pc(ctx, '#c49a6c', c => c.rect(-60, 600, 700, 200)); C.fig(ctx, 220, 690, 1.25, t, { coat: '#7a1a2a', hat: 'top', hatCol: '#d8b048', long_hair: 1, hair: '#2a1a14', mustache: '#2a1a14', pose: 'point', seed: 360 }); C.label(ctx, 'a king in London', 220, 250, 22);
-      C.fig(ctx, 520, 690, .65, t, { coat: '#2a2a34', hat: 'top', mood: 'happy', pose: 'up', seed: 361 }); C.label(ctx, 'a private company', 520, 430, 18);
+      C.fig(ctx, 220, 690, 1.15, t, { face: 'charles', pose: 'point', seed: 360 }); C.label(ctx, 'a king in London', 220, 250, 22);
+      C.fig(ctx, 520, 690, .8, t, { coat: '#2a2a34', hat: 'top', mood: 'happy', pose: 'up', seed: 361 }); C.label(ctx, 'a private company', 680, 330, 18); if (t < A.people) C.photo(ctx, 'signing-of-hbc-charter-2', 1010, 220, 420, 166, { rot: .04, tape: true, seed: 37, caption: 'the Hudson\'s Bay Company charter, 1670', capSize: 14 });
       // the chunk of continent: a torn cut-out of Rupert's Land
       ctx.save(); ctx.translate(lerp(360, 470, hk), lerp(400, 300, hk)); ctx.rotate(-.2 + hk * .2); ctx.scale(.42, .42); const pr = C.proj({ lon: -90, lat: 57, s: 1050, x: 0, y: 0 }); C.shadow(ctx, true, 10, .45); ctx.fillStyle = '#d86a5a'; ctx.beginPath(); HBAY.forEach((p, i) => { const [x, y] = pr(...p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.fill(); C.shadow(ctx, false); ctx.restore();
-      if (t > A.people) { C.pc(ctx, '#7f9a5a', c => c.rect(680, 560, 700, 300)); for (let i = 0; i < 4; i++) C.fig(ctx, 760 + i * 130, 700, .8, t, { coat: ['#7a4a2a', '#5a6a4a', '#d8c8a8', '#6a4a3a'][i], hat: i === 2 ? 'hood' : i === 0 ? 'feather' : null, hatCol: '#e8e0d0', long_hair: i % 2, skin: '#c08868', pose: 'shrug', mood: 'shock', seed: 370 + i }); C.bubble(ctx, '…who?', 980, 260, 36, 960, 380); }
+      if (t > A.people) { for (let i = 0; i < 4; i++) C.fig(ctx, 760 + i * 130, 700, .8, t, { coat: ['#7a4a2a', '#5a6a4a', '#d8c8a8', '#6a4a3a'][i], hat: i === 2 ? 'hood' : i === 0 ? 'feather' : null, hatCol: '#e8e0d0', long_hair: i % 2, skin: '#c08868', pose: 'shrug', mood: 'shock', seed: 370 + i }); C.bubble(ctx, '…who?', 980, 260, 36, 960, 380); }
       ctx.restore(); C.finish(ctx, t); }
   // 8. that company lasted 355 years and became a department store chain; hold onto it — it comes back with a price tag
   function sStore(ctx, lt, dur, t) { ctx.save(); C.cam(ctx, lt, dur, { z: 1.0 }, { z: 1.06 }); C.bg(ctx, 'kraft');
       S.timeline(ctx, 140, 1670, 2025, [{ v: 1670, text: 'charter · 1670', up: false }, { v: 2025, text: 'closes · 2025', up: false, k: k01(t, A.lasted + .5, .4) }], { ends: ['', ''] }); S.bigNum(ctx, '355 YEARS', 640, 300, 64, k01(t, A.lasted + .6, .4));
-      if (t > A.dept) { const k = k01(t, A.dept, .5); ctx.save(); ctx.translate(500, 560); ctx.scale(ease.back(k), ease.back(k)); C.pc(ctx, '#e8dcc4', c => c.rect(-300, -170, 600, 170)); for (let i = 0; i < 5; i++) C.pc(ctx, '#3a4a5a', c => c.rect(-270 + i * 112, -120, 80, 120), false); C.pc(ctx, '#1e3a2a', c => c.rect(-320, -210, 640, 50)); ctx.fillStyle = '#f4e2b0'; ctx.font = '900 34px Anton'; ctx.textAlign = 'center'; ctx.fillText('DEPARTMENT STORE', 0, -172); ctx.restore(); }
+      if (t > A.lasted + 1) { const k = k01(t, A.lasted + 1, .5); ctx.save(); ctx.translate(500, 560); ctx.scale(ease.back(k), ease.back(k)); C.pc(ctx, '#e8dcc4', c => c.rect(-300, -170, 600, 170)); for (let i = 0; i < 5; i++) C.pc(ctx, '#3a4a5a', c => c.rect(-270 + i * 112, -120, 80, 120), false); C.pc(ctx, '#1e3a2a', c => c.rect(-320, -210, 640, 50)); ctx.fillStyle = '#f4e2b0'; ctx.font = '900 34px Anton'; ctx.textAlign = 'center'; ctx.fillText('DEPARTMENT STORE', 0, -172); ctx.restore(); }
       if (t > A.tag) { const k = k01(t, A.tag, .5), sw = Math.sin(C.step(t) * 3) * .1; ctx.save(); ctx.translate(980, 360); ctx.rotate(sw); C.pc(ctx, '#f4c44a', c => { c.moveTo(-60, 0); c.lineTo(-20, -60); c.lineTo(140, -60); c.lineTo(140, 60); c.lineTo(-20, 60); c.closePath(); }); ctx.fillStyle = '#c49a6c'; ctx.beginPath(); ctx.arc(-24, 0, 10, 0, 7); ctx.fill(); ctx.fillStyle = INK; ctx.font = '900 46px Anton'; ctx.textAlign = 'center'; ctx.fillText('£ ? ? ?', 60, 16); ctx.restore(); C.scrawl(ctx, 'hold onto it…', 1000, 520, 40, '#c23a2c', -.05); }
       ctx.restore(); C.finish(ctx, t); }
 

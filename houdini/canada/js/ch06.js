@@ -3,7 +3,7 @@
 (function (G) {
   'use strict';
   const C = G.Col, S = G.Scenes, F = G.Film, P = G.Paint, Cn = G.Cine, PP = G.PEOPLE, { clamp, lerp, ease, INK, rng } = C, k01 = S.k01;
-  const a = ph => F.at(ph, 542);
+  const a = (ph, from = 542) => F.at(ph, from);
   const A = { start: 542.3, war: a('the war of 1812'), fighting: a('britain and the united states are fighting'), conquer: a('and conquering canada'), april: a('in april 1813'), york: a('american troops capture york'), toronto: a('which you know today'), burn: a('and burn government'),
     next: a('the next year'), fire: a('set fire to the capitol'), retal: a('partly in retaliation'), heard: a("now you've probably heard"), bar: a("it's a fun bar"), quite: a("it's not quite true"), british: a('it was british troops'), exist: a("canada didn't exist"),
     credit: a('canadians just like'), cousin: a('the way your cousin'), draw: a('the war ends in a draw'), borders: a('borders stay'), colonists: a('but the colonists'), remember: a('remember that feeling'), become: a("it's about to become") };

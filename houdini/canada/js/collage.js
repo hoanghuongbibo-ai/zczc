@@ -88,6 +88,11 @@
     if (o.beard) { q.beard = true; if (typeof o.beard === 'string') q.beardCol = o.beard; } if (o.specs) q.glasses = true;
     Object.assign(q, MOOD[o.mood] || {}); if (o.eyes) q.eyes = o.eyes; if (o.mouth) q.mouth = o.mouth; if (o.brow) q.brow = o.brow; const pose = o.pose || 'stand'; q.pose = POSE[pose] || pose; if (pose === 'run') q.speed = 1.6; if (o.walk || pose === 'walk' || pose === 'run') q.walk = true;
     q.face = (o.flip || o.face_ === -1) ? -1 : 1; if (o.dir) q.face = o.dir; q.seed = q.seed ?? Math.round(x);
+    // face the viewer unless walking/working sideways (o.profile keeps the old side view); the shot's main character — the first named
+    // cast member (or o.lead) drawn in a frame — mouths the narration in sync (js/lipsync.js)
+    q.front = o.front ?? !(o.profile || q.walk || q.pose === 'haul' || q.pose === 'pry');
+    if (q.front && q.turn === undefined) q.turn = o.look === 'viewer' ? 0 : .45; // a three-quarter head: the face stays to the viewer but looks the way the body is turned
+    if (o.speak !== false && (o.lead || (o.face && G.CAST && G.CAST[o.face])) && Math.abs(o.lean || 0) < .5 && s >= .45 && !G.__spoke) { G.__spoke = true; q.speak = true; q.lipT = G.__frameT; }
     ctx.save(); if (o.lean) { ctx.translate(x, y); ctx.rotate(o.lean * q.face); ctx.translate(-x, -y); } G.Paint.person(ctx, x, y, s * .8, t, q); ctx.restore(); }
 
   // ---------- paper props ----------

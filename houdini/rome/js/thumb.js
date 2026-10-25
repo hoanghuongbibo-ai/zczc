@@ -204,5 +204,6 @@
     stamp(ctx, 'STILL ALIVE?!', 640, 520, 44, -.08); C.finish(ctx, t, 'sunset', { leak: false, vig: .3 }); }
   // titles and stamps are queued and painted after the colour grade / vignette, so the grade never dims them
   const Q = [], title = (...a) => Q.push(() => _title(...a)), stamp = (...a) => Q.push(() => _stamp(...a));
+  G.ThumbKit = { bust, title: _title, stamp: _stamp, burst, rays };
   G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

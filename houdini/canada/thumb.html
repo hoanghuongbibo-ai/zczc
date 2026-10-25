@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Canada Thumbnails</title>
+<style>@font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: "Special Elite"; src: url(assets/fonts/SpecialElite-Regular.ttf); }
+html, body { margin: 0; background: #111; } canvas { display: block; }</style></head>
+<body><canvas id="stage" width="1280" height="720"></canvas>
+<script src="../js/toon.js"></script><script src="../rome/js/paint.js"></script><script src="../rome/js/monk.js"></script><script src="../rome/js/animals.js"></script><script src="../rome/js/cine.js"></script>
+<script src="../rome/js/kit.js"></script><script src="../rome/js/thumb.js"></script><script src="js/geo.js"></script><script src="js/collage.js"></script><script src="js/thumb.js"></script>
+<script>document.fonts.load('100px "Luckiest Guy"').then(() => { const v = +(new URLSearchParams(location.search).get('v') || 1); drawThumbCA(document.getElementById('stage').getContext('2d'), v); window.READY = true; });</script>
+</body></html>

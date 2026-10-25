@@ -64,5 +64,59 @@
     Col.flagCA(ctx, 120, 360, 150, 76); P.ink(ctx, '#3a3a3a', c => c.rect(114, 360, 8, 260), 0);
     grade(ctx); title(ctx, 'NEVER', 330, 140, 118, ['#ffffff', '#f0f0f0'], { rot: -.03 }); title(ctx, 'ABSORBED', 420, 250, 118, ['#ffe040', '#ff8a00'], { rot: -.03 }); }
 
-  G.drawThumbCA = (ctx, v) => { ctx.clearRect(0, 0, 1280, 720); Q.length = 0; ({ 1: v1, 2: v2, 3: v3 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
+
+  // ---- the user's three concepts ----
+  // a 1920s officer's kit over a bust: peaked cap with a red band, red collar tabs, a Sam Browne belt, brass buttons
+  function officer(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); for (const d of [-1, 1]) ink(ctx, '#c8221a', c => { c.moveTo(d * 48, 124); c.lineTo(d * 96, 136); c.lineTo(d * 80, 168); c.closePath(); }, 4);
+    ink(ctx, '#5a3a20', c => { c.moveTo(-150, 150); c.lineTo(170, 330); c.lineTo(130, 340); c.lineTo(-170, 176); c.closePath(); }, 4); ctx.fillStyle = '#e8c040'; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(0, 190 + i * 48, 10, 0, 7); ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke(); }
+    const hc = '#6a6a44'; cel(ctx, c => { c.moveTo(-178, -150); c.quadraticCurveTo(-210, -262, 0, -272); c.quadraticCurveTo(210, -262, 178, -150); c.closePath(); }, hc, { shade: mix(hc, '#000', .35), light: mix(hc, '#fff', .2), dx: 26, dy: 0, lw: 6 });
+    ink(ctx, '#c8221a', c => c.rect(-172, -158, 344, 44), 5); cel(ctx, c => { c.moveTo(-168, -114); c.quadraticCurveTo(0, -40, 168, -114); c.quadraticCurveTo(0, -84, -168, -114); c.closePath(); }, '#2a1c14', { shade: '#140c08', dx: 0, dy: 6, lw: 5 });
+    cel(ctx, c => c.ellipse(0, -194, 30, 26, 0, 0, 7), '#e8c040', { shade: '#a88020', light: '#fff0a0', dx: 6, dy: 0, lw: 4 }); ctx.restore(); }
+  // a vintage military map: the continent in sepia, a grid, typed city names, dotted invasion arrows
+  function warMap(ctx, v, cities, k = 1) { const pr = Col.map(ctx, v, { prov: true, fill: n => n === 'Canada' ? '#b84a3a' : null, alpha: .5 });
+    ctx.save(); ctx.globalCompositeOperation = 'color'; ctx.fillStyle = '#a07a40'; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = '#e8d8b0'; ctx.fillRect(0, 0, 1280, 720); ctx.restore();
+    ctx.strokeStyle = 'rgba(60,40,20,.25)'; ctx.lineWidth = 1.5; for (let x = 0; x < 1280; x += 80) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 720); ctx.stroke(); } for (let y = 0; y < 720; y += 80) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(1280, y); ctx.stroke(); }
+    for (const [f, to, n] of cities) { const [x0, y0] = pr(...f), [x1, y1] = pr(...to), mx = (x0 + x1) / 2 + (y1 - y0) * .25, my = (y0 + y1) / 2 - (x1 - x0) * .25; ctx.save(); ctx.strokeStyle = '#c8180e'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.setLineDash([2, 18]); ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke(); ctx.restore();
+      const a = Math.atan2(y1 - my, x1 - mx); ctx.save(); ctx.translate(x1, y1); ctx.rotate(a); ctx.fillStyle = '#c8180e'; ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(-20, -16); ctx.lineTo(-20, 16); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x1, y1, 7, 0, 7); ctx.fill(); ctx.font = '700 24px "Special Elite"'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = '#f0e2c0'; ctx.strokeText(n.toUpperCase(), x1, y1 + 34); ctx.fillText(n.toUpperCase(), x1, y1 + 34); }
+    return pr; }
+  const CITIES = [[[-123, 49.2], [-122.3, 47.6], 'Seattle'], [[-97, 49.2], [-93.3, 45], 'Minneapolis'], [[-74, 45.2], [-73.8, 42.7], 'Albany']];
+  // option 1: Buster in uniform over the vintage map
+  function v4(ctx) { warMap(ctx, { lon: -96, lat: 45.5, s: 1050, x: 900, y: 420 }, CITIES); const vg = ctx.createLinearGradient(0, 0, 640, 0); vg.addColorStop(0, 'rgba(20,12,8,.85)'); vg.addColorStop(1, 'rgba(20,12,8,0)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, 700, 720); glow(ctx, 300, 430, 420, 'rgba(255,190,110,A)', .35);
+    TK.bust(ctx, 270, 560, 1.0, { kind: 'tunic', cloth: '#6a6a44', skin: '#f2c9a2', hair: '#3a2416', face: 'smug', look: 26 }); mustache(ctx, 270, 560 + 6, 1.0); officer(ctx, 270, 560, 1.0);
+    grade(ctx, .9); title(ctx, "CANADA'S SECRET", 820, 110, 86, ['#ffffff', '#f0f0f0'], { rot: -.02 }); title(ctx, 'U.S. INVASION PLAN!', 830, 210, 92, ['#ff4a3a', '#d80a00'], { rot: -.02 }); stamp(ctx, 'DEFENCE SCHEME No. 1', 930, 660, 40, .04); }
+  // a burning White House: portico, columns, pediment, flames and smoke
+  function whiteHouse(ctx, x, y, s, t) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const W2 = '#efeae0', SH = '#c8c0b0';
+    cel(ctx, c => c.rect(-300, -200, 600, 200), W2, { shade: SH, light: '#ffffff', dx: 30, dy: 0, lw: 5 }); cel(ctx, c => c.rect(-310, -214, 620, 18), W2, { shade: SH, dx: 0, dy: 4, lw: 4 }); for (let r = 0; r < 2; r++) for (let i = 0; i < 8; i++) if (i < 3 || i > 4) ink(ctx, '#3a2a28', c => c.rect(-276 + i * 70, -176 + r * 90, 34, 50), 3);
+    cel(ctx, c => { c.moveTo(-110, -214); c.lineTo(0, -284); c.lineTo(110, -214); c.closePath(); }, W2, { shade: SH, dx: 10, dy: 0, lw: 5 }); for (let i = 0; i < 4; i++) cel(ctx, c => c.rect(-96 + i * 60, -210, 22, 210), '#f8f4ec', { shade: SH, dx: 6, dy: 0, lw: 3.5 });
+    ctx.restore(); const R = C.rng(5); for (let i = 0; i < 4; i++) G.RK.flames(ctx, x + (-250 + i * 160 + R() * 40) * s, y - 214 * s, (.55 + R() * .25) * s, t + i, { smoke: true }); for (let i = 0; i < 3; i++) G.RK.flames(ctx, x + (-230 + i * 230) * s, y - 120 * s, .35 * s, t + 5 + i, { smoke: false }); }
+  // option 2: split screen — the US side with the White House burning, the Canadian side; TOP SECRET across; Buster scouting in an inset
+  function v5(ctx) { const R = C.rng(9);
+    // left half: US flag and the fire
+    ctx.save(); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(700, 0); ctx.lineTo(560, 720); ctx.lineTo(0, 720); ctx.closePath(); ctx.clip(); G.RK.fireSky(ctx, t, 1); ctx.globalAlpha = .55; Col.flagUS(ctx, -40, -20, 800, 420); ctx.globalAlpha = 1; ctx.fillStyle = 'rgba(30,10,8,.35)'; ctx.fillRect(0, 0, 800, 720); whiteHouse(ctx, 300, 620, .95, t); cel(ctx, c => c.rect(-20, 600, 800, 140), '#3a2a20', { shade: '#2a1c14', dx: 0, dy: 0, lw: 0 }); for (let i = 0; i < 40; i++) { ctx.fillStyle = `rgba(255,${160 + R() * 80 | 0},60,${.5 + R() * .5})`; ctx.beginPath(); ctx.arc(R() * 700, R() * 600, 2 + R() * 4, 0, 7); ctx.fill(); } ctx.restore();
+    // right half: the Canadian flag
+    ctx.save(); ctx.beginPath(); ctx.moveTo(700, 0); ctx.lineTo(1300, 0); ctx.lineTo(1300, 720); ctx.lineTo(560, 720); ctx.closePath(); ctx.clip(); ctx.fillStyle = '#d8222a'; ctx.fillRect(500, 0, 800, 720); ctx.fillStyle = '#f8f4ec'; ctx.fillRect(760, 0, 420, 720); Col.mapleLeaf(ctx, 970, 380, 190, '#d8222a'); ctx.fillStyle = 'rgba(20,10,10,.25)'; ctx.fillRect(500, 0, 800, 720); ctx.restore();
+    ctx.strokeStyle = '#fbf8f0'; ctx.lineWidth = 14; ctx.beginPath(); ctx.moveTo(700, -10); ctx.lineTo(560, 730); ctx.stroke(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.stroke();
+    // inset: Buster in civilian clothes scouting a road and a bridge
+    ctx.save(); ctx.translate(1010, 470); ctx.rotate(.05); C.shadow ? 0 : 0; ctx.fillStyle = '#fbf8f0'; ctx.fillRect(-190, -170, 380, 380); ctx.save(); ctx.beginPath(); ctx.rect(-170, -150, 340, 290); ctx.clip(); C.sky(ctx, 'golden', t, { horizon: 40, sun: [100, -40], sunR: 30, seed: 3, clouds: 2 }); cel(ctx, c => c.rect(-200, 40, 400, 120), '#7a9a58', { dx: 0, dy: 0, lw: 0 }); cel(ctx, c => { c.moveTo(-20, 40); c.lineTo(20, 40); c.lineTo(120, 150); c.lineTo(-120, 150); c.closePath(); }, '#9a8a74', { dx: 0, dy: 0, lw: 3 });
+      ctx.strokeStyle = '#5a5a60'; ctx.lineWidth = 5; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(40 + i * 30, 30); ctx.lineTo(55 + i * 30, 6); ctx.lineTo(70 + i * 30, 30); ctx.stroke(); } ink(ctx, '#7a7a80', c => c.rect(36, 28, 130, 8), 3);
+      TK.bust(ctx, -60, 118, .5, { kind: 'tunic', suit: true, cloth: '#5a5a48', skin: '#f2c9a2', hair: '#3a2416', face: 'grin', look: 20 }); mustache(ctx, -60, 118 + 3, .5); bowler(ctx, -60, 118, .5); binoculars(ctx, 30, 70, .42); ctx.restore();
+      ctx.fillStyle = INK; ctx.font = '700 22px "Special Elite"'; ctx.textAlign = 'center'; ctx.fillText('Buster Brown, scouting · 1921', 0, 186); ctx.restore(); C.shadow;
+    grade(ctx, .9); title(ctx, 'WHEN CANADA PLANNED', 640, 100, 80, ['#ffffff', '#f0f0f0'], { rot: -.02 }); title(ctx, 'TO INVADE AMERICA', 640, 196, 92, ['#ffe040', '#ff8a00'], { rot: -.02 }); stamp(ctx, 'TOP SECRET', 300, 660, 66, -.08); }
+  function mapleBg(ctx, seed) { const g = ctx.createRadialGradient(640, 300, 80, 640, 360, 900); g.addColorStop(0, '#3a1a18'); g.addColorStop(1, '#0c0606'); ctx.fillStyle = g; ctx.fillRect(0, 0, 1280, 720); const R = C.rng(seed); ctx.save(); for (let i = 0; i < 26; i++) { ctx.globalAlpha = .08 + R() * .14; ctx.save(); ctx.translate(R() * 1280, R() * 720); ctx.rotate(R() * 6); Col.mapleLeaf(ctx, 0, 0, 30 + R() * 70, '#c8322a'); ctx.restore(); } ctx.restore(); }
+  // option 3: Louis Riel, the last spike behind him, maple leaves in the dark
+  function v6(ctx) { mapleBg(ctx, 13);
+    // the last spike: mountains, the rails, a crowd of top hats and the hammer raised
+    ctx.save(); ctx.beginPath(); ctx.rect(560, 250, 720, 470); ctx.clip(); ctx.globalAlpha = .95; C.sky(ctx, 'sunset', t, { horizon: 560, sun: [1000, 470], sunR: 60, seed: 31, clouds: 3 }); const R = C.rng(4);
+      for (let L = 0; L < 2; L++) { const col = ['#6a6a8a', '#4a4a5a'][L]; cel(ctx, c => { c.moveTo(500, 760); let x = 500; c.lineTo(500, 520); while (x < 1320) { const w = 160 + R() * 120; c.lineTo(x + w * .5, 380 + L * 60 - R() * 90); c.lineTo(x + w, 540); x += w * .8; } c.lineTo(1320, 760); c.closePath(); }, col, { shade: mix(col, '#000', .3), dx: 16, dy: 0, lw: 0 }); }
+      cel(ctx, c => c.rect(500, 600, 820, 140), '#4a3a2a', { dx: 0, dy: 0, lw: 0 }); ctx.strokeStyle = '#2a2a30'; ctx.lineWidth = 7; for (const y of [628, 660]) { ctx.beginPath(); ctx.moveTo(500, y); ctx.lineTo(1300, y - 20); ctx.stroke(); } ctx.fillStyle = '#5a3a24'; for (let x = 520; x < 1300; x += 40) ctx.fillRect(x, 622 - (x - 500) * .025, 18, 46);
+      G.Paint.person(ctx, 900, 640, .62, t, { kind: 'coat', front: true, cloth: '#2a2a30', hat: 'top', beard: true, beardCol: '#e8e4dc', hair: '#e8e4dc', pose: 'strike', seed: 8, prop: cc => { ink(cc, '#6a4428', c2 => c2.rect(-4, -80, 8, 96), 2); cel(cc, c2 => c2.rect(-26, -96, 52, 22), '#3a3a40', { dx: 0, dy: 0, lw: 2 }); } });
+      for (let i = 0; i < 4; i++) G.Paint.person(ctx, 1040 + i * 70, 650, .5, t + i, { kind: 'coat', front: true, cloth: ['#3a3a44', '#4a3a2a', '#2a2a30', '#5a4a3a'][i], hat: i % 2 ? 'bowler' : 'top', pose: i === 1 ? 'up' : 'stand', mouth: 'grin', seed: 20 + i });
+      ctx.restore(); ctx.strokeStyle = '#e8c040'; ctx.lineWidth = 8; ctx.strokeRect(560, 250, 720, 470); C.label ? 0 : 0;
+    glow(ctx, 300, 380, 460, 'rgba(255,170,90,A)', .3);
+    TK.bust(ctx, 300, 500, 1.05, { kind: 'tunic', suit: true, cloth: '#2a2a30', skin: '#d8a880', hair: '#2a1e18', hairStyle: 'curly', face: 'angry', look: 10 }); mustache(ctx, 300, 500 + 6 * 1.05, 1.05, '#2a1e18');
+    ctx.strokeStyle = INK; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(300 - 40, 500 + 88); ctx.quadraticCurveTo(300, 500 + 80, 300 + 40, 500 + 88); ctx.stroke();
+    grade(ctx, .9); title(ctx, 'HOW CANADA', 860, 116, 104, ['#ffffff', '#f0f0f0'], { rot: -.02 }); title(ctx, 'SURVIVED', 880, 226, 112, ['#ffe040', '#ff8a00'], { rot: -.02 });
+    Q.push(() => { ctx.save(); ctx.font = '700 26px "Special Elite"'; ctx.fillStyle = '#f4e8c8'; ctx.textAlign = 'center'; ctx.fillText('LOUIS RIEL', 300, 250); ctx.fillText('THE LAST SPIKE · 7 NOV 1885', 920, 290); ctx.restore(); }); }
+  G.drawThumbCA = (ctx, v) => { ctx.clearRect(0, 0, 1280, 720); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

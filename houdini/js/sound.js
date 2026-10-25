@@ -92,8 +92,8 @@
     }
     for (let t = 0, k = 0; t < dur; t += 1.6, k++) if (moodAt(t) === 'mystery') piano(m, t, [[74], [77], [73], [70]][k % 4], .32, 1.2);
     // gramophone-ish room hiss under everything
-    const r = rng(5); let lp = 0;
-    for (let i = 0; i < m.length; i++) { lp += (r() - lp) * .05; m[i] += lp * .02; }
+    if (!o.noHiss) { const r = rng(5); let lp = 0;
+    for (let i = 0; i < m.length; i++) { lp += (r() - lp) * .05; m[i] += lp * .02; } }
   }
 
   function render(o) {

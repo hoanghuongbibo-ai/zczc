@@ -120,8 +120,8 @@
   AMB.ship = (M, a, b, s) => { AMB.sea(M, a, b, s); scatter(M, a, b, .3, 4, .5, 'door', s + 3); scatter(M, a, b, .3, 6, .5, 'flag', s + 4); bed(M, a, b, .03, windGen(s + 6)); };
   AMB.river = (M, a, b, s) => { const bp = Bq('bp', 1200, .7), p = pinkGen(s), r = rng(s); bed(M, a, b, .06, (i, t) => bp(p()) * 2.2 * (.75 + .25 * Math.sin(t * 7 + Math.sin(t * 2.3)))); scatter(M, a, b, .2, 1.2, .8, 'pop', s); };
   AMB.rain = (M, a, b, s) => { const hp = Bq('hp', 1500), p = pinkGen(s), r = rng(s), w = whiteGen(s), hp2 = Bq('hp', 3000); let d = 0; bed(M, a, b, .07, () => { if (r() < 60 / SR) d = 40; let c = 0; if (d > 0) { c = hp2(w()) * .8; d--; } return hp(p()) * 1.5 + c; }); };
-  AMB.room = (M, a, b, s) => { const lp = Bq('lp', 140), br = brownGen(s), hp = Bq('hp', 4000), w = whiteGen(s); bed(M, a, b, .03, () => lp(br()) * 1.2 + hp(w()) * .05); };
-  AMB.map = (M, a, b, s) => { const bp = Bq('bp', 600, .5), p = pinkGen(s); bed(M, a, b, .012, () => bp(p()) * 2); };
+  AMB.room = () => {}; // indoor shots: no hiss bed, the score carries them
+  AMB.map = () => {};
   AMB.court = (M, a, b, s) => { AMB.room(M, a, b, s); scatter(M, a, b, .25, 6, .6, 'cough', s); };
   AMB.office = (M, a, b, s) => { AMB.room(M, a, b, s); scatter(M, a, b, .06, 8, .6, 'typewriter', s); };
   function crowdBed(M, a, b, s, o) { const L = new Float32Array(Math.ceil((b - a + .2) * SR)); crowd(L, 0, b - a, o); if (o.rev) reverb(L, o.rev, 1.3); const st = ix(a), fd = .8 * SR; for (let i = 0; i < L.length && st + i < M.length; i++) { const k = Math.min(1, i / fd, (L.length - i) / fd); M[st + i] += L[i] * k * (o.lv || 1); } }
@@ -144,12 +144,16 @@
   function addFx(M, type, t, gain, seed = 0) { const f = FX[type]; if (!f) return false; const key = type + ':' + (seed % 3); let L = cache[key]; if (!L) { L = new Float32Array(Math.ceil(f.len * SR)); f.fn(L, seed); cache[key] = L; } const st = ix(t - .02); for (let i = 0; i < L.length && st + i < M.length; i++) M[st + i] += L[i] * gain; return true; }
   const orig = ST.render;
   ST.render = o => {
-    // the score (and any legacy sfx types the old engine knows) from the original renderer
-    const legacy = (o.sfx || []).filter(c => !FX[c.type]);
-    const M = orig(Object.assign({}, o, { sfx: [], musicGain: o.musicGain ?? .42 }));
-    for (const c of legacy) { const tmp = orig({ duration: 3.2, sfx: [{ t: .1, type: c.type, gain: c.gain }], moods: [{ t: 0, mood: 'silence' }], musicGain: 0 }); const st = ix(c.t - .1); for (let i = 0; i < tmp.length && st + i < M.length; i++) M[st + i] += tmp[i]; }
-    for (const a of o.amb || []) (AMB[a.type] || AMB.none)(M, a.t0, a.t1, Math.round(a.t0 * 7) + 3);
-    for (const c of o.sfx || []) if (FX[c.type]) addFx(M, c.type, c.t, (c.gain ?? 1) * (o.sfxGain ?? .6), Math.round(c.t * 10));
+    // three stems: the score (old renderer, plus the legacy foley types it knows), the ambience beds, and the foley.
+    // Wherever a sound effect plays, the beds duck almost out and the score dips, so the effect reads clean.
+    const N = Math.ceil(o.duration * SR), legacy = (o.sfx || []).filter(c => !FX[c.type]);
+    const Mu = orig(Object.assign({}, o, { sfx: [], musicGain: o.musicGain ?? .42, noHiss: true })), A = new Float32Array(N), S = new Float32Array(N), duck = new Float32Array(Math.ceil(N / 256) + 2);
+    const mark = (t, len) => { for (let k = Math.max(0, Math.floor((t - .25) * SR / 256)); k < Math.min(duck.length, Math.ceil((t + len) * SR / 256)); k++) duck[k] = 1; };
+    for (const c of legacy) { const tmp = orig({ duration: 3.2, sfx: [{ t: .1, type: c.type, gain: c.gain }], moods: [{ t: 0, mood: 'silence' }], musicGain: 0, noHiss: true }); const st = ix(c.t - .1); for (let i = 0; i < tmp.length && st + i < N; i++) S[st + i] += tmp[i]; mark(c.t, 1); }
+    for (const a of o.amb || []) (AMB[a.type] || AMB.none)(A, a.t0, a.t1, Math.round(a.t0 * 7) + 3);
+    for (const c of o.sfx || []) if (FX[c.type]) { addFx(S, c.type, c.t, (c.gain ?? 1) * (o.sfxGain ?? .6), Math.round(c.t * 10)); mark(c.t, Math.min(FX[c.type].len, 3)); }
+    // smooth the duck envelope (~0.3 s ramps) and mix
+    let g = 0; const M = new Float32Array(N); for (let i = 0; i < N; i++) { if ((i & 255) === 0) { const tgt = duck[i >> 8]; g += (tgt - g) * .09; } M[i] = Mu[i] * (1 - .45 * g) + A[i] * (1 - .9 * g) + S[i]; }
     let pk = 0; for (const v of M) pk = Math.max(pk, Math.abs(v)); if (pk > .95) for (let i = 0; i < M.length; i++) M[i] *= .95 / pk;
     return M; };
   ST.FX = FX; ST.AMB = AMB;

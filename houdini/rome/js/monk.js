@@ -144,11 +144,50 @@
   const lip = t => { const Ls = G.LIPSYNC; if (!Ls) return Math.max(0, Math.round(Math.sin(t * 13) * 4)); const i = Math.floor(t * Ls.fps); return +(Ls.env[i] || 0); };
   function beat(t) { const W = (G.LIPSYNC || {}).words || []; let lo = 0, hi = W.length - 1, k = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (W[m] <= t) { k = m; lo = m + 1; } else hi = m - 1; }
     return k < 0 ? [0, 0] : [Math.exp(-(t - W[k]) * 5), k]; }
+  // the figure seen from the front (o.front, standing still): a symmetric garment, both arms at the sides (or in a front pose),
+  // two straight legs side by side and shoes pointing at the viewer. L = the screen-left arm (local -x); mirrored with o.face.
+  const FPOSE = { stand: [[-62, -250], [-64, -194]], talk: [[-66, -262], [-88, -312]], point: [[-112, -314], [-178, -320]], wave: [[-84, -352], [-92, -432]], up: [[-80, -372], [-96, -466], [80, -372], [96, -466]],
+    hold: [[-60, -262], [-24, -248], [60, -262], [24, -248]], carry: [[-60, -262], [-24, -248], [60, -262], [24, -248]], chin: [[-58, -262], [-22, -334]], shrug: [[-72, -272], [-106, -292], [72, -272], [106, -292]],
+    crossed: [[-52, -262], [30, -270], [52, -262], [-30, -282]], photo: [[-60, -322], [-30, -390], [60, -322], [30, -390]], shade: [[-62, -332], [-40, -404]], strike: [[-52, -392], [-10, -472], [52, -392], [10, -472]] };
+  function frontShoe(ctx, x, o) { const col = o.kind === 'coat' ? (o.shoe === '#e8e4dc' ? '#2a221c' : (o.shoe || '#2a221c')) : o.kind === 'tourist' ? o.shoe : '#5a3a26';
+    ink(ctx, col, c => { c.moveTo(x - 24, -2); c.quadraticCurveTo(x - 28, -24, x, -26); c.quadraticCurveTo(x + 28, -24, x + 24, -2); c.closePath(); }, L(3.5)); if (o.kind === 'tourist') { ctx.fillStyle = '#f4f4f0'; ctx.fillRect(x - 24, -6, 48, 5); } }
+  function personFront(ctx, x, y, s, t, o, pose) {
+    const bob = Math.sin(t * 1.6 + (o.seed || 0)) * 1.5; K = Math.max(1, 1.6 / (5 * s));
+    ctx.save(); ctx.translate(x, y); ctx.scale(s * (o.face === 1 ? -1 : 1), s); shadow(ctx, 170, .4);
+    const long = o.kind !== 'tunic' && o.kind !== 'tourist' && o.kind !== 'coat', hemY = long ? -64 : o.kind === 'coat' ? (o.coatLen ?? -150) : o.kind === 'tunic' ? -176 : -196;
+    const legCol = o.kind === 'tourist' ? o.skin : o.kind === 'coat' ? (o.legs || '#3a3a44') : (o.legs || o.skin), lw = o.kind === 'coat' ? 34 : 28;
+    // legs straight down, side by side, then the shoes facing forward
+    for (const d of [-1, 1]) { if (long) leg(ctx, d * 18, d * 20, 0, -120, o.skin, false, 16); else leg(ctx, d * 20, d * 21, 0, hemY + 10, legCol, d > 0, lw); frontShoe(ctx, d * 22, o); }
+    ctx.save(); ctx.translate(0, -bob);
+    const P0 = FPOSE[pose] || FPOSE.stand, E = P0[0].slice(), H = P0[1].slice(), E2 = P0[2] ? P0[2].slice() : [62, -250], H2 = P0[3] ? P0[3].slice() : [64, -194];
+    if (pose === 'wave') H[0] += Math.sin(t * 9) * 10; if (pose === 'talk') H[1] += Math.sin(t * 5 + (o.seed || 0)) * 12;
+    if (o.speak && (pose === 'talk' || pose === 'stand')) { const [b, k] = beat(o.lipT ?? t), g = [[-30, -18], [-10, -34], [-40, -6], [-20, -26]][k % 4]; E[0] = -66; E[1] = -262; H[0] = -86 + g[0] * b * .6; H[1] = -300 + g[1] * b; }
+    const cloth = o.cloth, csh = mix(cloth, '#3a2018', .28), cli = mix(cloth, '#ffffff', .18);
+    const body = c => { c.moveTo(-48, -322); c.quadraticCurveTo(-60, -250, -62 - (long ? 10 : 0), hemY); c.quadraticCurveTo(0, hemY + 10, 62 + (long ? 10 : 0), hemY); c.quadraticCurveTo(60, -250, 48, -322); c.quadraticCurveTo(0, -336, -48, -322); c.closePath(); };
+    if (o.kind === 'tourist') { cel(ctx, c => { c.moveTo(-52, -250); c.lineTo(-56, -190); c.lineTo(56, -190); c.lineTo(52, -250); c.closePath(); }, o.cloth2 || '#5a6a7a', { shade: mix(o.cloth2 || '#5a6a7a', '#000', .3), dx: 10, dy: 0, lw: L(4.5) }); ink(ctx, mix(o.cloth2 || '#5a6a7a', '#000', .3), c => c.rect(-2, -240, 4, 48), 0);
+      cel(ctx, c => { c.moveTo(-48, -322); c.quadraticCurveTo(-56, -280, -54, -234); c.quadraticCurveTo(0, -226, 54, -234); c.quadraticCurveTo(56, -280, 48, -322); c.quadraticCurveTo(0, -334, -48, -322); c.closePath(); }, cloth, { shade: csh, light: cli, dx: 12, dy: 0, lw: L(5) }); }
+    else { cel(ctx, body, cloth, { shade: csh, light: cli, dx: 14, dy: 0, lw: L(5) });
+      if (o.kind === 'coat') { ink(ctx, o.shirt || '#f4f0e6', c => { c.moveTo(-22, -326); c.lineTo(0, -270); c.lineTo(22, -326); c.closePath(); }, L(3)); if (o.tie) ink(ctx, o.tie, c => { c.moveTo(-5, -320); c.lineTo(5, -320); c.lineTo(8, -276); c.lineTo(0, -266); c.lineTo(-8, -276); c.closePath(); }, L(2.5));
+        ink(ctx, mix(cloth, '#000000', .22), c => { c.moveTo(-34, -322); c.lineTo(-2, -262); c.lineTo(-30, -286); c.closePath(); c.moveTo(34, -322); c.lineTo(2, -262); c.lineTo(30, -286); c.closePath(); }, L(2.5));
+        ctx.strokeStyle = mix(cloth, '#000', .35); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(0, -262); ctx.lineTo(0, hemY + 4); ctx.stroke(); ctx.fillStyle = o.btn || mix(cloth, '#000000', .45); for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(6, -244 + i * 24, 5, 0, 7); ctx.fill(); }
+        if (o.facings) { ctx.save(); body(ctx); ctx.clip(); ctx.fillStyle = o.facings; ctx.fillRect(-14, -330, 10, 330); ctx.fillRect(4, -330, 10, 330); ctx.restore(); }
+        if (o.sash) ink(ctx, o.sash, c => { c.moveTo(-60, -232); c.quadraticCurveTo(0, -222, 60, -232); c.lineTo(61, -210); c.quadraticCurveTo(0, -200, -61, -210); c.closePath(); }, L(3)); if (o.epaulette) for (const d of [-1, 1]) ink(ctx, o.epaulette, c => c.ellipse(d * 40, -318, 22, 10, d * .15, 0, 7), L(2.5)); }
+      else { if (o.kind === 'tunic' || o.belt || o.kind === 'monk') ink(ctx, o.kind === 'monk' ? '#c8a878' : (o.belt || '#5a3a24'), c => { c.moveTo(-60, -250); c.quadraticCurveTo(0, -240, 60, -250); c.lineTo(61, -236); c.quadraticCurveTo(0, -226, -61, -236); c.closePath(); }, L(3.5));
+        ink(ctx, mix(cloth, '#2a1810', .45), c => { c.moveTo(-18, -328); c.lineTo(0, -296); c.lineTo(18, -328); }, L(3));
+        if ((o.kind === 'toga' || o.kind === 'stola') ) { const d2 = o.kind === 'toga' ? mix(cloth, '#d8cfc0', .5) : (o.cloth2 || '#e8d8b8'); cel(ctx, c => { c.moveTo(-46, -326); c.quadraticCurveTo(20, -280, 50, -150); c.lineTo(26, -130); c.quadraticCurveTo(-4, -240, -56, -296); c.closePath(); }, d2, { shade: mix(d2, '#3a2018', .22), dx: 8, dy: 4, lw: L(4) }); } }
+      ctx.strokeStyle = mix(cloth, '#2a1810', .4); ctx.globalAlpha = .4; ctx.lineWidth = 3; for (const a of [-34, 34]) { ctx.beginPath(); ctx.moveTo(a * .8, -230); ctx.quadraticCurveTo(a, (hemY - 230) / 2 - 40, a * 1.2, hemY - 6); ctx.stroke(); } ctx.globalAlpha = 1; }
+    ink(ctx, mix(o.skin, '#8a4a3a', .15), c => c.rect(-14, -350, 28, 28), L(3.5));
+    // arms over the sides of the body, then the head centred on the body
+    arm(ctx, [48, -306], E2, H2, o, false); arm(ctx, [-48, -306], E, H, o, false);
+    if (o.prop) { ctx.save(); ctx.translate(H[0], H[1]); ctx.scale(1.4, 1.4); o.prop(ctx, 0, 0, t); ctx.restore(); }
+    ctx.save(); ctx.translate(11, o.kind === 'monk' ? -330 : -318); ctx.rotate((o.tilt || 0) + (o.speak ? -beat(o.lipT ?? t)[0] * .04 : 0)); if (o.kind !== 'monk') ctx.scale(.92, .92); head(ctx, o, t, 0); ctx.restore();
+    ctx.restore(); ctx.restore(); K = 1; }
   function person(ctx, x, y, s, t, o = {}) {
     o = Object.assign({ kind: 'tunic' }, o); if (o.kind === 'monk') o = Object.assign({ cloth: '#76503a', beard: true, hair: '#3c2a1e' }, o);
     o.skin = o.skin || SKINS[(o.seed || 0) % 3]; o.cloth = o.cloth || { tunic: '#9a7a54', woman: '#8fa4b8', toga: '#f4efe4', stola: '#c88a6a', tourist: '#3a6ab8', coat: '#3a3a48' }[o.kind] || '#9a7a54';
     o.shoe = o.shoe || '#e8e4dc';
     const pose = o.pose || 'stand', moving = pose === 'walk' || pose === 'haul' || o.walk, ph = moving ? t * Math.PI * 2 * (o.speed ?? .9) + (o.seed || 0) : 0;
+    if (o.front && !moving && pose !== 'pry') { personFront(ctx, x, y, s, t, o, pose); return; }
     const sw = moving ? Math.sin(ph) : 0, bob = moving ? Math.abs(Math.cos(ph)) * 6 : Math.sin(t * 1.6 + (o.seed || 0)) * 1.5, lean = pose === 'pry' ? -.12 + Math.sin(t * 3) * .03 : pose === 'haul' ? -.06 : 0;
     K = Math.max(1, 1.6 / (5 * s));
     ctx.save(); ctx.translate(x, y); ctx.scale(s * (o.face === 1 ? -1 : 1), s);

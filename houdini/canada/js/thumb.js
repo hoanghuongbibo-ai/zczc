@@ -2,7 +2,7 @@
  * warm/teal grade, a short punchy title. ?v=1 "7 DEALS" (the deal table), ?v=2 "CANADA INVADES?!" (Buster, 1921), ?v=3 "NEVER ABSORBED" (the border). */
 (function (G) {
   'use strict';
-  const C = G.Cine, P = G.Paint, Col = G.Col, TK = G.ThumbKit, { INK, ink, cel, mix } = P, t = 2.3;
+  const C = G.Cine, Cn2 = G.Cine, P = G.Paint, Col = G.Col, TK = G.ThumbKit, { INK, ink, cel, mix } = P, t = 2.3;
   const Q = [], title = (...a) => Q.push(() => TK.title(...a)), stamp = (...a) => Q.push(() => TK.stamp(...a));
   // ---- props for the busts (head: top y -214, ears at x ±156) ----
   function stetson(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const hc = '#8a6a3c', hs = '#5a4424', hl = '#b08a54';
@@ -118,5 +118,84 @@
     ctx.strokeStyle = INK; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(300 - 40, 500 + 88); ctx.quadraticCurveTo(300, 500 + 80, 300 + 40, 500 + 88); ctx.stroke();
     grade(ctx, .9); title(ctx, 'HOW CANADA', 860, 116, 104, ['#ffffff', '#f0f0f0'], { rot: -.02 }); title(ctx, 'SURVIVED', 880, 226, 112, ['#ffe040', '#ff8a00'], { rot: -.02 });
     Q.push(() => { ctx.save(); ctx.font = '700 26px "Special Elite"'; ctx.fillStyle = '#f4e8c8'; ctx.textAlign = 'center'; ctx.fillText('LOUIS RIEL', 300, 250); ctx.fillText('THE LAST SPIKE · 7 NOV 1885', 920, 290); ctx.restore(); }); }
-  G.drawThumbCA = (ctx, v) => { ctx.clearRect(0, 0, 1280, 720); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
+
+  // ---- the reference set: a short 2-3 word title, figures in a struggle over the map ----
+  // a thick sleeve from shoulder to hand, with a gripping hand at the end
+  function sleeve(ctx, x0, y0, x1, y1, w, cloth, skin, cuff) { ctx.save(); ctx.lineCap = 'round'; ctx.strokeStyle = INK; ctx.lineWidth = w + 10; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.strokeStyle = cloth; ctx.lineWidth = w; ctx.stroke();
+    if (cuff) { const a = Math.atan2(y1 - y0, x1 - x0); ctx.strokeStyle = INK; ctx.lineWidth = w * .5 + 8; ctx.beginPath(); ctx.moveTo(x1 - Math.cos(a) * 26, y1 - Math.sin(a) * 26); ctx.lineTo(x1 - Math.cos(a) * 8, y1 - Math.sin(a) * 8); ctx.stroke(); ctx.strokeStyle = cuff; ctx.lineWidth = w * .5; ctx.stroke(); }
+    ctx.restore(); cel(ctx, c => c.ellipse(x1, y1, w * .62, w * .56, 0, 0, 7), skin, { shade: mix(skin, '#8a4a3a', .25), dx: 6, dy: 0, lw: 5 }); ctx.strokeStyle = 'rgba(90,50,40,.6)'; ctx.lineWidth = 3; for (const d of [-.25, .05, .35]) { ctx.beginPath(); ctx.moveTo(x1 - w * .4, y1 + d * w); ctx.lineTo(x1 + w * .3, y1 + d * w); ctx.stroke(); } }
+  function samHat(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.save(); ctx.beginPath(); ctx.moveTo(-124, -170); ctx.lineTo(-140, -470); ctx.lineTo(140, -470); ctx.lineTo(124, -170); ctx.closePath(); ctx.fillStyle = '#f8f4ec'; ctx.fill(); ctx.clip(); ctx.fillStyle = '#d8222a'; for (let i = -3; i <= 3; i++) ctx.fillRect(i * 40 - 10, -480, 22, 320); ctx.fillStyle = '#2a4a9a'; ctx.fillRect(-150, -270, 300, 70); ctx.restore();
+    ink(ctx, null, c => { c.moveTo(-124, -170); c.lineTo(-140, -470); c.lineTo(140, -470); c.lineTo(124, -170); c.closePath(); }, 6); for (let i = -1; i <= 1; i++) { ctx.save(); ctx.translate(i * 70, -236); ctx.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 9 : 22; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke(); ctx.restore(); }
+    cel(ctx, c => c.ellipse(0, -168, 220, 40, 0, 0, 7), '#f8f4ec', { shade: '#c8c0b0', dx: 0, dy: 8, lw: 6 }); ctx.restore(); }
+  function goatee(ctx, x, y, s) { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); cel(ctx, c => { c.moveTo(-50, 96); c.quadraticCurveTo(-30, 180, 0, 250); c.quadraticCurveTo(30, 180, 50, 96); c.quadraticCurveTo(0, 120, -50, 96); c.closePath(); }, '#f4f2ea', { shade: '#c8c4b8', dx: 8, dy: 0, lw: 5 }); ctx.restore(); }
+  function shortTitle(ctx, a, b, y = 106, sz = 104) { Q.push(() => { ctx.save(); ctx.font = sz + 'px "Luckiest Guy"'; const wa = ctx.measureText(a + ' ').width, wb = ctx.measureText(b).width, x0 = 640 - (wa + wb) / 2; ctx.restore(); TK.title(ctx, a, x0, y, sz, ['#ffffff', '#f0f0f0'], { align: 'left', rot: -.02 }); TK.title(ctx, b, x0 + wa, y, sz, ['#ffe040', '#ffb000'], { align: 'left', rot: -.02 }); }); }
+  // a parchment map of Canada, slightly skewed as if pulled from both sides
+  function pulledMap(ctx, x, y, w, h, rot) { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); const edge = c => { c.moveTo(-w / 2, -h / 2 + 10); c.quadraticCurveTo(0, -h / 2 - 16, w / 2, -h / 2); c.lineTo(w / 2 + 6, h / 2 - 8); c.quadraticCurveTo(0, h / 2 + 18, -w / 2 - 4, h / 2); c.closePath(); };
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.5)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 10; ctx.fillStyle = '#efe2c0'; ctx.beginPath(); edge(ctx); ctx.fill(); ctx.restore(); ctx.save(); ctx.beginPath(); edge(ctx); ctx.clip();
+    ctx.translate(-640, -360); Col.map(ctx, { lon: -97, lat: 60, s: w * 1.25, x: 640, y: 380 }, { prov: true, fill: n => n === 'Canada' ? '#e89a5a' : n === 'United States of America' ? '#c8c0a8' : null, alpha: .85 }); ctx.restore(); ctx.save(); ctx.beginPath(); edge(ctx); ctx.clip(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = '#e8d8b0'; ctx.fillRect(-w, -h, w * 2, h * 2); ctx.restore();
+    ink(ctx, null, edge, 6); ctx.font = `900 ${w * .13}px Anton`; ctx.textAlign = 'center'; ctx.lineWidth = 10; ctx.strokeStyle = '#f6ecd4'; ctx.strokeText('CANADA', 0, h * .1); ctx.fillStyle = INK; ctx.fillText('CANADA', 0, h * .1); for (const d of [-1, 1]) { ctx.strokeStyle = 'rgba(90,60,30,.5)'; ctx.lineWidth = 2; for (let k = 0; k < 5; k++) { ctx.beginPath(); ctx.moveTo(d * w / 2, -h * .3 + k * h * .15); ctx.quadraticCurveTo(d * w * .38, -h * .28 + k * h * .15, d * w * .3, -h * .25 + k * h * .15); ctx.stroke(); } } ctx.restore(); }
+  function burningShip(ctx, x, y, s) { Col.ship(ctx, x, y, s, t, { flag: '#c23a2c', sail: '#d8c8a8' }); G.RK.flames(ctx, x - 10 * s, y - 60 * s, .5 * s * 2, t, { smoke: true }); }
+  // v7: Macdonald and Uncle Sam in a tug-of-war over the map; the ground cracks along the border
+  function v7(ctx) { C.sky(ctx, 'sunset', t, { horizon: 430, sun: [640, 400], sunR: 40, seed: 71, clouds: 5 }); for (const [px, py] of [[130, 380], [880, 300], [1180, 330]]) C.smoke(ctx, px, py, 1.6, t, { h: 420, a: .6, col: '50,40,44' });
+    Cn2.water(ctx, -20, 400, 560, 470, t, { pal: 'sunset' }); burningShip(ctx, 90, 440, .5); Col.ship(ctx, 220, 450, .4, t, { flag: '#c23a2c', sail: '#e8d8b8' });
+    cel(ctx, c => { c.moveTo(-20, 430); c.lineTo(1300, 410); c.lineTo(1300, 740); c.lineTo(-20, 740); c.closePath(); }, '#a88a60', { shade: '#7a6040', dx: 0, dy: 0, lw: 0 }); C.mounds(ctx, { y: 470, n: 4, seed: 72, col: '#9a7c54', far: .3, sunX: 640, t, w: 600, h: 40, copses: 0, haze: '#d89060' });
+    for (let i = 0; i < 6; i++) G.Paint.person(ctx, 30 + i * 46, 560 + (i % 2) * 8, .22, t + i, { kind: 'coat', front: true, cloth: '#c8221a', legs: '#efe6d2', hat: 'tricorne', seed: 30 + i });
+    for (let i = 0; i < 5; i++) G.Paint.person(ctx, 1080 + i * 44, 520 + (i % 2) * 8, .2, t + i, { kind: 'coat', front: true, cloth: '#2a3a6a', legs: '#c8c0b0', hat: 'kepi', hatCol: '#1e2a4a', seed: 40 + i });
+    // the crack along the border, the wire
+    cel(ctx, c => { c.moveTo(600, 740); c.lineTo(624, 640); c.lineTo(606, 600); c.lineTo(640, 540); c.lineTo(662, 600); c.lineTo(650, 650); c.lineTo(690, 740); c.closePath(); }, '#3a2a1c', { shade: '#1a120c', dx: 0, dy: 0, lw: 4 });
+    for (const x of [520, 760]) P.ink(ctx, '#5a3a24', c => c.rect(x, 560, 10, 80), 3); ctx.strokeStyle = '#3a3030'; ctx.lineWidth = 2; for (let x = 440; x < 860; x += 7) { ctx.beginPath(); ctx.arc(x, 580 + Math.sin(x * .3) * 3, 5, 0, 7); ctx.stroke(); }
+    Col.flagRedEnsign(ctx, 40, 470, 120, 66); P.ink(ctx, '#3a3a3a', c => c.rect(34, 470, 7, 200), 0); Col.flagUS(ctx, 1150, 420, 120, 70); P.ink(ctx, '#3a3a3a', c => c.rect(1144, 420, 7, 220), 0);
+    // the map, pulled
+    pulledMap(ctx, 640, 420, 460, 300, -.04);
+    // Macdonald (left): leaning back, gritted teeth
+    ctx.save(); ctx.translate(230, 600); ctx.rotate(-.14); ctx.translate(-290, -560);
+    cel(ctx, c => { c.moveTo(110, 760); c.quadraticCurveTo(90, 560, 200, 470); c.lineTo(350, 470); c.quadraticCurveTo(430, 560, 440, 760); c.closePath(); }, '#9a1a1a', { shade: '#6a1010', dx: 14, dy: 0, lw: 6 });
+    TK.bust(ctx, 290, 470, .78, { kind: 'tunic', suit: true, cloth: '#2a2420', skin: '#f2c9a2', hair: '#4a3a2e', hairStyle: 'curly', face: 'grin', look: 22 }); ctx.restore();
+    sleeve(ctx, 330, 560, 414, 330, 50, '#2a2420', '#f2c9a2', '#f4f0e6'); sleeve(ctx, 350, 620, 414, 500, 50, '#2a2420', '#f2c9a2', '#f4f0e6');
+    Col.beaver(ctx, 150, 700, .9, t, {}); peakedCap(ctx, 150, 610, .2);
+    ctx.save(); ctx.translate(300, 700); ctx.rotate(-.25); cel(ctx, c => c.rect(-40, -50, 80, 100), '#f6ecd4', { shade: '#d8c8a4', dx: 4, dy: 4, lw: 4 }); ctx.fillStyle = INK; ctx.font = '900 22px Anton'; ctx.textAlign = 'center'; ctx.fillText('DEAL', 0, -18); ctx.restore();
+    // Uncle Sam (right): shouting
+    ctx.save(); ctx.translate(1050, 600); ctx.rotate(.14); ctx.translate(-990, -560);
+    cel(ctx, c => { c.moveTo(860, 760); c.quadraticCurveTo(850, 560, 930, 470); c.lineTo(1060, 470); c.quadraticCurveTo(1150, 560, 1160, 760); c.closePath(); }, '#2a4a9a', { shade: '#1a2e6a', dx: 14, dy: 0, lw: 6 });
+    TK.bust(ctx, 990, 470, .78, { kind: 'tunic', suit: true, cloth: '#2a4a9a', skin: '#f2c9a2', hair: '#e8e4dc', face: 'panic', look: -22 }); goatee(ctx, 990, 470 + 60 * .78, .78); samHat(ctx, 990, 470, .78); ctx.restore();
+    sleeve(ctx, 950, 560, 866, 330, 50, '#2a4a9a', '#f2c9a2', '#f4f0e6'); sleeve(ctx, 930, 620, 866, 500, 50, '#2a4a9a', '#f2c9a2', '#f4f0e6');
+    grade(ctx); shortTitle(ctx, 'WHO GETS', 'CANADA?'); }
+  // v8: the 1921 war room — Buster slams the red arrow onto the map; an American officer drops his coffee
+  function v8(ctx) { const bg = ctx.createRadialGradient(640, 420, 60, 640, 420, 800); bg.addColorStop(0, '#4a3a2c'); bg.addColorStop(1, '#120c0a'); ctx.fillStyle = bg; ctx.fillRect(0, 0, 1280, 720);
+    ctx.save(); ctx.globalAlpha = .55; Col.flagRedEnsign(ctx, -20, 140, 230, 400); Col.flagUS(ctx, 1080, 140, 230, 400); ctx.restore(); ctx.fillStyle = 'rgba(10,8,6,.35)'; ctx.fillRect(0, 0, 1280, 720);
+    // the table and the map in perspective
+    cel(ctx, c => { c.moveTo(120, 500); c.lineTo(1160, 500); c.lineTo(1300, 740); c.lineTo(-20, 740); c.closePath(); }, '#6a4428', { shade: '#4a2e18', light: '#8a5a34', dx: 0, dy: 0, lw: 5 });
+    ctx.save(); ctx.beginPath(); ctx.moveTo(300, 520); ctx.lineTo(980, 520); ctx.lineTo(1090, 720); ctx.lineTo(190, 720); ctx.closePath(); ctx.clip(); ctx.translate(640, 620); ctx.scale(1, .55); ctx.translate(-640, -620); Col.map(ctx, { lon: -96, lat: 46, s: 1000, x: 640, y: 560 }, { prov: true, fill: n => n === 'Canada' ? '#c86a5a' : n === 'United States of America' ? '#8ab0d8' : null, alpha: .8 });
+      ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = '#e0cfa0'; ctx.fillRect(0, 0, 1280, 1400); ctx.restore(); ctx.restore(); ink(ctx, null, c => { c.moveTo(300, 520); c.lineTo(980, 520); c.lineTo(1090, 720); c.lineTo(190, 720); c.closePath(); }, 5);
+    for (const [x0, x1] of [[520, 500], [640, 640], [760, 800]]) Col.marker ? 0 : 0; for (const [x0, y0, x1, y1] of [[540, 560, 520, 640], [650, 560, 660, 650], [780, 560, 830, 640]]) { ctx.strokeStyle = '#d8241a'; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); ctx.save(); ctx.translate(x1, y1); ctx.rotate(Math.atan2(y1 - y0, x1 - x0)); ctx.fillStyle = '#d8241a'; ctx.beginPath(); ctx.moveTo(18, 0); ctx.lineTo(-14, -16); ctx.lineTo(-14, 16); ctx.closePath(); ctx.fill(); ctx.restore(); }
+    // the lantern
+    glow(ctx, 760, 430, 360, 'rgba(255,200,110,A)', .55); cel(ctx, c => c.rect(740, 420, 40, 60), '#f8d070', { shade: '#d8a040', light: '#fff4c0', dx: 0, dy: 0, lw: 4 }); ink(ctx, '#3a2a1c', c => { c.rect(734, 410, 52, 12); c.rect(734, 478, 52, 12); }, 3);
+    // Buster: angry grin, slamming the arrow; folder under his arm
+    TK.bust(ctx, 300, 420, .86, { kind: 'tunic', cloth: '#6a6a44', skin: '#f2c9a2', hair: '#3a2416', face: 'grin', look: 20 }); mustache(ctx, 300, 420 + 5, .86); officer(ctx, 300, 420, .86);
+    sleeve(ctx, 430, 560, 560, 580, 56, '#6a6a44', '#f2c9a2'); ctx.save(); ctx.translate(560, 600); ctx.rotate(.5); cel(ctx, c => { c.moveTo(-14, -60); c.lineTo(14, -60); c.lineTo(14, 10); c.lineTo(34, 10); c.lineTo(0, 60); c.lineTo(-34, 10); c.lineTo(-14, 10); c.closePath(); }, '#d8241a', { shade: '#a01410', dx: 4, dy: 0, lw: 4 }); ctx.restore();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 5; for (const a of [-.4, 0, .4]) { ctx.beginPath(); ctx.moveTo(540 + Math.cos(a - 1.6) * 90, 560 + Math.sin(a - 1.6) * 90); ctx.lineTo(540 + Math.cos(a - 1.6) * 130, 560 + Math.sin(a - 1.6) * 130); ctx.stroke(); }
+    ctx.save(); ctx.translate(140, 640); ctx.rotate(-.1); cel(ctx, c => c.rect(-70, -90, 140, 180), '#d8b878', { shade: '#a88850', dx: 6, dy: 0, lw: 5 }); ctx.fillStyle = INK; ctx.font = '900 22px Anton'; ctx.textAlign = 'center'; ctx.fillText('DEFENCE', 0, -30); ctx.fillText('SCHEME', 0, 0); ctx.fillText('No. 1', 0, 30); ctx.restore();
+    // the American officer: panic, hands up, coffee flying
+    TK.bust(ctx, 1010, 440, .82, { kind: 'tunic', cloth: '#7a6a44', skin: '#f0c8a0', hair: '#8a7a6a', face: 'panic', hands: 'up', shock: true, look: -20 }); peakedCap(ctx, 1010, 440, .82);
+    cel(ctx, c => c.rect(860, 560, 44, 52), '#f4f0e8', { shade: '#c8c0b0', dx: 4, dy: 0, lw: 4 }); for (let i = 0; i < 5; i++) cel(ctx, c => c.ellipse(840 - i * 16, 540 - i * 14 + i * i * 3, 9 - i, 7 - i * .8, 0, 0, 7), '#6a3a1a', { dx: 0, dy: 0, lw: 2 });
+    grade(ctx, .9); title(ctx, 'CANADA', 640, 130, 120, ['#ffffff', '#f0f0f0'], { rot: -.02 }); title(ctx, 'INVADES?!', 660, 250, 128, ['#ffe040', '#ff9a00'], { rot: -.02 }); }
+  // v9: the birth of Canada — Macdonald signs THE DEAL 1867; a redcoat points; the map on the globe; a train and burning ships
+  function v9(ctx) { C.sky(ctx, 'sunset', t, { horizon: 520, sun: [640, 470], sunR: 60, seed: 91, clouds: 4 });
+    // left: snowy mountains and a steam train; right: smoke and burning ships
+    for (let i = 0; i < 3; i++) cel(ctx, c => { c.moveTo(-40 + i * 120, 470); c.lineTo(60 + i * 120, 230 + i * 30); c.lineTo(170 + i * 120, 470); c.closePath(); }, '#7a8aa0', { shade: '#5a6a80', light: '#e8eef4', dx: 20, dy: 0, lw: 4 }); for (let i = 0; i < 6; i++) Col.pine(ctx, 20 + i * 60, 500, .6, '#2f4a3a');
+    Col.train(ctx, 230, 520, .7, t, { flip: true }); C.smoke(ctx, 1100, 360, 1.8, t, { h: 420, a: .7, col: '40,32,32' }); Cn2.water(ctx, 900, 430, 1300, 520, t, { pal: 'sunset' }); burningShip(ctx, 1060, 470, .55); burningShip(ctx, 1200, 480, .45);
+    // the globe with the map of Canada
+    ctx.save(); ctx.beginPath(); ctx.arc(640, 760, 470, 0, 7); ctx.clip(); Col.map(ctx, { lon: -96, lat: 52, s: 640, x: 640, y: 520 }, { prov: true, fill: n => n === 'Canada' ? '#f0d8b8' : null, alpha: .9 }); ctx.restore(); ink(ctx, null, c => c.arc(640, 760, 470, 0, 7), 6);
+    // the desk and Macdonald signing
+    cel(ctx, c => { c.moveTo(-20, 600); c.lineTo(640, 600); c.lineTo(680, 740); c.lineTo(-20, 740); c.closePath(); }, '#6a4428', { shade: '#4a2e18', light: '#8a5a34', dx: 0, dy: 10, lw: 6 });
+    TK.bust(ctx, 250, 470, .82, { kind: 'tunic', suit: true, cloth: '#2a2420', skin: '#f2c9a2', hair: '#4a3a2e', hairStyle: 'curly', face: 'smug', look: 20 });
+    sleeve(ctx, 380, 580, 610, 672, 50, '#2a2420', '#f2c9a2', '#f4f0e6'); cel(ctx, c => { c.moveTo(610, 672); c.quadraticCurveTo(640, 592, 690, 552); c.quadraticCurveTo(660, 612, 620, 678); c.closePath(); }, '#f8f4ec', { shade: '#c8c0b0', dx: 4, dy: 0, lw: 3 });
+    ctx.save(); ctx.translate(420, 660); ctx.rotate(.08); cel(ctx, c => c.rect(-150, -50, 300, 100), '#f6ecd4', { shade: '#d8c8a4', dx: 6, dy: 6, lw: 5 }); for (const d of [-1, 1]) cel(ctx, c => c.ellipse(d * 152, 0, 14, 52, 0, 0, 7), '#e8dcc0', { dx: 0, dy: 0, lw: 4 }); ctx.fillStyle = INK; ctx.font = '900 34px Anton'; ctx.textAlign = 'center'; ctx.fillText('THE DEAL 1867', 0, 12); cel(ctx, c => c.arc(110, 26, 18, 0, 7), '#b8221a', { shade: '#7a1410', dx: 3, dy: 0, lw: 3 }); ctx.restore();
+    Col.beaver(ctx, 700, 680, .9, t, {}); stetson(ctx, 700, 600, .2);
+    // the redcoat: angry, pointing at the map
+    TK.bust(ctx, 1060, 520, .82, { kind: 'tunic', cloth: '#c8221a', skin: '#f2c9a2', hair: '#6a4a2a', face: 'grin', beard: true, look: -22 }); ink(ctx, '#efe6d2', c => { c.moveTo(1060 - 150, 520 + 120); c.lineTo(1060 + 180, 520 + 270); c.lineTo(1060 + 150, 520 + 290); c.lineTo(1060 - 170, 520 + 140); c.closePath(); }, 4);
+    ctx.save(); ctx.translate(1060, 520); ctx.scale(.82, .82); cel(ctx, c => { c.moveTo(-130, -150); c.lineTo(-120, -330); c.lineTo(120, -330); c.lineTo(130, -150); c.closePath(); }, '#1e1a20', { shade: '#0e0a10', light: '#3a3640', dx: 20, dy: 0, lw: 6 }); cel(ctx, c => c.ellipse(0, -150, 160, 26, 0, 0, 7), '#1e1a20', { dx: 0, dy: 4, lw: 5 }); cel(ctx, c => c.ellipse(0, -250, 40, 46, 0, 0, 7), '#e8c040', { shade: '#a88020', dx: 6, dy: 0, lw: 4 }); ctx.restore();
+    sleeve(ctx, 940, 600, 800, 560, 52, '#c8221a', '#f2c9a2', '#efe6d2');
+    grade(ctx); title(ctx, 'BIRTH OF', 640, 120, 100, ['#ffe040', '#ffb000'], { rot: -.02 }); title(ctx, 'CANADA', 640, 250, 150, ['#ffffff', '#f0f0f0'], { rot: -.02 }); Q.push(() => { Col.mapleLeaf(ctx, 300, 200, 40, '#d8222a'); Col.mapleLeaf(ctx, 980, 200, 40, '#d8222a'); }); }
+  G.drawThumbCA = (ctx, v) => { ctx.clearRect(0, 0, 1280, 720); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

@@ -204,6 +204,45 @@
     stamp(ctx, 'STILL ALIVE?!', 640, 520, 44, -.08); C.finish(ctx, t, 'sunset', { leak: false, vig: .3 }); }
   // titles and stamps are queued and painted after the colour grade / vignette, so the grade never dims them
   const Q = [], title = (...a) => Q.push(() => _title(...a)), stamp = (...a) => Q.push(() => _stamp(...a));
+
+  // ---- "How on earth did the Romans survive without water?" — a parched legionary under a blazing sun ----
+  function hotSky(ctx, sx, sy) { const g = ctx.createLinearGradient(0, 0, 0, 520); g.addColorStop(0, '#f8c860'); g.addColorStop(.6, '#f8a040'); g.addColorStop(1, '#f8d890'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const sg = ctx.createRadialGradient(sx, sy, 20, sx, sy, 420); sg.addColorStop(0, 'rgba(255,255,230,1)'); sg.addColorStop(.18, 'rgba(255,244,190,.95)'); sg.addColorStop(1, 'rgba(255,200,90,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H); rays(ctx, sx, sy, '#fff6c8', .22);
+    ctx.fillStyle = '#fffbe8'; ctx.beginPath(); ctx.arc(sx, sy, 78, 0, 7); ctx.fill(); }
+  function crackedEarth(ctx, y0, seed) { cel(ctx, c => { c.moveTo(-20, y0 + 20); c.quadraticCurveTo(640, y0 - 20, 1300, y0 + 10); c.lineTo(1300, 740); c.lineTo(-20, 740); c.closePath(); }, '#d8a868', { shade: '#b88448', light: '#ecc890', dx: 0, dy: 0, lw: 4 });
+    const R = C.rng(seed); ctx.strokeStyle = '#7a5430'; ctx.lineCap = 'round'; for (let i = 0; i < 46; i++) { let x = R() * 1300, y = y0 + 20 + R() * (720 - y0); const k = (y - y0) / (720 - y0); ctx.lineWidth = 1.5 + k * 4; ctx.beginPath(); ctx.moveTo(x, y); for (let j = 0; j < 4; j++) { x += (R() - .5) * 90 * (.4 + k); y += (R() - .3) * 30 * (.4 + k); ctx.lineTo(x, y); } ctx.stroke(); }
+    ctx.save(); ctx.globalAlpha = .25; ctx.strokeStyle = '#fff4d0'; ctx.lineWidth = 3; for (let i = 0; i < 9; i++) { const yy = y0 - 30 + i * 9; ctx.beginPath(); for (let x = 0; x <= 1280; x += 20) ctx.lineTo(x, yy + Math.sin(x * .03 + i) * 4); ctx.stroke(); } ctx.restore(); }
+  // the parched legionary: drooping lids, dark rings, cracked lips, tongue out, sunburn, sweat, tilting an empty waterskin
+  function parched(ctx, x, y, s, o = {}) { bust(ctx, x, y, s, Object.assign({}, LEGION, { face: 'panic', look: 0, skin: '#e8a878' }));
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); const skin = '#e8a878';
+    ctx.fillStyle = 'rgba(220,70,50,.35)'; for (const d of [-1, 1]) { ctx.beginPath(); ctx.ellipse(d * 96, 26, 44, 26, 0, 0, 7); ctx.fill(); } ctx.beginPath(); ctx.ellipse(4, 8, 22, 18, 0, 0, 7); ctx.fill();
+    for (const d of [-1, 1]) { const ex = d * 58, ey = -36; ctx.save(); ctx.beginPath(); ctx.ellipse(ex, ey, 44, 54, 0, 0, 7); ctx.clip(); ink(ctx, skin, c => { c.moveTo(ex - 50, ey - 60); c.lineTo(ex + 50, ey - 60); c.lineTo(ex + 50, ey - 6 + d * 0); c.quadraticCurveTo(ex, ey + 8, ex - 50, ey - 6); c.closePath(); }, 0); ctx.restore();
+      ctx.strokeStyle = INK; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(ex - 40, ey - 4); ctx.quadraticCurveTo(ex, ey + 10, ex + 40, ey - 4); ctx.stroke();
+      ctx.strokeStyle = 'rgba(110,50,60,.55)'; ctx.lineWidth = 6; ctx.beginPath(); ctx.moveTo(ex - 32, ey + 46); ctx.quadraticCurveTo(ex, ey + 60, ex + 32, ey + 46); ctx.stroke(); }
+    // tongue out over the lower lip, dry cracks around the mouth
+    cel(ctx, c => { c.moveTo(-34, 118); c.quadraticCurveTo(-40, 200, 0, 214); c.quadraticCurveTo(40, 200, 34, 118); c.closePath(); }, '#d8626a', { shade: '#a8404a', light: '#f0909a', dx: 6, dy: 0, lw: 5 }); ctx.strokeStyle = '#a8404a'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, 130); ctx.lineTo(0, 190); ctx.stroke();
+    ctx.strokeStyle = '#6a2a1a'; ctx.lineWidth = 3; for (const [a, b] of [[-50, 50], [-20, 42], [20, 42], [52, 52], [-62, 120], [60, 124]]) { ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(a + 6, b + 10); ctx.lineTo(a + 1, b + 16); ctx.stroke(); }
+    for (const [dx, dy, r] of [[-150, -100, 1], [160, -60, .9], [-120, 40, .7], [130, 70, .6]]) cel(ctx, c => { c.moveTo(dx, dy - 30 * r); c.quadraticCurveTo(dx + 22 * r, dy, dx + 14 * r, dy + 14 * r); c.quadraticCurveTo(dx, dy + 26 * r, dx - 14 * r, dy + 14 * r); c.quadraticCurveTo(dx - 22 * r, dy, dx, dy - 30 * r); c.closePath(); }, '#8ad0f4', { shade: '#4aa0d0', light: '#e0f6ff', dx: 3, dy: 0, lw: 3.5 });
+    // the arm and the empty waterskin, upside down, one last drop
+    cel(ctx, c => { c.moveTo(150, 330); c.quadraticCurveTo(250, 160, 230, -150); c.lineTo(170, -150); c.quadraticCurveTo(180, 120, 110, 280); c.closePath(); }, LEGION.cloth, { shade: mix(LEGION.cloth, '#3a1a10', .35), dx: 10, dy: 0, lw: 5 });
+    ctx.save(); ctx.translate(150, -250); ctx.rotate(-2.4); cel(ctx, c => { c.moveTo(-60, -40); c.quadraticCurveTo(-90, 60, -40, 110); c.quadraticCurveTo(0, 130, 40, 110); c.quadraticCurveTo(90, 60, 60, -40); c.quadraticCurveTo(30, -60, 18, -80); c.lineTo(-18, -80); c.quadraticCurveTo(-30, -60, -60, -40); c.closePath(); }, '#b47a44', { shade: '#7a4a24', light: '#d8a068', dx: 14, dy: 0, lw: 6 }); ink(ctx, '#5a3418', c => c.rect(-22, -104, 44, 28), 5); ctx.save(); ctx.setLineDash([8, 7]); ctx.strokeStyle = '#5a3418'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-52, -30); ctx.quadraticCurveTo(-78, 60, -34, 100); ctx.moveTo(52, -30); ctx.quadraticCurveTo(78, 60, 34, 100); ctx.stroke(); ctx.restore();
+      ctx.strokeStyle = '#3a2414'; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(-22, -80); ctx.quadraticCurveTo(-120, -60, -70, 40); ctx.stroke(); ctx.restore();
+    cel(ctx, c => c.ellipse(200, -170, 36, 32, -.4, 0, 7), skin, { shade: mix(skin, '#8a4a3a', .25), dx: 6, dy: 0, lw: 5 });
+    cel(ctx, c => { c.moveTo(64, -150); c.quadraticCurveTo(80, -122, 74, -110); c.quadraticCurveTo(64, -100, 54, -110); c.quadraticCurveTo(48, -122, 64, -150); c.closePath(); }, '#8ad0f4', { shade: '#4aa0d0', light: '#e0f6ff', dx: 3, dy: 0, lw: 3.5 });
+    ctx.restore(); }
+  function dryScene(ctx, sx, sy) { hotSky(ctx, sx, sy); C.mounds(ctx, { y: 470, n: 5, seed: 1501, col: '#c89a60', far: .5, sunX: sx, t, w: 560, h: 60, copses: 0, haze: '#f8c880' });
+    K.aqueduct(ctx, 560, 1500, 300, () => 520, t, { bay: 120, far: .2, haze: '#f8c880' }); crackedEarth(ctx, 500, 77);
+    // a dry spout on the aqueduct: no water, one drip
+    ink(ctx, '#7a5a3a', c => c.rect(960, 296, 40, 18), 3); cel(ctx, c => { c.moveTo(980, 330); c.quadraticCurveTo(990, 350, 984, 358); c.quadraticCurveTo(978, 364, 972, 358); c.quadraticCurveTo(966, 350, 980, 330); c.closePath(); }, '#8ad0f4', { shade: '#4aa0d0', dx: 2, dy: 0, lw: 3 });
+    // bleached bones and a cracked, empty amphora in the dust
+    ctx.save(); ctx.translate(1110, 640); ctx.rotate(1.35); const AM = '#c8784a', AS = '#9a5430';
+    for (const d of [-1, 1]) { ctx.strokeStyle = INK; ctx.lineWidth = 16; ctx.beginPath(); ctx.moveTo(d * 18, -96); ctx.quadraticCurveTo(d * 52, -96, d * 40, -60); ctx.stroke(); ctx.strokeStyle = AM; ctx.lineWidth = 9; ctx.stroke(); }
+    cel(ctx, c => { c.moveTo(-16, -110); c.lineTo(16, -110); c.lineTo(18, -70); c.quadraticCurveTo(66, -40, 56, 30); c.quadraticCurveTo(40, 90, 10, 120); c.lineTo(-10, 120); c.quadraticCurveTo(-40, 90, -56, 30); c.quadraticCurveTo(-66, -40, -18, -70); c.closePath(); }, AM, { shade: AS, light: '#e09a6a', dx: 12, dy: 0, lw: 5 });
+    ink(ctx, '#d8a868', c => { c.moveTo(-18, 10); c.lineTo(-40, 30); c.lineTo(-30, 70); c.lineTo(-8, 50); c.closePath(); }, 0); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-18, 10); ctx.lineTo(-40, 30); ctx.lineTo(-30, 70); ctx.lineTo(-8, 50); ctx.closePath(); ctx.stroke(); ctx.restore(); }
+  function v10(ctx) { dryScene(ctx, 1080, 260); parched(ctx, 360, 500, .82); C.finish(ctx, t, 'golden', { leak: false, vig: .25 });
+    title(ctx, 'HOW ON EARTH DID THE ROMANS', 640, 96, 72, ['#ffffff', '#f4f4f4'], { rot: -.015 }); title(ctx, 'SURVIVE WITHOUT WATER?!', 660, 200, 88, ['#4ac8ff', '#1a8ad8'], { rot: -.015 }); }
+  function v11(ctx) { dryScene(ctx, 260, 220); parched(ctx, 880, 520, .95); C.finish(ctx, t, 'golden', { leak: false, vig: .25 });
+    title(ctx, 'NO', 290, 330, 170, ['#ffffff', '#f4f4f4'], { rot: -.04 }); title(ctx, 'WATER?!', 330, 480, 150, ['#4ac8ff', '#1a8ad8'], { rot: -.04 }); }
   G.ThumbKit = { bust, title: _title, stamp: _stamp, burst, rays };
-  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
+  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9, 10: v10, 11: v11 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

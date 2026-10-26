@@ -12,10 +12,11 @@
   const INK = () => Gd.kit.INK;
 
   // ---------- seated legs: thighs come toward the camera (short, wide), shins drop to the floor ----------
-  LEGS.sit = (ctx, g, L) => { const { sd } = g, hip = [sd * 26, -150], knee = [sd * 40, -112], ank = [sd * 44, 34], col = L.c || Gd.C.face;
-    path(ctx, c => c.ellipse(lerp(hip[0], knee[0], .5), -128, 34, 30, 0, 0, TAU), col, 4.5);
+  LEGS.sit = (ctx, g, L) => { const { sd } = g, knee = [sd * 46, -104], ank = [sd * 48, 34], col = L.c || Gd.C.face;
+    if (sd < 0) path(ctx, c => c.roundRect(-78, -156, 156, 52, 22), col, 4.5);   // the lap: thighs pointing at the camera
     seg(ctx, [knee, ank], 44); seg(ctx, [knee, ank], 34, col);
-    path(ctx, c => c.ellipse(knee[0], knee[1] + 4, 22, 18, 0, 0, TAU), col, 0);
+    path(ctx, c => c.ellipse(knee[0], knee[1], 30, 24, 0, 0, TAU), col, 4.5); ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.beginPath(); ctx.ellipse(knee[0] - 6, knee[1] - 8, 14, 8, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(ank[0] - 16, knee[1] + 22, 32, 10);
     const sh = L.shoe || '#2e2c30'; path(ctx, c => c.ellipse(ank[0] + sd * 6, 44, 30, 14, 0, 0, TAU), sh, 4);
     if (L.sneaker) { path(ctx, c => c.rect(ank[0] + sd * 6 - 30, 46, 60, 7), '#f4f4f4', 2.5); } };
   const sitTwin = k => { const S = O[k], L = S.legs || {}; O[k + '@sit'] = Object.assign({}, S, { legs: { kind: 'sit', c: L.kind === 'bare' ? null : (L.c || L.sock), shoe: S.boot || (S.feet === 'barefoot' ? Gd.C.face : '#2e2c30'), sneaker: S.sneaker }, feet: 'none' }); };

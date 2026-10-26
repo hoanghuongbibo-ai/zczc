@@ -53,6 +53,7 @@
     TS.sohoMap(ctx, t, clamp(lt / 3.5)); if (lt > R(268)) { const k = clamp((lt - R(268)) / .6); ctx.save(); ctx.lineWidth = 6; ctx.strokeStyle = `rgba(200,40,30,${k})`; ctx.beginPath(); ctx.arc(640, 352, 150, 0, TAU); ctx.stroke(); ctx.restore(); }
     if (lt > R(269)) { const k = K.pop(lt, R(270), .4); ctx.save(); ctx.translate(1060, 560); ctx.scale(k, k); K.paper(ctx, 0, 0, 340, 200, { draw: c => { EK.txt(c, '89', 0, -30, '80px "Luckiest Guy"', '#2a2420'); EK.txt(c, 'cholera deaths in one week', 0, 50, '700 22px Fredoka', '#3a2618'); } }); ctx.restore(); }
     EP.dateTag(ctx, "Snow's map · 1854");
+    TS.globeOver(ctx, t, lt, -0.137, 51.513, { D: 2.4 });
   });
   S(272, (ctx, lt, dur, t, R) => {   // 8 September: the pump's handle is removed. Later: a cesspit a few feet away had been leaking into the well.
     if (lt < R(274)) { ctx.save(); push(ctx, lt, dur, 1.2, 1.35, 640, 420); TS.soho(ctx, t, { handle: lt < R(273) + .6 }); ctx.restore(); EP.dateTag(ctx, '8 September 1854'); if (lt > R(273)) K.tag(ctx, 'the handle is removed', 640, 140, lt, R(273) + .4, { size: 30 }); return; }
@@ -131,6 +132,7 @@
     ctx.save(); ctx.lineCap = 'round'; ln(ctx, [[x0, y0], [lerp(x0, x1, k), lerp(y0, y1, k)]], 20, '#3a2418'); ln(ctx, [[x0, y0], [lerp(x0, x1, k), lerp(y0, y1, k)]], 13, '#b8643e'); ctx.restore();
     TS.pin(ctx, 'usa', v, -74.0, 40.7, 'New York', clamp(lt / .4)); TS.pin(ctx, 'usa', v, -87.6, 41.9, 'Chicago', clamp((lt - 1.6) / .4));
     K.tag(ctx, '≈ 1,000+ miles of brick sewer', 640, 120, lt, 1.0, { size: 30 }); if (lt > R(309)) K.tag(ctx, '…all of it under ONE city', 640, 640, lt, R(309), { size: 32 });
+    TS.globeOver(ctx, t, lt, -82, 41.3, { D: 2.2 });
   });
   S(310, (ctx, lt, dur, t, R) => {   // London suffers one more cholera outbreak, in 1866 — in an area not yet connected to the new system
     TS.londonMap(ctx, t, 1); const k = clamp((lt - R(311)) / .5); ctx.save(); ctx.globalAlpha = .35 * k; ctx.fillStyle = '#c8322a'; ctx.beginPath(); ctx.ellipse(1040, 300, 130, 80, 0, 0, TAU); ctx.fill(); ctx.restore();

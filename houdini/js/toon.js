@@ -87,6 +87,7 @@
     for (const s of shots) if (t >= s.start && t < s.end) { ctx.save(); s.draw(ctx, t - s.start, s.end - s.start, t); ctx.restore(); }
     if (G.TOON_POST) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); G.TOON_POST(ctx, t); ctx.restore(); }   // optional colour grade
     finish(ctx, t, G.TOON_FINISH || {});   // a page can set window.TOON_FINISH = { grain, vignette }
+    if (G.TOON_UI) { ctx.save(); G.TOON_UI(ctx, t); ctx.restore(); }   // crisp text layer drawn after grade + grain (see js/ui.js)
   }
 
   // ---------- cinematic helpers ----------

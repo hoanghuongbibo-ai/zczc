@@ -71,3 +71,24 @@
   };
   EP.lineEnd = lineEnd;
 })(window);
+
+/* ---------- crisp text layer (js/ui.js): every label / card / stamp / bubble is deferred and laid out after the grade ---------- */
+(function (G) {
+  'use strict';
+  const UI = G.UI, K = G.VK, EK = G.EK, FX = G.FX, EP = G.EP, T = G.Toon, clamp = T.clamp;
+  const direct = () => UI.flushing;
+  K.tag = (ctx, text, x, y, lt, t0, o = {}) => { const k = K.pop(lt, t0); if (k <= 0) return; UI.tag(ctx, text, x, y, Math.max(24, o.size || 26), { k, rot: o.rot, fill: o.fill }); };
+  EP.label = (ctx, lt, t0, text, x = 640, y = 110, col = '#d23a2a') => { const k = FX.settle(clamp((lt - t0) / .3)); if (k <= 0) return; UI.sign(ctx, text, x, y, 44, { k, fill: col === '#c8322a' ? '#d23a2a' : col }); };
+  const stamp0 = FX.stamp; FX.stamp = (ctx, text, x, y, k, o = {}) => { if (direct()) return stamp0(ctx, text, x, y, k, o); if (k <= 0) return; UI.sign(ctx, text, x, y, Math.min(64, o.size || 48), { k: FX.settle(clamp(k)), rot: o.rot, fill: o.color === '#2a7a4a' ? '#2a8a52' : '#d23a2a' }); };
+  const big0 = FX.bigText; FX.bigText = (ctx, text, x, y, px, o = {}) => { if (direct() || px <= 0) return big0(ctx, text, x, y, px, o); ctx.save(); ctx.font = `${px}px "Luckiest Guy"`; const w = ctx.measureText(text).width + px * .4; ctx.restore(); UI.box(ctx, x, y - px * .1, w, px * 1.25, c => big0(c, text, x, y, px, o)); };
+  const card0 = EP.card; EP.card = (ctx, text, x, y, lt, t0, o = {}) => { if (direct()) return card0(ctx, text, x, y, lt, t0, o); const k = K.pop(lt, t0, .4); if (k <= 0) return; const lines = text.split('\n'), sz = o.size || 32; ctx.save(); ctx.font = `700 ${sz}px Fredoka`; const w = o.w || Math.max(...lines.map(l => ctx.measureText(l).width)) + 70, h = lines.length * sz * 1.3 + 40; ctx.restore();
+    UI.box(ctx, x, y, (w + 16) * k, (h + 16) * k, c => card0(c, text, x, y, lt, t0, o)); };
+  const name0 = EK.nameCard; EK.nameCard = (ctx, lt, t0, name, role, x, y, o = {}) => { if (lt < t0) return; UI.box(ctx, x, y, (o.w || 380) + 20, 132, c => name0(c, lt, t0, name, role, x, y, o)); };
+  const count0 = EK.count; EK.count = (ctx, x, y, to, lt, t0, d, label, o = {}) => { if (lt < t0 - .2) return; const sz = o.size || 84; UI.box(ctx, x, y + sz * .2, Math.max(sz * 3.4, label ? label.length * 13 + 40 : 0), sz * 1.9, c => count0(c, x, y, to, lt, t0, d, label, o)); };
+  const ref0 = EP.refrain; EP.refrain = (ctx, lt, t0, num, o = {}) => { const k = K.pop(lt, t0, .4); if (k <= 0) return; const y = o.y ?? 610; UI.box(ctx, 680, y, 1040, 130, c => ref0(c, lt, t0, num, o)); };
+  const rule0 = EP.rule; EP.rule = (ctx, lt, t0, text) => { if (K.pop(lt, t0, .4) <= 0) return; UI.box(ctx, 640, 600, 1000, 140, c => rule0(c, lt, t0, text)); };
+  EP.dateTag = (ctx, s) => { ctx.save(); ctx.font = '700 20px Fredoka'; const w = ctx.measureText(s).width + 40; ctx.restore(); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); UI.box(ctx, 30 + w / 2, 42, w + 10, 44, c => FX.dateTag(c, s), { free: true }); ctx.restore(); };
+  const sp0 = EP.speech; EP.speech = (ctx, who, text, from, limit, t, o) => { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); UI.box(ctx, 640, 360, 1, 1, c => sp0(c, who, text, from, limit, t, o), { free: true }); ctx.restore(); };
+  // every figure registers its head as an obstacle so labels keep clear of faces
+  const fig0 = K.fig; K.fig = (ctx, x, y, s, o, blur) => { fig0(ctx, x, y, s, o, blur); if (s >= .45 && !UI.flushing) UI.face(ctx, x - 190 * s, y - 650 * s, x + 190 * s, y - 330 * s); };
+})(window);

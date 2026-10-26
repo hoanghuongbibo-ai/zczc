@@ -60,6 +60,19 @@ Then wait for the assets + voice (or "run").
 6. **Learn.** After every video, add new lessons and the user's feedback to the *Lessons* section below (and to the
    style rules if it's a rule), then commit + push this file. This skill is the only memory between sessions.
 
+## USER RULES — real media, readability, grounding, globe maps (2026-10-26, apply to EVERY video)
+1. **Real media first: Wikimedia Commons.** When a shot needs a photo or clip of a specific place, object, document or event, search Wikimedia Commons first (API: https://commons.wikimedia.org/w/api.php). Use only **public domain or CC-BY / CC-BY-SA** files (check `extmetadata.LicenseShortName`). Download into `<ep>/assets/commons/`, record title, author, licence and URL in `<ep>/assets/commons/credits.json`, and **credit them**:
+   - a small credit line on screen while the photo shows
+   - a full credits roll at the end of the video
+   - a `CREDITS.md`
+   Don't skimp on images or credits.
+2. **Collage look.** Mix real photos into the cartoon: taped polaroids, torn paper and cut-outs over the painted sets, with a slow Ken Burns pan inside each photo. Board/diagram shots never sit on an empty board; give them a collage of real photos plus painted props.
+3. **Readable text.** Labels, tags, stamps and cards must never overlap each other, faces or the frame edge (safe margin about 30 px), and must never look blurry or faded. Draw all text after the grade/grain pass (crisp UI layer). Use solid high-contrast colours, e.g. dark ink on cream with a thick outline, or white on solid red. No semi-transparent grunge stamps for important words.
+4. **Lively, detailed backgrounds.** No empty or plain frames: add plants, animals (birds, cats, goats, chickens, fish), small props and background people. Every set gets foreground, midground and background detail with motion.
+5. **Grounding: nothing floats or flies.** Houses, walls, furniture and props stand on the ground with contact shadows. Never move the set itself up or down to reveal something; move the camera with a clear ground line, or use a cutaway that keeps the ground fixed. Characters enter by walking in, not by rising out of the floor.
+6. **Real sound.** Use real recorded sounds (flush, water, crowd, bells, rain, from Commons PD/CC-BY audio) where it fits. While a real sound plays, duck or mute the background music so they don't fight.
+7. **Maps on a spherical Earth.** Start every map on a 3D globe (orthographic projection, Natural Earth public-domain land data, ocean shading, atmosphere glow), rotate to the region and zoom in, then hand off to the detailed regional map.
+
 ## Style rules (locked)
 
 - Explainer look of the user's reference clips: flat sets, soft vignette + centre glow, paper date tag top-left, paper

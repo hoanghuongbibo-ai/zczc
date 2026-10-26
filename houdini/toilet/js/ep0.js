@@ -35,15 +35,22 @@
     if (lt > R(8)) K.tag(ctx, '…gone.', 640, 120, lt, R(8), { size: 40, rot: -.03 });
   });
   S(9, (ctx, lt, dur, t, R) => {   // you don't think about where. You've never had to. (the floor slides away: a pipe going down into "?")
-    const k = ease.inOut(clamp(lt / 1.2)); ctx.save(); ctx.translate(0, -k * 300); EP.viewerScene(ctx, t, lt, { face: { mouth: 'smile', eyes: 'half', look: [.3, .5] } });
-    ctx.fillStyle = '#5a4a3a'; ctx.fillRect(0, H, W, 400); sh(ctx, '#d8dee2', 4, c => c.rect(610, 700, 60, 360)); for (let i = 0; i < 6; i++) { const y = 720 + ((t * 120 + i * 60) % 340); ctx.fillStyle = 'rgba(120,170,200,.5)'; ctx.fillRect(620, y, 40, 12); }
-    ctx.restore(); if (k > .6) { FX.bigText(ctx, '?', 640, 600, 220 * K.pop(lt, 1.0, .5), { fill: '#ffd23a' }); }
+    // the room stays put (grounding rule): a cutaway panel opens in the floor and shows the pipe going down into "?"
+    const k = ease.inOut(clamp(lt / 1.0)); EP.viewerScene(ctx, t, lt, { face: { mouth: 'smile', eyes: 'half', look: [.3, .5] } });
+    if (k > 0) { const cx = 990, cy = 380, r = 230 * ease.out(k); ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.clip();   // x-ray lens: what is under the floor
+      ctx.fillStyle = '#cfe0ea'; ctx.fillRect(cx - r, cy - r, 2 * r, 2 * r); ctx.fillStyle = '#9aa8b0'; ctx.fillRect(cx - r, cy - 150, 2 * r, 22);
+      ctx.fillStyle = '#6a4a30'; ctx.fillRect(cx - r, cy - 128, 2 * r, 400); ctx.fillStyle = 'rgba(40,25,10,.35)'; for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.arc(cx - 220 + (i * 97) % 440, cy - 120 + (i * 53) % 340, 4 + i % 5, 0, TAU); ctx.fill(); }
+      sh(ctx, '#f4f4f0', 4, c => c.roundRect(cx - 70, cy - 240, 140, 90, 20)); sh(ctx, '#d8dee2', 4, c => c.rect(cx - 26, cy - 152, 52, 400));
+      for (let i = 0; i < 6; i++) { const y = cy - 140 + ((t * 120 + i * 60) % 360); ctx.fillStyle = 'rgba(80,140,190,.7)'; ctx.fillRect(cx - 18, y, 36, 12); }
+      ctx.font = '120px "Luckiest Guy"'; ctx.textAlign = 'center'; ctx.lineWidth = 10; ctx.strokeStyle = '#2a1a10'; ctx.strokeText('?', cx + 110, cy + 150); ctx.fillStyle = '#ffd23a'; ctx.fillText('?', cx + 110, cy + 150); ctx.restore();
+      ctx.save(); ctx.lineWidth = 10; ctx.strokeStyle = '#2a1a10'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.stroke(); ctx.lineWidth = 4; ctx.strokeStyle = '#fff'; ctx.beginPath(); ctx.arc(cx, cy, r - 8, 0, TAU); ctx.stroke(); ctx.restore(); }
   });
   fx(11, 'whoosh', .6, -.2); fx(11, 'wind', .5, 0, 6);
   mood(11, 'curious');
   S(11, (ctx, lt, dur, t, R) => {   // hard cut: an island off the top of Scotland, ~5,000 years ago; a little stone village
     ctx.save(); push(ctx, lt, dur, 1.12, 1.0, 700, 560); TS.orkney(ctx, t, lt * 10); ctx.restore();
     EP.dateTag(ctx, 'ORKNEY · c. 3100 BC'); if (lt > R(12)) K.tag(ctx, 'a little stone village', 700, 420, lt, R(12), { size: 26 });
+    TS.globeOver(ctx, t, lt, -3.34, 59.05);
   });
   fx(16, 'pop', .4, .1);
   S(13, (ctx, lt, dur, t, R) => {   // inside the houses, built into the walls: small cells… and under some of them? Drains.
@@ -80,9 +87,9 @@
   });
   fx(27, 'boing', .5, .1); fx(29, 'whoosh', .5, .6);
   S(27, (ctx, lt, dur, t, R) => {   // Crapper pops in grinning — "Not yet, Tom. Get out."
-    TS.showroom(ctx, t); const up = ease.out(clamp(lt / .35)) - ease.inOut(clamp((lt - (R(30) + .2)) / .5));
+    TS.showroom(ctx, t); const up = ease.inOut(clamp(lt / .8)) - ease.inOut(clamp((lt - (R(30) + .2)) / .8));
     theo(ctx, 360, 760, .95, { t, pose: lt > R(29) ? 'pointSide' : 'present', turn: .35, vis: say(t), face: { mouth: lt > R(29) ? 'flat' : 'smile', brows: lt > R(29) ? 'skeptic' : 'up', eyes: lt > R(29) ? 'half' : 'open', look: [.7, -.1] } });
-    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 920, 760 + (1 - up) * 560, .95, { t, pose: lt > R(29) ? 'shrug' : 'cheer', turn: -.35, face: { mouth: lt > R(29) ? 'frown' : 'grin', eyes: lt > R(29) ? 'open' : 'happy', brows: lt > R(29) ? 'worried' : 'up' } }); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 920 + (1 - up) * 640, 760, .95, { t, walk: up > .01 && up < .99 ? t * 9 : null, pose: lt > R(29) ? 'shrug' : 'cheer', turn: -.35, face: { mouth: lt > R(29) ? 'frown' : 'grin', eyes: lt > R(29) ? 'open' : 'happy', brows: lt > R(29) ? 'worried' : 'up' } }); ctx.restore();
     if (lt < R(29)) K.tag(ctx, '"TA-DA!"', 1000, 150, lt, .3, { size: 30 });
   }, -.3);
 

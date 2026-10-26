@@ -135,9 +135,9 @@
   mood(217, 'comic');
   fx(217, 'boing', .6, .2); fx(217, 'confetti', .5, .5);
   S(217, (ctx, lt, dur, t, R) => {   // "Fine. Now, Tom." Crapper bursts in, ecstatic. A real Victorian plumber in London.
-    TS.showroom(ctx, t); const up = ease.out(clamp((lt - .5) / .4));
+    TS.showroom(ctx, t); const up = ease.inOut(clamp((lt - .3) / .8));
     theo(ctx, 300, 760, .9, { t, outfit: 'victorian', hat: 'topHat', pose: lt < .6 ? 'shrug' : 'present', turn: .35, vis: say(t), face: { mouth: 'smile', eyes: 'half', brows: 'up' } });
-    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 860, 760 + (1 - up) * 560, 1.0, { t, pose: 'cheer', turn: -.3, hair: Gd.hairRing(lt - .9), face: { mouth: 'grin', eyes: 'happy', brows: 'up', blush: true } }); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 860 + (1 - up) * 640, 760, 1.0, { t, walk: up > .01 && up < .99 ? t * 9 : null, pose: 'cheer', turn: -.3, hair: Gd.hairRing(lt - .9), face: { mouth: 'grin', eyes: 'happy', brows: 'up', blush: true } }); ctx.restore();
     if (lt > R(219)) EK.nameCard(ctx, lt, R(219), 'THOMAS CRAPPER', 'Victorian plumber, London · 1836–1910', 900, 110, { icon: 'brush', w: 520 });
   });
   fx(221, 'stamp', .6, .4); fx(225, 'stamp', .6, .2);

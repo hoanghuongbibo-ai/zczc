@@ -19,6 +19,7 @@
     if (lt > R(64)) EK.nameCard(ctx, lt, R(64) + .3, 'MOHENJO-DARO', 'mo-HEN-jo DAH-ro · in Sindh, Pakistan', 330, 620, { icon: 'brush', w: 480 });
     if (lt > R(65)) K.tag(ctx, 'one of the biggest cities on Earth', 900, 140, lt, R(65), { size: 26 });
     if (lt > R(66)) label(ctx, lt, R(66) + .2, 'OBSESSED WITH DRAINAGE', 900, 230);
+    TS.globeOver(ctx, t, lt, 68.14, 27.33);
   });
   S(67, (ctx, lt, dur, t, R) => {   // a private bathing area in almost every house; house drains → covered brick street drains, big enough to climb in
     ctx.save(); cover(ctx, lt, [[0, 1.15, 600, 420], [R(68), 1.0, 640, 400], [R(69), 1.35, 900, 560]]); TS.mohenjo(ctx, t);
@@ -67,6 +68,7 @@
     const u = ease.inOut(clamp(lt / 2.6)), v = { lon: lerp(15, 12.5, u), lat: lerp(38, 41.9, u), z: lerp(.55, 1.4, u) };
     TS.map(ctx, t, 'med', v); TS.pin(ctx, 'med', v, 12.48, 41.89, 'ROME', clamp((lt - .6) / .4)); EP.dateTag(ctx, 'Roman Empire');
     if (lt > R(86)) K.tag(ctx, 'the Romans ♥ infrastructure', 640, 640, lt, R(86), { size: 30 });
+    TS.globeOver(ctx, t, lt, 12.48, 41.89, { D: 2.2 });
   });
   S(87, (ctx, lt, dur, t, R) => {   // aqueducts bring water in; the Cloaca Maxima — "the Greatest Sewer" — carries water out toward the Tiber
     ctx.save(); push(ctx, lt, dur, 1.0, 1.08, 450, 450); TS.rome(ctx, t); ctx.restore();
@@ -158,9 +160,9 @@
   });
   fx(138, 'boing', .5); fx(138, 'whoosh', .4, 1.2);
   S(138, (ctx, lt, dur, t, R) => {   // Crapper pops in again — "Still no, Tom."
-    TS.medieval(ctx, t); const up = ease.out(clamp(lt / .3)) - ease.inOut(clamp((lt - 1.1) / .5));
+    TS.medieval(ctx, t); const up = ease.inOut(clamp(lt / .7)) - ease.inOut(clamp((lt - 1.1) / .7));
     theo(ctx, 360, 760, .95, { t, outfit: 'medieval', hat: 'hood', pose: 'pointSide', turn: .35, vis: say(t), face: { mouth: 'flat', eyes: 'half', brows: 'skeptic', look: [.7, -.1] } });
-    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 940, 760 + (1 - up) * 560, .95, { t, pose: lt > .8 ? 'shrug' : 'cheer', turn: -.35, face: { mouth: lt > .8 ? 'frown' : 'grin', eyes: lt > .8 ? 'open' : 'happy', brows: lt > .8 ? 'worried' : 'up' } }); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, W, 760); ctx.clip(); fig(ctx, 'crapper', 940 + (1 - up) * 640, 760, .95, { t, walk: up > .01 && up < .99 ? t * 9 : null, pose: lt > .8 ? 'shrug' : 'cheer', turn: -.35, face: { mouth: lt > .8 ? 'frown' : 'grin', eyes: lt > .8 ? 'open' : 'happy', brows: lt > .8 ? 'worried' : 'up' } }); ctx.restore();
   }, -.2);
 
   // ===================== BEAT 5 — sponsor bridge (no sponsor read in the recording): the recap =====================

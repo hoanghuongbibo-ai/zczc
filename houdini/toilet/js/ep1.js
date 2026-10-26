@@ -50,7 +50,7 @@
     const px = 720 + 0, py = lerp(320, 500, down); G.potFace(ctx, px, py, 1.1, lt > R(79) - .1 ? 'flat' : 'face', lt > R(79) && lt < R(79) + .6 ? Math.abs(Math.sin(lt * 16)) : 0);
     EP.mark(ctx, 'pot', px, py + 260 * .45, .45, 300, 380); ctx.restore();
     EP.speech(ctx, 'exc', '"A sacred funerary vessel."', L(78), L(79), t); EP.speech(ctx, 'pot', '"Buddy."', L(79), L(80), t);
-    if (lt < R(78)) K.tag(ctx, 'mistaken for burial urns', 640, 120, lt, .3, { size: 28 }); EP.dateTag(ctx, 'EXCAVATOR · 1920s');
+    if (lt < R(78)) K.tag(ctx, 'mistaken for burial urns', 640, 120, lt, .3, { size: 28 });
   });
   fx(83, 'stamp', .7, .4);
   S(80, (ctx, lt, dur, t, R) => {   // not flushing porcelain thrones. What they nailed: the pipe. House → drain → away.

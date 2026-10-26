@@ -163,7 +163,7 @@
 
   // =================== Soho, Broad Street, 1854 (still, dark, no jokes) ===================
   const sohoL = () => layer('t-soho', g => { g.fillStyle = grad(g, 0, 0, 0, 420, [[0, '#2a2e3a'], [1, '#4a4a52']]); g.fillRect(-PAD, 0, W + PAD * 2, 420);
-    for (const [x, w, h, col] of [[-PAD, 360, 400, '#5a4a40'], [330, 320, 440, '#4e423a'], [650, 340, 420, '#5a4c42'], [990, 360, 400, '#504238']]) { bricks(g, x, 470 - h, w, h, { c: col, mortar: '#3a322c', bw: 34, bh: 14, seed: x });
+    for (const [x, w, h, col] of [[-PAD, 330 + PAD, 400, '#5a4a40'], [330, 320, 440, '#4e423a'], [650, 340, 420, '#5a4c42'], [990, 360, 400, '#504238']]) { bricks(g, x, 470 - h, w, h, { c: col, mortar: '#3a322c', bw: 34, bh: 14, seed: x });
       for (let row = 0; row < 3; row++) for (let i = 0; i < 3; i++) { const wx = x + 40 + i * (w - 80) / 3, wy = 470 - h + 40 + row * 110; sh(g, '#1e1c22', 3, c => c.rect(wx, wy, 50, 76)); if ((row + i + x) % 4 === 0) { g.fillStyle = 'rgba(255,190,110,.35)'; g.fillRect(wx + 4, wy + 4, 42, 68); } } }
     g.fillStyle = grad(g, 0, 470, 0, H, [[0, '#4a4640'], [1, '#2a2824']]); g.fillRect(-PAD, 470, W + PAD * 2, H - 470); const r = rng(5); for (let i = 0; i < 60; i++) slab(g, -PAD + r() * (W + PAD * 2), 480 + r() * 220, 50 + r() * 50, 12, '#3e3a34', i);
     // the Broad Street pump: cast-iron column with a handle and spout

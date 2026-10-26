@@ -1,0 +1,129 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* Variant B — "the reflection": Venice's skyline at sunset, but its reflection in the lagoon is an
+ * upside-down forest. A gondolier leans over the side and can't believe what he sees. */
+const T = Toon(document.getElementById('c'), 5), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const WL = 610;
+
+function sky() {
+  g.fillStyle = lg(0, 0, 0, WL, [[0, '#4a2c6b'], [.4, '#c2507a'], [.75, '#f59a55'], [1, '#ffd88c']]); g.fillRect(0, 0, W, WL);
+  g.fillStyle = rg(1230, WL, 0, 900, [[0, 'rgba(255,240,190,1)'], [.12, 'rgba(255,210,130,.8)'], [.4, 'rgba(250,150,90,.25)'], [1, 'rgba(250,150,90,0)']]); g.fillRect(0, 0, W, WL);
+  fill(c => c.arc(1230, WL, 120, Math.PI, 0), '#fff2c4');
+  g.fillStyle = 'rgba(255,200,170,.35)';
+  [[300, 120, 260, 26], [620, 200, 200, 18], [1600, 90, 240, 22]].forEach(([x, y, rx, ry]) => { T.P(ell(x, y, rx, ry)); g.fill(); });
+}
+// Skyline silhouettes; the same list drives the reflected trees, so each building gets its tree.
+const SIL = '#3b1f3d', LIT = '#ffcf6a';
+const blds = [
+  { kind: 'dome', x: 820, w: 260, h: 150, top: 120 },   // Salute
+  { kind: 'dome', x: 1010, w: 120, h: 90, top: 60 },
+  { kind: 'block', x: 1120, w: 140, h: 120 },
+  { kind: 'tower', x: 1340, w: 70, h: 330 },           // Campanile
+  { kind: 'dome', x: 1490, w: 150, h: 120, top: 80 },   // basilica domes
+  { kind: 'dome', x: 1610, w: 110, h: 110, top: 60 },
+  { kind: 'block', x: 1780, w: 280, h: 130 },          // Doge's Palace
+];
+function skyline() {
+  g.fillStyle = SIL;
+  g.fillRect(660, WL - 60, W - 660, 60);
+  for (const b of blds) {
+    const L = b.x - b.w / 2, R = b.x + b.w / 2, base = WL - 50;
+    T.P(c => {
+      if (b.kind === 'dome') { c.moveTo(L, WL); c.lineTo(L, base - b.h + 40); c.quadraticCurveTo(L, base - b.h - b.top * .8, b.x, base - b.h - b.top); c.quadraticCurveTo(R, base - b.h - b.top * .8, R, base - b.h + 40); c.lineTo(R, WL); }
+      else if (b.kind === 'tower') { c.moveTo(L, WL); c.lineTo(L, base - b.h); c.lineTo(b.x, base - b.h - 90); c.lineTo(R, base - b.h); c.lineTo(R, WL); }
+      else { c.moveTo(L, WL); c.lineTo(L, base - b.h); for (let x = L; x < R; x += 24) { c.lineTo(x + 12, base - b.h - 14); c.lineTo(x + 24, base - b.h); } c.lineTo(R, WL); }
+      c.closePath();
+    }); g.fill();
+    if (b.kind === 'dome') { g.fillRect(b.x - 4, base - b.h - b.top - 40, 8, 44); }
+    // lit windows
+    g.fillStyle = LIT;
+    const rows = b.kind === 'tower' ? [base - b.h + 30] : [base - b.h * .55, base - b.h * .2];
+    rows.forEach(y => { for (let x = L + 16; x < R - 20; x += 34) T.P(rr(x, y, 12, 22, 6)) || g.fill(); });
+    g.fillStyle = SIL;
+  }
+  // golden rim light on the left edges facing the sun
+  g.fillStyle = 'rgba(255,180,90,.25)'; g.fillRect(660, WL - 60, W - 660, 6);
+}
+function water() {
+  g.fillStyle = lg(0, WL, 0, H, [[0, '#2a6b86'], [.5, '#174a62'], [1, '#0d2838']]); g.fillRect(0, WL, W, H - WL);
+  // the "reflection": draw upside-down trees on an offscreen canvas, then copy it in rippled strips
+  const oc = document.createElement('canvas'); oc.width = W; oc.height = H; const o = Toon(oc, 9), og = o.g;
+  // each building's reflection is a tree of the same height and footprint
+  const tree = (cx, total, tw, shape, w) => {
+    const trunkLen = total * (shape === 'cypress' ? .25 : .5);
+    o.ink(c => { c.moveTo(cx - tw / 2, WL); c.lineTo(cx - tw * .35, WL + trunkLen + 20); c.lineTo(cx + tw * .35, WL + trunkLen + 20); c.lineTo(cx + tw / 2, WL); c.closePath(); }, '#8a5a34', 6);
+    [-1, 1].forEach(s => { o.line([[cx + s * tw * .3, WL + 8], [cx + s * tw * 1.3, WL + 3]], 14); o.line([[cx + s * tw * .3, WL + 8], [cx + s * tw * 1.3, WL + 3]], 6, '#8a5a34'); });
+    const top = WL + trunkLen, bot = WL + total;
+    if (shape === 'cypress') {
+      o.ink(c => { c.moveTo(cx, bot + 30); c.bezierCurveTo(cx - w * .9, bot - 40, cx - w * .9, top + 60, cx, top); c.bezierCurveTo(cx + w * .9, top + 60, cx + w * .9, bot - 40, cx, bot + 30); c.closePath(); }, '#2f8a43', 6);
+      o.fill(c => { c.moveTo(cx - w * .2, bot - 20); c.bezierCurveTo(cx - w * .6, bot - 80, cx - w * .6, top + 90, cx - w * .1, top + 40); c.lineTo(cx - w * .15, bot - 60); c.closePath(); }, 'rgba(170,230,120,.45)');
+    } else {
+      const R = w / 2, cy = (top + bot) / 2 + 10, ry = (bot - top) / 2 + 10;
+      [[0, 0, 1, 1], [-.55, -.25, .6, .6], [.55, -.25, .6, .6], [-.4, .4, .6, .6], [.4, .4, .6, .6]].forEach(([dx, dy, sx, sy]) => o.ink(ell(cx + dx * R, cy + dy * ry, R * sx, ry * sy), '#46a447', 6));
+      [[-.25, -.15, .4], [.35, .2, .25]].forEach(([dx, dy, k]) => o.fill(ell(cx + dx * R, cy + dy * ry, R * k, ry * k * .7), 'rgba(190,240,130,.5)'));
+    }
+  };
+  for (const b of blds) {
+    const total = 50 + b.h + (b.kind === 'dome' ? b.top : b.kind === 'tower' ? 90 : 14);
+    if (b.kind === 'block') { const n = Math.round(b.w / 70); for (let i = 0; i < n; i++) tree(b.x - b.w / 2 + (i + .5) * b.w / n, total, 22, 'round', b.w / n + 10); }
+    else tree(b.x, total, b.kind === 'tower' ? 30 : Math.max(30, b.w * .18), b.kind === 'tower' ? 'cypress' : 'round', b.kind === 'tower' ? b.w * 1.1 : b.w);
+  }
+  // even the gondolier's own reflection is a little tree — wearing his hat
+  tree(330, 300, 26, 'round', 150);
+  o.boater(330, WL + 330, .8, Math.PI);
+  g.save(); g.globalAlpha = .9;
+  for (let y = WL; y < H; y += 6) { const off = Math.sin(y * .09) * (2 + (y - WL) * .012); g.drawImage(oc, 0, y, W, 6, off, y, W, 6); }
+  g.restore();
+  // darken with depth + teal tint so it sits "in" the water
+  g.fillStyle = lg(0, WL, 0, H, [[0, 'rgba(30,110,140,.15)'], [1, 'rgba(10,30,45,.6)']]); g.fillRect(0, WL, W, H - WL);
+  // sun glitter column + ripple lines
+  for (let y = WL + 4; y < H; y += 14) { const k = 1 - (y - WL) / (H - WL), w = 60 + T.rnd() * 120 * k + 40; T.line([[1230 - w / 2 + (T.rnd() - .5) * 40, y], [1230 + w / 2 + (T.rnd() - .5) * 40, y]], 5, `rgba(255,225,160,${.65 * k})`); }
+  for (let i = 0; i < 60; i++) { const x = T.rnd() * W, y = WL + 6 + T.rnd() * (H - WL); T.line([[x, y], [x + 30 + T.rnd() * 70, y]], 4, `rgba(255,255,255,${.15 + T.rnd() * .35})`); }
+  T.line([[0, WL], [W, WL]], 6, 'rgba(255,240,200,.8)');
+}
+function gondola() {
+  // hull across the left, prow curling up on the right with the iron ferro
+  ink(c => { c.moveTo(-60, WL - 40); c.quadraticCurveTo(300, WL + 40, 640, WL + 10); c.quadraticCurveTo(760, WL - 10, 790, WL - 120); c.lineTo(812, WL - 116); c.quadraticCurveTo(800, WL + 20, 650, WL + 50); c.quadraticCurveTo(300, WL + 80, -60, WL + 30); c.closePath(); }, '#1f1915', 6);
+  T.line([[0, WL - 4], [620, WL + 14]], 4, 'rgba(255,200,120,.55)');
+  ink(c => { c.moveTo(790, WL - 120); c.lineTo(840, WL - 150); c.lineTo(842, WL - 128); c.lineTo(818, WL - 126); c.lineTo(842, WL - 108); c.lineTo(816, WL - 100); c.closePath(); }, '#d9dde2', 4);
+  ink(rr(430, WL - 22, 140, 26, 8), '#b8261f', 5);   // seat cushion
+}
+function gondolier() {
+  // oar first (behind), angled into the water
+  T.line([[150, 120], [470, 720]], 22); T.line([[150, 120], [470, 720]], 12, '#8a5a30');
+  // legs
+  [[260, 330], [330, 390]].forEach(([x0, x1]) => { T.line([[x0, 470], [x1, WL - 10]], 30); T.line([[x0, 470], [x1, WL - 10]], 16, '#1f1f24'); ink(rr(x1 - 30, WL - 26, 60, 22, 10), '#2b2420', 5); });
+  // torso leaning forward toward the water
+  const torso = c => { c.moveTo(220, 330); c.quadraticCurveTo(300, 290, 400, 320); c.lineTo(360, 480); c.quadraticCurveTo(290, 500, 230, 480); c.closePath(); };
+  T.stripes(torso, 200, 280, 220, 230, 30);
+  ink(rr(222, 455, 146, 26, 10), '#c7322a', 4);
+  // back arm gripping the oar
+  T.line([[250, 350], [215, 260], [205, 215]], 30); T.line([[250, 350], [215, 260], [205, 215]], 18, '#fbf7ef');
+  ink(ell(204, 220, 26, 24), '#fbf7ef', 5);
+  // front arm pointing down at the water
+  T.line([[390, 400], [480, 480], [580, 560]], 32); T.line([[390, 400], [480, 480], [580, 560]], 18, '#fbf7ef');
+  ink(ell(586, 566, 26, 24), '#fbf7ef', 5); ink(rr(594, 562, 44, 16, 8), '#fbf7ef', 4);
+  // head: craned over the side, looking straight down at the "reflection"
+  const hx = 540, hy = 270;
+  T.head(hx, hy, 150);
+  T.eye(hx - 50, hy + 40, 40, 50, -4, 26, .34); T.eye(hx + 55, hy + 40, 40, 50, -2, 26, .34);
+  T.line([[hx - 100, hy - 30], [hx - 30, hy - 50]], 11); T.line([[hx + 20, hy - 50], [hx + 100, hy - 28]], 11);
+  ink(ell(hx + 6, hy + 128, 30, 34), '#7a2420', 6); fill(ell(hx + 6, hy + 146, 18, 12), '#e8726a');
+  T.drop(hx - 175, hy - 30, .9); T.drop(hx + 180, hy + 20, .8); T.drop(hx + 160, hy - 110, .6);
+  // boater blown off, tumbling down
+  T.boater(700, 180, .9, .5);
+  [[640, 120], [760, 110], [790, 160]].forEach(([x, y]) => T.line([[x, y], [x + 16, y - 16]], 5));
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  sky(); skyline(); water(); gondola(); gondolier();
+  T.grade();
+  T.title("WHAT'S REALLY", 1890, 170, 128, '#ffffff', -.03, 'right');
+  T.title('UNDER VENICE?', 1890, 350, 172, T.yellow(172), -.03, 'right');
+  T.badge('A FOREST?!', 1010, 985, 66, -.04);
+  window.DONE = true;
+});
+</script>

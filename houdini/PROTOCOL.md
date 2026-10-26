@@ -31,3 +31,8 @@ These are the steps agreed with the user while building the opening sequence.
 ## 6. Deliver
 - Commit and push to `claude/tencent-story-animation-hiuikf`, and send the MP4. If the upload is too large, send a compressed copy.
 - Summarise what changed, the defaults chosen, and anything that still needs the user's eye.
+
+## 6. Sourcing real photos and clips (standing rule)
+- When a shot needs a photo or clip of a specific place, object or event, search Wikimedia Commons first (`https://commons.wikimedia.org/w/api.php`), using `tools/commons.py`.
+- Only use **public domain** (PD, CC0, PD-old, PD-US, PD-Canada and the like) or **CC BY** files. No CC BY-SA, NC or ND, and nothing marked "fair use".
+- Credit every file: `tools/commons.py` appends title, author, licence and source URL to `<project>/assets/img/CREDITS.md`, and those credits go in the video description (and on screen where CC BY needs it).

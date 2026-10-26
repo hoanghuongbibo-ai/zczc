@@ -241,6 +241,21 @@ python3 tools/align-partN.py $S/asr.json assets/audio/narration-partN.mp3
 The aligner maps the script to the transcript with difflib and interpolates unmatched words. ANCHORS are
 `(key, phrase)` in script order; print the transcript first to see what the narrator actually said.
 
+### "It's About Salt" (houdini/salt/, Oct '26)
+- Reuses the toilet framework (`toilet/js/frame.js`, `toilet/js/cast.js`, sets) and adds `salt/js/`:
+  - `cast.js`: Han robes + mianguan/guan, French peasant/gabelou/smuggler (tricorne, beanie), dhoti/kurta + gandhiCap + specs,
+    Civil War bluejacket/officerBlue/butternut (kepi, slouch), Bronze Age miner (furCap), and `G.shaker` — the SALT SHAKER mascot
+    (turns to camera, faces smug/happy/shock, glasses + lab coat). New hats were drawn ~40 units too high: they are lowered in a
+    wrapper at the end of the file — check new hats on the cast sheet (`tools/_cast.mjs salt/castsheet.html out.png`).
+  - `maps.js` (G.MAP): crisp vector maps from Natural Earth (`view/draw/route/zone/pin/label/fly`) + `MAP.intro` = the globe flying in.
+    `EP.mapShot(ctx,t,lt,keys,{D})` = globe intro → map. Prefer it to hand-drawn polygon maps.
+  - `frame.js`: `EP.count(n, line, off)` (a SALT COUNTER plaque that slams in centre-screen with a cash-register sound, then
+    parks bottom-right for the rest of the video; drawn by show.js after each shot), `EP.refrainSalt`, `EP.busted`, `EP.quote`.
+    In refrain shots keep characters at the sides (x ≈ 250 / 1030): the counter pops at the centre.
+- `EP.board(ctx, seed, [set names])` = collage desk with three polaroids of the episode's own sets.
+- Seeded `rng(i + k)` restarted per item gives nearly identical first values — use ONE rng stream for scattered trees.
+- Serious section (Saltville massacre): 'somber'/'tender' moods, darkened set, standing figures + grave markers, no gags.
+
 ## Lessons (keep adding)
 
 - **Hands**: draw hand pieces with `Chars.union` (one outline) — separate outlined fingers looked "weird" to the user.

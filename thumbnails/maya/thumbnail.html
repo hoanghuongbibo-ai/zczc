@@ -1,0 +1,182 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* Maya thumbnail — "Where did the Maya go?": deep rainforest at golden hour. A Maya man in a
+ * quetzal-feather headdress pushes a giant leaf aside, shading his eyes, searching for his people.
+ * Behind him a Tikal-style pyramid rises out of the misty canopy, swallowed by vines. */
+const T = Toon(document.getElementById('c'), 17), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+
+function sky() {
+  g.fillStyle = lg(0, 0, 0, 700, [[0, '#f3b25a'], [.5, '#f7d488'], [1, '#d9e6b0']]); g.fillRect(0, 0, W, H);
+  g.fillStyle = rg(1560, 150, 0, 900, [[0, 'rgba(255,252,225,1)'], [.12, 'rgba(255,240,180,.85)'], [.45, 'rgba(255,215,140,.3)'], [1, 'rgba(255,215,140,0)']]); g.fillRect(0, 0, W, H);
+}
+// soft blob canopy row
+function canopy(y, amp, col, r0, seedStep = 1) {
+  g.fillStyle = col; T.P(c => { c.moveTo(0, H); c.lineTo(0, y); for (let x = 0; x <= W + 80; x += r0) c.arc(x, y - T.rnd() * amp, r0 * (.7 + T.rnd() * .5), Math.PI, 0); c.lineTo(W, H); c.closePath(); }); g.fill();
+}
+function distantPyramid(x, base, w, h, col) {
+  g.fillStyle = col;
+  const tiers = 6;
+  for (let i = 0; i < tiers; i++) { const tw = w * (1 - i / tiers * .7), th = h / tiers; g.fillRect(x - tw / 2, base - (i + 1) * th, tw, th + 2); }
+  g.fillRect(x - w * .1, base - h - h * .25, w * .2, h * .25);
+}
+function pyramid() {
+  // Tikal Temple I: nine steep tiers, a central stair, a temple and roof comb on top
+  const cx = 1440, base = 760, w = 640, tiers = 9, th = 56, stone = '#c9b48a', dark = '#9c8662';
+  for (let i = 0; i < tiers; i++) {
+    const tw = w * (1 - i / tiers * .62), y = base - (i + 1) * th;
+    ink(c => { c.moveTo(cx - tw / 2, y + th); c.lineTo(cx - tw / 2 + 10, y); c.lineTo(cx + tw / 2 - 10, y); c.lineTo(cx + tw / 2, y + th); c.closePath(); }, stone, 5);
+    // apron moulding + shade on the right side away from the sun... the sun is right, so shade left
+    fill(c => { c.moveTo(cx - tw / 2, y + th); c.lineTo(cx - tw / 2 + 10, y); c.lineTo(cx - tw / 2 + 60, y); c.lineTo(cx - tw / 2 + 50, y + th); c.closePath(); }, 'rgba(90,70,40,.3)');
+    T.line([[cx - tw / 2 + 12, y + 14], [cx + tw / 2 - 12, y + 14]], 3, 'rgba(90,70,40,.45)');
+    // moss on the ledges
+    for (let k = 0; k < 6; k++) fill(ell(cx - tw / 2 + T.rnd() * tw, y + 3, 18 + T.rnd() * 30, 7), 'rgba(80,130,50,.75)');
+  }
+  // central stairway
+  const top = base - tiers * th;
+  ink(c => { c.moveTo(cx - 70, base); c.lineTo(cx - 44, top); c.lineTo(cx + 44, top); c.lineTo(cx + 70, base); c.closePath(); }, '#d8c59a', 5);
+  for (let y = top + 10; y < base; y += 14) T.line([[cx - 44 - (y - top) * .05, y], [cx + 44 + (y - top) * .05, y]], 2.5, 'rgba(90,70,40,.5)');
+  // temple + roof comb
+  ink(rr(cx - 80, top - 110, 160, 112, 4), stone, 5);
+  ink(c => { c.moveTo(cx - 22, top); c.lineTo(cx - 22, top - 60); c.lineTo(cx + 22, top - 60); c.lineTo(cx + 22, top); c.closePath(); }, '#2a1f14', 4);
+  ink(rr(cx - 60, top - 230, 120, 124, 6), stone, 5);
+  for (let i = 0; i < 3; i++) ink(rr(cx - 44 + i * 32, top - 200, 24, 34, 5), dark, 3);
+  fill(ell(cx - 30, top - 230, 34, 10), 'rgba(80,130,50,.8)'); fill(ell(cx + 40, top - 110, 30, 9), 'rgba(80,130,50,.8)');
+  // a tree growing out of the top tiers + vines draped down
+  T.line([[cx + 160, base - 6 * th], [cx + 190, base - 7.6 * th]], 12, '#5a3d22');
+  ink(ell(cx + 200, base - 8.2 * th, 70, 44), '#4c8a3c', 5); ink(ell(cx + 160, base - 7.9 * th, 46, 30), '#5ea048', 4);
+  [[cx - 150, base - 7 * th, 220], [cx + 110, base - 8 * th, 300], [cx - 260, base - 4 * th, 160], [cx + 230, base - 4.5 * th, 180]].forEach(([x, y, l]) => {
+    g.strokeStyle = '#3f7a32'; g.lineWidth = 7; g.beginPath(); g.moveTo(x, y); g.bezierCurveTo(x + 20, y + l * .3, x - 20, y + l * .6, x + 6, y + l); g.stroke();
+    for (let k = .15; k < 1; k += .2) fill(ell(x + Math.sin(k * 9) * 12, y + l * k, 10, 6, .6), '#5ea048');
+  });
+  // golden rim light from the sun behind, then mist at the base
+  g.fillStyle = lg(cx + w / 2, 0, cx - w / 2, 0, [[0, 'rgba(255,220,140,.35)'], [.5, 'rgba(255,220,140,0)']]); g.fillRect(cx - w / 2, top - 240, w, base - top + 240);
+}
+function mist(y, h, a) { g.fillStyle = lg(0, y - h, 0, y + h, [[0, 'rgba(245,240,215,0)'], [.5, `rgba(245,240,215,${a})`], [1, 'rgba(245,240,215,0)']]); g.fillRect(0, y - h, W, h * 2); }
+function godRays() {
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 9; i++) { const x = 600 + i * 170; T.P(c => { c.moveTo(x, -20); c.lineTo(x + 70, -20); c.lineTo(x - 380, H); c.lineTo(x - 520, H); c.closePath(); }); g.fillStyle = 'rgba(255,240,190,.09)'; g.fill(); }
+  g.restore();
+}
+function trunks() {
+  // mid-ground rainforest trees with buttress roots
+  [[90, 70, '#4a3524'], [1880, 80, '#4a3524'], [1020, 46, '#5e4630']].forEach(([x, w, col]) => {
+    ink(c => { c.moveTo(x - w / 2, -20); c.lineTo(x + w / 2, -20); c.lineTo(x + w / 2, 820); c.quadraticCurveTo(x + w * 1.3, 900, x + w * 2, 930); c.lineTo(x - w * 2, 930); c.quadraticCurveTo(x - w * 1.3, 900, x - w / 2, 820); c.closePath(); }, col, 6);
+    fill(rr(x + w * .1, -20, w * .3, 840, 4), 'rgba(0,0,0,.18)');
+    for (let y = 40; y < 800; y += 90) T.line([[x - w * .3, y], [x - w * .1, y + 30]], 3, 'rgba(0,0,0,.3)');
+  });
+  // hanging lianas
+  [[300, 520], [760, 380], [1230, 300], [1700, 460]].forEach(([x, l]) => { g.strokeStyle = '#2f5a26'; g.lineWidth = 8; g.beginPath(); g.moveTo(x, -10); g.bezierCurveTo(x + 40, l * .4, x - 40, l * .7, x + 10, l); g.stroke(); fill(ell(x + 10, l, 14, 22, .3), '#3f7a32'); });
+}
+function ground() {
+  g.fillStyle = lg(0, 820, 0, H, [[0, '#4f7a35'], [1, '#2b4a20']]); T.P(c => { c.moveTo(0, 860); c.bezierCurveTo(500, 830, 1200, 880, W, 840); c.lineTo(W, H); c.lineTo(0, H); c.closePath(); }); g.fill();
+  // ferns
+  for (let i = 0; i < 22; i++) {
+    const x = T.rnd() * W, y = 870 + T.rnd() * 200, s = .7 + T.rnd() * .6;
+    for (let k = -3; k <= 3; k++) { const a = -Math.PI / 2 + k * .32; T.line([[x, y], [x + Math.cos(a) * 80 * s, y + Math.sin(a) * 70 * s]], 6 * s, k % 2 ? '#4c8a3c' : '#62a64a'); }
+  }
+}
+function stela() {
+  // a carved stela half-swallowed by roots, beside the path
+  const x = 930, y = 905, w = 210, h = 330;
+  ink(c => { c.moveTo(x - w / 2, y); c.lineTo(x - w / 2, y - h + 40); c.quadraticCurveTo(x, y - h - 20, x + w / 2, y - h + 40); c.lineTo(x + w / 2, y); c.closePath(); }, '#a39a7c', 6);
+  fill(rr(x + w / 2 - 40, y - h + 30, 36, h - 34, 8), 'rgba(50,45,30,.28)');
+  for (let r = 0; r < 5; r++) for (let k = 0; k < 3; k++) {
+    const bx = x - w / 2 + 18 + k * 60, by = y - h + 50 + r * 56;
+    ink(rr(bx, by, 52, 48, 14), '#b8af90', 3);
+    T.line([[bx + 12, by + 16], [bx + 30, by + 12], [bx + 26, by + 30]], 3, 'rgba(60,55,40,.7)');
+    fill(ell(bx + 38, by + 34, 5, 5), 'rgba(60,55,40,.7)');
+  }
+  fill(ell(x - 30, y - h + 20, 70, 16), 'rgba(80,130,50,.9)'); fill(ell(x + 70, y - 120, 30, 12), 'rgba(80,130,50,.8)');
+  [[-80, -60], [40, -120], [-20, -200], [90, -40]].forEach(([dx, dy]) => { g.strokeStyle = '#5a3d22'; g.lineWidth = 12; g.lineCap = 'round'; g.beginPath(); g.moveTo(x + dx - 60, y + 14); g.quadraticCurveTo(x + dx, y + dy, x + dx + 70, y + dy - 50); g.stroke(); });
+}
+function toucan() {
+  g.save(); g.translate(1110, 430);
+  T.line([[-80, 40], [90, 50]], 16, '#4a3524'); T.line([[-80, 40], [90, 50]], 8, '#6b4a2a');
+  ink(ell(0, 0, 34, 46), '#1f1a18', 5);
+  ink(ell(-6, -10, 22, 18), '#fbe27a', 4);
+  ink(c => { c.moveTo(10, -30); c.quadraticCurveTo(90, -40, 96, -8); c.quadraticCurveTo(60, -4, 10, -10); c.closePath(); }, '#f28a2a', 4);
+  T.line([[20, -14], [92, -14]], 3);
+  fill(c => { c.moveTo(70, -36); c.quadraticCurveTo(92, -34, 96, -12); c.lineTo(72, -14); c.closePath(); }, '#c7322a');
+  ink(ell(4, -26, 7, 7), '#fff', 3); fill(ell(2, -26, 3.5, 3.5), INK);
+  T.line([[-6, 44], [-6, 50]], 5); T.line([[8, 44], [10, 50]], 5);
+  g.restore();
+}
+function bigLeaf(x, y, len, wid, ang, col, vein) {
+  g.save(); g.translate(x, y); g.rotate(ang);
+  ink(c => { c.moveTo(0, 0); c.bezierCurveTo(len * .3, -wid, len * .8, -wid * .8, len, 0); c.bezierCurveTo(len * .8, wid * .8, len * .3, wid, 0, 0); c.closePath(); }, col, 6);
+  T.line([[0, 0], [len * .96, 0]], 4, vein);
+  for (let k = .15; k < .9; k += .12) { T.line([[len * k, 0], [len * (k + .1), -wid * .55]], 2.5, vein); T.line([[len * k, 0], [len * (k + .1), wid * .55]], 2.5, vein); }
+  g.restore();
+}
+function mayaMan() {
+  const hx = 500, hy = 680;
+  g.save(); g.translate(30, 120);
+  // cape behind (deep red), then body
+  ink(c => { c.moveTo(370, 690); c.quadraticCurveTo(300, 860, 320, 1100); c.lineTo(640, 1100); c.quadraticCurveTo(650, 860, 580, 690); c.closePath(); }, '#9e2a22', 7);
+  // torso: white cotton tunic with red and teal borders
+  const torso = c => { c.moveTo(385, 700); c.quadraticCurveTo(475, 670, 565, 700); c.lineTo(590, 1100); c.lineTo(360, 1100); c.closePath(); };
+  ink(torso, '#f4ecd8', 7);
+  g.save(); T.P(torso); g.clip();
+  g.fillStyle = 'rgba(0,0,0,.12)'; g.fillRect(530, 680, 80, 420);
+  [920, 960].forEach((y, i) => { g.fillStyle = i ? '#2a9a8a' : '#c7322a'; g.fillRect(350, y, 260, 22); });
+  for (let x = 360; x < 600; x += 30) ink(c => { c.moveTo(x, 942); c.lineTo(x + 15, 928); c.lineTo(x + 30, 942); }, null, 2);
+  g.restore();
+  // jade bead collar with a pendant
+  ink(c => { c.moveTo(380, 700); c.quadraticCurveTo(475, 790, 570, 700); c.quadraticCurveTo(475, 740, 380, 700); c.closePath(); }, '#2f9a6a', 5);
+  for (let k = 0; k < 9; k++) { const t = k / 8, x = 390 + t * 170, y = 708 + Math.sin(t * Math.PI) * 50; ink(ell(x, y, 11, 11), '#4cc08a', 3); }
+  ink(ell(475, 790, 22, 26), '#4cc08a', 4); fill(ell(468, 782, 6, 8), 'rgba(255,255,255,.6)');
+  g.restore();
+  // head
+  T.head(hx, hy, 150);
+  // jade ear spools
+  ink(ell(hx - 168, hy + 40, 28, 28), '#3fb08a', 5); fill(ell(hx - 168, hy + 40, 10, 10), '#1f5a48');
+  ink(ell(hx + 170, hy + 40, 28, 28), '#3fb08a', 5); fill(ell(hx + 170, hy + 40, 10, 10), '#1f5a48');
+  // face: squinting into the distance, worried, sweating; looking right toward the pyramid
+  T.eye(hx - 30, hy + 30, 34, 38, 16, 2, .34); T.eye(hx + 70, hy + 30, 34, 38, 16, 2, .34);
+  T.line([[hx - 74, hy - 8], [hx - 6, hy - 22]], 10); T.line([[hx + 30, hy - 26], [hx + 108, hy - 8]], 10);
+  ink(c => { c.moveTo(hx, hy + 110); c.quadraticCurveTo(hx + 30, hy + 96, hx + 60, hy + 110); c.quadraticCurveTo(hx + 56, hy + 140, hx + 30, hy + 140); c.quadraticCurveTo(hx + 4, hy + 140, hx, hy + 110); c.closePath(); }, '#7a2420', 5);
+  // face paint: red band under the eyes
+  fill(rr(hx - 80, hy + 72, 200, 14, 7), 'rgba(199,50,42,.55)');
+  T.drop(hx - 180, hy - 10, .9); T.drop(hx + 200, hy - 40, .8); T.drop(hx + 150, hy + 110, .6);
+  // headdress: jaguar-spotted band and a fan of quetzal feathers
+  const fan = [[-2.5, '#c7322a'], [-.64, '#c7322a'], [-2.25, '#2f9a5a'], [-.89, '#2f9a5a'], [-2.0, '#3fb06a'], [-1.14, '#3fb06a'], [-1.78, '#2f9a5a'], [-1.36, '#2f9a5a'], [-1.57, '#3fb06a']];
+  fan.forEach(([a, col]) => { g.save(); g.translate(hx + 10, hy - 120); g.rotate(a + Math.PI / 2);
+    ink(c => { c.moveTo(0, 0); c.quadraticCurveTo(-36, -120, 0, -230); c.quadraticCurveTo(36, -120, 0, 0); c.closePath(); }, col, 5);
+    T.line([[0, -10], [0, -215]], 3, 'rgba(20,60,30,.6)'); g.restore(); });
+  ink(rr(hx - 160, hy - 150, 320, 62, 22), '#e0a43a', 6);
+  for (let k = 0; k < 7; k++) { const x = hx - 130 + k * 44; ink(ell(x, hy - 120, 10, 8), '#3a2616', 2); fill(ell(x + 2, hy - 119, 4, 3), '#e0a43a'); }
+  ink(ell(hx + 10, hy - 122, 26, 26), '#3fb08a', 5);
+  // other arm pushing the giant leaf aside
+  T.line([[590, 840], [690, 730], [770, 610]], 34); T.line([[590, 840], [690, 730], [770, 610]], 20, '#fbf7ef');
+  ink(ell(778, 604, 30, 26), '#fbf7ef', 5);
+  // "?" marks floating off toward the pyramid
+  [[hx + 270, hy + 90, 150, .18], [hx + 400, hy - 10, 110, -.15], [hx + 470, hy + 130, 80, .3]].forEach(([x, y, sz, r]) => T.title('?', x, y, sz, '#ffffff', r, 'center'));
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  sky(); godRays();
+  canopy(520, 60, '#a9c48a', 70);
+  distantPyramid(1840, 560, 260, 230, '#b9c49a'); distantPyramid(880, 560, 220, 180, '#b5c296');
+  mist(540, 60, .6);
+  canopy(640, 50, '#7fa86a', 80);
+  pyramid();
+  mist(740, 50, .55);
+  canopy(800, 40, '#5e8f4c', 90);
+  trunks(); toucan(); ground(); stela();
+  // giant leaves framing the left; one being pushed aside by his hand
+  bigLeaf(780, 600, 520, 150, -.25, '#3f8a3a', 'rgba(20,60,20,.6)');
+  mayaMan();
+  bigLeaf(-80, 1110, 560, 160, -.32, '#2f6f2e', 'rgba(15,45,15,.6)');
+  bigLeaf(1980, 1100, 560, 160, Math.PI + .5, '#2f6f2e', 'rgba(15,45,15,.6)');
+  bigLeaf(1960, 120, 420, 120, Math.PI - .5, '#2f6f2e', 'rgba(15,45,15,.6)');
+  // fireflies / floating dust in the light
+  for (let i = 0; i < 40; i++) { const x = 600 + T.rnd() * 1200, y = 200 + T.rnd() * 700; fill(ell(x, y, 4, 4), 'rgba(255,245,190,.85)'); fill(ell(x, y, 10, 10), 'rgba(255,245,190,.15)'); }
+  T.grade('rgba(10,30,10,.6)');
+  T.title('WHERE DID', 60, 180, 150, '#ffffff', -.04);
+  T.title('THE MAYA GO?', 46, 380, 190, T.yellow(190), -.04);
+  window.DONE = true;
+});
+</script>

@@ -99,7 +99,6 @@
   S(31, (ctx, lt, dur, t, R) => {   // the honest baseline: the toilet was "outside". Pick a spot. Walk away. Done.
     TS.village(ctx, t, 0); const w = clamp((lt - R(34)) / 2);
     fig(ctx, 'neo1', lerp(520, 1010, ease.inOut(w)), 640, .7, { t, walk: w > 0 && w < 1 ? t * 8 : null, turn: w > 0 && w < 1 ? .7 : .2, face: { mouth: 'smile', look: [.6, 0] } });
-    EF.bushMass(ctx, 1000, 670, 260, 130, 77, 1);
     [[R(33), 'PICK A SPOT', 300, 200], [R(34), 'WALK AWAY', 640, 160], [R(35), 'DONE.', 980, 200]].forEach(([a, s2, x, y], i) => { if (lt > a) K.tag(ctx, s2, x, y, lt, a, { size: 34, rot: (i - 1) * .04 }); });
     EP.dateTag(ctx, 'for most of human history');
   });

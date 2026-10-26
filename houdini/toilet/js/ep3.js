@@ -35,7 +35,7 @@
   });
 
   // ----- Soho, 1854 — the music drops out; no jokes -----
-  mood(259, 'none');
+  mood(259, 'somber');
   S(259, (ctx, lt, dur, t, R) => {   // late August 1854: cholera breaks out in Soho, central London
     ctx.save(); push(ctx, lt, dur, 1.0, 1.05, 640, 420); TS.soho(ctx, t); ctx.restore(); EP.dateTag(ctx, 'Soho, London · August 1854');
   });
@@ -148,7 +148,7 @@
   });
 
   // ===================== BEAT 8 — aftermath & human cost (quiet, no jokes) =====================
-  mood(317, 'quiet');
+  mood(317, 'tender');
   function people(ctx, x, y, n, on, k, sz = 46) { for (let i = 0; i < n; i++) { const a = clamp(k * n - i); if (a <= 0) continue; ctx.save(); ctx.globalAlpha = a; ctx.translate(x + i * sz * 1.4, y); const col = i < on ? '#c8643a' : '#8aa6b8';
       sh(ctx, col, 3, circ(0, -sz * 1.4, sz * .36)); sh(ctx, col, 3, c => c.roundRect(-sz * .45, -sz * 1.0, sz * .9, sz, sz * .3)); ctx.restore(); } }
   S(317, (ctx, lt, dur, t, R) => {   // here's the part that stops being funny: the toilet you used today isn't a finished story

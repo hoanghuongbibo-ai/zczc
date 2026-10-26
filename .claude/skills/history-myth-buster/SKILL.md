@@ -73,6 +73,19 @@ Then wait for the assets + voice (or "run").
 6. **Real sound.** Use real recorded sounds (flush, water, crowd, bells, rain, from Commons PD/CC-BY audio) where it fits. While a real sound plays, duck or mute the background music so they don't fight.
 7. **Maps on a spherical Earth.** Start every map on a 3D globe (orthographic projection, Natural Earth public-domain land data, ocean shading, atmosphere glow), rotate to the region and zoom in, then hand off to the detailed regional map.
 
+
+### User rules, round 2 (2026-10-26) — the ground logic checklist (check EVERY outdoor set before rendering)
+- Background is background, ground is ground: nothing (bushes, walls, houses) may straddle the horizon or sit where the sky
+  or the water is. Build a real ground plane (meadow, plaza, road, quay) and stand everything on it with a contact shadow.
+- Every tree has a visible trunk on the ground (P.tree / pine / cypress in toilet/js/sets3.js) — no trunkless "cloud bushes".
+- Potted plants have stems and leaves on the stems (TS.pottedPlant) — never a bush blob sitting on a pot.
+- Buildings: podium/foundation or terrace wall under them (temples on steps, aqueduct on piers, Parliament on its river wall).
+- People stand on walkable surfaces (road, quay, floor) — never on a river. Boats go on the water.
+- Don't hide the subject: a farm/pen/prop the narration is about must be in the clear (no foreground tree or bush over it).
+- Fill distance with life: boats on the sea, people walking a road, birds, smoke — never an empty band.
+- Prefer a straight road into the distance with fields + trees either side and small walkers for open-country shots.
+- Music: no silent stretches (no 'none' mood); serious beats use 'somber'/'tender', duck only under real sound effects.
+
 ## Style rules (locked)
 
 - Explainer look of the user's reference clips: flat sets, soft vignette + centre glow, paper date tag top-left, paper

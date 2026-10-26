@@ -145,21 +145,31 @@
     P.motes(ctx, t, 18, 5); }
 
   // =================== the 1800s Thames ===================
-  const thamesL = v => layer('t-thames-' + v, g => { P2.overcast(g, [[0, '#7a7a6e'], [.5, '#a8a090'], [1, '#c8bca0']], 5, [900, 200]);
-    // St Paul's dome + spires in the smog
-    g.fillStyle = 'rgba(110,104,92,.7)'; g.beginPath(); g.ellipse(840, 250, 70, 64, 0, PI, TAU); g.fill(); g.fillRect(780, 250, 120, 60); g.fillRect(830, 160, 20, 40); for (const x of [300, 460, 1080]) { g.beginPath(); g.moveTo(x - 14, 310); g.lineTo(x, 190); g.lineTo(x + 14, 310); g.fill(); }
-    g.fillStyle = 'rgba(120,112,98,.75)'; for (let x = -PAD; x < W + PAD; x += 70) { const h = 40 + (Math.sin(x) + 1) * 30; g.fillRect(x, 310 - h, 64, h); }
-    P2.haze(g, 220, 340, 'rgba(200,190,160,', .6);
-    // the far bank wharves and the near embankment wall with outfall pipes
-    sh(g, '#6a5a44', 3, c => c.rect(-PAD, 330, W + PAD * 2, 30)); for (let x = -PAD; x < W + PAD; x += 50) ln(g, [[x, 330], [x, 360]], 4, '#4a3e30');
-    g.fillStyle = grad(g, 0, 360, 0, H, [[0, v === 'stink' ? '#7a8a4a' : '#8a8a6a'], [1, v === 'stink' ? '#4a5a2a' : '#5a5a42']]); g.fillRect(-PAD, 360, W + PAD * 2, H - 360);
-    sh(g, '#8a7a62', 4, c => c.rect(-PAD, 540, W + PAD * 2, 180)); stoneCourses(g, -PAD, 540, W + PAD * 2, 180, '#9a8a70', 13);
-    for (const x of [240, 700, 1080]) { sh(g, '#3a3028', 4, c => c.ellipse(x, 560, 46, 34, 0, 0, TAU)); sh(g, '#1a1612', 0, c => c.ellipse(x, 562, 34, 24, 0, 0, TAU)); }
+  const RIV = [372, 600];   // river surface: far-bank wall foot → near quay edge
+  function bollard(g, x, y, s = 1) { g.fillStyle = 'rgba(30,25,15,.35)'; g.beginPath(); g.ellipse(x + 4, y + 2, 18 * s, 4 * s, 0, 0, TAU); g.fill(); sh(g, '#2e2c2a', 3, c => { c.moveTo(x - 10 * s, y); c.lineTo(x - 8 * s, y - 26 * s); c.quadraticCurveTo(x, y - 36 * s, x + 8 * s, y - 26 * s); c.lineTo(x + 10 * s, y); c.closePath(); }); }
+  function quay(g, y0, col = '#9a8c74', seed = 3) {   // the near bank seen from on top: kerb edge, paving, bollards + a lamp
+    sh(g, '#6a5e4c', 3, c => c.rect(-PAD, y0 - 6, W + PAD * 2, 16)); sh(g, col, 3, c => c.rect(-PAD, y0 + 10, W + PAD * 2, H - y0 - 10));
+    const r = rng(seed); for (let y = y0 + 14; y < H; y += 22) for (let x = -PAD + (y % 44 ? 0 : 30); x < W + PAD; x += 62) slab(g, x + r() * 4, y, 58, 19, mul(col, .92 + r() * .14), x * 7 + y);
+    g.fillStyle = grad(g, 0, y0, 0, y0 + 60, [[0, 'rgba(30,25,15,.35)'], [1, 'rgba(30,25,15,0)']]); g.fillRect(-PAD, y0 + 10, W + PAD * 2, 60);
+    for (const x of [90, 470, 830, 1210]) bollard(g, x, y0 + 22, 1.1); }
+  const thamesL = v => layer('t-thames2-' + v, g => { P2.overcast(g, [[0, '#7a7a6e'], [.5, '#a8a090'], [1, '#c8bca0']], 5, [900, 200]);
+    // St Paul's dome + spires in the smog, then the far-bank warehouses standing on the river wall
+    g.fillStyle = 'rgba(110,104,92,.7)'; g.beginPath(); g.ellipse(840, 236, 70, 64, 0, PI, TAU); g.fill(); g.fillRect(780, 236, 120, 60); g.fillRect(830, 146, 20, 40); for (const x of [300, 460, 1080]) { g.beginPath(); g.moveTo(x - 14, 296); g.lineTo(x, 176); g.lineTo(x + 14, 296); g.fill(); }
+    P2.haze(g, 200, 320, 'rgba(200,190,160,', .5);
+    const r = rng(4); for (let x = -PAD; x < W + PAD; x += 96) { const h = 60 + r() * 50, w = 88, col = mul('#8a6a4e', .85 + r() * .25); sh(g, col, 3, c => c.rect(x, 340 - h, w, h)); sh(g, mul(col, .8), 3, c => { c.moveTo(x - 4, 340 - h); c.lineTo(x + w / 2, 340 - h - 26); c.lineTo(x + w + 4, 340 - h); c.closePath(); });
+      for (let i = 0; i < 2; i++) for (let j = 0; j < Math.floor(h / 34); j++) sh(g, '#3a3028', 2, c => c.rect(x + 14 + i * 40, 340 - h + 12 + j * 30, 20, 18)); sh(g, '#3a2a1e', 2, c => c.rect(x + 30, 316, 28, 24)); }
+    ln(g, [[180, 340], [180, 230], [260, 250]], 6, '#3a2e24'); ln(g, [[260, 250], [260, 300]], 2, '#3a2e24');   // a wharf crane
+    sh(g, '#6a5a44', 3, c => c.rect(-PAD, 338, W + PAD * 2, RIV[0] - 338)); stoneCourses(g, -PAD, 340, W + PAD * 2, RIV[0] - 342, '#7a6a52', 17);
+    for (const x of [240, 700, 1080]) { sh(g, '#2a221c', 3, c => c.ellipse(x, 356, 16, 11, 0, 0, TAU)); }   // outfall mouths in the far wall
+    g.fillStyle = grad(g, 0, RIV[0], 0, RIV[1], [[0, v === 'stink' ? '#6e7e44' : '#7e7e62'], [1, v === 'stink' ? '#4a5a2a' : '#56563e']]); g.fillRect(-PAD, RIV[0], W + PAD * 2, RIV[1] - RIV[0]);
+    g.fillStyle = 'rgba(60,50,30,.25)'; for (let x = -PAD; x < W + PAD; x += 96) g.fillRect(x + 10, RIV[0] + 2, 70, 30);   // reflections of the warehouses
+    quay(g, RIV[1], '#9a8c74', 3);
   });
   function thames(ctx, t, o = {}) { const v = o.v || 'grey'; put(ctx, thamesL(v), o.pan || 0, .3);
-    for (const x of [240, 700, 1080]) for (let i = 0; i < 6; i++) { const k = (t * .7 + i / 6) % 1; ctx.fillStyle = `rgba(110,100,60,${.7 * (1 - k)})`; ctx.beginPath(); ctx.ellipse(x, 580 - k * 150, 20 + k * 60, 8 + k * 10, 0, 0, TAU); ctx.fill(); }
-    for (let i = 0; i < 16; i++) { const x = ((i * 97 + t * 14) % (W + 80)) - 40, y = 380 + (i * 53) % 140; ctx.strokeStyle = 'rgba(200,200,160,.3)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 40, y); ctx.stroke(); }
-    if (o.stink) for (const x of [180, 520, 860, 1160]) stink(ctx, t + x, x, 470, o.stink); }
+    for (const x of [240, 700, 1080]) { ctx.fillStyle = 'rgba(100,90,50,.75)'; ctx.fillRect(x - 6, 356, 12, 18); for (let i = 0; i < 6; i++) { const k = (t * .5 + i / 6) % 1; ctx.fillStyle = `rgba(100,90,50,${.6 * (1 - k)})`; ctx.beginPath(); ctx.ellipse(x + k * 30, 378 + k * 40, 16 + k * 70, 4 + k * 8, 0, 0, TAU); ctx.fill(); } }
+    for (let i = 0; i < 18; i++) { const x = ((i * 97 + t * 14) % (W + 80)) - 40, y = RIV[0] + 30 + (i * 53) % (RIV[1] - RIV[0] - 50); ctx.strokeStyle = 'rgba(210,210,170,.3)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 30 + (y - 372) / 6, y); ctx.stroke(); }
+    if (o.stink) for (const x of [180, 520, 860, 1160]) stink(ctx, t + x, x, 520, o.stink); }
+  TS.RIV = RIV; TS.quay = quay;
 
   // =================== Soho, Broad Street, 1854 (still, dark, no jokes) ===================
   const sohoL = () => layer('t-soho', g => { g.fillStyle = grad(g, 0, 0, 0, 420, [[0, '#2a2e3a'], [1, '#4a4a52']]); g.fillRect(-PAD, 0, W + PAD * 2, 420);
@@ -185,24 +195,40 @@
     sh(ctx, '#c0281e', 3, circ(640, 352, 14)); txt(ctx, 'PUMP', 640, 384, FONT(700, 18), '#c0281e'); }
 
   // =================== Parliament + the Great Stink ===================
-  const parlL = () => layer('t-parl', g => { P2.overcast(g, [[0, '#8a8a6a'], [.5, '#b8b08a'], [1, '#d0c494']], 7, [400, 200]);
-    // the Palace of Westminster: long gothic front, towers, the new clock tower
-    g.fillStyle = '#c8b48a'; g.strokeStyle = OUT; g.lineWidth = 4;
-    sh(g, '#cdb88c', 4, c => c.rect(120, 230, 900, 160)); for (let x = 140; x < 1000; x += 46) gothicWindow(g, x, 270, 26, 80, '#8a7a5e');
-    for (let x = 120; x < 1020; x += 46) { sh(g, '#cdb88c', 3, c => { c.moveTo(x, 232); c.lineTo(x + 8, 206); c.lineTo(x + 16, 232); c.closePath(); }); }
-    sh(g, '#c4ae82', 4, c => c.rect(980, 60, 110, 330)); sh(g, '#e8dcb8', 3, circ(1035, 130, 34)); ln(g, [[1035, 130], [1035, 110]], 4); ln(g, [[1035, 130], [1050, 138]], 4); sh(g, '#b8a276', 4, c => { c.moveTo(970, 60); c.lineTo(1035, -40); c.lineTo(1100, 60); c.closePath(); });
-    sh(g, '#c4ae82', 4, c => c.rect(40, 120, 140, 270)); sh(g, '#b8a276', 4, c => c.rect(30, 110, 160, 22)); for (let x = 36; x < 186; x += 22) sh(g, '#c4ae82', 2, c => c.rect(x, 92, 12, 20));
-    g.fillStyle = grad(g, 0, 390, 0, H, [[0, '#7a8a4a'], [1, '#3e4a26']]); g.fillRect(-PAD, 390, W + PAD * 2, H - 390);
-    const r = rng(9); for (let i = 0; i < 70; i++) { g.fillStyle = `rgba(140,160,60,${.2 + r() * .3})`; g.beginPath(); g.ellipse(-PAD + r() * (W + PAD * 2), 400 + r() * 300, 10 + r() * 50, 3 + r() * 6, 0, 0, TAU); g.fill(); }
-    sh(g, '#8a7a62', 4, c => c.rect(-PAD, 600, W + PAD * 2, 120)); stoneCourses(g, -PAD, 600, W + PAD * 2, 120, '#9a8a70', 23);
+  const parlL = () => layer('t-parl2', g => { P2.overcast(g, [[0, '#8a8a6a'], [.5, '#b8b08a'], [1, '#d0c494']], 7, [400, 200]);
+    // the Palace of Westminster standing on its river terrace wall; the clock tower; Victoria Tower at the far end
+    const BY = 380; sh(g, '#cdb88c', 4, c => c.rect(120, 220, 900, BY - 220)); for (let x = 140; x < 1000; x += 46) gothicWindow(g, x, 260, 26, 80, '#8a7a5e');
+    for (let x = 140; x < 1000; x += 46) gothicWindow(g, x, 352, 26, 22, '#8a7a5e'); for (let x = 120; x < 1020; x += 46) sh(g, '#cdb88c', 3, c => { c.moveTo(x, 222); c.lineTo(x + 8, 196); c.lineTo(x + 16, 222); c.closePath(); });
+    for (let x = 120; x <= 1020; x += 92) sh(g, '#bfa87c', 3, c => c.rect(x - 6, 200, 12, BY - 200));
+    sh(g, '#c4ae82', 4, c => c.rect(980, 50, 110, BY - 50)); sh(g, '#e8dcb8', 3, circ(1035, 120, 34)); ln(g, [[1035, 120], [1035, 100]], 4); ln(g, [[1035, 120], [1050, 128]], 4); sh(g, '#b8a276', 4, c => { c.moveTo(970, 50); c.lineTo(1035, -50); c.lineTo(1100, 50); c.closePath(); });
+    sh(g, '#c4ae82', 4, c => c.rect(40, 110, 140, BY - 110)); sh(g, '#b8a276', 4, c => c.rect(30, 100, 160, 22)); for (let x = 36; x < 186; x += 22) sh(g, '#c4ae82', 2, c => c.rect(x, 82, 12, 20));
+    // the river terrace: a stone wall the whole palace stands on, going down into the water
+    sh(g, '#a8987a', 4, c => c.rect(-PAD, BY, W + PAD * 2, 34)); stoneCourses(g, -PAD, BY + 2, W + PAD * 2, 30, '#b4a486', 29); sh(g, '#8a7c62', 3, c => c.rect(-PAD, BY - 8, W + PAD * 2, 10));
+    for (let x = -PAD + 10; x < W + PAD; x += 26) sh(g, '#bfae8a', 2, c => c.rect(x, BY - 22, 8, 14));   // balustrade
+    // the stinking river
+    const RY = BY + 34, QY = 610; g.fillStyle = grad(g, 0, RY, 0, QY, [[0, '#7a8a4a'], [1, '#4a5a2a']]); g.fillRect(-PAD, RY, W + PAD * 2, QY - RY);
+    g.fillStyle = 'rgba(205,190,140,.25)'; g.fillRect(120, RY + 2, 900, 40);   // the palace's reflection
+    const r = rng(9); for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(140,160,60,${.2 + r() * .3})`; g.beginPath(); g.ellipse(-PAD + r() * (W + PAD * 2), RY + 20 + r() * (QY - RY - 30), 10 + r() * 50, 3 + r() * 6, 0, 0, TAU); g.fill(); }
+    quay(g, QY, '#9a8c74', 23);
+    for (const x of [300, 980]) { ln(g, [[x, QY + 40], [x, QY - 150]], 8, '#2a2a2a'); sh(g, '#2a2a2a', 3, c => c.rect(x - 14, QY + 30, 28, 14)); sh(g, '#f2d88a', 3, c => c.roundRect(x - 14, QY - 186, 28, 36, 6)); sh(g, '#2a2a2a', 3, c => { c.moveTo(x - 18, QY - 186); c.lineTo(x, QY - 200); c.lineTo(x + 18, QY - 186); c.closePath(); }); }
   });
-  const chamberL = () => layer('t-commons', g => { g.fillStyle = '#4a3220'; g.fillRect(-PAD, 0, W + PAD * 2, H);
-    for (let x = -PAD; x < W + PAD; x += 90) { sh(g, '#6a4a2e', 3, c => c.rect(x, 40, 90, 330)); gothicWindow(g, x + 20, 70, 50, 200, '#3a2a1a'); }
-    for (const x of [100, 640, 1180]) { sh(g, '#e8dcc0', 4, c => c.rect(x - 70, 60, 140, 300)); g.fillStyle = 'rgba(200,220,170,.5)'; g.fillRect(x - 64, 66, 128, 288); }   // the soaked curtains
-    for (let row = 0; row < 3; row++) sh(g, '#3a6a3e', 4, c => c.rect(-PAD, 420 + row * 90, W + PAD * 2, 50));   // green leather benches
-    for (let row = 0; row < 3; row++) sh(g, '#5a3a22', 3, c => c.rect(-PAD, 470 + row * 90, W + PAD * 2, 40));
+  const chamberL = () => layer('t-commons2', g => { g.fillStyle = '#3e2a1a'; g.fillRect(-PAD, 0, W + PAD * 2, H);
+    // upper wall: tall traceried windows; lower wall: carved oak panelling
+    for (let x = -PAD; x < W + PAD; x += 110) { sh(g, '#5e4228', 3, c => c.rect(x, 20, 110, 260)); gothicWindow(g, x + 22, 46, 66, 210, '#e8dca8'); g.strokeStyle = 'rgba(90,70,40,.8)'; g.lineWidth = 3; g.beginPath(); g.moveTo(x + 55, 70); g.lineTo(x + 55, 256); g.moveTo(x + 22, 160); g.lineTo(x + 88, 160); g.stroke(); }
+    sh(g, '#6a4a2e', 4, c => c.rect(-PAD, 280, W + PAD * 2, 22)); for (let x = -PAD; x < W + PAD; x += 46) { sh(g, '#5a3e24', 2.5, c => c.rect(x + 4, 306, 38, 100)); sh(g, '#6a4a2e', 2, c => { c.moveTo(x + 12, 320); c.lineTo(x + 23, 308); c.lineTo(x + 34, 320); c.closePath(); }); }
+    // the Speaker's canopied chair at the head of the chamber
+    sh(g, '#4a3018', 4, c => c.rect(580, 170, 120, 250)); sh(g, '#6a4422', 4, c => { c.moveTo(570, 180); c.lineTo(640, 100); c.lineTo(710, 180); c.closePath(); }); sh(g, '#2e5a32', 3, c => c.rect(600, 300, 80, 70)); sh(g, '#c8a040', 2, circ(640, 150, 12));
+    // the soaked curtains hung over the windows (story beat)
+    for (const x of [130, 1150]) { sh(g, '#e6e8cc', 4, c => c.rect(x - 70, 30, 140, 250)); g.strokeStyle = 'rgba(150,170,120,.6)'; g.lineWidth = 3; for (let i = -50; i <= 50; i += 25) { g.beginPath(); g.moveTo(x + i, 34); g.quadraticCurveTo(x + i + 8, 150, x + i, 276); g.stroke(); } g.fillStyle = 'rgba(200,220,160,.35)'; g.fillRect(x - 66, 34, 132, 242); }
+    // floor: green carpet, the clerks' table with the mace
+    g.fillStyle = '#2e4a30'; g.fillRect(-PAD, 410, W + PAD * 2, H - 410); sh(g, '#6a4422', 4, c => c.rect(540, 430, 200, 40)); sh(g, '#d8b04a', 3, c => c.roundRect(560, 422, 160, 10, 5)); sh(g, '#d8b04a', 3, circ(722, 427, 10));
   });
-  function parliament(ctx, t, o = {}) { if (o.inside) { put(ctx, chamberL(), o.pan || 0, .3); stinkHaze(ctx, t, o.stink ?? .6); return; }
+  const BENCH = [450, 545, 640];
+  function parliament(ctx, t, o = {}) { if (o.inside) { put(ctx, chamberL(), o.pan || 0, .3);
+      BENCH.forEach((y, row) => { const r = rng(row + 3); for (let x = 30 + row * 20; x < W; x += 72 + row * 10) { if (Math.abs(x - 640) < 130 && row === 0) continue; const s = .2 + row * .05, who = r() < .5 ? 'mp1' : 'mp2';
+          G.VK.fig(ctx, x + r() * 20, y + 10, s, G.EP.cast(who, { t: t + x, turn: (x < 640 ? .4 : -.4), pose: r() < .3 ? 'think' : undefined, prop: r() < .4 ? 'hanky' : undefined })); }
+        sh(ctx, '#2e6a3a', 3.5, c => c.roundRect(-10, y - 30, W + 20, 30, 8)); for (let x = 20; x < W; x += 30) sh(ctx, 'rgba(20,50,25,.6)', 0, circ(x, y - 16, 2.5)); sh(ctx, '#5a3a22', 3.5, c => c.rect(-10, y, W + 20, 40 + row * 6)); });
+      stinkHaze(ctx, t, o.stink ?? .6); return; }
     put(ctx, parlL(), o.pan || 0, .3); for (const x of [200, 480, 760, 1040]) stink(ctx, t + x * .01, x, 560, o.stink ?? 1); stinkHaze(ctx, t, (o.stink ?? 1) * .6); }
   function stinkHaze(ctx, t, a) { if (a <= 0) return; ctx.save(); ctx.globalAlpha = a * .35; ctx.fillStyle = grad(ctx, 0, 0, 0, H, [[0, 'rgba(160,190,60,0)'], [1, 'rgba(150,180,50,1)']]); ctx.fillRect(0, 0, W, H); ctx.restore(); }
 

@@ -12,29 +12,28 @@
   const walker = (t, speed, x0, x1, ph = 0) => { const L = x1 - x0, u = ((t * speed + ph) % (2 * L) + 2 * L) % (2 * L); return u < L ? [x0 + u, 1] : [x1 - (u - L), -1]; };
   const wrap = (name, after, before) => { const f = TS[name]; TS[name] = function (ctx, ...a) { if (before) before(ctx, ...a); f.call(this, ctx, ...a); after(ctx, ...a); }; };
 
+
+  // a potted plant drawn properly: terracotta pot, soil, stems that branch from the soil, leaves on the stems
+  TS.pottedPlant = (ctx, x, y, s = 1, seed = 1, t = 0, pot = '#c8703e') => { const r = rng(seed); ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+    ctx.fillStyle = 'rgba(40,25,10,.3)'; ctx.beginPath(); ctx.ellipse(6, 2, 60, 10, 0, 0, TAU); ctx.fill();
+    const stems = []; for (let i = 0; i < 7; i++) { const a = -PI / 2 + (i - 3) * .3 + (r() - .5) * .15, L = 90 + r() * 70, sw = Math.sin(t * 1.3 + i) * .03; stems.push([a + sw, L]); }
+    for (const [a, L] of stems) { const ex = Math.cos(a) * L, ey = -78 + Math.sin(a) * L; ctx.lineCap = 'round'; ln(ctx, [[0, -78], [ex * .5, -78 + (ey + 78) * .55 - 8], [ex, ey]], 7, OUT); ln(ctx, [[0, -78], [ex * .5, -78 + (ey + 78) * .55 - 8], [ex, ey]], 4, '#5a7a2e'); }
+    for (const [a, L] of stems) for (let j = 1; j <= 3; j++) { const k = j / 3, lx = Math.cos(a) * L * k, ly = -78 + Math.sin(a) * L * k, side = j % 2 ? 1 : -1, la = a + side * .9;
+      ctx.save(); ctx.translate(lx, ly); ctx.rotate(la); sh(ctx, j === 3 ? '#5e9a3a' : '#4a8430', 3, c => { c.moveTo(0, 0); c.quadraticCurveTo(18, -12, 40, 0); c.quadraticCurveTo(18, 12, 0, 0); c.closePath(); });
+      ln(ctx, [[2, 0], [36, 0]], 1.5, 'rgba(220,240,180,.6)'); ctx.restore(); }
+    sh(ctx, pot, 4, c => { c.moveTo(-40, -78); c.lineTo(40, -78); c.lineTo(30, 0); c.lineTo(-30, 0); c.closePath(); }); sh(ctx, G.Guide.hexMul(pot, 1.08), 4, c => c.rect(-46, -88, 92, 16));
+    ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(-28, -70, 10, 62); sh(ctx, '#4a3424', 2, c => c.ellipse(0, -88, 40, 5, 0, 0, TAU)); ctx.restore(); };
+
   // ---------- 1. bathroom: rug, floor plant, laundry basket, loo roll, a cat ----------
   wrap('bathroom', (ctx, t) => { sh(ctx, '#6aa8c8', 3, c => c.ellipse(640, 712, 230, 28, 0, 0, TAU)); ctx.fillStyle = 'rgba(255,255,255,.25)'; for (let i = -4; i <= 4; i++) ctx.fillRect(640 + i * 50 - 3, 690, 6, 40);
-    sh(ctx, '#d07a4a', 3.5, c => { c.moveTo(70, 712); c.lineTo(150, 712); c.lineTo(160, 640); c.lineTo(60, 640); c.closePath(); }); EF.bushMass(ctx, 30, 640, 160, 110, 21, 1);
+    TS.pottedPlant(ctx, 110, 712, .85, 21, t);
     PR.basket(ctx, 1170, 712, 1.1, 'bread'); sh(ctx, '#f8f8f4', 3, c => c.roundRect(900, 520, 54, 46, 10)); ln(ctx, [[900, 520], [960, 520]], 5, '#9aa6ae');
     FA.cat(ctx, 300, 708, .8, t, { dir: 1, coat: '#e0a050' }); });
-
-  // ---------- 2. Orkney: sheep, thrift flowers, a dog, smoke from a roof, two villagers far off ----------
-  wrap('orkney', (ctx, t, pan = 0) => { const p = -pan * .6;
-    for (const [x, y, s, d] of [[180, 600, .55, 1], [1050, 640, .6, -1], [900, 700, .7, 1], [1180, 560, .45, -1]]) FA.sheep(ctx, x + p, y, s, t + x, { dir: d, ph: x });
-    for (const [x, y] of [[120, 690], [460, 700], [820, 690], [1240, 700], [300, 660]]) EF.flowers(ctx, x + p, y, 120, 7, x, t);
-    K.smoke(ctx, t, 720 + p, 548, .35); FA.dog(ctx, 560 + p, 700, .55, t, { dir: -1, coat: '#3a3028' });
-    const [wx, wd] = walker(t, 14, 250, 520); mini(ctx, 'neo1', wx + p, 600, .3, t, { walk: t * 7, turn: .7 * wd }); });
 
   // ---------- 3. inside Skara Brae: furs on the beds, pots, a quern, a sleeping dog by the hearth, fish drying ----------
   wrap('skara', (ctx, t) => { for (const x of [110, 940]) { sh(ctx, '#8a6a4a', 3, c => c.roundRect(x + 20, 372, 220, 34, 14)); ctx.fillStyle = 'rgba(255,240,210,.18)'; ctx.fillRect(x + 30, 378, 200, 6); }
     PR.jug(ctx, 560, 248, 1.0); PR.bowl(ctx, 640, 248, 1.0); PR.jug(ctx, 720, 328, .9); PR.basket(ctx, 600, 408, .8, 'bread');
     PR.quern(ctx, 420, 640, 1.0); FA.dog(ctx, 830, 650, .7, t, { dir: -1, coat: '#7a5a3a' }); PR.washline(ctx, 120, 150, 420, 150, t, ['#c0b080', '#a8a090', '#c0b080']); });
-
-  // ---------- 4. village: chickens, sheep pen, smoke, a dog, small farmers ----------
-  wrap('village', (ctx, t, k = 0) => { PR.fence(ctx, 880, 1240, 690, 50); for (const [x, s] of [[960, .55], [1060, .5], [1160, .55]]) FA.sheep(ctx, x, 680, s, t + x, { dir: -1, ph: x });
-    for (const [x, y] of [[220, 690], [300, 700], [380, 688]]) FA.chicken(ctx, x, y, .5, t, { dir: x % 2 ? 1 : -1, ph: x });
-    for (const x of [420, 860]) K.smoke(ctx, t, x, 470, .3); FA.dog(ctx, 560, 712, .6, t, { dir: 1 });
-    const [wx, wd] = walker(t, 20, 140, 700, 30); mini(ctx, 'neo2', wx, 560, .32, t, { walk: t * 7, turn: .7 * wd }); });
 
   // ---------- 6. Mohenjo-daro: grounded walls, people, goats, birds, a neem tree, jars; a manhole rim in front of the worker ----------
   wrap('mohenjo', (ctx, t, o = {}) => { shadowLine(ctx, 0, W, 470, .35, 18);
@@ -47,15 +46,14 @@
   TS.manholeRim = (ctx, x = 900, y = 578) => { sh(ctx, '#8a5a3a', 4, c => { c.moveTo(x - 60, y); c.lineTo(x + 60, y); c.lineTo(x + 54, y + 16); c.lineTo(x - 54, y + 16); c.closePath(); }); };
 
   // ---------- Rome: pines + cypress, boats on the Tiber, pigeons, citizens strolling, a dog ----------
-  wrap('rome', (ctx, t) => { for (const [x, s] of [[60, .9], [1200, 1.0]]) P.tree(ctx, x, 430, t, 11 + x, s);
-    for (const x of [980, 1040]) { sh(ctx, '#2e5a2e', 3, c => { c.moveTo(x, 420); c.quadraticCurveTo(x - 22, 330, x, 250); c.quadraticCurveTo(x + 22, 330, x, 420); }); }
-    const bx = ((t * 16) % 1500) - 200; sh(ctx, '#8a5a34', 3.5, c => { c.moveTo(bx - 70, 560); c.lineTo(bx + 70, 560); c.lineTo(bx + 50, 584); c.lineTo(bx - 50, 584); c.closePath(); }); ln(ctx, [[bx, 560], [bx, 480]], 4); sh(ctx, '#f2e6cc', 3, c => { c.moveTo(bx + 4, 486); c.lineTo(bx + 46, 548); c.lineTo(bx + 4, 548); c.closePath(); });
-    const [wx, wd] = walker(t, 18, 40, 340); mini(ctx, 'marcus', wx, 448, .3, t, { walk: t * 7, turn: .7 * wd }); FA.dog(ctx, 600, 470, .45, t, { dir: 1, coat: '#b08050' });
-    for (const [x, y] of [[700, 466], [730, 470]]) FA.chicken(ctx, x, y, .35, t, { dir: -1, ph: x, col: '#8a8a94' }); });
+  wrap('rome', (ctx, t) => { const gy = TS.ROME_Y.ground;
+    TS.boat(ctx, ((t * 14) % 1600) - 200, 610, .55, t, 'roman', 1); TS.boat(ctx, 1500 - ((t * 10 + 600) % 1700), 660, .4, t, 'dugout', 3);
+    for (const [sp, x0, x1, who, s] of [[18, 40, 360, 'marcus', .2], [14, 560, 1180, 'roman2', .19]]) { const [wx, wd] = walker(t, sp, x0, x1); mini(ctx, who, wx, gy - 2, s, t, { walk: t * 7, turn: .8 * wd }); }
+    FA.dog(ctx, 600, gy, .32, t, { dir: 1, coat: '#b08050' }); for (const [x, y] of [[700, gy - 2], [726, gy]]) FA.chicken(ctx, x, y, .26, t, { dir: -1, ph: x, col: '#8a8a94' }); });
 
   // ---------- forica: mosaic floor, a cat, a potted laurel, a sponge stick resting in the channel ----------
   wrap('forica', (ctx, t) => { ctx.save(); ctx.globalAlpha = .45; for (let x = 0; x < W; x += 40) for (let y = 650; y < H; y += 40) { ctx.fillStyle = (x / 40 + y / 40) % 2 ? '#c8b896' : '#9a8a6a'; ctx.fillRect(x, y, 38, 38); } ctx.restore();
-    FA.cat(ctx, 1180, 712, .7, t, { dir: -1, coat: '#6a5a4a' }); sh(ctx, '#c47a48', 3.5, c => { c.moveTo(40, 712); c.lineTo(110, 712); c.lineTo(118, 650); c.lineTo(32, 650); c.closePath(); }); EF.bushMass(ctx, 10, 650, 130, 90, 33, 1); });
+    FA.cat(ctx, 1180, 712, .7, t, { dir: -1, coat: '#6a5a4a' }); TS.pottedPlant(ctx, 80, 712, .8, 33, t); });
 
   // ---------- castle: ducks on the moat, a flag on the tower, trees, crows ----------
   wrap('castle', (ctx, t) => { ln(ctx, [[1000, -20], [1000, -100]], 5); const fw = Math.sin(t * 3) * 8; sh(ctx, '#c8322a', 3, c => { c.moveTo(1000, -100); c.quadraticCurveTo(1040, -110 + fw, 1080, -96); c.lineTo(1000, -70); c.closePath(); });
@@ -78,22 +76,22 @@
     for (const [x, y] of [[200, 700], [700, 700], [1100, 690]]) EF.flowers(ctx, x, y, 140, 8, x, t); FA.butterfly(ctx, 600 + Math.sin(t) * 80, 560 + Math.sin(t * 2) * 30, .6, t, { col: '#f2a040' }); });
 
   // ---------- showroom: aspidistra pots, customers browsing, a shop cat ----------
-  wrap('showroom', (ctx, t) => { for (const x of [130, 1150]) { sh(ctx, '#3a6a4a', 3.5, c => { c.moveTo(x - 30, 712); c.lineTo(x + 30, 712); c.lineTo(x + 36, 640); c.lineTo(x - 36, 640); c.closePath(); }); EF.bushMass(ctx, x - 80, 640, 160, 120, x, .9); }
+  wrap('showroom', (ctx, t) => { for (const x of [130, 1150]) TS.pottedPlant(ctx, x, 712, .9, x, t, '#3a6a4a');
     mini(ctx, 'lady1', 430, 495, .36, t, { turn: .3 }); mini(ctx, 'mp1', 950, 495, .36, t + 2, { turn: -.3 }); FA.cat(ctx, 760, 712, .6, t, { dir: -1, coat: '#2a2622' }); });
 
   // ---------- the Thames: barges with sails, gulls, people and crates on the embankment ----------
-  wrap('thames', (ctx, t) => { for (const [ph, y, s] of [[0, 430, .9], [700, 470, 1.1]]) { const bx = ((t * 12 + ph) % 1600) - 200; ctx.save(); ctx.translate(bx, y); ctx.scale(s, s);
+  wrap('thames', (ctx, t) => { for (const [ph, y, s] of [[0, 452, .7], [700, 540, 1.0]]) { const bx = ((t * 12 + ph) % 1600) - 200; ctx.save(); ctx.translate(bx, y); ctx.scale(s, s);
       sh(ctx, '#5a3a22', 3.5, c => { c.moveTo(-90, 0); c.lineTo(90, 0); c.lineTo(70, 26); c.lineTo(-70, 26); c.closePath(); }); ln(ctx, [[0, 0], [0, -110]], 4); sh(ctx, '#a84a2a', 3, c => { c.moveTo(4, -104); c.lineTo(60, -20); c.lineTo(4, -20); c.closePath(); }); ctx.restore(); }
-    P.birds(ctx, t, [[200, 160, 30, 0], [700, 120, 26, 1.5], [1000, 180, 32, 3]]); PR.barrel(ctx, 1180, 548, .8); PR.crate(ctx, 1110, 552, .7);
-    const [wx, wd] = walker(t, 20, 60, 600); mini(ctx, 'navvy', wx, 548, .34, t, { walk: t * 7, turn: .7 * wd }); });
+    P.birds(ctx, t, [[200, 160, 30, 0], [700, 120, 26, 1.5], [1000, 180, 32, 3]]); PR.barrel(ctx, 1180, 664, .8); PR.crate(ctx, 1110, 668, .7);
+    const [wx, wd] = walker(t, 20, 60, 600); mini(ctx, 'navvy', wx, 662, .26, t, { walk: t * 7, turn: .7 * wd }); });
 
   // ---------- Soho (serious, still): puddle reflections, a cat, a distant figure; no gags ----------
   wrap('soho', (ctx, t) => { for (const [x, y, w] of [[360, 640, 120], [900, 680, 160]]) { ctx.save(); ctx.globalAlpha = .35; ctx.fillStyle = '#5a6478'; ctx.beginPath(); ctx.ellipse(x, y, w, 12, 0, 0, TAU); ctx.fill(); ctx.restore(); }
     FA.cat(ctx, 1080, 600, .55, t, { dir: -1, coat: '#1e1e22' }); shadowLine(ctx, 0, W, 470, .4, 22); });
 
   // ---------- Parliament: boats, gulls, people with handkerchiefs on the embankment ----------
-  wrap('parliament', (ctx, t, o = {}) => { if (o.inside) return; for (const [ph, y] of [[0, 470], [800, 520]]) { const bx = ((t * 10 + ph) % 1600) - 200; sh(ctx, '#4a3422', 3.5, c => { c.moveTo(bx - 60, y); c.lineTo(bx + 60, y); c.lineTo(bx + 46, y + 18); c.lineTo(bx - 46, y + 18); c.closePath(); }); }
-    P.birds(ctx, t, [[300, 140, 26, 0], [900, 100, 30, 2]]); const [wx, wd] = walker(t, 18, 80, 1200); mini(ctx, 'mp1', wx, 610, .3, t, { walk: t * 7, turn: .7 * wd, prop: 'hanky' }); });
+  wrap('parliament', (ctx, t, o = {}) => { if (o.inside) return; for (const [ph, y] of [[0, 470], [800, 560]]) { const bx = ((t * 10 + ph) % 1600) - 200; sh(ctx, '#4a3422', 3.5, c => { c.moveTo(bx - 60, y); c.lineTo(bx + 60, y); c.lineTo(bx + 46, y + 18); c.lineTo(bx - 46, y + 18); c.closePath(); }); }
+    P.birds(ctx, t, [[300, 140, 26, 0], [900, 100, 30, 2]]); const [wx, wd] = walker(t, 18, 80, 1200); mini(ctx, 'mp1', wx, 676, .24, t, { walk: t * 7, turn: .7 * wd, prop: 'hanky' }); });
 
   // ---------- sewer works: brick stacks, wheelbarrows, ladders, buckets, navvies in the back ----------
   wrap('sewer', (ctx, t) => { for (const [x, y] of [[230, 712], [1060, 712]]) { for (let r = 0; r < 4; r++) for (let i = 0; i < 4 - r; i++) sh(ctx, '#a85a36', 2, c => c.rect(x - 60 + i * 34 + r * 17, y - 18 - r * 16, 32, 15)); }

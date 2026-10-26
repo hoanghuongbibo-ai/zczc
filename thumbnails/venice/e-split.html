@@ -1,0 +1,233 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* Variant E — "same spot, 1,000 years apart": one camera, one horizon, split down the middle.
+ * Left: a grey, rainy mudflat with a thatched hut on stilts, where a muddy settler hammers a pile.
+ * Right: St Mark's Square at golden hour, where the same guy (now the doge) shows it off. */
+const T = Toon(document.getElementById('c'), 31), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const HZ = 610;                                        // shared horizon
+const SPLIT = [[1000, -10], [975, 140], [1010, 260], [950, 420], [995, 560], [940, 720], [985, 860], [930, 1000], [955, 1090]];
+const splitPath = (side) => c => {                     // side -1 = left half, +1 = right half
+  const x = side < 0 ? -10 : W + 10;
+  c.moveTo(x, -10); SPLIT.forEach(p => c.lineTo(...p)); c.lineTo(x, H + 10); c.closePath();
+};
+
+// ================= LEFT: the mudflat, c. 500 AD =================
+function left() {
+  g.save(); T.P(splitPath(-1)); g.clip();
+  g.fillStyle = lg(0, 0, 0, HZ, [[0, '#4f5544'], [.6, '#8a8b6a'], [1, '#b9b28a']]); g.fillRect(0, 0, W, HZ);
+  // heavy clouds
+  g.fillStyle = 'rgba(55,60,48,.55)';
+  [[200, 90, 260, 50], [560, 60, 300, 46], [820, 160, 200, 36], [360, 220, 220, 30]].forEach(([x, y, rx, ry]) => { T.P(ell(x, y, rx, ry)); g.fill(); T.P(ell(x - rx * .4, y + ry * .4, rx * .6, ry * .8)); g.fill(); });
+  // flat grey lagoon to the horizon, low distant shore
+  g.fillStyle = '#8f9479'; g.fillRect(0, HZ - 40, W, 60);
+  fill(c => { c.moveTo(0, HZ - 40); c.quadraticCurveTo(300, HZ - 70, 600, HZ - 48); c.lineTo(1000, HZ - 44); c.lineTo(1000, HZ - 36); c.lineTo(0, HZ - 36); c.closePath(); }, '#6c7158');
+  // mudflat
+  g.fillStyle = lg(0, HZ, 0, H, [[0, '#7d7046'], [.5, '#5e4f30'], [1, '#3f331f']]); g.fillRect(0, HZ + 10, W, H - HZ);
+  // puddles reflecting the grey sky
+  [[180, 760, 170, 26], [700, 700, 140, 18], [420, 980, 240, 34], [860, 900, 110, 20]].forEach(([x, y, rx, ry]) => { ink(ell(x, y, rx, ry), '#9da38a', 4); T.line([[x - rx * .5, y - 4], [x + rx * .2, y - 4]], 3, 'rgba(255,255,255,.4)'); });
+  // reeds
+  for (let i = 0; i < 26; i++) {
+    const x = T.rnd() * 960, y = HZ + 30 + T.rnd() * 420, s = .6 + (y - HZ) / 420;
+    for (let k = -2; k <= 2; k++) T.line([[x, y], [x + k * 10 * s + (T.rnd() - .5) * 8, y - (40 + T.rnd() * 30) * s]], 3.5 * s, k % 2 ? '#6f7a3c' : '#8a8f48');
+    if (T.rnd() > .6) ink(ell(x + 6 * s, y - 62 * s, 5 * s, 14 * s), '#6a4a2a', 2);
+  }
+  // a few poles already standing in the mud
+  [[90, 840, 22, 140], [790, 690, 16, 90], [880, 760, 18, 110], [300, 700, 14, 70]].forEach(([x, y, w, h]) => { ink(rr(x - w / 2, y - h, w, h, 6), '#7a5530', 5); fill(ell(x, y - h, w / 2, 5), '#a37a4a'); });
+  hut(); settler();
+  // drizzle
+  for (let i = 0; i < 130; i++) { const x = T.rnd() * 1000, y = T.rnd() * H; T.line([[x, y], [x - 8, y + 30]], 2, 'rgba(220,225,210,.35)'); }
+  // dull, damp grade
+  g.fillStyle = 'rgba(70,80,60,.18)'; g.fillRect(0, 0, W, H);
+  g.restore();
+}
+function hut() {
+  const x0 = 110, base = HZ + 30;
+  // stilts
+  [x0 + 20, x0 + 120, x0 + 220, x0 + 320].forEach(x => ink(rr(x - 9, base - 30, 18, 70, 5), '#6b4a2a', 4));
+  // wattle-and-daub wall
+  const wall = rr(x0, base - 210, 340, 190, 4);
+  ink(wall, '#a58a5c', 6);
+  g.save(); T.P(wall); g.clip();
+  for (let y = base - 200; y < base; y += 22) T.line([[x0, y], [x0 + 340, y + 6]], 3, 'rgba(70,50,25,.5)');
+  for (let x = x0 + 30; x < x0 + 340; x += 46) T.line([[x, base - 210], [x + 4, base]], 4, 'rgba(70,50,25,.6)');
+  fill(ell(x0 + 260, base - 120, 40, 26), 'rgba(80,60,35,.45)'); fill(ell(x0 + 80, base - 60, 30, 18), 'rgba(80,60,35,.4)');
+  g.restore();
+  ink(c => { c.moveTo(x0 + 140, base - 20); c.lineTo(x0 + 140, base - 140); c.quadraticCurveTo(x0 + 175, base - 160, x0 + 210, base - 140); c.lineTo(x0 + 210, base - 20); c.closePath(); }, '#2a1f14', 5);
+  // thatched roof with crossed gable poles
+  const roof = c => { c.moveTo(x0 - 60, base - 170); c.lineTo(x0 + 120, base - 360); c.lineTo(x0 + 250, base - 360); c.lineTo(x0 + 410, base - 170); c.quadraticCurveTo(x0 + 175, base - 140, x0 - 60, base - 170); c.closePath(); };
+  ink(roof, '#c9a24e', 7);
+  g.save(); T.P(roof); g.clip();
+  for (let i = 0; i < 120; i++) { const x = x0 - 60 + T.rnd() * 470, y = base - 360 + T.rnd() * 210; T.line([[x, y], [x + (x - x0 - 175) * .08, y + 30 + T.rnd() * 20]], 3, T.rnd() > .5 ? 'rgba(120,85,30,.6)' : 'rgba(240,210,130,.6)'); }
+  g.fillStyle = 'rgba(90,65,25,.3)'; g.fillRect(x0 + 200, base - 370, 300, 260);
+  g.restore();
+  T.line([[x0 + 90, base - 410], [x0 + 200, base - 330]], 14); T.line([[x0 + 90, base - 410], [x0 + 200, base - 330]], 7, '#7a5530');
+  T.line([[x0 + 280, base - 410], [x0 + 170, base - 330]], 14); T.line([[x0 + 280, base - 410], [x0 + 170, base - 330]], 7, '#7a5530');
+  // fishing net drying on a pole + a small boat pulled up
+  ink(rr(x0 + 390, base - 230, 14, 260, 5), '#6b4a2a', 4);
+  g.strokeStyle = 'rgba(60,45,25,.8)'; g.lineWidth = 2.5;
+  for (let k = 0; k < 6; k++) { g.beginPath(); g.moveTo(x0 + 404, base - 220 + k * 22); g.quadraticCurveTo(x0 + 450, base - 200 + k * 22, x0 + 480, base - 140 + k * 14); g.stroke(); }
+  ink(c => { c.moveTo(x0 + 20, base + 70); c.quadraticCurveTo(x0 + 140, base + 120, x0 + 290, base + 66); c.lineTo(x0 + 270, base + 50); c.lineTo(x0 + 40, base + 54); c.closePath(); }, '#5a3d22', 5);
+}
+function settler() {
+  const hx = 650, hy = 540;
+  // legs sunk in the mud
+  [[610, 600], [700, 740]].forEach(([x0, x1]) => { T.line([[x0, 800], [x1, 930]], 30); T.line([[x0, 800], [x1, 930]], 16, '#fbf7ef'); });
+  fill(ell(660, 935, 150, 26), '#4a3b22'); T.line([[520, 930], [800, 930]], 4, 'rgba(30,22,12,.6)');
+  // the pile he's driving
+  ink(rr(790, 640, 34, 300, 8), '#9a6c3c', 5); fill(ell(807, 640, 17, 6), '#c7955c');
+  // ragged tunic
+  ink(c => { c.moveTo(560, 650); c.quadraticCurveTo(650, 620, 740, 650); c.lineTo(760, 760); c.lineTo(740, 800); c.lineTo(712, 780); c.lineTo(690, 815); c.lineTo(660, 785); c.lineTo(630, 815); c.lineTo(600, 785); c.lineTo(570, 805); c.lineTo(545, 760); c.closePath(); }, '#8a6a42', 7);
+  g.fillStyle = 'rgba(60,40,20,.4)'; T.P(ell(700, 720, 30, 20)); g.fill(); T.P(ell(600, 700, 20, 26)); g.fill();
+  T.line([[560, 735], [745, 735]], 8, '#4a3520');
+  // arms raised, swinging a wooden mallet over the pile
+  T.line([[720, 670], [640, 600], [520, 500]], 30); T.line([[720, 670], [640, 600], [520, 500]], 16, '#fbf7ef');
+  T.line([[580, 670], [520, 600], [500, 520]], 30); T.line([[580, 670], [520, 600], [500, 520]], 16, '#fbf7ef');
+  T.line([[505, 505], [420, 370]], 22); T.line([[505, 505], [420, 370]], 12, '#8a5a30');
+  g.save(); g.translate(412, 356); g.rotate(.56); ink(rr(-60, -36, 120, 72, 14), '#9a6c3c', 6); T.line([[-40, -20], [40, -20]], 3, 'rgba(60,35,15,.5)'); g.restore();
+  ink(ell(510, 510, 28, 24), '#fbf7ef', 5);
+  // head: muddy, exhausted, miserable
+  T.head(hx, hy, 130, 'rgba(150,140,110,.5)');
+  [[hx - 70, hy + 90, 22, 12], [hx + 60, hy - 60, 16, 10], [hx + 90, hy + 60, 12, 8]].forEach(([x, y, rx, ry]) => fill(ell(x, y, rx, ry), 'rgba(110,85,50,.6)'));
+  // messy hair tufts
+  [[-60, -125], [-20, -138], [25, -136], [65, -122]].forEach(([dx, dy]) => ink(c => { c.moveTo(hx + dx - 20, hy + dy + 20); c.lineTo(hx + dx, hy + dy - 18); c.lineTo(hx + dx + 22, hy + dy + 22); c.closePath(); }, '#6b4a2a', 4));
+  // droopy eyes with bags, tear, wobbly frown
+  ink(ell(hx - 45, hy + 20, 30, 26), '#ffffff', 5); ink(ell(hx + 45, hy + 20, 30, 26), '#ffffff', 5);
+  fill(ell(hx - 45, hy + 30, 10, 10), INK); fill(ell(hx + 45, hy + 30, 10, 10), INK);
+  fill(c => { c.rect(hx - 80, hy - 10, 160, 22); }, '#fbf7ef'); T.line([[hx - 75, hy + 10], [hx - 15, hy + 12]], 6); T.line([[hx + 15, hy + 12], [hx + 75, hy + 10]], 6);
+  T.line([[hx - 72, hy - 8], [hx - 20, hy - 34]], 9); T.line([[hx + 20, hy - 34], [hx + 72, hy - 8]], 9);
+  T.line([[hx - 70, hy + 52], [hx - 50, hy + 60]], 4, 'rgba(100,80,60,.6)'); T.line([[hx + 50, hy + 60], [hx + 70, hy + 52]], 4, 'rgba(100,80,60,.6)');
+  T.line([[hx - 40, hy + 110], [hx - 15, hy + 95], [hx + 10, hy + 106], [hx + 40, hy + 96]], 7);
+  T.drop(hx - 40, hy + 70, .7); T.drop(hx - 155, hy - 10, .9); T.drop(hx + 150, hy - 40, .8); T.drop(hx + 140, hy + 50, .6);
+}
+
+// ================= RIGHT: St Mark's Square, c. 1500 =================
+function right() {
+  g.save(); T.P(splitPath(1)); g.clip();
+  g.fillStyle = lg(0, 0, 0, HZ, [[0, '#f28a4c'], [.5, '#f9bd6a'], [1, '#ffe6a6']]); g.fillRect(900, 0, W, HZ);
+  g.fillStyle = rg(1640, 420, 0, 800, [[0, 'rgba(255,252,230,1)'], [.12, 'rgba(255,240,180,.9)'], [.45, 'rgba(255,200,120,.3)'], [1, 'rgba(255,200,120,0)']]); g.fillRect(900, 0, W, H);
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 20; i++) { const a = Math.PI + i / 19 * Math.PI * 1.1 - .05, a2 = a + .06; T.P(c => { c.moveTo(1640, 420); c.lineTo(1640 + Math.cos(a) * 1400, 420 + Math.sin(a) * 1400); c.lineTo(1640 + Math.cos(a2) * 1400, 420 + Math.sin(a2) * 1400); c.closePath(); }); g.fillStyle = 'rgba(255,240,200,.12)'; g.fill(); }
+  g.restore();
+  buildings();
+  piazza();
+  doge();
+  g.restore();
+}
+function buildings() {
+  // Procuratie: long arcaded wing on the left
+  ink(rr(900, HZ - 210, 330, 220, 2), '#efdcb5', 5);
+  for (let row = 0; row < 3; row++) for (let i = 0; i < 9; i++) { const x = 914 + i * 36, y = HZ - 190 + row * 64; ink(c => { c.moveTo(x, y + 50); c.lineTo(x, y + 18); c.arc(x + 11, y + 18, 11, Math.PI, 0); c.lineTo(x + 22, y + 50); c.closePath(); }, '#7a5a3a', 3); }
+  // Campanile
+  const cx = 1270;
+  ink(rr(cx - 50, 170, 100, HZ - 160, 2), '#c9583c', 6);
+  for (let k = -1; k <= 1; k++) T.line([[cx + k * 26, 230], [cx + k * 26, HZ - 10]], 3, 'rgba(110,40,25,.5)');
+  ink(rr(cx - 58, 110, 116, 66, 4), '#efdcb5', 6);
+  for (let i = 0; i < 4; i++) ink(rr(cx - 42 + i * 22, 122, 12, 42, 6), '#5a3528', 3);
+  ink(c => { c.moveTo(cx - 54, 112); c.lineTo(cx, 10); c.lineTo(cx + 54, 112); c.closePath(); }, '#5f9a7a', 6);
+  ink(ell(cx, 0, 12, 16), '#f2c344', 4);
+  // Basilica: five arches with gold mosaics, domes
+  const bx = 1370, bw = 360, bt = HZ - 190;
+  [[bx + 60, bt - 30, 52], [bx + 180, bt - 60, 72], [bx + 300, bt - 30, 52], [bx + 120, bt - 70, 40], [bx + 240, bt - 70, 40]].forEach(([x, y, r]) => {
+    ink(c => { c.moveTo(x - r, y + 30); c.quadraticCurveTo(x - r, y - r, x, y - r * 1.05); c.quadraticCurveTo(x + r, y - r, x + r, y + 30); c.closePath(); }, '#9bb7c4', 5);
+    T.line([[x, y - r * 1.05], [x, y - r * 1.5]], 5); ink(ell(x, y - r * 1.3, 7, 9), '#e2b647', 3);
+  });
+  ink(rr(bx, bt, bw, HZ - bt + 10, 2), '#f1e0c0', 6);
+  for (let i = 0; i < 5; i++) {
+    const x = bx + 14 + i * 68, w = 58;
+    ink(c => { c.moveTo(x, bt + 10); c.quadraticCurveTo(x + w / 2, bt - 50, x + w, bt + 10); c.closePath(); }, '#f1e0c0', 4);
+    ink(c => { c.moveTo(x, HZ); c.lineTo(x, bt + 60); c.arc(x + w / 2, bt + 60, w / 2, Math.PI, 0); c.lineTo(x + w, HZ); c.closePath(); }, '#d9a23a', 4);
+    fill(c => { c.moveTo(x + 8, HZ); c.lineTo(x + 8, bt + 80); c.arc(x + w / 2, bt + 80, w / 2 - 8, Math.PI, 0); c.lineTo(x + w - 8, HZ); c.closePath(); }, '#3a2a3a');
+  }
+  // the four bronze horses over the central door
+  for (let i = 0; i < 4; i++) ink(ell(bx + 150 + i * 20, bt + 4, 8, 6), '#c98a34', 2);
+  // Doge's Palace: pink, arcaded, crenellated
+  const px = 1740, pt = HZ - 230;
+  ink(rr(px, pt, 220, 240, 2), '#f2b6a0', 5);
+  g.fillStyle = 'rgba(200,110,90,.35)'; for (let y = pt + 14; y < pt + 100; y += 18) for (let x = px + (y / 18 % 2) * 14; x < px + 220; x += 28) g.fillRect(x + 4, y, 10, 6);
+  for (let i = 0; i < 3; i++) ink(rr(px + 30 + i * 64, pt + 30, 28, 52, 14), '#5a3528', 3);
+  for (let i = 0; i < 7; i++) { const x = px + 6 + i * 30; ink(c => { c.moveTo(x, HZ); c.lineTo(x, HZ - 60); c.arc(x + 11, HZ - 60, 11, Math.PI, 0); c.lineTo(x + 22, HZ); c.closePath(); }, '#4a2a20', 3); }
+  for (let i = 0; i < 8; i++) ink(c => { const x = px + 4 + i * 28; c.moveTo(x, pt); c.lineTo(x + 12, pt - 16); c.lineTo(x + 24, pt); c.closePath(); }, '#fbe3c8', 3);
+  // golden haze over the far buildings
+  g.fillStyle = 'rgba(255,215,150,.22)'; g.fillRect(900, 0, W, HZ);
+}
+function piazza() {
+  g.fillStyle = lg(0, HZ, 0, H, [[0, '#f3dfb6'], [1, '#d8b98a']]); g.fillRect(900, HZ, W, H - HZ);
+  // perspective paving: lines converging on the basilica door
+  const vx = 1550, vy = HZ - 10;
+  for (let k = -14; k <= 14; k++) T.line([[vx, vy], [vx + k * 140, H + 40]], 2.5, 'rgba(150,110,70,.35)');
+  for (let y = HZ + 20, s = 12; y < H; s *= 1.18, y += s) T.line([[900, y], [W, y]], 2, 'rgba(150,110,70,.3)');
+  // crowd: little round-headed Venetians, bigger as they come closer
+  const robes = ['#b8261f', '#2f62b8', '#3f8a5a', '#d9a23a', '#7a3f8a', '#e07a4a', '#2b2b2b'];
+  const ppl = [];
+  for (let i = 0; i < 46; i++) { const y = HZ + 20 + Math.pow(T.rnd(), 1.4) * 300, x = 980 + T.rnd() * 780; if (x > 1080 && x < 1420 && y > 700) continue; ppl.push([x, y]); }
+  ppl.sort((a, b) => a[1] - b[1]).forEach(([x, y]) => {
+    const s = .25 + (y - HZ) / 300 * .55;
+    ink(c => { c.moveTo(x - 18 * s, y); c.lineTo(x - 12 * s, y - 60 * s); c.lineTo(x + 12 * s, y - 60 * s); c.lineTo(x + 18 * s, y); c.closePath(); }, robes[Math.floor(T.rnd() * robes.length)], 3);
+    ink(ell(x, y - 78 * s, 18 * s, 20 * s), '#fbf7ef', 3);
+  });
+  // pigeons
+  for (let i = 0; i < 9; i++) { const x = 1450 + T.rnd() * 300, y = 930 + T.rnd() * 110; ink(ell(x, y, 14, 9), '#8e8f9a', 3); ink(ell(x + 12, y - 8, 6, 6), '#8e8f9a', 2); }
+  // warm sunlight across the square
+  g.fillStyle = rg(1640, 420, 0, 900, [[0, 'rgba(255,230,160,.25)'], [1, 'rgba(255,230,160,0)']]); g.fillRect(900, HZ, W, H);
+}
+function doge() {
+  const hx = 1250, hy = 560;
+  // robe: red and gold brocade with an ermine collar
+  const robe = c => { c.moveTo(1140, 670); c.quadraticCurveTo(1250, 640, 1360, 670); c.lineTo(1420, 1100); c.lineTo(1080, 1100); c.closePath(); };
+  ink(robe, '#b8261f', 7);
+  g.save(); T.P(robe); g.clip();
+  for (let y = 680; y < 1100; y += 36) for (let x = 1090 + (y / 36 % 2) * 18; x < 1420; x += 36) { fill(c => { c.moveTo(x, y - 8); c.lineTo(x + 6, y); c.lineTo(x, y + 8); c.lineTo(x - 6, y); c.closePath(); }, '#e8b64a'); }
+  g.fillStyle = 'rgba(80,10,5,.35)'; g.fillRect(1330, 640, 100, 460);
+  g.restore();
+  T.line([[1250, 700], [1250, 1080]], 14, '#e8b64a'); T.line([[1250, 700], [1250, 1080]], 3);
+  ink(c => { c.moveTo(1130, 690); c.quadraticCurveTo(1250, 620, 1370, 690); c.quadraticCurveTo(1250, 780, 1130, 690); c.closePath(); }, '#fbf7ef', 6);
+  [[1180, 692], [1220, 716], [1280, 716], [1320, 692]].forEach(([x, y]) => fill(rr(x - 4, y - 8, 8, 16, 3), INK));
+  // hand on hip
+  T.line([[1150, 700], [1090, 820], [1160, 880]], 34); T.line([[1150, 700], [1090, 820], [1160, 880]], 20, '#b8261f');
+  ink(ell(1166, 880, 28, 24), '#fbf7ef', 5);
+  // presenting arm, palm up toward the square
+  T.line([[1350, 700], [1470, 720], [1560, 660]], 34); T.line([[1350, 700], [1470, 720], [1560, 660]], 20, '#b8261f');
+  ink(rr(1540, 640, 30, 40, 10), '#fbf7ef', 4);
+  ink(c => { c.moveTo(1565, 668); c.quadraticCurveTo(1610, 640, 1650, 628); c.quadraticCurveTo(1660, 640, 1640, 652); c.lineTo(1600, 662); c.quadraticCurveTo(1640, 672, 1630, 684); c.quadraticCurveTo(1590, 690, 1565, 686); c.closePath(); }, '#fbf7ef', 5);
+  T.line([[1592, 660], [1628, 650]], 3);
+  // head: clean, smug, delighted
+  T.head(hx, hy, 130);
+  // closed happy eyes ^ ^ and raised brows
+  T.line([[hx - 72, hy + 30], [hx - 45, hy + 6], [hx - 18, hy + 30]], 9); T.line([[hx + 18, hy + 30], [hx + 45, hy + 6], [hx + 72, hy + 30]], 9);
+  T.line([[hx - 78, hy - 30], [hx - 22, hy - 44]], 9); T.line([[hx + 22, hy - 44], [hx + 78, hy - 30]], 9);
+  fill(ell(hx - 85, hy + 70, 22, 12), 'rgba(240,120,110,.45)'); fill(ell(hx + 85, hy + 70, 22, 12), 'rgba(240,120,110,.45)');
+  // twirled moustache + big grin
+  ink(c => { c.moveTo(hx - 70, hy + 82); c.quadraticCurveTo(hx, hy + 92, hx + 70, hy + 82); c.quadraticCurveTo(hx + 60, hy + 150, hx, hy + 150); c.quadraticCurveTo(hx - 60, hy + 150, hx - 70, hy + 82); c.closePath(); }, '#7a2420', 6);
+  g.save(); T.P(c => { c.moveTo(hx - 70, hy + 82); c.quadraticCurveTo(hx, hy + 92, hx + 70, hy + 82); c.quadraticCurveTo(hx + 60, hy + 150, hx, hy + 150); c.quadraticCurveTo(hx - 60, hy + 150, hx - 70, hy + 82); c.closePath(); }); g.clip();
+  g.fillStyle = '#fff'; g.fillRect(hx - 80, hy + 76, 160, 26); fill(ell(hx, hy + 150, 40, 18), '#e8726a'); g.restore();
+  ink(c => { c.moveTo(hx, hy + 74); c.quadraticCurveTo(hx - 50, hy + 50, hx - 90, hy + 70); c.quadraticCurveTo(hx - 110, hy + 50, hx - 92, hy + 40); c.quadraticCurveTo(hx - 104, hy + 64, hx - 80, hy + 60); c.quadraticCurveTo(hx - 40, hy + 50, hx, hy + 64); c.quadraticCurveTo(hx + 40, hy + 50, hx + 80, hy + 60); c.quadraticCurveTo(hx + 104, hy + 64, hx + 92, hy + 40); c.quadraticCurveTo(hx + 110, hy + 50, hx + 90, hy + 70); c.quadraticCurveTo(hx + 50, hy + 50, hx, hy + 74); c.closePath(); }, '#4a2e1c', 4);
+  // the doge's corno: gold brocade cap with its horn at the back
+  ink(c => { c.moveTo(hx - 140, hy - 70); c.quadraticCurveTo(hx - 150, hy - 200, hx - 20, hy - 220); c.quadraticCurveTo(hx + 100, hy - 230, hx + 150, hy - 250); c.quadraticCurveTo(hx + 175, hy - 170, hx + 142, hy - 70); c.quadraticCurveTo(hx, hy - 100, hx - 140, hy - 70); c.closePath(); }, '#e2b23e', 7);
+  g.save(); T.P(c => { c.moveTo(hx - 140, hy - 70); c.quadraticCurveTo(hx - 150, hy - 200, hx - 20, hy - 220); c.quadraticCurveTo(hx + 100, hy - 230, hx + 150, hy - 250); c.quadraticCurveTo(hx + 175, hy - 170, hx + 142, hy - 70); c.closePath(); }); g.clip();
+  for (let y = hy - 260; y < hy - 60; y += 26) for (let x = hx - 150 + (y / 26 % 2) * 13; x < hx + 190; x += 26) fill(ell(x, y, 3.5, 3.5), '#a8261f');
+  g.fillStyle = 'rgba(140,90,20,.35)'; g.fillRect(hx + 80, hy - 320, 120, 260);
+  g.restore();
+  ink(rr(hx - 150, hy - 92, 300, 34, 14), '#fbf7ef', 5);
+  // sparkles of wealth
+  [[hx - 200, hy - 160], [hx + 230, hy - 80], [1620, 590]].forEach(([x, y]) => ink(c => { c.moveTo(x, y - 26); c.lineTo(x + 7, y - 7); c.lineTo(x + 26, y); c.lineTo(x + 7, y + 7); c.lineTo(x, y + 26); c.lineTo(x - 7, y + 7); c.lineTo(x - 26, y); c.lineTo(x - 7, y - 7); c.closePath(); }, '#fff6c8', 3));
+}
+function seam() {
+  T.P(c => { c.moveTo(...SPLIT[0]); SPLIT.slice(1).forEach(p => c.lineTo(...p)); });
+  g.lineJoin = 'miter'; g.lineWidth = 30; g.strokeStyle = INK; g.stroke();
+  g.lineWidth = 14; g.strokeStyle = '#fffaf0'; g.stroke();
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  left(); right(); seam();
+  T.grade('rgba(25,15,5,.55)');
+  T.title('VENICE', 960, 270, 250, '#ffffff', 0, 'center');
+  T.title('FROM', 50, 870, 110, '#ffffff', -.04);
+  T.title('MUD...', 40, 1030, 175, T.yellow(175), -.04);
+  T.title('TO', 1880, 870, 110, '#ffffff', -.04, 'right');
+  T.title('MARBLE!', 1880, 1030, 175, T.yellow(175), -.04, 'right');
+  window.DONE = true;
+});
+</script>

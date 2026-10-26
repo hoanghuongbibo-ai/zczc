@@ -84,6 +84,12 @@ Then wait for the assets + voice (or "run").
 - Don't hide the subject: a farm/pen/prop the narration is about must be in the clear (no foreground tree or bush over it).
 - Fill distance with life: boats on the sea, people walking a road, birds, smoke — never an empty band.
 - Prefer a straight road into the distance with fields + trees either side and small walkers for open-country shots.
+- Draw order = depth: anything standing on the ground is drawn back-to-front by its ground-contact y (nearer covers
+  further). Never bake a near tree/building into a static layer and then draw boats/houses/people live on top of it —
+  sort them together (see TS.village in toilet/js/sets3.js). Far boats are drawn before the far shore trees.
+- P.tree(ctx, x, …) puts the trunk PAD (220) px LEFT of x — always call P.tree(ctx, x + P.PAD, …) and check a still.
+- Check every shot at two times (tools/_stills.mjs page out .2 .8) before a full render: floating objects, things on
+  water, objects drawn over what should be in front of them, text overlapping, cards hidden behind the photo column.
 - Music: no silent stretches (no 'none' mood); serious beats use 'somber'/'tender', duck only under real sound effects.
 
 ## Style rules (locked)

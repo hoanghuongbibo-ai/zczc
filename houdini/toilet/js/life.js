@@ -37,7 +37,7 @@
 
   // ---------- 6. Mohenjo-daro: grounded walls, people, goats, birds, a neem tree, jars; a manhole rim in front of the worker ----------
   wrap('mohenjo', (ctx, t, o = {}) => { shadowLine(ctx, 0, W, 470, .35, 18);
-    P.tree(ctx, 1210, 470, t, 7, .8); for (const [x, y] of [[480, 470], [770, 470]]) { EF.jar(ctx, x, y, 1.1); }
+    P.tree(ctx, 1210 + P.PAD, 470, t, 7, .8); for (const [x, y] of [[480, 470], [770, 470]]) { EF.jar(ctx, x, y, 1.1); }
     for (const [x, s, d] of [[200, .5, 1], [1120, .45, -1]]) FA.sheep(ctx, x, 510, s, t + x, { dir: d, ph: x });
     FA.chicken(ctx, 660, 515, .45, t, { dir: -1 }); P.birds(ctx, t, [[200, 120, 34, 0], [600, 80, 30, 1]]);
     const [wx, wd] = walker(t, 22, 700, 1150); mini(ctx, 'indus2', wx, 505, .34, t, { walk: t * 7, turn: .7 * wd });
@@ -57,7 +57,7 @@
 
   // ---------- castle: ducks on the moat, a flag on the tower, trees, crows ----------
   wrap('castle', (ctx, t) => { ln(ctx, [[1000, -20], [1000, -100]], 5); const fw = Math.sin(t * 3) * 8; sh(ctx, '#c8322a', 3, c => { c.moveTo(1000, -100); c.quadraticCurveTo(1040, -110 + fw, 1080, -96); c.lineTo(1000, -70); c.closePath(); });
-    for (const [x, s] of [[80, 1.1], [1200, 1.0]]) P.tree(ctx, x, 470, t, 21 + x, s);
+    for (const [x, s] of [[60, .28], [130, .22], [1225, .25]]) { ctx.fillStyle = 'rgba(30,25,10,.25)'; ctx.beginPath(); ctx.ellipse(x + 10, 338, 40 * s / .3, 6, 0, 0, TAU); ctx.fill(); P.tree(ctx, x + P.PAD, 336, t, 21 + x, s); }
     for (const [x, d] of [[300, 1], [380, 1], [900, -1]]) FA.duck(ctx, x + Math.sin(t * .4 + x) * 30, 560 + (x % 3) * 20, .6, t, { dir: d, ph: x });
     P.birds(ctx, t, [[100, 90, 24, 0], [500, 60, 28, 2]]); });
 
@@ -71,7 +71,7 @@
     mini(ctx, 'lady2', 960, 520, .38, t, { turn: -.4 }); mini(ctx, 'mp2', 320, 520, .38, t + 1, { turn: .4 }); });
 
   // ---------- Kelston: sheep in the meadow, flowers, butterflies, trees ----------
-  wrap('kelston', (ctx, t) => { for (const [x, s] of [[60, 1.1], [1180, 1.0]]) P.tree(ctx, x, 520, t, 31 + x, s);
+  wrap('kelston', (ctx, t) => { for (const [x, s] of [[1120, .6], [1235, .72]]) P.tree(ctx, x + P.PAD, 520, t, 31 + x, s);
     for (const [x, y, s] of [[260, 620, .6], [420, 660, .7], [980, 640, .6]]) FA.sheep(ctx, x, y, s, t + x, { dir: x > 640 ? -1 : 1, ph: x });
     for (const [x, y] of [[200, 700], [700, 700], [1100, 690]]) EF.flowers(ctx, x, y, 140, 8, x, t); FA.butterfly(ctx, 600 + Math.sin(t) * 80, 560 + Math.sin(t * 2) * 30, .6, t, { col: '#f2a040' }); });
 

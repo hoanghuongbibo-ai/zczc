@@ -182,7 +182,7 @@
     ctx.restore(); }
 
   function count(ctx, x, y, to, lt, t0, d, label, o = {}) { const k = clamp((lt - t0) / d); if (lt < t0 - .2) return; const v = lerp(0, to, ease.out(k)), s = pop(lt, t0 - .2, .35);
-    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); FX.bigText(ctx, (o.prefix || '') + v.toFixed(o.dec ?? 0) + (o.suffix || ''), 0, 0, o.size || 84, { color: o.color || '#f6c945' });
+    ctx.save(); ctx.translate(x, y); ctx.scale(s, s); FX.bigText(ctx, (o.prefix || '') + v.toLocaleString('en-US', { minimumFractionDigits: o.dec ?? 0, maximumFractionDigits: o.dec ?? 0 }) + (o.suffix || ''), 0, 0, o.size || 84, { color: o.color || '#f6c945' });
     if (label) { ctx.font = FONT(700, 24); const w = ctx.measureText(label).width + 30; sh(ctx, '#f7eedb', 3, c => c.roundRect(-w / 2, (o.size || 84) * .55, w, 40, 10)); txt(ctx, label, 0, (o.size || 84) * .55 + 21, FONT(700, 24)); } ctx.restore(); }
   G.EK = { board, scroll, count, hieratic, papyrusSheet, logCard, onScreen, chapter, nameCard, timeline, onions, tombPainting, sandDiagram, rampTypes, gangChart, workforce, calendar, timesheet, graffiti, bonesCard, txt, FONT, DISP };
 })(window);

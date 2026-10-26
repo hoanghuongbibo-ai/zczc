@@ -71,9 +71,14 @@
     sh(g, '#9a8c76', 4, c => c.rect(560, 200, 130, 110)); stoneCourses(g, 560, 200, 130, 110, '#a89c84', 51); sh(g, '#6a4a2e', 4, c => { c.moveTo(548, 204); c.lineTo(625, 150); c.lineTo(702, 204); c.closePath(); });
     for (let i = 0; i < 3; i++) slab(g, 566 + i * 40, 310, 34, 24 + i * 4, '#8a7c66', 60 + i); sh(g, '#1e1a16', 3, c => c.rect(604, 306, 42, 30));
     g.fillStyle = 'rgba(80,90,40,.45)'; g.beginPath(); g.moveTo(600, 336); g.lineTo(650, 336); g.lineTo(700, 470); g.lineTo(560, 470); g.closePath(); g.fill();   // streak down the wall
-    // the moat: murky, scummy green
-    g.fillStyle = grad(g, 0, 470, 0, H, [[0, '#6a7a3a'], [1, '#3e4a22']]); g.fillRect(-PAD, 470, W + PAD * 2, H - 470);
-    const r = rng(4); for (let i = 0; i < 60; i++) { g.fillStyle = `rgba(150,170,70,${.2 + r() * .3})`; g.beginPath(); g.ellipse(-PAD + r() * (W + PAD * 2), 490 + r() * 220, 10 + r() * 40, 3 + r() * 6, 0, 0, TAU); g.fill(); }
+    // the moat: murky water that the wall stands in (wet dark footing, reflection, ripples), a grassy near bank with reeds
+    g.fillStyle = grad(g, 0, 470, 0, 650, [[0, '#56643a'], [1, '#3a4626']]); g.fillRect(-PAD, 470, W + PAD * 2, 180);
+    g.fillStyle = 'rgba(40,40,30,.35)'; g.fillRect(200, 470, 860, 70); g.fillStyle = 'rgba(30,30,20,.45)'; g.fillRect(200, 462, 860, 12);   // wall reflection + wet footing
+    const r = rng(4); for (let i = 0; i < 70; i++) { const x = -PAD + r() * (W + PAD * 2), y = 480 + r() * 160; g.strokeStyle = `rgba(190,200,150,${.2 + r() * .3})`; g.lineWidth = 2; g.beginPath(); g.moveTo(x, y); g.lineTo(x + 16 + r() * 40, y); g.stroke(); }
+    for (let i = 0; i < 26; i++) { g.fillStyle = `rgba(150,170,70,${.25 + r() * .25})`; g.beginPath(); g.ellipse(-PAD + r() * (W + PAD * 2), 490 + r() * 140, 8 + r() * 26, 2 + r() * 4, 0, 0, TAU); g.fill(); }   // scum
+    sh(g, '#7aa04e', 3, c => { c.moveTo(-PAD, 660); c.quadraticCurveTo(400, 640, 800, 652); c.quadraticCurveTo(1100, 660, W + PAD, 646); c.lineTo(W + PAD, H); c.lineTo(-PAD, H); c.closePath(); });
+    sh(g, '#6a5a3a', 0, c => c.rect(-PAD, 654, W + PAD * 2, 6)); P2.meadow(g, 662, H, { seed: 41 });
+    for (let x = -PAD + 20; x < W + PAD; x += 70 + (x % 3) * 20) EF.tuft(g, x, 660, 1.3, '#4e7a32');
   });
   function castle(ctx, t, o = {}) { put(ctx, castleL(), o.pan || 0, .3); P.clouds(ctx, t, 0, [[60, 40, .8, 3, 5], [760, 60, .7, 7, 4]]);
     for (let i = 0; i < 3; i++) { const k = (t * .4 + i / 3) % 1; ctx.strokeStyle = `rgba(150,170,60,${.6 * (1 - k)})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.ellipse(625, 520, 30 + k * 120, 8 + k * 24, 0, 0, TAU); ctx.stroke(); }

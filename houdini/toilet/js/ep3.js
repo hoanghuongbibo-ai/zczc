@@ -117,7 +117,7 @@
   S(300, (ctx, lt, dur, t, R) => {   // enter Joseph Bazalgette, engineer. His plan: intercepting sewers along the Thames, catching waste before the centre, carrying it far downstream
     if (lt < R(302)) { TS.sewer(ctx, t); fig(ctx, 'bazalgette', 640, 760, 1.0, { t, pose: 'pointSide', turn: .1, face: { mouth: 'smile', brows: 'up' } });
       EK.nameCard(ctx, lt, .2, 'JOSEPH BAZALGETTE', 'BAZZ-ul-jet · engineer, 1819–1891', 380, 110, { icon: 'brush', w: 480 }); return; }
-    TS.londonMap(ctx, t, clamp((lt - R(302)) / 5)); if (lt > R(303)) K.tag(ctx, 'catch the waste BEFORE the river', 640, 660, lt, R(303), { size: 28 }); if (lt > R(304)) K.tag(ctx, '…carry it far downstream →', 1000, 600, lt, R(304), { size: 26 });
+    TS.londonMap(ctx, t, clamp((lt - R(302)) / 5)); if (lt > R(303)) K.tag(ctx, 'catch the waste BEFORE the river', 640, 660, lt, R(303), { size: 28 }); if (lt > R(304)) K.tag(ctx, '…carry it far downstream →', 760, 600, lt, R(304), { size: 26 });
   });
   fx(306, 'tick', .4); fx(307, 'hammer', .4, .4);
   S(305, (ctx, lt, dur, t, R) => {   // main system finished by 1875; Historic England: 1,000+ miles of new sewers and ~318 million bricks
@@ -175,7 +175,7 @@
   S(332, (ctx, lt, dur, t, R) => {   // so let's say it back — the whole 5,000 years in one sweep
     EK.board(ctx, 24); FX.bigText(ctx, "LET'S SAY IT BACK", 640, 80, 52 * K.pop(lt, .1, .4), { fill: '#ffd23a' });
     const cur = RECAP.filter(([n]) => lt > R(n)).length, pan = lerp(0, Math.max(0, (cur - 4) * 300), ease.inOut(clamp((lt - (cur ? R(RECAP[Math.max(0, cur - 1)][0]) : 0)) / .6)));
-    ctx.save(); ctx.translate(-Math.max(0, (cur - 4)) * 300 + 0, 0);
+    ctx.save(); ctx.beginPath(); ctx.rect(36, 120, W - 72, H - 150); ctx.clip(); ctx.translate(-Math.max(0, (cur - 4)) * 300 + 0, 0);
     RECAP.forEach(([n, s2, who], i) => { if (lt < R(n)) return; const k = K.pop(lt, R(n), .4), x = 200 + i * 300, y = 380; ctx.save(); ctx.translate(x, y); ctx.scale(k, k); ctx.rotate((i % 2 ? 1 : -1) * .03);
       K.paper(ctx, 0, 0, 270, 330, { draw: c => { c.save(); c.beginPath(); c.rect(-120, -150, 240, 210); c.clip(); c.fillStyle = '#d8c8a8'; c.fillRect(-120, -150, 240, 210);
         if (who === 'skara') { c.fillStyle = '#9a8e76'; c.fillRect(-120, -150, 240, 210); sh(c, '#1e1a16', 3, cc => cc.roundRect(-40, -80, 80, 120, 30)); }

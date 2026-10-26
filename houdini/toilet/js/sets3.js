@@ -14,7 +14,7 @@
   const { OUT, sh, ln, circ, layer, put, PAD } = P, TAU = Math.PI * 2, PI = Math.PI;
   const mul = (h, k) => G.Guide.hexMul(h, k), { slab, stoneCourses } = TS;
   const shadow = (g, x, y, rx, a = .3, ry = rx * .2) => { g.save(); g.fillStyle = `rgba(40,30,15,${a})`; g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, TAU); g.fill(); g.restore(); };
-  const tree = (g, x, y, s, seed, t = 0) => { shadow(g, x + 8 * s / .3, y + 2, 120 * s, .28); P.tree(g, x, y, t, seed, s); };
+  const tree = (g, x, y, s, seed, t = 0) => { shadow(g, x + 8 * s / .3, y + 2, 120 * s, .28); P.tree(g, x + PAD, y, t, seed, s); };   // P.tree places the trunk PAD px left of x, so compensate
   const fig = (ctx, who, x, y, s, t, o = {}) => G.VK.fig(ctx, x, y, s, G.EP.cast(who, Object.assign({ t }, o)));
 
   // ---------- boats ----------
@@ -49,13 +49,11 @@
     const r = rng(17); for (let i = 0; i < 90; i++) { const y = HZ + 6 + Math.pow(r(), .7) * (H - HZ - 6), x = RC + (r() - .5) * 1.8 * RX(y), s = 1 + (y - HZ) / 60; g.fillStyle = r() < .5 ? 'rgba(150,120,80,.6)' : 'rgba(235,215,170,.7)'; g.beginPath(); g.ellipse(x, y, s * 1.6, s, 0, 0, TAU); g.fill(); }
     for (let y = HZ + 6; y < H; y += 26) { EF.tuft(g, RC - RX(y) - 6, y, .4 + (y - HZ) / 300, '#5e8a3e'); EF.tuft(g, RC + RX(y) + 6, y + 12, .4 + (y - HZ) / 300, '#5e8a3e'); }
     // trees with trunks on the far shore (small = far), and two near ones framing the edges
-    for (const [x, s, sd] of [[40, .15, 1], [120, .18, 2], [200, .14, 3], [560, .13, 4], [740, .13, 5], [1080, .16, 6], [1170, .19, 7], [1250, .15, 8]]) tree(g, x, HZ + 8, s, 40 + sd);
-    tree(g, 60, 560, .5, 52); tree(g, 1250, 600, .55, 53);
     // the sheep pen (left, in the clear) — back rail, side rails; the front rail is drawn live in front of the sheep
-    PR.fence(g, 150, 420, 498, 34, '#8a6a44'); ln(g, [[150, 498], [130, 566]], 5, '#6a4a2a'); ln(g, [[420, 498], [440, 566]], 5, '#6a4a2a');
-    g.fillStyle = 'rgba(120,100,50,.25)'; g.beginPath(); g.moveTo(150, 498); g.lineTo(420, 498); g.lineTo(440, 566); g.lineTo(130, 566); g.closePath(); g.fill();
+    PR.fence(g, 150, 350, 498, 34, '#8a6a44'); ln(g, [[150, 498], [130, 566]], 5, '#6a4a2a'); ln(g, [[350, 498], [370, 566]], 5, '#6a4a2a');
+    g.fillStyle = 'rgba(120,100,50,.25)'; g.beginPath(); g.moveTo(150, 498); g.lineTo(350, 498); g.lineTo(370, 566); g.lineTo(130, 566); g.closePath(); g.fill();
   });
-  const HUTS = [[470, 560], [830, 560], [960, 450], [330, 450], [1090, 620], [520, 430], [760, 430], [180, 650], [1070, 485], [880, 690], [420, 700], [100, 440]];
+  const HUTS = [[470, 520], [830, 560], [960, 450], [330, 450], [1090, 620], [520, 430], [760, 430], [180, 650], [1070, 485], [880, 690], [420, 700], [100, 440]];
   function hut(ctx, x, y, s, seed) { const r = rng(seed); shadow(ctx, x + 6, y + 2, 110 * s, .3); ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
     sh(ctx, '#b49a74', 4, c => c.rect(-70, -70, 140, 70)); for (let i = 0; i < 5; i++) ln(ctx, [[-60 + i * 30, -66], [-60 + i * 30, -4]], 2, 'rgba(90,60,30,.3)');
     sh(ctx, mul('#c8a24a', .9 + r() * .15), 4, c => { c.moveTo(-96, -60); c.quadraticCurveTo(0, -190, 96, -60); c.closePath(); });
@@ -63,16 +61,18 @@
     sh(ctx, '#3a2a1a', 3, c => c.roundRect(-18, -54, 36, 54, 10)); ctx.restore(); }
   function village(ctx, t, k = 0, o = {}) { put(ctx, villageL(), o.pan || 0, .3); P.clouds(ctx, t, 0, [[100, 40, .8, 3, 6], [700, 70, .7, 5, 4]]);
     for (const [ph, y, s, kd] of [[0, 334, .22, 'dugout'], [500, 342, .26, 'skin'], [1100, 330, .2, 'dugout']]) boat(ctx, ((t * 9 + ph) % (W + 300)) - 150, y, s, t, kd, ph);
-    // sheep in the pen + its front rail
-    for (const [x, y, s, d] of [[210, 540, .42, 1], [300, 552, .45, -1], [380, 528, .38, -1]]) FA.sheep(ctx, x, y, s, t + x, { dir: d, ph: x });
-    PR.fence(ctx, 130, 440, 568, 38, '#8a6a44');
-    const n = Math.round(lerp(3, HUTS.length, clamp(k))); HUTS.slice(0, n).sort((a, b) => a[1] - b[1]).forEach(([x, y], i) => hut(ctx, x, y, .55 + (y - 430) / 560, 10 + i));
-    if (n > 3) G.VK.smoke(ctx, t, 830, 470, .25);
-    for (const [x, y] of [[560, 590], [600, 604], [900, 600]]) FA.chicken(ctx, x, y, .38 + (y - 560) / 500, t, { dir: x > 640 ? -1 : 1, ph: x });
-    // people on the road (smaller = further away); a dog trotting along
+    // the far trees stand on the shore line, in front of the sea and its boats
+    for (const [x, s, sd] of [[40, .15, 1], [120, .18, 2], [200, .14, 3], [560, .13, 4], [740, .13, 5], [1080, .16, 6], [1170, .19, 7], [1250, .15, 8]]) tree(ctx, x, HZ + 8, s, 40 + sd);
+    // everything standing on the ground is drawn back-to-front by where it touches the ground (nearer covers further)
+    const L = [];
+    L.push([568, () => { for (const [x, y, s, d] of [[200, 540, .42, 1], [270, 552, .45, -1], [330, 528, .38, -1]]) FA.sheep(ctx, x, y, s, t + x, { dir: d, ph: x }); PR.fence(ctx, 130, 370, 568, 38, '#8a6a44'); }]);
+    const n = Math.round(lerp(3, HUTS.length, clamp(k))); HUTS.slice(0, n).forEach(([x, y], i) => L.push([y, () => { hut(ctx, x, y, .55 + (y - 430) / 560, 10 + i); if (i === 1 && n > 3) G.VK.smoke(ctx, t, x, y - 130, .25); }]));
+    L.push([560, () => tree(ctx, 60, 560, .5, 52, t)]); L.push([600, () => tree(ctx, 1250, 600, .55, 53, t)]);
+    for (const [x, y] of [[560, 590], [600, 604], [900, 600]]) L.push([y, () => FA.chicken(ctx, x, y, .38 + (y - 560) / 500, t, { dir: x > 640 ? -1 : 1, ph: x })]);
     for (const [sp, ph, who, side] of [[.05, 0, 'neo1', -1], [.04, .5, 'neo2', 1]]) { const u = (t * sp + ph) % 1, toward = side < 0, y = toward ? lerp(HZ + 20, 700, u) : lerp(700, HZ + 20, u), s = lerp(.06, .34, (y - HZ) / (H - HZ));
-      fig(ctx, who, RC + side * RX(y) * .4, y, s, t, { walk: t * 7, turn: toward ? 0 : .9, back: !toward }); }
-    FA.dog(ctx, RC + 40, 660, .5, t, { dir: -1, coat: '#7a5a3a' }); }
+      L.push([y, () => fig(ctx, who, RC + side * RX(y) * .4, y, s, t, { walk: t * 7, turn: toward ? 0 : .9, back: !toward })]); }
+    L.push([660, () => FA.dog(ctx, RC + 40, 660, .5, t, { dir: -1, coat: '#7a5a3a' })]);
+    L.sort((a, b) => a[0] - b[0]).forEach(([, f]) => f()); }
   TS.village = village;
 
   // =================== Orkney: Skara Brae from outside ===================

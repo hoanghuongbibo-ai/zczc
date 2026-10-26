@@ -93,10 +93,11 @@
       if (p === 0) { EK.count(ctx, 420, 380, 7.5, lt, R(196), 1.4, 'gallons per flush (reportedly)', { size: 90, dec: 1 }); if (lt > R(197)) { fig(ctx, 'neo2', 960, 720, .75, { t, prop: 'jug', pose: 'idle', turn: -.3, face: { mouth: 'grit', brows: 'worried', sweat: true } }); K.tag(ctx, 'hauled by hand', 960, 330, lt, R(197), { size: 28 }); } }
       else { ajax(ctx, 640, 500, .7, t, 0); TS.stink(ctx, t, 640, 430, 1, 3); K.cross(ctx, 640, 340, 1.4, lt, R(199) + 1.2); K.tag(ctx, 'nothing blocked the smell from the pit', 640, 690, lt, R(199), { size: 28 }); } }
     else {   // the cutaway: an early flush toilet draining into a pit under the house; water poured in by hand; odours rising
-      ctx.fillStyle = '#e8d8b8'; ctx.fillRect(0, 0, W, 470); TS.stoneCourses(ctx, 0, 0, W, 470, '#d8c49a', 5); ctx.fillStyle = '#6a5240'; ctx.fillRect(0, 470, W, H - 470); sh(ctx, '#3a2a1e', 4, c => c.ellipse(640, 640, 300, 70, 0, 0, TAU));
+      ctx.fillStyle = '#e8d8b8'; ctx.fillRect(0, 0, W, 470); TS.stoneCourses(ctx, 0, 0, W, 470, '#d8c49a', 5); ctx.fillStyle = grad(ctx, 0, 488, 0, H, [[0, '#7a5e44'], [1, '#4a3626']]); ctx.fillRect(0, 488, W, H - 488); for (let i = 0; i < 70; i++) { ctx.fillStyle = i % 2 ? 'rgba(40,25,10,.35)' : 'rgba(150,120,80,.35)'; ctx.beginPath(); ctx.ellipse((i * 173) % W, 500 + (i * 61) % 210, 5 + i % 6, 3 + i % 3, 0, 0, TAU); ctx.fill(); }
+      sh(ctx, '#3a2a1e', 4, c => c.ellipse(640, 640, 300, 70, 0, 0, TAU)); sh(ctx, '#9a6a3e', 3.5, c => c.rect(-10, 466, W + 20, 24)); for (let x = 0; x < W; x += 90) ln(ctx, [[x, 468], [x, 488]], 2, 'rgba(60,35,15,.6)'); TS.txt && TS.txt(ctx, 'the pit', 900, 690, '700 22px Fredoka', '#e8d4b0');
       ajax(ctx, 640, 430, .7, t, .5); fig(ctx, 'neo2', 360, 470, .65, { t, prop: 'jug', pose: { L: [-68, -158], R: [150, -360], hL: 'rest', hR: 'hold' }, turn: .5, face: { mouth: 'grit', brows: 'worried', sweat: true } });
-      TS.stink(ctx, t, 640, 600, 1, 4); K.tag(ctx, 'a pit under your house isn\'t a plan', 640, 110, lt, R(203) - .4, { size: 30 });
-      if (lt > R(202)) refrain(ctx, lt, R(202), 4, { y: 220 }); }
+      TS.stink(ctx, t, 640, 600, 1, 4); K.tag(ctx, 'a pit under your house isn\'t a plan', 640, 560, lt, R(203) - .4, { size: 30 });
+      if (lt > R(202)) refrain(ctx, lt, R(202), 4, { y: 110 }); }
   });
 
   // ===================== BEAT 6b — Alexander Cumming bends the pipe =====================

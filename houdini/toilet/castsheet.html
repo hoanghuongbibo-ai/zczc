@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Toilet cast sheet</title>
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2); }
+@font-face { font-family: 'Luckiest Guy'; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #222; }</style></head>
+<body><canvas id="c" width="2400" height="1500"></canvas>
+<script src="../js/toon.js"></script><script src="../js/common.js"></script><script src="../js/guide.js"></script><script src="../js/wardrobe.js"></script>
+<script src="../js/paint.js"></script><script src="../js/paint2.js"></script>
+<script src="../vindolanda/js/cast.js"></script><script src="../vindolanda/js/kit.js"></script><script src="../merer/js/cast.js"></script><script src="js/cast.js"></script>
+<script>
+(async () => {
+  await document.fonts.load('700 30px Fredoka'); await document.fonts.load('60px "Luckiest Guy"');
+  const G = window, c = document.getElementById("c"), g = c.getContext("2d"), Gd = G.Guide;
+  const bg = g.createLinearGradient(0, 0, 0, 1500); bg.addColorStop(0, '#f6ead2'); bg.addColorStop(1, '#e2cfa8'); g.fillStyle = bg; g.fillRect(0, 0, 2400, 1500);
+  g.font = '60px "Luckiest Guy"'; g.fillStyle = '#3a2618'; g.textAlign = 'center'; g.fillText('WHERE DOES IT GO? — NEW CAST', 1200, 80);
+  const row = (list, y, s) => list.forEach(([key, label, o], i) => { const x = 160 + i * (2080 / (list.length - 1));
+    Gd.draw(g, x, y, s, Object.assign({ t: 1, pose: 'idle', light: Gd.LIGHT ? undefined : undefined }, G.CW[key] || {}, o || {}, { look: Object.assign({}, (G.CW[key] || {}).look) }));
+    g.font = '700 30px Fredoka'; g.fillStyle = '#3a2618'; g.fillText(label, x, y + 46); });
+  row([['viewer', 'The Viewer', { face: { mouth: 'smile' } }], ['crapper', 'Thomas Crapper', { pose: 'cheer', face: { mouth: 'grin', eyes: 'happy', brows: 'up' } }], ['harington', 'Sir John Harington', { pose: 'present', face: { mouth: 'smirk', brows: 'sly' } }],
+       ['elizabeth', 'Elizabeth I', { face: { mouth: 'flat', eyes: 'half', brows: 'skeptic' } }], ['cumming', 'Alexander Cumming', { pose: 'magnify', face: { mouth: 'o', brows: 'up' } }], ['snow', 'Dr John Snow', { face: { mouth: 'flat', brows: 'worried' } }]], 680, .95);
+  row([['bazalgette', 'Joseph Bazalgette', { pose: 'pointSide', face: { mouth: 'smile', brows: 'up' } }], ['mp1', 'MP 1', { face: { mouth: 'grit', eyes: 'squint', brows: 'worried' } }], ['mp2', 'MP 2', { face: { mouth: 'frown', eyes: 'squint', brows: 'worried' } }],
+       ['marcus', 'Marcus (Roman)', { face: { mouth: 'grin' } }], ['roman2', 'Roman 2', { face: { mouth: 'grit', brows: 'worried' } }], ['excavator', '1920s excavator', { face: { mouth: 'o', brows: 'up' } }], ['navvy', 'Sewer navvy', {}]], 1400, .95);
+  // the seated viewer (on a stool box) to test the @sit legs
+  g.save(); g.fillStyle = '#ddd'; g.restore();
+  window.DONE = true;
+})();
+</script></body></html>

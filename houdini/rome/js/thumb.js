@@ -243,6 +243,82 @@
     title(ctx, 'HOW ON EARTH DID THE ROMANS', 640, 96, 72, ['#ffffff', '#f4f4f4'], { rot: -.015 }); title(ctx, 'SURVIVE WITHOUT WATER?!', 660, 200, 88, ['#4ac8ff', '#1a8ad8'], { rot: -.015 }); }
   function v11(ctx) { dryScene(ctx, 260, 220); parched(ctx, 880, 520, .95); C.finish(ctx, t, 'golden', { leak: false, vig: .25 });
     title(ctx, 'NO', 290, 330, 170, ['#ffffff', '#f4f4f4'], { rot: -.04 }); title(ctx, 'WATER?!', 330, 480, 150, ['#4ac8ff', '#1a8ad8'], { rot: -.04 }); }
+
+  // ---- "I'M SO THIRSTY!" in the channel style: an egg-headed white-faced soldier with a sticker outline, painterly desert ----
+  function sticker(ctx, draw, r = 8) { const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d'); draw(o);
+    const sil = document.createElement('canvas'); sil.width = W; sil.height = H; const g = sil.getContext('2d'); g.drawImage(off, 0, 0); g.globalCompositeOperation = 'source-in'; g.fillStyle = '#fffaf0'; g.fillRect(0, 0, W, H);
+    ctx.save(); ctx.shadowColor = 'rgba(60,20,0,.55)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 10; for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; ctx.drawImage(sil, Math.cos(a) * r, Math.sin(a) * r); if (i === 0) { ctx.shadowColor = 'transparent'; } } ctx.restore(); ctx.drawImage(off, 0, 0); }
+  function crackedTiles(ctx, hz, seed) { const R = C.rng(seed); const proj = (u, v) => { const z = 1 + v * 7; return [640 + (u - 640) / z * 1.0 + (u - 640) * .0, hz + (720 - hz) * (1 - 1 / (1 + v * 2.2)) * 1.25]; };
+    cel(ctx, c => c.rect(-20, hz, 1320, 760 - hz), '#d8a058', { shade: '#b8803c', dx: 0, dy: 0, lw: 0 });
+    const rows = 9, cols = 16, P2 = []; for (let r = 0; r <= rows; r++) { P2.push([]); for (let c = 0; c <= cols; c++) { const y0 = hz + Math.pow(r / rows, 1.7) * (760 - hz), w = 90 + Math.pow(r / rows, 1.7) * 260, x0 = 640 + (c - cols / 2) * w * .55; P2[r].push([x0 + (R() - .5) * w * .5 * (r > 0), y0 + (R() - .5) * (r ? 70 * r / rows : 0)]); } }
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const q = [P2[r][c], P2[r][c + 1], P2[r + 1][c + 1], P2[r + 1][c]], k = r / rows, base = ['#e2ac64', '#d89c50', '#e8b670', '#d2964a'][(r * 3 + c) % 4];
+      ctx.beginPath(); q.forEach((p, i) => i ? ctx.lineTo(...p) : ctx.moveTo(...p)); ctx.closePath(); const gg = ctx.createLinearGradient(0, q[0][1], 0, q[2][1]); gg.addColorStop(0, mix(base, '#fff2c8', .25)); gg.addColorStop(1, base); ctx.fillStyle = gg; ctx.fill(); ctx.strokeStyle = '#6a4020'; ctx.lineWidth = 1.2 + k * 6; ctx.lineJoin = 'round'; ctx.stroke(); ctx.strokeStyle = 'rgba(255,236,190,.5)'; ctx.lineWidth = 1 + k * 2; ctx.beginPath(); ctx.moveTo(q[0][0] + 4, q[0][1] + 3); ctx.lineTo(q[1][0] - 4, q[1][1] + 3); ctx.stroke();
+      if (R() < .7) { const cx0 = (q[0][0] + q[2][0]) / 2, cy0 = (q[0][1] + q[2][1]) / 2, e = q[(R() * 4) | 0]; ctx.strokeStyle = '#7a4a24'; ctx.lineWidth = .8 + k * 3; ctx.beginPath(); ctx.moveTo(e[0], e[1]); ctx.quadraticCurveTo(cx0 + (R() - .5) * 30, cy0 + (R() - .5) * 12, cx0 + (R() - .5) * 20, cy0); ctx.stroke(); } } }
+  function thirstySoldier(o) { const INKC = '#2a1810', WF = '#f8f4ec', WS = '#d8d0c4', GOLD = '#e0b048', GS = '#a87420', GL = '#fff0a0', RED = '#c8281e', RS = '#8a140e';
+    const L = (c, fill, f, opt = {}) => cel(c, f, fill, Object.assign({ dx: 10, dy: 0, lw: 7 }, opt));
+    // the red cape flowing back to the ground
+    L(o, RED, c => { c.moveTo(870, 400); c.quadraticCurveTo(1010, 430, 1040, 560); c.quadraticCurveTo(1060, 640, 1080, 690); c.lineTo(960, 690); c.quadraticCurveTo(930, 600, 880, 520); c.closePath(); }, { shade: RS, light: '#e8483a', dx: 18 });
+    // legs: kneeling on the left knee, right foot planted
+    o.lineCap = 'round'; const leg = (pts, w) => { o.strokeStyle = INKC; o.lineWidth = w + 12; o.beginPath(); pts.forEach((p, i) => i ? o.lineTo(...p) : o.moveTo(...p)); o.stroke(); o.strokeStyle = WF; o.lineWidth = w; o.stroke(); };
+    leg([[860, 600], [800, 660], [850, 690]], 26); leg([[930, 600], [960, 640], [940, 690]], 26);
+    for (const [x, y] of [[850, 690], [940, 690]]) { L(o, '#7a4a24', c => c.ellipse(x - 10, y + 4, 34, 12, 0, 0, 7), { shade: '#4a2a14', dx: 0, lw: 5 }); o.strokeStyle = '#7a4a24'; o.lineWidth = 6; for (const d of [-14, 0]) { o.beginPath(); o.moveTo(x - 16, y + d - 8); o.lineTo(x + 8, y + d - 14); o.stroke(); } }
+    // tunic skirt with leather strips, belt
+    L(o, RED, c => { c.moveTo(830, 520); c.lineTo(960, 520); c.lineTo(980, 610); c.quadraticCurveTo(900, 630, 820, 610); c.closePath(); }, { shade: RS, dx: 14 });
+    for (let i = 0; i < 6; i++) L(o, '#8a5a30', c => c.rect(830 + i * 24, 540, 18, 64), { shade: '#5a3818', dx: 4, lw: 4 }); L(o, '#5a3a20', c => c.rect(826, 512, 140, 26), { shade: '#3a2410', dx: 0, lw: 5 }); o.fillStyle = GOLD; for (let i = 0; i < 5; i++) { o.beginPath(); o.arc(840 + i * 28, 525, 6, 0, 7); o.fill(); }
+    // the cuirass: bronze bands
+    L(o, GOLD, c => { c.moveTo(822, 410); c.quadraticCurveTo(890, 380, 962, 410); c.lineTo(972, 520); c.quadraticCurveTo(896, 540, 818, 520); c.closePath(); }, { shade: GS, light: GL, dx: 22 });
+    o.strokeStyle = GS; o.lineWidth = 5; for (let i = 1; i < 5; i++) { o.beginPath(); o.moveTo(822, 410 + i * 22); o.quadraticCurveTo(895, 400 + i * 22 + 12, 966, 410 + i * 22); o.stroke(); }
+    o.strokeStyle = '#6a4020'; o.lineWidth = 12; o.beginPath(); o.moveTo(830, 412); o.lineTo(950, 520); o.stroke(); L(o, GOLD, c => c.arc(840, 420, 13, 0, 7), { shade: GS, dx: 3, lw: 4 });
+    // the limp arm, hand on the knee
+    leg([[950, 430], [985, 500], [965, 560]], 30); L(o, WF, c => c.ellipse(962, 570, 24, 21, 0, 0, 7), { shade: WS, dx: 6, lw: 6 });
+    // the head: a white egg, tilted back, looking up at the empty skin
+    o.save(); o.translate(895, 290); o.rotate(-.28); o.scale(1.28, 1.28);
+    L(o, WF, c => c.ellipse(0, 0, 86, 100, 0, 0, 7), { shade: WS, light: '#ffffff', dx: 20 });
+    // eyes squeezed shut (> <), worried brows, tears
+    o.strokeStyle = INKC; o.lineWidth = 8; o.lineJoin = 'round'; o.lineCap = 'round'; o.beginPath(); o.moveTo(-58, -26); o.lineTo(-30, -12); o.lineTo(-58, 2); o.moveTo(40, -26); o.lineTo(14, -12); o.lineTo(40, 2); o.stroke();
+    o.lineWidth = 7; o.beginPath(); o.moveTo(-64, -52); o.quadraticCurveTo(-46, -62, -26, -44); o.moveTo(44, -54); o.quadraticCurveTo(28, -62, 10, -44); o.stroke();
+    for (const [x, d] of [[-50, -1], [30, 1]]) L(o, '#6ac8f4', c => { c.moveTo(x - 6, 6); c.quadraticCurveTo(x + d * 14, 50, x + d * 4, 90); c.lineTo(x + d * 16, 86); c.quadraticCurveTo(x + d * 22, 46, x + 8, 6); c.closePath(); }, { shade: '#3a98d0', light: '#d8f4ff', dx: 4, lw: 4 });
+    // the open mouth, tongue lolling out, a drip
+    L(o, '#6a1418', c => { c.moveTo(-40, 34); c.quadraticCurveTo(-8, 22, 30, 32); c.quadraticCurveTo(36, 78, -6, 86); c.quadraticCurveTo(-46, 80, -40, 34); c.closePath(); }, { shade: '#3a0a0c', dx: 6, lw: 6 });
+    L(o, '#e8707a', c => { c.moveTo(-30, 58); c.quadraticCurveTo(-40, 120, -14, 132); c.quadraticCurveTo(12, 136, 14, 104); c.quadraticCurveTo(18, 70, 6, 60); c.closePath(); }, { shade: '#b8404a', light: '#ffa0a8', dx: 6, lw: 5 }); o.strokeStyle = '#b8404a'; o.lineWidth = 3; o.beginPath(); o.moveTo(-10, 70); o.lineTo(-12, 120); o.stroke();
+    L(o, '#d8f0fc', c => c.ellipse(-16, 150, 7, 10, 0, 0, 7), { shade: '#90c8e8', dx: 2, lw: 3 });
+    // the helmet: gold bowl, brow ridge, cheek guard, neck guard, a red bristle crest
+    L(o, GOLD, c => { c.moveTo(-92, -24); c.quadraticCurveTo(-96, -122, 0, -128); c.quadraticCurveTo(100, -126, 100, -20); c.lineTo(84, -22); c.quadraticCurveTo(70, -88, 0, -92); c.quadraticCurveTo(-60, -94, -80, -30); c.closePath(); }, { shade: GS, light: GL, dx: 22 });
+    L(o, GOLD, c => { c.moveTo(-96, -40); c.quadraticCurveTo(0, -78, 104, -36); c.lineTo(104, -22); c.quadraticCurveTo(0, -62, -96, -24); c.closePath(); }, { shade: GS, dx: 4, lw: 6 });
+    L(o, GOLD, c => { c.moveTo(70, -30); c.quadraticCurveTo(104, -10, 98, 40); c.quadraticCurveTo(84, 70, 60, 60); c.quadraticCurveTo(70, 20, 58, -14); c.closePath(); }, { shade: GS, light: GL, dx: 8, lw: 6 }); o.fillStyle = GS; o.beginPath(); o.arc(78, 20, 6, 0, 7); o.fill();
+    L(o, GOLD, c => { c.moveTo(96, -40); c.quadraticCurveTo(140, -20, 150, 20); c.lineTo(126, 22); c.quadraticCurveTo(118, -4, 92, -14); c.closePath(); }, { shade: GS, dx: 6, lw: 6 });
+    L(o, '#d8323a', c => { c.moveTo(-60, -116); c.quadraticCurveTo(-30, -220, 60, -214); c.quadraticCurveTo(140, -200, 160, -110); c.lineTo(110, -112); c.quadraticCurveTo(80, -150, 20, -150); c.quadraticCurveTo(-30, -150, -40, -112); c.closePath(); }, { shade: RS, light: '#f0606a', dx: 16 });
+    o.strokeStyle = RS; o.lineWidth = 3; for (let i = 0; i < 18; i++) { const a = Math.PI * (1.08 + i * .05); o.beginPath(); o.moveTo(50 + Math.cos(a) * 90, -110 + Math.sin(a) * 92); o.lineTo(50 + Math.cos(a) * 140, -110 + Math.sin(a) * 140 * .8); o.stroke(); }
+    // sweat flying off
+    for (const [x, y, r] of [[-120, -60, 1], [130, -150, .8], [150, 60, .9], [-110, 40, .7]]) L(o, '#6ac8f4', c => { c.moveTo(x, y - 30 * r); c.quadraticCurveTo(x + 22 * r, y, x + 14 * r, y + 14 * r); c.quadraticCurveTo(x, y + 26 * r, x - 14 * r, y + 14 * r); c.quadraticCurveTo(x - 22 * r, y, x, y - 30 * r); c.closePath(); }, { shade: '#3a98d0', light: '#e0f6ff', dx: 3, lw: 4 });
+    o.restore();
+    // the raised arm holding the waterskin upside down over the face
+    leg([[850, 420], [770, 350], [742, 240]], 30);
+    o.save(); o.translate(758, 214); o.rotate(2.5); o.scale(.78, .78); L(o, '#a8703c', c => { c.moveTo(-58, -40); c.quadraticCurveTo(-96, 60, -44, 112); c.quadraticCurveTo(0, 134, 44, 112); c.quadraticCurveTo(96, 60, 58, -40); c.quadraticCurveTo(28, -62, 18, -86); c.lineTo(-18, -86); c.quadraticCurveTo(-28, -62, -58, -40); c.closePath(); }, { shade: '#6a4220', light: '#d09a5a', dx: 18 });
+      L(o, '#6a4220', c => c.rect(-22, -110, 44, 28), { shade: '#4a2a14', dx: 0, lw: 6 }); L(o, '#1a0e08', c => c.ellipse(0, -112, 18, 7, 0, 0, 7), { dx: 0, lw: 4 }); o.strokeStyle = '#3a2414'; o.lineWidth = 7; o.beginPath(); o.moveTo(-20, -86); o.quadraticCurveTo(-110, -40, -66, 60); o.stroke(); o.strokeStyle = '#6a4220'; o.lineWidth = 4; o.setLineDash([8, 7]); o.beginPath(); o.moveTo(-54, -24); o.quadraticCurveTo(-80, 56, -36, 98); o.stroke(); o.setLineDash([]); o.restore();
+    L(o, WF, c => c.ellipse(744, 236, 28, 25, -.5, 0, 7), { shade: WS, dx: 6, lw: 6 });
+    // the last drop from the skin's neck
+    L(o, '#6ac8f4', c => { c.moveTo(830, 306); c.quadraticCurveTo(846, 334, 840, 346); c.quadraticCurveTo(830, 356, 820, 346); c.quadraticCurveTo(814, 334, 830, 306); c.closePath(); }, { shade: '#3a98d0', light: '#e0f6ff', dx: 3, lw: 4 }); }
+  function brokenAmphora(o, x, y, s) { o.save(); o.translate(x, y); o.scale(s, s); o.rotate(1.25); const AM = '#c8784a', AS = '#8a4a26';
+    for (const d of [-1, 1]) { o.strokeStyle = '#2a1810'; o.lineWidth = 20; o.beginPath(); o.moveTo(d * 20, -100); o.quadraticCurveTo(d * 60, -100, d * 46, -56); o.stroke(); o.strokeStyle = AM; o.lineWidth = 11; o.stroke(); }
+    cel(o, c => { c.moveTo(-18, -116); c.lineTo(18, -116); c.lineTo(20, -74); c.quadraticCurveTo(74, -40, 62, 34); c.quadraticCurveTo(44, 100, 12, 128); c.lineTo(-12, 128); c.quadraticCurveTo(-44, 100, -62, 34); c.quadraticCurveTo(-74, -40, -20, -74); c.closePath(); }, AM, { shade: AS, light: '#e8a070', dx: 16, dy: 0, lw: 7 });
+    o.strokeStyle = '#2a1810'; o.lineWidth = 4; o.beginPath(); for (let i = 0; i < 7; i++) { const yy = -30; o.lineTo(-56 + i * 16, yy + (i % 2 ? -10 : 0)); o.lineTo(-56 + i * 16 + 8, yy + (i % 2 ? 0 : -10)); } o.stroke(); o.beginPath(); o.moveTo(-60, -18); o.lineTo(60, -18); o.moveTo(-60, -44); o.lineTo(60, -44); o.stroke();
+    cel(o, c => { c.moveTo(-18, -116); c.lineTo(18, -116); c.lineTo(10, -100); c.lineTo(0, -112); c.lineTo(-8, -98); c.closePath(); }, '#3a1a0a', { dx: 0, dy: 0, lw: 4 }); o.restore(); }
+  function v12(ctx) { // sky: hazy blazing orange, a big sun, painted ruins of an aqueduct in the heat
+    const g = ctx.createLinearGradient(0, 0, 0, 470); g.addColorStop(0, '#e8a050'); g.addColorStop(.5, '#f4c070'); g.addColorStop(1, '#f8dca0'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const sx = 470, sy = 40; const sg = ctx.createRadialGradient(sx, sy, 30, sx, sy, 520); sg.addColorStop(0, 'rgba(255,255,236,1)'); sg.addColorStop(.2, 'rgba(255,240,190,.9)'); sg.addColorStop(1, 'rgba(255,190,90,0)'); ctx.fillStyle = sg; ctx.fillRect(0, 0, W, H); rays(ctx, sx, sy, '#fff4d0', .2);
+    C.mounds(ctx, { y: 430, n: 5, seed: 1601, col: '#d8a868', far: .6, sunX: sx, t, w: 560, h: 50, copses: 0, haze: '#f8d8a0' });
+    ctx.save(); ctx.globalAlpha = .8; K.aqueduct(ctx, 1040, 1500, 250, () => 470, t, { bay: 110, far: .45, haze: '#f4c890' }); ctx.restore(); ctx.fillStyle = 'rgba(248,200,140,.35)'; ctx.fillRect(1000, 220, 300, 260);
+    crackedTiles(ctx, 440, 7);
+    // heat shimmer rising, three wavy lines over his head
+    ctx.save(); ctx.strokeStyle = 'rgba(255,248,220,.75)'; ctx.lineWidth = 6; ctx.lineCap = 'round'; for (let i = 0; i < 3; i++) { ctx.beginPath(); for (let y = 0; y <= 80; y += 4) ctx.lineTo(760 + i * 34 + Math.sin(y * .12 + i) * 8, 110 - y); ctx.stroke(); } ctx.restore();
+    // the soldier with a white sticker edge, the broken amphora
+    sticker(ctx, o => thirstySoldier(o), 9); sticker(ctx, o => brokenAmphora(o, 1150, 640, .9), 7);
+    // warm grade, vignette, a halftone in the corners
+    ctx.save(); ctx.globalCompositeOperation = 'soft-light'; ctx.fillStyle = 'rgba(255,140,40,.35)'; ctx.fillRect(0, 0, W, H); ctx.restore();
+    const v = ctx.createRadialGradient(640, 360, 300, 640, 360, 800); v.addColorStop(0, 'rgba(60,20,0,0)'); v.addColorStop(1, 'rgba(60,20,0,.55)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+    ctx.save(); ctx.fillStyle = 'rgba(80,30,0,.18)'; for (let y = 0; y < H; y += 10) for (let x = 0; x < W; x += 10) { const d = Math.hypot(x - 640, y - 360) / 760; if (d > .62) { ctx.beginPath(); ctx.arc(x + (y / 10 % 2) * 5, y, (d - .6) * 9, 0, 7); ctx.fill(); } } ctx.restore();
+    title(ctx, "I'M SO", 330, 270, 150, ['#ffffff', '#f2f2f2'], { rot: -.05 }); title(ctx, 'THIRSTY!', 350, 450, 170, ['#fff060', '#ffc000'], { rot: -.05 }); }
   G.ThumbKit = { bust, title: _title, stamp: _stamp, burst, rays };
-  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9, 10: v10, 11: v11 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
+  G.drawThumb = (ctx, v) => { ctx.clearRect(0, 0, W, H); Q.length = 0; ({ 1: v1, 2: v2, 3: v3, 4: v4, 5: v5, 6: v6, 7: v7, 8: v8, 9: v9, 10: v10, 11: v11, 12: v12 })[v](ctx); ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); Q.forEach(f => f()); ctx.restore(); };
 })(window);

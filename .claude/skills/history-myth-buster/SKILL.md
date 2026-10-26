@@ -352,3 +352,14 @@ The user rejected plain "scene + title" thumbnails. They asked for something uni
   - Big Luckiest Guy text with a gradient fill and a heavy stroke. Keep it inside x ≥ 40.
   - One short Fredoka pill underneath.
 - **Output:** render 3 options so the user can pick one.
+
+### "Where Does It Go?" (toilet history, houdini/toilet/, Oct '26)
+A narrated myth-buster with skits. It reuses merer's flora/sets/kit and the vindolanda + merer casts. New pieces:
+- **`toilet/js/frame.js`** holds the generic framework:
+  - **Shots keyed to transcript lines.** `timing.js` comes straight from `asr.json`: `TV.L<n>` is the first word of line n of `transcript.txt`, and `TW[n][k]` is word k of that line. `S(n, fn, off)` and `R(n[, k])` inside a shot replace the hand-written `anchors.txt` (no misheard keys, no duplicate keys).
+  - Speech bubbles (`EP.mark`/`EP.speech`), the refrain stamp (`EP.refrain`), the rule card and labels.
+  - `EP.sit(ctx, who, x, seatY, s)` draws seated figures. Every outfit gets an `@sit` twin with a lap, knees and shins toward camera.
+- **`toilet/js/cast.js`** adds new outfits (hoodie, plumber, tudor, gown, georgian, frock*, sewerman) and hats (tudorCap, periwig, queenCrown, bowlerT). `toilet/castsheet.html` renders the sheet.
+- **`toilet/js/sets.js` + `sets2.js` (G.TS)** have about 17 painted sets, plus a polygon relief-map painter (`TS.map(name, {lon, lat, z})`, `TS.pin`, `TS.mapPt`) for southasia / med / usa. Keep coastlines simple. Lake polygons drawn from memory looked like random shards, so they were dropped.
+- **Tone rule:** sections the script marks as serious (Soho 1854, the global sanitation numbers) use music mood 'none' or 'quiet', dimmed sets, and no gags.
+- **No sponsor read in the recording:** the bridge went straight to the recap. Bracketed placeholders were read by the narrator as generic lines, so the end card mirrors what was said.

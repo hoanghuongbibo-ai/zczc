@@ -93,6 +93,21 @@ Studied frame-by-frame (3 fps sheets), scene-cut detection, spectrograms and tra
   (whooshes on whip-pans, impacts, crowd walla, rain, horses, paper/pencil on maps, pops on graphics). Mix voice ≈ −16
   LUFS-I, music −12…−18 dB under the voice with ducking, final master ≈ −14 LUFS for YouTube, stereo.
 
+### The polished pipeline (salt remake, houdini/salt2/, Oct '27) — use for every new episode
+- `js/director.js` (G.DR): `DR.shot(ctx, lt, dur, t, {cam, bg, dof, crowd, act, fg, atm, ui})` — camera move + depth of
+  field + sprite crowds (`DR.army`) + blurred foreground + atmosphere; text kit (`callout`, `write`, `banner`, `sign`,
+  `tally`, `statCard`, `mystery`, `exclaim`, `circle`), `blueprint`/`bpDraw`, cartoon maps (`map`, `mapWrite`, `mapPin`,
+  `mapPortrait`, `mapArmy`, `mapShip`) on top of G.MAP.
+- `salt2/js/show.js`: `C(line, word, fn, transition)` — shots on transcript WORDS; transitions whip/whipL/dissolve/flash/
+  ink/dip/zoom. `salt2/js/kit.js`: `P`, `head` (close-ups by head position), `SFX(line, word, type)`, `AMB(line, bed, dur)`.
+- Sound: `tools/foley.py` (≈50 synthesised one-shots + ambience beds; CC0 Kenney recordings via KENNEY_DIR),
+  `tools/cues.mjs` (cues + automatic transition whooshes + counter cha-chings), `tools/music.mjs`, `tools/mix.py`
+  (stereo; voice 0 dB, music −14 dB ducked −7 dB under the voice, SFX −10 dB, beds −22 dB; loudnorm −14 LUFS / −1.5 dBTP).
+  Render video with export-par, then mux: `ffmpeg -i raw.mp4 -i mix.wav -map 0:v -map 1:a -c:v copy -c:a aac`.
+- Review with `tools/_stillsw.mjs page out t0 t1 .6` + `tools/_sheet.py` per section before the full render.
+- Pace achieved: 309 shots / 14:53 (~2.9 s average, 1.5–2 s in busy passages); target the references' ~1.6 s where
+  the narration allows.
+
 ## USER RULES — real media, readability, grounding, globe maps (2026-10-26, apply to EVERY video)
 1. **Real media first: Wikimedia Commons.** When a shot needs a photo or clip of a specific place, object, document or event, search Wikimedia Commons first (API: https://commons.wikimedia.org/w/api.php). Use only **public domain or CC-BY / CC-BY-SA** files (check `extmetadata.LicenseShortName`). Download into `<ep>/assets/commons/`, record title, author, licence and URL in `<ep>/assets/commons/credits.json`, and **credit them**:
    - a small credit line on screen while the photo shows

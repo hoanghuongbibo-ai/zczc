@@ -16,7 +16,7 @@
   function screenBox(m, x, y, w, h) { const pts = [[x - w / 2, y - h / 2], [x + w / 2, y - h / 2], [x - w / 2, y + h / 2], [x + w / 2, y + h / 2]].map(([a, b]) => m.transformPoint(new DOMPoint(a, b)));
     const xs = pts.map(p => p.x), ys = pts.map(p => p.y); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
   function face(ctx, x0, y0, x1, y1) { fresh(); const m = ctx.getTransform(); const b = screenBox(m, (x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0); FACES.push(b); }
-  function box(ctx, x, y, w, h, draw, o = {}) { fresh(); const m = ctx.getTransform(); Q.push({ m, a: ctx.globalAlpha, x, y, w, h, draw, free: o.free, pri: o.pri || 0 }); }
+  function box(ctx, x, y, w, h, draw, o = {}) { if (UI && UI.mute) return; fresh(); const m = ctx.getTransform(); Q.push({ m, a: ctx.globalAlpha, x, y, w, h, draw, free: o.free, pri: o.pri || 0 }); }
   const ov = (a, b) => Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])) * Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
   function flush(ctx) { if (G.EP && G.EP.frame !== frame) { Q.length = 0; FACES.length = 0; return; }
     const placed = []; UI.flushing = true;

@@ -42,8 +42,20 @@
   function sprite(who, o = {}) { const key = who + '|' + JSON.stringify(o); if (SPR[key]) return SPR[key]; const s = .5, c = mk(260, 420), g = c.getContext('2d');
     G.VK.fig(g, 130, 400, s, G.EP.cast(who, Object.assign({ t: 2.3 + (key.length % 7) * .41 }, o))); return (SPR[key] = c); }
   function crowd(g, list, t) { const L = list.slice().sort((a, b) => a[2] - b[2]);
-    for (const [who, x, y, s, o = {}] of L) { const sp = sprite(who, o.spr || {}), ph = (x * 13.7 + y * 7.1) % TAU, bob = o.still ? 0 : Math.abs(Math.sin(t * (o.walk ? 7 : 1.6) + ph)) * (o.walk ? 6 : 2) * s;
+    for (const [who, x, y, s, o = {}] of L) { if (typeof who === 'function') { g.save(); who(g, x, y, s, t, o); g.restore(); continue; } const sp = sprite(who, o.spr || {}), ph = (x * 13.7 + y * 7.1) % TAU, bob = o.still ? 0 : Math.abs(Math.sin(t * (o.walk ? 7 : 1.6) + ph)) * (o.walk ? 6 : 2) * s;
       g.save(); g.fillStyle = 'rgba(30,20,10,.22)'; g.beginPath(); g.ellipse(x, y + 2 * s, 46 * s, 9 * s, 0, 0, TAU); g.fill(); g.translate(x, y - bob); if (o.flip) g.scale(-1, 1); g.drawImage(sp, -130 * s * 2, -400 * s * 2, 260 * s * 2, 420 * s * 2); g.restore(); } }
+  // a mounted rider as a crowd entry (sorted by its hooves with everyone else): DR.rider(who, { coat, dir, spr, hs })
+  // horse scale = rider scale × hs; the rider's upper body sits on the saddle, one leg hangs down the near flank
+  const WAIST = 300;
+  function rider(who, ro = {}) { return (g, x, y, s, t, o = {}) => { const hs = s * (ro.hs || 2.3), dir = ro.dir || o.dir || 1, ph = (x * .37) % 6;
+    g.fillStyle = 'rgba(30,20,10,.22)'; g.beginPath(); g.ellipse(x, y + 2 * hs, 110 * hs, 12 * hs, 0, 0, TAU); g.fill();
+    G.Fauna.horse(g, x, y, hs, t + ph, { dir, coat: ro.coat || '#5a4a3a', mane: ro.mane });
+    const sy = y - 132 * hs, rx = x - dir * 14 * hs, c = G.EP.cast(who, Object.assign({ t: 2.3 + ph, turn: dir * .7 }, ro.spr || {})), O = G.Guide.OUTFITS[c.outfit] || {}, L = O.legs || {};
+    g.save(); g.beginPath(); g.rect(rx - 600 * s, sy - 1200 * s, 1200 * s, 1200 * s + 16 * hs); g.clip(); G.VK.fig(g, rx, sy + WAIST * s, s, c); g.restore();
+    g.fillStyle = ro.blanket || '#8a2a22'; g.strokeStyle = '#2a1608'; g.lineWidth = 2.5 * hs; g.beginPath(); g.roundRect(rx - 36 * hs, sy - 2 * hs, 72 * hs, 44 * hs, 6 * hs); g.fill(); g.stroke();
+    const lc = (L.kind === 'bare' ? null : (L.c || L.sock)) || '#3a3a44', bc = O.boot || '#2e2420', hip = [rx + dir * 8 * hs, sy + 30 * hs], knee = [rx + dir * 30 * hs, y - 78 * hs], ank = [rx + dir * 16 * hs, y - 48 * hs], lw = Math.max(5, 20 * hs);
+    g.lineCap = 'round'; g.lineJoin = 'round'; for (const [w, col] of [[lw + 5, '#1e1410'], [lw, lc]]) { g.strokeStyle = col; g.lineWidth = w; g.beginPath(); g.moveTo(...hip); g.lineTo(...knee); g.lineTo(...ank); g.stroke(); }
+    g.fillStyle = bc; g.strokeStyle = '#1e1410'; g.lineWidth = 2.5; g.beginPath(); g.ellipse(ank[0] + dir * 6 * hs, ank[1] + 4 * hs, 15 * hs, 9 * hs, 0, 0, TAU); g.fill(); g.stroke(); }; }
   function army(x0, y0, x1, y1, n, who, s0 = .2, s1 = .35, seed = 1, o = {}) { const r = rng(seed), L = []; const rows = Math.max(1, Math.round(Math.sqrt(n * (y1 - y0) / Math.max(1, x1 - x0)) * 1.4));
     for (let i = 0; i < n; i++) { const v = r(), y = lerp(y0, y1, v), s = lerp(s0, s1, v), x = lerp(x0, x1, r()) + (r() - .5) * 10; L.push([who[Math.floor(r() * who.length)], x, y, s, Object.assign({}, o, { spr: Object.assign({ turn: o.turn ?? (r() - .5) * .6 }, o.spr || {}) })]); } return L; }
 
@@ -76,9 +88,12 @@
     ctx.restore(); }
 
   // ---------- the shot ----------
-  function shot(ctx, lt, dur, t, o) { const c = camAt(o.cam, lt, dur); if (o.shake) { const k = o.shake * Math.max(0, 1 - lt / .5); c.x += Math.sin(t * 61) * 14 * k / c.z; c.y += Math.sin(t * 47) * 10 * k / c.z; } CAM = c; G.DR.cam = c;
+  function shot(ctx, lt, dur, t, o) { const c = camAt(o.cam, lt, dur); if (o.shake) { const k = o.shake * Math.max(0, 1 - lt / .5); c.x += Math.sin(t * 61) * 14 * k / c.z; c.y += Math.sin(t * 47) * 10 * k / c.z; }
+    // the camera never looks past the painted set (no black band under the ground or beside the scenery)
+    if (!o.freeCam) { const hx = 640 / c.z, hy = 360 / c.z; if (hy * 2 <= H) c.y = clamp(c.y, hy, H - hy); if (hx * 2 <= W + 440) c.x = clamp(c.x, hx - 220, W + 220 - hx); }
+    CAM = c; G.DR.cam = c;
     bg.setTransform(1, 0, 0, 1, 0, 0); bg.fillStyle = '#000'; bg.fillRect(0, 0, W, H); bg.save(); apply(bg, c);
-    if (o.bg) o.bg(bg, t, lt); if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
+    G.DR.crowdOn = !!o.crowd; if (o.bg) o.bg(bg, t, lt); G.DR.crowdOn = false; if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); blurInto(ctx, buf, o.dof || 0); ctx.restore();
     if (o.act) { ctx.save(); apply(ctx, c); o.act(ctx, t, lt); ctx.restore(); }
     fgProps(ctx, o.fg, c, t); atmos(ctx, o.atm, t);
@@ -165,5 +180,5 @@
     ctx.save(); ctx.setLineDash([12, 10]); ctx.lineWidth = 4; ctx.strokeStyle = '#c8281e'; ctx.beginPath(); let rem = L * k, end = P[0], dir = 0; ctx.moveTo(...P[0]); for (let i = 1; i < P.length && rem > 0; i++) { const f = Math.min(1, rem / d[i - 1]); end = [lerp(P[i - 1][0], P[i][0], f), lerp(P[i - 1][1], P[i][1], f)]; dir = P[i][0] - P[i - 1][0]; ctx.lineTo(...end); rem -= d[i - 1]; } ctx.stroke(); ctx.setLineDash([]);
     if (k > 0 && G.TS.boat) G.TS.boat(ctx, end[0], end[1] + 6, .3, t, 'roman', 0); ctx.restore(); return end; }
 
-  G.DR = { shot, toScreen, crowd, army, sprite, callout, write, banner, sign, tally, statCard, mystery, exclaim, sunburst, blueprint, bpDraw, pencil, circle, map, mapWrite, mapPin, mapPortrait, mapArmy, mapShip, arrowTo, box, ease, MK, HAND, atmos, fgProps, cam: CAM, blurInto };
+  G.DR = { shot, toScreen, crowd, army, rider, sprite, callout, write, banner, sign, tally, statCard, mystery, exclaim, sunburst, blueprint, bpDraw, pencil, circle, map, mapWrite, mapPin, mapPortrait, mapArmy, mapShip, arrowTo, box, ease, MK, HAND, atmos, fgProps, cam: CAM, blurInto };
 })(window);

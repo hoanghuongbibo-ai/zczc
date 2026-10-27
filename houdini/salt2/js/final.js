@@ -3,7 +3,7 @@
   'use strict';
   G.Guide.straight = true;
   const DUR = 893, EP = G.EP, shots = G.SALT2.build(DUR);
-  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { d(ctx, lt, dur, t); if (EP.drawCounter) EP.drawCounter(ctx, t); }; }
+  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { d(ctx, lt, dur, t); if (t < 885.6) EP.drawCounter(ctx, t); else G.UI.keepOut = null; }; }   // no badge on the end screen
   G.TOON_FINISH = { grain: .018, vignette: .28 };
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;
   const bg = buf.getContext('2d'), blg = bl.getContext('2d');

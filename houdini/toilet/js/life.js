@@ -10,7 +10,7 @@
   const mini = (ctx, who, x, y, s, t, o = {}) => G.VK.fig(ctx, x, y, s, G.EP.cast(who, Object.assign({ t, turn: o.turn || 0, walk: o.walk, pose: o.pose }, o)));   // s < .45 → not a face obstacle
   const shadowLine = (ctx, x0, x1, y, a = .28, h = 14) => { ctx.save(); ctx.fillStyle = grad(ctx, 0, y - 2, 0, y + h, [[0, `rgba(30,15,5,${a})`], [1, 'rgba(30,15,5,0)']]); ctx.fillRect(x0, y - 2, x1 - x0, h); ctx.restore(); };
   const walker = (t, speed, x0, x1, ph = 0) => { const L = x1 - x0, u = ((t * speed + ph) % (2 * L) + 2 * L) % (2 * L); return u < L ? [x0 + u, 1] : [x1 - (u - L), -1]; };
-  const wrap = (name, after, before) => { const f = TS[name]; TS[name] = function (ctx, ...a) { if (before) before(ctx, ...a); f.call(this, ctx, ...a); after(ctx, ...a); }; };
+  const wrap = (name, after, before) => { const f = TS[name]; TS[name] = function (ctx, ...a) { if (before) before(ctx, ...a); f.call(this, ctx, ...a); if (!(G.DR && G.DR.crowdOn)) after(ctx, ...a); }; };   // a director crowd replaces the set's own extras (they would be drawn behind it)
 
 
   // a potted plant drawn properly: terracotta pot, soil, stems that branch from the soil, leaves on the stems

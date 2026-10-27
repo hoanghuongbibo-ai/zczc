@@ -16,7 +16,7 @@
   function screenBox(m, x, y, w, h) { const pts = [[x - w / 2, y - h / 2], [x + w / 2, y - h / 2], [x - w / 2, y + h / 2], [x + w / 2, y + h / 2]].map(([a, b]) => m.transformPoint(new DOMPoint(a, b)));
     const xs = pts.map(p => p.x), ys = pts.map(p => p.y); return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
   function face(ctx, x0, y0, x1, y1) { fresh(); const m = ctx.getTransform(); const b = screenBox(m, (x0 + x1) / 2, (y0 + y1) / 2, x1 - x0, y1 - y0); FACES.push(b); }
-  function box(ctx, x, y, w, h, draw, o = {}) { if (UI && UI.mute) return; fresh(); const m = ctx.getTransform(); Q.push({ m, a: ctx.globalAlpha, x, y, w, h, draw, free: o.free, pri: o.pri || 0 }); }
+  function box(ctx, x, y, w, h, draw, o = {}) { if (UI && UI.mute) return; fresh(); const m = ctx.getTransform(); Q.push({ m, a: ctx.globalAlpha, x, y, w, h, draw, free: o.free, keep: o.keep, pri: o.pri || 0 }); }
   const ov = (a, b) => Math.max(0, Math.min(a[2], b[2]) - Math.max(a[0], b[0])) * Math.max(0, Math.min(a[3], b[3]) - Math.max(a[1], b[1]));
   function flush(ctx) { if (G.EP && G.EP.frame !== frame) { Q.length = 0; FACES.length = 0; return; }
     const placed = []; UI.flushing = true;
@@ -27,6 +27,9 @@
         if (at(dx, dy) > 0) { let best = null; for (let r = 1; r <= 14; r++) for (const [ux, uy] of [[0, 1], [0, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [1, -1], [-1, -1]]) { const cx = dx + ux * r * 22, cy = dy + uy * r * 16, nb = [b[0] + cx, b[1] + cy, b[2] + cx, b[3] + cy];
             if (nb[0] < M || nb[2] > W - M || nb[1] < M || nb[3] > H - M) continue; const s = at(cx, cy) * 1000 + Math.hypot(cx - dx, cy - dy); if (!best || s < best[0]) best = [s, cx, cy]; if (s < 1000 && at(cx, cy) === 0) break; }
           if (best) { dx = best[1]; dy = best[2]; } } }
+      // a reserved corner (UI.keepOut, e.g. the episode's counter badge) pushes every other box left or up, free ones too
+      const ko = UI.keepOut; if (ko && !it.keep) { const nb = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy]; if (ov(nb, ko) > 0) { const l = ko[0] - 8 - nb[2], u = ko[1] - 8 - nb[3];
+        if (nb[0] + l >= M && (-l <= -u || nb[1] + u < M)) dx += l; else dy += u; } }
       placed.push([b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy]);
       ctx.save(); ctx.setTransform(new DOMMatrix().translate(dx, dy).multiply(it.m)); ctx.globalAlpha = it.a; it.draw(ctx); ctx.restore(); }
     Q.length = 0; UI.flushing = false; }

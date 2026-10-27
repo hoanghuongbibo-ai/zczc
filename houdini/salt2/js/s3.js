@@ -62,7 +62,7 @@
   C(241, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 400, 1.0], [640, 380, 1.06]], bg: (g, t) => memorial(g, t), ui: c => DR.write(c, 'KILLED AFTER THE FIGHTING WAS OVER', 640, 160, 44, lt, .4, { col: '#fff', halo: false }) }), 'dissolve');
   // ---------- December 1864 ----------
   mood(242, 'curious'); SFX(242, null, 'gallop', .7, 3);
-  C(242, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 450, 1.0], [700, 450, 1.03]], bg: (g, t) => TS.saltville(g, t, { v: 'day' }), atm: { snow: 60, cold: .2 }, bgAct: (g, t) => { for (let i = 0; i < 8; i++) { const x = -120 + lt * 160 + i * 90; FA.horse(g, x, 620 + (i % 3) * 24, .5, t + i, { dir: 1, coat: ['#3a2a1e', '#5a4a3a', '#7a5a3a'][i % 3] }); P(g, 'uscav2', x - 10, 580 + (i % 3) * 24, .26, t + i, { turn: .8 }); } },
+  C(242, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 450, 1.0], [700, 450, 1.03]], bg: (g, t) => TS.saltville(g, t, { v: 'day' }), atm: { snow: 60, cold: .2 }, crowd: (t2, l2) => [0, 1, 2, 3, 4, 5, 6, 7].map(i => [DR.rider('uscav2', { dir: 1, coat: ['#3a2a1e', '#5a4a3a', '#7a5a3a'][i % 3], blanket: '#2a3a6a' }), -120 + l2 * 160 + i * 150 - (i % 3) * 40, 600 + (i % 3) * 30, .2, {}]),
     ui: c => DR.write(c, 'DECEMBER 1864', 640, 130, 56, lt, .2, { col: '#fff', halo: '#1e1612' }) }), 'dip');
   C(243, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 380, 1.4], [640, 380, 1.46]], dof: 3, bg: (g, t) => TS.saltville(g, t, { v: 'day' }), act: (g, t) => P(g, 'stoneman', 640, 760, .85, t, { pose: 'pointSide', face: { mouth: 'grit', brows: 'neutral' } }), atm: { snow: 50 },
     ui: c => DR.callout(c, 'GEN. GEORGE STONEMAN', 980, 140, lt, R(243, 4), 640, 300) }));

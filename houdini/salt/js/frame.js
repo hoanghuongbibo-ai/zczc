@@ -21,10 +21,11 @@
     c.fillStyle = '#c8322a'; c.beginPath(); c.roundRect(58, -44, 82, 88, 12); c.fill(); c.lineWidth = 4; c.strokeStyle = '#2a1608'; c.stroke();
     const show = flip < .5 ? prev : n, sy = Math.abs(Math.cos(flip * Math.PI)); c.save(); c.translate(99, 2); c.scale(1, Math.max(.05, sy));
     c.font = (show === '∞' ? '62px' : '64px') + ' "Luckiest Guy"'; c.fillStyle = '#fff'; c.fillText(String(show), 0, 4); c.restore(); c.restore(); }
-  const box0 = UI.box; EP.drawCounter = (ctx, t) => { const past = COUNTS.filter(c => c.t <= t); if (!past.length) return; const cur = past[past.length - 1], prev = past.length > 1 ? past[past.length - 2].n : 0, lt = t - cur.t;
+  const box0 = UI.box; EP.drawCounter = (ctx, t) => { const past = COUNTS.filter(c => c.t <= t); UI.keepOut = null; if (!past.length) return; const cur = past[past.length - 1], prev = past.length > 1 ? past[past.length - 2].n : 0, lt = t - cur.t;
     const k = clamp(lt / .35), flip = clamp((lt - .35) / .45), go = ease.inOut(clamp((lt - 2.4) / .5));
     const x = lerp(640, 1118, go), y = lerp(330, 668, go), s = lerp(1.2 * FX.settle(k), .6, go);
-    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); box0(ctx, x, y, 300 * s + 10, 108 * s + 10, c => { c.translate(x, y); plaque(c, cur.n, prev, flip, s); }, { free: true }); ctx.restore(); };
+    if (go > .5) UI.keepOut = [x - 150 * s - 5, y - 54 * s - 5, x + 150 * s + 5, y + 54 * s + 5];
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); box0(ctx, x, y, 300 * s + 10, 108 * s + 10, c => { c.translate(x, y); plaque(c, cur.n, prev, flip, s); }, { free: true, keep: true }); ctx.restore(); };
 
   EP.refrainSalt = (ctx, lt, t0, o = {}) => { const k = K.pop(lt, t0, .4); if (k <= 0) return; const y = o.y ?? 610, k2 = clamp((lt - t0 - (o.gap ?? 1.1)) / .3);
     UI.box(ctx, 640, y, 1000, 130, c => { K.paper(c, 640, y, 920, 100, { rot: -.012, scale: k, draw: cc => { EK.txt(cc, 'AND ONCE AGAIN…', -220, 4, '40px "Luckiest Guy"', '#5a3a22'); if (k2 > 0) { cc.save(); cc.translate(200, 2); cc.scale(FX.settle(k2), FX.settle(k2)); EK.txt(cc, "IT'S ABOUT SALT", 0, 2, '50px "Luckiest Guy"', '#c8322a'); cc.restore(); } } }); }); };

@@ -97,8 +97,10 @@
   });
   function hanEstate(ctx, t, o = {}) { put(ctx, estateL(), o.pan || 0, .25); smoke(ctx, t, 710, 170, .4);
     for (const x of [260, 520, 780, 1040]) { P2.fire(ctx, x, 556, .35, t + x); steam(ctx, t + x, x, 516, 180, .45); }
-    PR.cart(ctx, 160, 660, .9, 'sacks'); PR.cart(ctx, 1130, 670, .9, 'sacks'); for (const [x, y] of [[300, 640], [340, 655], [960, 660]]) sack(ctx, x, y, .8, '#e2d2a8');
-    for (const [sp, ph, y] of [[22, 0, 470], [18, 300, 600], [26, 700, 690]]) { const L = 1100, u = ((t * sp + ph) % (2 * L)), x = 90 + (u < L ? u : 2 * L - u), d = u < L ? 1 : -1; fig(ctx, 'merchant', x, y, .28 + (y - 470) / 1200, t, { walk: t * 7, turn: .8 * d, outfit: 'hanScholar', hat: 'none', look: { width: 1 } }); }
+    // when a crowd stands in this yard (G.DR.crowdOn) the loose ground props and walkers are left out: the crowd is drawn
+    // after the set, so anything on the ground in front of it would wrongly end up behind people standing further back
+    const busy = G.DR && G.DR.crowdOn; if (!busy) { PR.cart(ctx, 160, 660, .9, 'sacks'); PR.cart(ctx, 1130, 670, .9, 'sacks'); for (const [x, y] of [[300, 640], [340, 655], [960, 660]]) sack(ctx, x, y, .8, '#e2d2a8'); }
+    if (!busy) for (const [sp, ph, y] of [[22, 0, 470], [18, 300, 600], [26, 700, 690]]) { const L = 1100, u = ((t * sp + ph) % (2 * L)), x = 90 + (u < L ? u : 2 * L - u), d = u < L ? 1 : -1; fig(ctx, 'merchant', x, y, .28 + (y - 470) / 1200, t, { walk: t * 7, turn: .8 * d, outfit: 'hanScholar', hat: 'none', look: { width: 1 } }); }
     P.birds(ctx, t, [[200, 120, 26, 0], [700, 90, 30, 2]]); }
 
   // =================== the salt-and-iron debate, 81 BC ===================

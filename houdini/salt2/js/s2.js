@@ -29,7 +29,14 @@
   mood(122, 'busy'); SFX(122, null, 'whoosh', .6); SFX(122, null, 'paper', .4);
   C(122, null, (ctx, lt, dur, t, R) => { const v = M.fly(lt, [[0, 6, 47, 14], [1.4, 2.4, 46.6, 40]]); DR.shot(ctx, lt, dur, t, { bg: g => DR.map(g, t, v), ui: c => DR.mapWrite(c, v, 2.4, 46.8, 'FRANCE', lt, .4, { dy: 0, size: 72 }) }); }, 'whip');
   SFX(123, 3, 'stamp', .7); AMB(123, 'court', 4, .5);
-  C(123, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 400, 1.0], [640, 400, 1.06]], bg: (g, t) => { TS.court(g, t); }, crowd: DR.army(100, 620, 1180, 710, 14, ['duke', 'noble', 'priest'], .4, .48, 91, { spr: { pose: 'bow' } }), act: (g, t) => P(g, 'taxman', 640, 560, .45, t, { pose: 'present' }),
+  // 1360: King John II, just ransomed from the English, makes the salt tax permanent — medieval court, nobles and clergy bow
+  G.CW.kingJohn = { outfit: 'tudor', hat: 'crown', look: { skin: '#f2cfae', hairCol: '#6a4a2a', beard: 'full', beardCol: '#6a4a2a' } };
+  G.CW.medNoble = { outfit: 'tudor', hat: 'tudorCap', look: { skin: '#f0c8a8', hairCol: '#3a2a1a' } };
+  C(123, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 400, 1.0], [640, 400, 1.06]], bg: (g, t) => { TS.court(g, t); },
+    crowd: [...DR.army(80, 620, 500, 712, 8, ['medNoble', 'priest', 'medNoble'], .4, .48, 91, { spr: { pose: 'bow', turn: .5 } }), ...DR.army(780, 620, 1200, 712, 8, ['medNoble', 'priest', 'medNoble'], .4, .48, 92, { spr: { pose: 'bow', turn: -.5 } }), [(g, x, y, s, t) => { // the king: an ermine-trimmed red mantle behind him, then the figure
+      g.fillStyle = '#a81e22'; g.strokeStyle = '#2a0e0a'; g.lineWidth = 4; g.beginPath(); g.moveTo(x - 70 * s, y - 360 * s); g.lineTo(x + 70 * s, y - 360 * s); g.lineTo(x + 150 * s, y); g.lineTo(x - 150 * s, y); g.closePath(); g.fill(); g.stroke();
+      g.fillStyle = '#f6f2ea'; g.beginPath(); g.rect(x - 150 * s, y - 34 * s, 300 * s, 34 * s); g.fill(); g.stroke(); g.fillStyle = '#1e1410'; for (let i = 0; i < 7; i++) g.fillRect(x - 130 * s + i * 42 * s, y - 22 * s, 7 * s, 12 * s);
+      G.VK.fig(g, x, y, s, G.EP.cast('kingJohn', { t: t, pose: 'present' })); }, 640, 575, .44, {}]],
     ui: c => { DR.write(c, '1360', 640, 130, 80, lt, .1, { col: '#c8281e', underline: '#c8281e' }); if (lt > R(123, 9)) DR.callout(c, 'LA GABELLE: PERMANENT', 640, 640, lt, R(123, 9), null, null, { size: 30 }); } }), 'whip');
   SFX(124, 3, 'pop', .5);
   C(124, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 380, 1.0], [640, 380, 1.04]], bg: g => DR.sunburst(g, t, '#2a3e8a', '#5a7ac8'), act: (g, t) => { TS.sack(g, 640, 600, 2.4, '#e8dcbc', 'SEL'); },
@@ -78,8 +85,8 @@
   C(144, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 560, 2.4], [700, 560, 2.5]], dof: 4, bg: (g, t) => TS.border(g, t), act: (g, t) => { for (let i = 0; i < 3; i++) { const x = 480 + i * 90 + lt * 60; P(g, 'smuggler', x, 640, .35, t + i, { walk: t * 7, turn: .8, prop: 'saltSack' }); } }, atm: { night: .25 },
     ui: c => DR.callout(c, 'ACROSS PROVINCIAL BORDERS', 640, 140, lt, .2, 760, 540) }));
   SFX(145, 4, 'gallop', .7, 3); SFX(145, 4, 'sting', .5);
-  C(145, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 470, 1.0], [600, 470, 1.04]], bg: (g, t) => TS.border(g, t), crowd: (t2, l2) => DR.army(-200 + l2 * 160, 560, 300 + l2 * 160, 680, 10, ['taxman'], .36, .46, 121, { walk: true, spr: { turn: .8, face: { mouth: 'grit', brows: 'angry' } } }),
-    bgAct: (g, t) => { for (let i = 0; i < 4; i++) FA.horse(g, -100 + lt * 200 + i * 110, 600 + (i % 2) * 30, .5, t + i, { dir: 1, coat: '#3a2a1e' }); }, atm: { night: .2 },
+  C(145, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 470, 1.0], [600, 470, 1.04]], bg: (g, t) => TS.border(g, t), crowd: (t2, l2) => [...DR.army(-200 + l2 * 160, 580, 300 + l2 * 160, 690, 10, ['taxman'], .36, .46, 121, { walk: true, spr: { turn: .8, face: { mouth: 'grit', brows: 'angry' } } }),
+      ...[0, 1, 2].map(i => [DR.rider('taxman', { dir: 1, coat: '#3a2a1e', blanket: '#2a3a6a', spr: { face: { mouth: 'grit', brows: 'angry' } } }), 120 + l2 * 200 + i * 300, 540 + (i % 2) * 14, .3, {}])], atm: { night: .2 },
     ui: c => { if (lt > R(145, 7)) DR.callout(c, 'THE SALT POLICE', 900, 150, lt, R(145, 7)); } }), 'whip');
   SFX(146, 3, 'drum', .5); SFX(146, 9, 'sting', .5);
   C(146, null, (ctx, lt, dur, t, R) => DR.shot(ctx, lt, dur, t, { cam: [[640, 420, 1.0], [640, 420, 1.06]], bg: (g, t) => { g.fillStyle = '#6a9ab8'; g.fillRect(-200, -200, 1700, 1100); g.fillStyle = '#4a7a9a'; g.fillRect(-200, 470, 1700, 400); }, act: (g, t) => galley(g, 640, 480 + Math.sin(t * 1.4) * 6, 1.1, t),

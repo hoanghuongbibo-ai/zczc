@@ -458,3 +458,17 @@ A narrated myth-buster with skits. It reuses merer's flora/sets/kit and the vind
 - **`toilet/js/sets.js` + `sets2.js` (G.TS)** have about 17 painted sets, plus a polygon relief-map painter (`TS.map(name, {lon, lat, z})`, `TS.pin`, `TS.mapPt`) for southasia / med / usa. Keep coastlines simple. Lake polygons drawn from memory looked like random shards, so they were dropped.
 - **Tone rule:** sections the script marks as serious (Soho 1854, the global sanitation numbers) use music mood 'none' or 'quiet', dimmed sets, and no gags.
 - **No sponsor read in the recording:** the bridge went straight to the recap. Bracketed placeholders were read by the narrator as generic lines, so the end card mirrors what was said.
+
+### Depth & logic rules learned on the salt remake (user review, Oct '27)
+- Everything standing on the ground goes through ONE depth sort. `DR.shot` draws bg → crowd → bgAct → act, so never put
+  horses/people/props in `bgAct` or `act` if crowd members stand in front of them: add them to the crowd list instead.
+  Crowd entries may be draw functions `[(g, x, y, s, t) => …, x, y, s, {}]`; mounted troops = `DR.rider(who, {coat, dir})`
+  (horse ≈ 2.3× the rider's scale — never toy-sized horses among men).
+- Never mix character types with different head sizes in one crowd (a big-headed "merchant" behind small workers reads
+  as a giant). Keep crowd scale monotonic with depth.
+- Sets' own extras/props (life.js wrappers, hanEstate carts/walkers) are skipped automatically when a director crowd
+  is present (`G.DR.crowdOn`); new sets with ground props must do the same.
+- The camera is clamped to the painted set (no black band under the ground); `freeCam: true` opts out.
+- `UI.keepOut` reserves the SALT COUNTER corner — cards slide clear of it; no counter on the end screen.
+- Period check every crowd shot: no modern suits in 1360/1789, medieval court ≠ Versailles wigs, draft physicals in an
+  army exam room (not a kitchen). Run `tools/_edges.mjs` and a full contact sheet before every render.

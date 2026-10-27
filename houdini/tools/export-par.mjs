@@ -1,6 +1,7 @@
 // Parallel exporter: N headless Chromium workers each render a slice of frames and stream JPEGs into their own
 // ffmpeg (x264); the slices are concatenated and muxed with the page's soundtrack + the narration.
 // usage: node tools/export-par.mjs <page.html> <out.mp4> <fps> <workers> <narration.mp3>   (paths relative to houdini/)
+// HIRES=1.5 in the environment renders natively at 1920×1080 (js/hires.js)
 import { chromium } from 'playwright';
 import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -11,7 +12,7 @@ const [page_, out, fpsA = '30', nA = '4', narr, segArg] = process.argv.slice(2);
 const fps = +fpsA, N = +nA, exe = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 const tmp = path.join(path.dirname(path.resolve(root, out)), '.parts'); fs.mkdirSync(tmp, { recursive: true });
 async function openPage() { const b = await chromium.launch({ executablePath: exe, args: ['--allow-file-access-from-files'] }); const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
-  await p.goto(pathToFileURL(path.join(root, page_)).href + '?t=0'); await p.waitForFunction(() => window.READY === true, null, { timeout: 120000 }); return [b, p]; }
+  await p.goto(pathToFileURL(path.join(root, page_)).href + '?t=0' + (process.env.HIRES ? '&k=' + process.env.HIRES : '')); await p.waitForFunction(() => window.READY === true, null, { timeout: 120000 }); return [b, p]; }
 if (segArg != null) {   // worker
   const [i0, i1, k] = segArg.split(':').map(Number);
   const [b, p] = await openPage();

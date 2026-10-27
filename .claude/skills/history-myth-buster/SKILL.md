@@ -60,6 +60,39 @@ Then wait for the assets + voice (or "run").
 6. **Learn.** After every video, add new lessons and the user's feedback to the *Lessons* section below (and to the
    style rules if it's a rule), then commit + push this file. This skill is the only memory between sessions.
 
+
+## REFERENCE STYLE — the user's 10 "polished" reference clips (2026-10-27). Target this look for EVERY video.
+Studied frame-by-frame (3 fps sheets), scene-cut detection, spectrograms and transcripts. Rules distilled:
+**Pace / editing**
+- A new shot every **1.2–2.5 s** (median ~1.6 s). Every narrated sentence gets 2–4 shots. Never hold a static frame > 3 s.
+- Shot grammar per idea: ESTABLISHING wide (crowds, landscape, sun haze) → MEDIUM (2–3 characters acting) → CLOSE-UP
+  (one face fills ~60% of frame, reaction: sweat drop, wide eyes, wince) → INSERT (extreme close detail: feet sinking in mud,
+  arrow in a shield, a hand on a coin) → back out. Alternate eye levels; top-down tactical views for battles/plans.
+- Mostly hard cuts on the word; motion-blur WHIP pans for jumps in place/time; dissolves for "meanwhile/time passes";
+  a dark cloud/ink wipe for chapter-like turns; a camera keeps moving inside every shot (slow push, pan, or tracking).
+**Depth & atmosphere**
+- Strong depth of field: close-ups blur BOTH background and out-of-focus foreground elements (spears, shields, a second
+  character). Atmospheric perspective: far crowds/hills paler and warmer. Sun glare, dust, rain streaks, flags, birds.
+- Massive crowds of small characters (armies, villagers) for scale; parallax layers.
+- Mood lighting changes inside a shot (room dims purple + "!" when something bad happens); silhouettes behind a paper
+  screen for violent acts (tasteful). Scene palettes: warm sepia battle haze, cold grey rain, blue night interiors.
+**Characters & comedy**
+- Very expressive faces, constant secondary motion (blinks, breathing, looking around), slapstick (falls, a pig next to an
+  elephant), characters react to what the narrator says.
+**Graphics / text (sparse, functional, animated)**
+- Callout label: white box, thick black outline, marker-style caps ("ENGLISH ARCHERS", "YOU") + a red arrow that draws in
+  to the thing it names.
+- Maps: flat beige land, pale blue-grey sea, very thick dark coastline; place names in big black marker caps written on,
+  the date in red marker; red map pin; tokens ON the map: little armies, portrait-in-circle pins, ships moving along a
+  dashed route; a tally box ("20" + icons filling in). Maps can also be a parchment sheet lying on a desk.
+- Diagrams: blueprint (blue grid, white line art drawn on, pencil moving, yellow hand-drawn circle highlight).
+- Game-UI cards: character stat card (portrait, name ribbon, class, star ratings); "???" locked mystery cards that flip
+  to reveal a portrait; a ribbon banner over a sunburst ("ULTIMATE WEAPON"); a wooden sign whose question types on.
+**Sound**
+- Continuous narration on top; soft orchestral music bed always under it (never silent); dense foley on actions
+  (whooshes on whip-pans, impacts, crowd walla, rain, horses, paper/pencil on maps, pops on graphics). Mix voice ≈ −16
+  LUFS-I, music −12…−18 dB under the voice with ducking, final master ≈ −14 LUFS for YouTube, stereo.
+
 ## USER RULES — real media, readability, grounding, globe maps (2026-10-26, apply to EVERY video)
 1. **Real media first: Wikimedia Commons.** When a shot needs a photo or clip of a specific place, object, document or event, search Wikimedia Commons first (API: https://commons.wikimedia.org/w/api.php). Use only **public domain or CC-BY / CC-BY-SA** files (check `extmetadata.LicenseShortName`). Download into `<ep>/assets/commons/`, record title, author, licence and URL in `<ep>/assets/commons/credits.json`, and **credit them**:
    - a small credit line on screen while the photo shows

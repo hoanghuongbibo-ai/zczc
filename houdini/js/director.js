@@ -147,7 +147,11 @@
     const r = rng(3); ctx.strokeStyle = 'rgba(80,120,140,.35)'; ctx.lineWidth = 3; ctx.lineCap = 'round'; for (let i = 0; i < 26; i++) { const x = r() * W, y = r() * H; ctx.beginPath(); ctx.arc(x, y, 14, PI * 1.15, PI * 1.85); ctx.arc(x + 26, y, 14, PI * 1.15, PI * 1.85); ctx.stroke(); }
     const land = M.landPath(v); ctx.fillStyle = 'rgba(30,20,10,.18)'; ctx.save(); ctx.translate(6, 8); ctx.fill(land); ctx.restore(); ctx.fillStyle = o.land || '#efd49c'; ctx.fill(land);
     ctx.save(); ctx.clip(land); const gr = ctx.createRadialGradient(W * .4, H * .3, 100, W * .5, H * .5, 900); gr.addColorStop(0, 'rgba(255,250,230,.35)'); gr.addColorStop(1, 'rgba(160,110,50,.18)'); ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H); if (G.Paint2) G.Paint2.grain(ctx, 0, 0, W, H, .22, 13, 'multiply', 1.3); ctx.restore();
-    ctx.lineJoin = 'round'; ctx.strokeStyle = '#2a1e18'; ctx.lineWidth = o.lw || 7; ctx.stroke(land); ctx.restore(); }
+    ctx.lineJoin = 'round'; ctx.strokeStyle = '#2a1e18'; ctx.lineWidth = o.lw || 7; ctx.stroke(land);
+    const lk = new Path2D(); for (const r of G.GEO.lakes) { let mnx = 1e9, mxx = -1e9; for (let i = 0; i < r.length; i += 2) { mnx = Math.min(mnx, r[i]); mxx = Math.max(mxx, r[i]); } if ((mxx - mnx) * v.k < 4) continue; const [x0, y0] = M.pt(v, r[0], r[1]); lk.moveTo(x0, y0); for (let i = 2; i < r.length; i += 2) lk.lineTo(...M.pt(v, r[i], r[i + 1])); lk.closePath(); }
+    ctx.fillStyle = o.sea || '#c4dade'; ctx.fill(lk); ctx.lineWidth = (o.lw || 7) * .6; ctx.stroke(lk);
+    for (const [lon, lat, rx, ry] of (o.extraLakes || [])) { const [x, y] = M.pt(v, lon, lat); ctx.beginPath(); ctx.ellipse(x, y, rx * v.k, ry * v.k, -.6, 0, TAU); ctx.fillStyle = o.sea || '#c4dade'; ctx.fill(); ctx.stroke(); }
+    ctx.restore(); }
   function mapWrite(ctx, v, lon, lat, name, lt, t0, o = {}) { const [x, y] = G.MAP.pt(v, lon, lat); write(ctx, name, x + (o.dx || 0), y + (o.dy ?? 60), o.size || 54, lt, t0, { col: '#2a1e18', halo: false });
     if (o.date) write(ctx, o.date, x + (o.dx || 0) + (o.ddx || 0), y + (o.dy ?? 60) + (o.size || 54) * .95, (o.size || 54) * .9, lt, t0 + .5, { col: '#c8281e', halo: false, underline: '#c8281e' }); }
   function mapPin(ctx, v, lon, lat, lt, t0) { const [x, y] = G.MAP.pt(v, lon, lat), k = pop(lt, t0, .35); if (k <= 0) return; ctx.save(); ctx.translate(x, y - (1 - k) * 60); ctx.scale(1.2, 1.2); ctx.lineWidth = 4; ctx.strokeStyle = '#7a1410'; ctx.fillStyle = '#e0261c';

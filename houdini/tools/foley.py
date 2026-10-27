@@ -236,7 +236,7 @@ def amb_battle(d): b = crowd(d, 36, 1.4, .4); return norm(b + march(d) * .5, .55
 ONE = dict(whoosh=whoosh, swish=swish, whip=whip, pop=pop, ding=ding, chime=chime, sparkle=sparkle, tada=tada, gong=gong, thud=thud, boom=boom, stamp=stamp, rumble=rumble, clink=clink, coins=coins, cash=cash, card=card,
            paper=paper, pencil=pencil, marker=marker, tick=tick, buzz=buzz, zap=zap, sting=sting, boing=boing, drop=drop, creak=creak, cloth=cloth, sack=sack, gasp=gasp, oink=oink, fly=fly, dig=dig, splash=splash,
            salthiss=salthiss, crunch=crunch, footsteps=footsteps, march=march, machine=machine, truck=truck, impact=impact, sword=sword, gallop=gallop, drum=drum, bell=bell, typewriter=typewriter, cramp=cramp,
-           cheer=cheer, crowd=crowd, fire=fire_one)
+           cheer=cheer, crowd=crowd, fire=fire_one, sizzle=lambda: salthiss(1.5))
 VAR = {'pencil', 'paper', 'fly', 'salthiss', 'footsteps', 'march', 'machine', 'truck', 'gallop', 'typewriter', 'crowd', 'cheer', 'fire', 'rumble'}
 def make(name, dur=None):
     if name.startswith('amb_'): return globals()[name](max(2.5, dur or 8))

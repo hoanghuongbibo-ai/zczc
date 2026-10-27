@@ -23,7 +23,7 @@
     c.font = (show === '∞' ? '62px' : '64px') + ' "Luckiest Guy"'; c.fillStyle = '#fff'; c.fillText(String(show), 0, 4); c.restore(); c.restore(); }
   const box0 = UI.box; EP.drawCounter = (ctx, t) => { const past = COUNTS.filter(c => c.t <= t); if (!past.length) return; const cur = past[past.length - 1], prev = past.length > 1 ? past[past.length - 2].n : 0, lt = t - cur.t;
     const k = clamp(lt / .35), flip = clamp((lt - .35) / .45), go = ease.inOut(clamp((lt - 2.4) / .5));
-    const x = lerp(640, 1118, go), y = lerp(170, 668, go), s = lerp(1.2 * FX.settle(k), .6, go);
+    const x = lerp(640, 1118, go), y = lerp(330, 668, go), s = lerp(1.2 * FX.settle(k), .6, go);
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); box0(ctx, x, y, 300 * s + 10, 108 * s + 10, c => { c.translate(x, y); plaque(c, cur.n, prev, flip, s); }, { free: true }); ctx.restore(); };
 
   EP.refrainSalt = (ctx, lt, t0, o = {}) => { const k = K.pop(lt, t0, .4); if (k <= 0) return; const y = o.y ?? 610, k2 = clamp((lt - t0 - (o.gap ?? 1.1)) / .3);

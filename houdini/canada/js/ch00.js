@@ -41,7 +41,7 @@
       C.stamp(ctx, 'SECRET', 900, 220, 54, .12, k01(t, A.scheme + .4, .4)); C.stamp(ctx, 'INVADE FIRST!', 820, 560, 64, -.1, k01(t, A.first + .1, .4)); if (t > A.first) C.marker(ctx, 'circle', [460, 446, 200, 34], k01(t, A.first, .6));
       ctx.restore(); C.finish(ctx, t); }
   // 5. Seattle, Great Falls, Minneapolis, Albany: arrows punch south across the paper map; Britain's ship sails in
-  function sMap(ctx, lt, dur, t) { const v = S.view({ lon: -98, lat: 47, s: 1500, y: 300 }, { lon: -96, lat: 46, s: 1650, y: 310 }, ease.inOut(clamp(lt / dur))); const pr = C.map(ctx, v, { fill: n => n === 'Canada' ? '#d86a5a' : n === 'United States of America' ? '#e8d8a8' : null });
+  function sMap(ctx, lt, dur, t) { const v = S.view({ lon: -98, lat: 47, s: 1500, y: 300 }, { lon: -96, lat: 46, s: 1650, y: 310 }, ease.inOut(clamp(lt / dur))); const pr = C.map(ctx, v, { fill: n => n === 'Canada' ? '#d86a5a' : n === 'United States of America' ? '#e8d8a8' : null, faces: n => n === 'Canada' ? 'angry' : n === 'United States of America' ? (t > A.seattle ? 'shock' : 'smug') : 'calm', faceAt: n => n === 'Canada' ? [-100, 53] : n === 'United States of America' ? [-100, 40.5] : null });
     const tg = [[A.seattle, [-123, 50], [-122.3, 47.6], 'Seattle'], [A.falls, [-111, 50.5], [-111.3, 47.5], 'Great Falls'], [A.minn, [-95, 50], [-93.3, 45], 'Minneapolis'], [A.albany, [-73.6, 45.5], [-73.8, 42.7], 'Albany']];
     const back = k01(t, A.britain, 1.2);
     tg.forEach(([kt, from, to, nm]) => { const kk = k01(t, kt - .15, .6); C.mapArrow(ctx, pr, from, back > 0 ? [lerp(to[0], from[0], back * .7), lerp(to[1], from[1], back * .7)] : to, kk, '#c23a2c', 16, .1); C.pin(ctx, pr, to[0], to[1], nm, k01(t, kt + .2, .4), { dy: 40 }); });

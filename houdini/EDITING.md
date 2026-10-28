@@ -104,3 +104,15 @@ The rules here apply to every video in this repo. They come from 15 clips the us
 - **Dates:** a slanted white plate with a black edge in the corner ("1600 B.C." style).
 - **Keep it short:** one line, two at most. Long text shrinks to fit or wraps; it never runs off screen.
 - Implemented once in `canada/js/type.js`, so every chapter inherits it.
+
+## 6. Maps as characters (from the Warring States clips)
+- **Territories have faces.** Every coloured country or province is a character with a mood that fits the story: smug sunglasses for the big power, angry for the aggressor, shocked for the target, worried sweat drops for the weak one. They blink and breathe. Implemented in `C.map` as `faces: name => mood` (`regionFace`).
+- **Maps act out the history:**
+  - regions grow muscles or weapons;
+  - a giant hand squashes a region;
+  - a broom sweeps the losers off;
+  - a region swallows its neighbour;
+  - arrows fly between rivals;
+  - a tiny state hides behind a big one.
+- **Running counters on a hanging sign** ("WARRING STATES COUNT: 1"), and a "FREE FOR ALL" era badge in the corner.
+- **Zoom from the whole map into the two rivals**, then back out to show the new balance. Every new region pops in with its name written beside it and an arrow.

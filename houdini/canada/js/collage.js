@@ -188,7 +188,34 @@
     ctx.save(); ctx.strokeStyle = 'rgba(40,30,20,.7)'; ctx.lineWidth = 1.6; ctx.beginPath(); for (const nm of ['Canada', 'United States of America']) for (const r of Gd.countries[nm] || []) ring(ctx, pr, r); ctx.stroke(); ctx.restore();
     // lakes and rivers
     ctx.save(); ctx.fillStyle = '#5b97ba'; ctx.strokeStyle = 'rgba(30,50,70,.5)'; ctx.lineWidth = 1; for (const nm in Gd.lakes) { ctx.beginPath(); for (const r of Gd.lakes[nm]) ring(ctx, pr, r); ctx.fill(); ctx.stroke(); } ctx.strokeStyle = '#5b97ba'; ctx.lineWidth = o.riverW || 2; ctx.lineCap = 'round'; for (const nm in Gd.rivers) for (const l of Gd.rivers[nm]) { ctx.beginPath(); let f = true; for (const [lo, la] of l) { const [x, y, vi] = pr(lo, la); if (vi < 0) continue; f ? ctx.moveTo(x, y) : ctx.lineTo(x, y); f = false; } ctx.stroke(); } ctx.restore();
+    // regions as characters (the reference channel's maps): every coloured country/province gets a face at its centre that
+    // blinks and breathes; o.faces(name) -> 'calm' | 'happy' | 'smug' | 'angry' | 'shock' | 'sad' | 'worried' | false
+    if (o.faces !== false) { const moodOf = typeof o.faces === 'function' ? o.faces : (nm => DEFAULT_MOOD[nm] || 'calm'), seen = [];
+      const each = (nm, rs) => { if (!fillOf(nm)) return; const mood = moodOf(nm); if (!mood) return; let best = null;
+        for (const r of rs) { let A = 0, cx = 0, cy = 0, n = 0, mnx = 1e9, mxx = -1e9, mny = 1e9, mxy = -1e9; const pts = []; for (let j = 0; j < r.length; j += Math.max(1, r.length / 300 | 0)) { const [x, y, vi] = pr(r[j][0], r[j][1]); if (vi < 0) continue; pts.push([x, y]); mnx = Math.min(mnx, x); mxx = Math.max(mxx, x); mny = Math.min(mny, y); mxy = Math.max(mxy, y); }
+          for (let j = 0; j < pts.length; j++) { const [x0, y0] = pts[j], [x1, y1] = pts[(j + 1) % pts.length], c = x0 * y1 - x1 * y0; A += c; cx += (x0 + x1) * c; cy += (y0 + y1) * c; } if (Math.abs(A) < 1) continue; cx /= 3 * A; cy /= 3 * A; const sz = Math.min(mxx - mnx, mxy - mny);
+          if (cx < 60 || cx > 1220 || cy < 60 || cy > 660) { const ins = pts.filter(([x, y]) => x > 80 && x < 1200 && y > 80 && y < 640); if (ins.length > 8) { cx = ins.reduce((q, p) => q + p[0], 0) / ins.length; cy = ins.reduce((q, p) => q + p[1], 0) / ins.length; } }
+          if (!best || sz > best[2]) best = [cx, cy, sz]; }
+        if (!best || best[2] < 70) return; const [fx, fy] = o.faceAt && o.faceAt(nm) ? pr(...o.faceAt(nm)) : best; if (fx < 40 || fx > 1240 || fy < 40 || fy > 680) return; if (seen.some(([a, b]) => Math.hypot(a - fx, b - fy) < 80)) return; seen.push([fx, fy]);
+        regionFace(ctx, fx, fy, Math.min(2.4, Math.max(.7, best[2] / 170)), mood, (G.__frameT || 0) + nm.length); };
+      for (const nm in Gd.countries) each(nm, Gd.countries[nm]); if (o.prov) for (const nm in Gd.provinces) each(nm, Gd.provinces[nm]); }
     return pr; }
+  // a cartoon face drawn straight onto a map region: ink lines only, like a doodle on the map
+  const DEFAULT_MOOD = { 'United States of America': 'smug', 'United Kingdom': 'smug', France: 'calm', Canada: 'calm', 'Province of Canada': 'worried' };
+  function regionFace(ctx, x, y, s, mood, t) { ctx.save(); ctx.translate(x, y + Math.sin(t * 2.1) * 2 * s); ctx.scale(s, s); ctx.strokeStyle = '#2b1d16'; ctx.fillStyle = '#2b1d16'; ctx.lineWidth = 4.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const blink = (t % 4.2) < .14, E = (dx, f) => { ctx.save(); ctx.translate(dx, 0); f(); ctx.restore(); };
+    if (mood === 'smug') { ctx.fillStyle = '#1a1414'; for (const d of [-1, 1]) { ctx.beginPath(); ctx.moveTo(d * 6, -10); ctx.lineTo(d * 34, -12); ctx.quadraticCurveTo(d * 34, 6, d * 20, 6); ctx.quadraticCurveTo(d * 6, 6, d * 6, -10); ctx.fill(); } ctx.fillRect(-8, -12, 16, 4); ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; for (const d of [-1, 1]) { ctx.beginPath(); ctx.moveTo(d * 12 - 3, -6); ctx.lineTo(d * 12 + 4, -9); ctx.stroke(); } ctx.strokeStyle = '#2b1d16'; ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(-8, 18); ctx.quadraticCurveTo(6, 24, 16, 13); ctx.stroke(); }
+    else { for (const d of [-1, 1]) E(d * 17, () => { ctx.beginPath();
+        if (blink || mood === 'calm') { ctx.moveTo(-7, -2); ctx.quadraticCurveTo(0, mood === 'calm' && !blink ? -9 : 3, 7, -2); ctx.stroke(); }
+        else if (mood === 'happy') { ctx.moveTo(-8, 0); ctx.quadraticCurveTo(0, -10, 8, 0); ctx.stroke(); }
+        else if (mood === 'angry') { ctx.moveTo(-9, -4 - d * 4); ctx.lineTo(9, -4 + d * 4); ctx.stroke(); ctx.beginPath(); ctx.arc(0, 2, 3.5, 0, 7); ctx.fill(); }
+        else if (mood === 'shock') { ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(0, -2, 8, 0, 7); ctx.fill(); ctx.stroke(); ctx.fillStyle = '#2b1d16'; ctx.beginPath(); ctx.arc(0, -2, 2.8, 0, 7); ctx.fill(); }
+        else { ctx.moveTo(-8, -1); ctx.lineTo(8, -1); ctx.stroke(); if (mood === 'sad' || mood === 'worried') { ctx.beginPath(); ctx.moveTo(-8, -12 + d * 3); ctx.lineTo(7, -12 - d * 3); ctx.stroke(); } } });
+      ctx.beginPath(); if (mood === 'happy' || mood === 'calm') { ctx.moveTo(-9, 12); ctx.quadraticCurveTo(0, mood === 'happy' ? 24 : 18, 9, 12); ctx.stroke(); }
+      else if (mood === 'shock') { ctx.ellipse(0, 18, 6, 8, 0, 0, 7); ctx.stroke(); }
+      else if (mood === 'angry') { for (let i = -2; i <= 2; i++) { ctx.lineTo(i * 5, 16 + (i % 2 ? -3 : 3)); } ctx.stroke(); }
+      else { ctx.moveTo(-9, 18); ctx.quadraticCurveTo(0, 10, 9, 18); ctx.stroke(); if (mood === 'worried') { ctx.fillStyle = '#6ac8f4'; ctx.beginPath(); ctx.moveTo(30, -26); ctx.quadraticCurveTo(38, -12, 30, -8); ctx.quadraticCurveTo(22, -12, 30, -26); ctx.fill(); } } }
+    ctx.restore(); }
   // a pin with a typed label on the map
   function pin(ctx, pr, lon, lat, text, k = 1, o = {}) { if (k <= 0) return; const [x, y] = pr(lon, lat), d = 1 - ease.back(clamp(k * 2)); ctx.save(); ctx.translate(x, y - d * 40); shadow(ctx, true, 4, .35); ctx.fillStyle = o.col || '#d8241a'; ctx.beginPath(); ctx.arc(0, -16, 9, 0, 7); ctx.fill(); shadow(ctx, false); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-3, -19, 3, 0, 7); ctx.fill(); ctx.strokeStyle = '#555'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(0, 0); ctx.stroke(); ctx.restore(); if (text) label(ctx, text, x + (o.dx ?? 0), y + (o.dy ?? -50), o.size || 18, { rot: o.rot || 0 }); }
   // a fat paper arrow between two lon/lat points (drawn on over k)

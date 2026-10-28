@@ -10,7 +10,7 @@
     ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = `900 ${w * .1}px Anton`; ctx.fillText(title, 0, -h * .12); ctx.font = `700 ${w * .05}px Fredoka, sans-serif`; ctx.fillText(sub, 0, h * .04); ctx.restore(); C.stamp(ctx, 'SECRET', x + w * .2, y + h * .3, w * .09, -.12, k); };
   // 1. the plan was real: the folder and a map of the five thrusts
   function sScheme(ctx, lt, dur, t) { const v = S.view({ lon: -95, lat: 46, s: 1000, y: 360 }, { lon: -92, lat: 45, s: 1250, y: 330 }, ease.inOut(clamp(lt / dur)));
-    const pr = C.map(ctx, v, { prov: true, fill: n => n === 'Canada' ? '#c86a5a' : n === 'United States of America' ? '#8ab0d8' : null, alpha: .55 });
+    const pr = C.map(ctx, v, { prov: true, faces: n => n === 'Canada' ? 'angry' : n === 'United States of America' ? 'shock' : null, faceAt: n => n === 'Canada' ? [-100, 53] : n === 'United States of America' ? [-100, 40.5] : null, fill: n => n === 'Canada' ? '#c86a5a' : n === 'United States of America' ? '#8ab0d8' : null, alpha: .55 });
     const thrusts = [[[-123, 49.5], [-122.3, 47.6], 'Seattle'], [[-111, 49.5], [-111.3, 47.5], 'Great Falls'], [[-97, 49.5], [-93.3, 45], 'Minneapolis'], [[-82.5, 43], [-83, 42.3], 'Detroit'], [[-74, 45.5], [-73.8, 42.7], 'Albany']];
     thrusts.forEach(([f, to, n], i) => { const kt = A.idea + i * .45, back = t > A.fall ? k01(t, A.fall, 1.5) : 0; if (t < kt) return; const kk = k01(t, kt, .7); const tip = back > 0 ? [lerp(to[0], f[0], back * .7), lerp(to[1], f[1], back * .7)] : to; C.mapArrow(ctx, pr, f, tip, kk, '#c23a2c', 14, .15); if (t > A.grab) { const [x, y] = pr(...to); C.label(ctx, n, x, y + 30, 18); } });
     if (t > A.wait) C.headline(ctx, '…THEN WAIT FOR HELP', 640, 600, 38, { rot: -.03, bg: '#fbf8f0' });

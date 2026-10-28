@@ -73,7 +73,7 @@
   // ---- wrap every scene draw ----
   function wrap(cut, duration, sfx, ambOf = () => null) { instrument(); const BT = beatTimes(duration), scratch = document.createElement('canvas'); scratch.width = W; scratch.height = H; const sctx = scratch.getContext('2d'), cache = new Map();
     const sorted = cut.slice().sort((a, b) => a[0] - b[0]);
-    return sorted.map(([s0, draw, fade], i) => { const s1 = i + 1 < sorted.length ? sorted[i + 1][0] : duration; if (draw.noCover) return [s0, draw, fade];
+    return sorted.map(([s0, draw, fade], i) => { const s1 = i + 1 < sorted.length ? sorted[i + 1][0] : duration; if (draw.noCover) { if (draw.noDrift) return [s0, draw, fade]; const dur = s1 - s0, dir = i % 2 ? 1 : -1; const drift = function (ctx, lt, d, t) { const k = Math.min(1, Math.max(0, lt / dur)), e = k * k * (3 - 2 * k), z = 1 + .035 * e; ctx.save(); ctx.translate(640 + dir * 10 * e, 360); ctx.scale(z, z); ctx.translate(-640, -360); draw(ctx, lt, d, t); ctx.restore(); }; Object.defineProperty(drift, 'name', { value: draw.name }); return [s0, drift, fade]; }
       // this scene's beats (global beat times inside it; a tail shorter than 1.2 s merges into the previous beat)
       const bs = [s0, ...BT.filter(b => b > s0 + 1.2 && b < s1 - 1.2)];
       const f = function (ctx, lt, dur, t) { let bi = 0; while (bi + 1 < bs.length && t >= bs[bi + 1]) bi++; const bStart = bs[bi], bEnd = bi + 1 < bs.length ? bs[bi + 1] : s1;

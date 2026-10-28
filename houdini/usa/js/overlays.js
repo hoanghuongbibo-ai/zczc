@@ -33,7 +33,8 @@
       const nw = ctx.measureText(name).width, kw = clamp((u - .35) / .4); ctx.fillStyle = '#d8241a'; ctx.fillRect(x, y + 10, nw * eo(kw), 7);
       if (u > .5) { const k2 = clamp((u - .5) / .3); ctx.globalAlpha = (1 - kout) * k2; ctx.save(); ctx.translate(x + 6, y + 50); ctx.rotate(-.04); ctx.font = '28px "Permanent Marker"'; ctx.lineJoin = 'round'; ctx.lineWidth = 7; ctx.strokeStyle = '#fffaf0'; ctx.strokeText(role, 0, 0); ctx.fillStyle = '#c23a2c'; ctx.fillText(role, 0, 0); ctx.restore(); }
       ctx.restore(); } }
-  function bars(ctx, t) { let k = 0; for (const [t0, t1] of BARS) k = Math.max(k, Math.min(eo(clamp((t - t0) / .5)), eo(clamp((t1 - t) / .5)))); if (k <= 0) return; const h = 74 * k; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 1280, h); ctx.fillRect(0, 720 - h, 1280, h); }
+  const barsK = G.barsK = t => { let k = 0; for (const [t0, t1] of BARS) k = Math.max(k, Math.min(eo(clamp((t - t0) / .5)), eo(clamp((t1 - t) / .5)))); return k; };
+  function bars(ctx, t) { const k = barsK(t); if (k <= 0) return; const h = 74 * k; ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 1280, h); ctx.fillRect(0, 720 - h, 1280, h); }
   // the deal-count sign, called by Scenes.dealStamp with its number
   G.dealSign = (ctx, t, tDeal, n) => { const u = t - tDeal + .3; if (u < 0 || u > 3.8) return; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const drop = eo(clamp(u / .45)), out = clamp((u - 3.3) / .5), sw = Math.sin(u * 5) * Math.exp(-u * 1.4) * .12;
     ctx.translate(1060, -40 + drop * 60 - out * 240); ctx.rotate(sw); ctx.strokeStyle = '#6a4a2a'; ctx.lineWidth = 5; for (const d of [-90, 90]) { ctx.beginPath(); ctx.moveTo(d * .6, -60); ctx.lineTo(d, 30); ctx.stroke(); }

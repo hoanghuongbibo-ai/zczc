@@ -27,7 +27,7 @@
     plate(4, 5); ctx.fill(); plate(0, 0); ctx.fillStyle = '#fbf8f0'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke();
     ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text.toUpperCase(), x + w / 2, y + h / 2 + 3); ctx.restore(); };
   // ---- fact strip: big rounded outlined text at the bottom, two lines at most ----
-  S.fact = (ctx, text, k = 1, o = {}) => { if (k <= 0) return; P.caption(ctx, text, k, { size: (o.size || 26) * 1.12, x: o.x ?? 640, y: o.y ?? 668, align: o.align || 'center' }); };
+  S.fact = (ctx, text, k = 1, o = {}) => { if (k <= 0) return; P.caption(ctx, text, k, { size: (o.size || 26) * 1.12, x: o.x ?? 640, y: o.y ?? 668 - (G.barsK && G.__frameT != null ? 74 * G.barsK(G.__frameT) : 0), align: o.align || 'center' }); };
   // ---- labels: a clean white pill with a dark edge (o.bg tints it) ----
   C.label = function (ctx, text, x, y, size = 22, o = {}) { ctx.save(); ctx.translate(x, y); ctx.rotate(o.rot || 0); const s = size * 1.02; ctx.font = ROUND(s); const w = ctx.measureText(text).width + s * 1.1, h = s * 1.55;
     ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.roundRect(-w / 2 + 3, -h / 2 + 4, w, h, h / 2.6); ctx.fill(); ctx.fillStyle = o.bg || '#ffffff'; ctx.beginPath(); ctx.roundRect(-w / 2, -h / 2, w, h, h / 2.6); ctx.fill(); ctx.lineWidth = Math.max(2.5, s * .13); ctx.strokeStyle = INK; ctx.stroke();

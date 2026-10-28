@@ -101,6 +101,9 @@
   FX.wolf = { len: 3, fn: L => { const n = Math.round(2.6 * SR); let ph = 0; for (let i = 0; i < n; i++) { const k = i / n, f = (420 + 300 * Math.sin(Math.PI * Math.min(1, k * 1.6)) - k * 120) * (1 + .01 * Math.sin(i / SR * 30)); ph += f / SR; L[ix(.02) + i] += (Math.sin(TAU * ph) + .15 * Math.sin(TAU * ph * 2)) * Math.sin(Math.PI * k) ** .5 * .2; } reverb(L, .6, 1.6); } };
   FX.cough = { len: 1, fn: L => { for (let k = 0; k < 2; k++) { const bp = Bq('bp', 700, 1.4); burst(L, .02 + k * .25, .15, .6, x => bp(x) * 2.5, kk => Math.exp(-kk * 5), 30 + k); } reverb(L, .4, 1.3); } };
   FX.scrape = FX.chair;
+  FX.swish = { len: .6, fn: L => { const bp = Bq('bp', 800, 1.2), w = pinkGen(11), n = Math.round(.32 * SR); for (let i = 0; i < n; i++) { const k = i / n; bp.set(500 + 2600 * Math.sin(Math.PI * k), 1.4); L[ix(.02) + i] += bp(w()) * Math.sin(Math.PI * k) ** 2 * 1.6; } } };
+  FX.riser = { len: 2, fn: L => { const bp = Bq('bp', 400, 2), w = pinkGen(13), n = Math.round(1.6 * SR); let ph = 0; for (let i = 0; i < n; i++) { const k = i / n; bp.set(300 + 3200 * k * k, 2.5); ph += (120 + 520 * k * k) / SR; L[ix(.02) + i] += (bp(w()) * 1.4 + Math.sin(TAU * ph) * .12) * k ** 2.2; } } };
+  FX.impact = { len: 2.6, fn: L => { sine(L, .02, 2.2, 58, 1, 2.2, 36); const lp = Bq('lp', 260); burst(L, .02, .9, .9, x => lp(x), k => Math.exp(-k * 4), 17); const hp = Bq('hp', 3000); burst(L, .02, .05, .4, x => hp(x), k => 1 - k, 18); reverb(L, .35, 1.4); } };
 
   // ---- ambience beds: write [t0, t1) into the master buffer M at level lv (with 0.8 s fades) ----
   const AMB = {};

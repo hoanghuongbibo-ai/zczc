@@ -34,7 +34,10 @@
     ctx.save(); const g = ctx.createRadialGradient(640, 150, 20, 640, 420, 620); g.addColorStop(0, 'rgba(255,220,150,.55)'); g.addColorStop(1, 'rgba(255,220,150,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(600, 90); ctx.lineTo(680, 90); ctx.lineTo(1180, 720); ctx.lineTo(100, 720); ctx.closePath(); ctx.fill(); ctx.restore();
     ctx.strokeStyle = '#111'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(640, -10); ctx.lineTo(640, 60); ctx.stroke(); C.pc(ctx, '#2f5a3a', c => { c.moveTo(580, 100); c.lineTo(610, 56); c.lineTo(670, 56); c.lineTo(700, 100); c.closePath(); }); C.pc(ctx, '#fff4c8', c => c.ellipse(640, 100, 60, 8, 0, 0, 7), false);
     // figures behind the table
-    for (const p of o.people || []) { if (p.face) { C.fig(ctx, p.x, p.y ?? 640, p.s ?? 1.05, t, Object.assign({ pose: p.pose || 'stand', seed: p.x }, p)); } else C.fig(ctx, p.x, p.y ?? 640, p.s ?? 1.05, t, Object.assign({ seed: p.x }, p)); }
+    for (const p0 of o.people || []) { let p = p0; if (p0.enterAt !== undefined) { if (t < p0.enterAt) continue; const from = p0.from ?? (p0.x < 640 ? -140 : 1420), u = Math.min(1, (t - p0.enterAt) / 1.1), x = from + (p0.x - from) * (1 - (1 - u) ** 2);
+        p = Object.assign({}, p0, { x }); if (u < 1) Object.assign(p, { pose: 'walk', walk: true, flip: from > p0.x, profile: true }); }
+      if (p0.hopAt !== undefined && t > p0.hopAt && t < p0.hopAt + 1.3) p = Object.assign({}, p, { y: (p.y ?? 640) - Math.abs(Math.sin((t - p0.hopAt) * 7.2)) * 22, pose: 'up' });
+      if (p.face) { C.fig(ctx, p.x, p.y ?? 640, p.s ?? 1.05, t, Object.assign({ pose: p.pose || 'stand', seed: p.x }, p)); } else C.fig(ctx, p.x, p.y ?? 640, p.s ?? 1.05, t, Object.assign({ seed: p.x }, p)); }
     // chairs (empty) — wooden chair backs above the table edge
     const nch = o.chairs || 0; for (let i = 0; i < nch; i++) { const cx = o.chairX ? o.chairX(i) : 640 + (i - (nch - 1) / 2) * 150; S.chair(ctx, cx, 520, 1, o.chairCol); }
     // table top (perspective) and front

@@ -28,7 +28,7 @@
   // 4. who wasn't asked — they step up to the table one by one; then more chairs get pulled up
   function sAsked(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.08, y: 20 }, { z: 1.0 }); const who = [[A.metis, 230, PP.metis(0), 'Métis at Red River'], [A.chinese, 450, PP.chinese(1), 'Chinese railway workers'], [A.japanese, 830, PP.japanese(2), 'Japanese Canadian fishermen'], [A.children, 1040, Object.assign(PP.child(1), { s: .85 }), '150,000+ Indigenous children']];
     const nch = t > A.chairs ? Math.min(6, 1 + Math.floor((t - A.chairs) * 2.5)) : 0;
-    Cn.layer(ctx, c, 1, () => S.dealTable(ctx, t, { people: [{ x: 640, face: 'macdonald', flip: false }, ...who.filter(w => t > w[0]).map(([kt, x, o]) => Object.assign({ x, s: o.s ?? 1.0, mood: 'calm', flip: x > 640 }, o))], chairs: nch, chairX: i => [640 - 340, 640 + 340, 640 - 120, 640 + 120, 640 - 520, 640 + 520][i], doc: 'THE DEAL' }));
+    Cn.layer(ctx, c, 1, () => S.dealTable(ctx, t, { people: [{ x: 640, face: 'macdonald', flip: false }, ...who.map(([kt, x, o]) => Object.assign({ x, s: o.s ?? 1.0, mood: 'calm', flip: x > 640, enterAt: kt - .9 }, o))], chairs: nch, chairX: i => [640 - 340, 640 + 340, 640 - 120, 640 + 120, 640 - 520, 640 + 520][i], doc: 'THE DEAL' }));
     who.forEach(([kt, x, , l], i) => { if (t > kt) C.label(ctx, l, x, 120 + (i % 2) * 44, 16, { rot: (i % 2 ? .03 : -.03) }); });
     if (t > A.asked && t < A.metis) S.fact(ctx, "it's about who wasn't asked", k01(t, A.asked, .4)); if (t > A.modern) S.fact(ctx, 'a lot of modern Canada is the slow, unfinished work of pulling up more chairs', k01(t, A.modern, .4)); C.finish(ctx, t); }
   // 5. the border Buster scouted, today: trucks crossing both ways under two flags

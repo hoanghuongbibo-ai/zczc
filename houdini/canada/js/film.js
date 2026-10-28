@@ -13,7 +13,12 @@
     const marks = []; F.chapters.forEach((ch, ci) => { const map = (G.SOUNDMAP || [])[ci] || {}; for (const c of ch.cut) marks.push([c[0], map[c[1].name] || 'room']); }); marks.sort((a, b) => a[0] - b[0]);
     const amb = []; marks.forEach(([t, type], i) => { const t1 = i + 1 < marks.length ? marks[i + 1][0] : duration; const last = amb[amb.length - 1]; if (last && last.type === type) last.t1 = t1; else amb.push({ t0: t, t1, type }); });
     for (const [ph, from, type, gain = 1, off = 0] of G.SOUNDFX || []) sfx.push({ t: at(ph, from) + off, type, gain });
-    return { duration, narration: 'canada/assets/audio/narration-full.mp3', shots: P.cutList(cut, duration), sfx, moods, amb, images: G.CA_IMAGES, fonts: ['400 20px "Special Elite"', '400 20px "Permanent Marker"', '400 20px Anton', '400 20px "Luckiest Guy"'] }; };
+    // automatic detail sounds from the visual scan (js/autosfx.js): a pop when text lands, paper when a photo is pinned, a soft swish on scene cuts
+    if (G.AUTOSFX) { const near = (t, d) => sfx.some(c => Math.abs(c.t - t) < d); let last = -9; const MAP = { text: ['pop', .22], photo: ['rustle', .3], figure: ['pop', .1], cut: ['swish', .16] };
+      for (const [t, kind] of G.AUTOSFX) { const [type, gain] = MAP[kind]; if (t - last < .3 || near(t, .3)) continue; sfx.push({ t, type, gain }); last = t; } }
+    // risers into the big reveals: every DEAL stamp and the big title moments get a rising swell 1.6 s before and a low hit on the beat
+    for (const ph of ['it made a deal']) { let from = 0; for (;;) { const t = at(ph, from); if (t <= from) break; sfx.push({ t: t - 1.6, type: 'riser', gain: .32 }, { t, type: 'impact', gain: .45 }); from = t + 1; } }
+    return { duration, narration: 'canada/assets/audio/narration-full.mp3', shots: P.cutList(G.Coverage ? G.Coverage.wrap(cut, duration, sfx, (name, t0) => { const m = marks.find(mm => Math.abs(mm[0] - t0) < .01); return m ? m[1] : null; }) : cut, duration), sfx, moods, amb, images: G.CA_IMAGES, fonts: ['400 20px "Special Elite"', '400 20px "Permanent Marker"', '400 20px Anton', '400 20px "Luckiest Guy"'] }; };
   // per-frame bookkeeping for lip-sync: the absolute time, and whether this frame's main character has been claimed yet
   if (G.Toon && !G.Toon.__wrapped) { const rf = G.Toon.renderFrame; G.Toon.renderFrame = (ctx, shots, t) => { G.__frameT = t; G.__spoke = false; return rf(ctx, shots, t); }; G.Toon.__wrapped = true; }
   G.Film = F;

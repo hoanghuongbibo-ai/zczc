@@ -15,7 +15,7 @@
   const CA67 = n => ({ Ontario: '#c86a5a', 'Québec': '#5a7ab8', Quebec: '#5a7ab8', 'Nova Scotia': '#d8a050', 'New Brunswick': '#7a9a5a' })[n] || null;
   // 1. recap: three polaroids on the board — the deal, the purchase, the people nobody asked
   function sRecap(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.06 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft');
-      S.polaroid(ctx, 230, 280, 300, 200, -.06, (cc, w, h) => sc(cc, w, h, c2 => S.dealTable(c2, t, { people: [{ x: 440, ...PP.politician(1) }, { x: 840, face: 'macdonald', flip: true }], doc: 'CONFEDERATION', sign: 1 })), '1867: a deal', k01(t, A.french, .4), 3);
+      S.polaroid(ctx, 230, 280, 300, 200, -.06, (cc, w, h) => sc(cc, w, h, c2 => S.dealTable(c2, t, { people: [{ x: 440, ...PP.politician(1) }, { x: 840, face: 'macdonald', flip: true }], doc: 'CONFEDERATION', sign: 1 })), '1867: a deal', k01(t, A.start + .2, .4), 3);
       S.polaroid(ctx, 640, 260, 300, 200, .04, (cc, w, h) => sc(cc, w, h, c2 => C.map(c2, { lon: -95, lat: 56, s: 700, x: 640, y: 380 }, { fill: n => n === 'Canada' ? '#c86a5a' : null, alpha: .7 })), 'half a continent', k01(t, A.bought, .4), 4);
       S.polaroid(ctx, 1050, 290, 300, 200, -.03, (cc, w, h) => sc(cc, w, h, c2 => S.redRiver(c2, t, {})), 'the people there', k01(t, A.without - .6, .4), 5);
       if (t > A.without) { C.marker(ctx, 'circle', [1050, 290, 190, 150], k01(t, A.without + .2, .6)); C.scrawl(ctx, 'nobody asked them!', 1040, 520, 34); } });

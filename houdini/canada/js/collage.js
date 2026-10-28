@@ -91,8 +91,14 @@
     // face the viewer unless walking/working sideways (o.profile keeps the old side view); the shot's main character — the first named
     // cast member (or o.lead) drawn in a frame — mouths the narration in sync (js/lipsync.js)
     q.front = o.front ?? !(o.profile || q.walk || q.pose === 'haul' || q.pose === 'pry');
-    if (q.front && q.turn === undefined) q.turn = o.look === 'viewer' ? 0 : .45; // a three-quarter head: the face stays to the viewer but looks the way the body is turned
+    if (q.front && q.turn === undefined) q.turn = o.look === 'viewer' ? 0 : .45 * (q.face === 1 ? 1 : 1); // a three-quarter head: the face stays to the viewer but looks the way the body is turned
     if (o.speak !== false && (o.lead || (o.face && G.CAST && G.CAST[o.face])) && Math.abs(o.lean || 0) < .5 && s >= .45 && !G.__spoke) { G.__spoke = true; q.speak = true; q.lipT = G.__frameT; }
+    // acting on the beat: the speaker changes gesture each narration beat; listeners shift weight, turn to look, fold arms
+    const B = G.__beat ?? 0, sad = o.mood === 'sad' || q.brow === 'sad', seedN = (q.seed | 0) % 7;
+    if (!q.walk && (q.pose === 'stand' || q.pose === 'talk') && !o.still) {
+      if (q.speak) q.pose = (sad ? ['talk', 'chin', 'hold', 'talk'] : ['talk', 'point', 'talk', 'shrug', 'hold', 'talk', 'chin'])[(B + seedN) % (sad ? 4 : 7)];
+      else if (q.front) { const r = (B * 3 + seedN) % 6; if (r === 1 && !sad) q.pose = 'crossed'; else if (r === 3) q.pose = sad ? 'hold' : 'chin'; else if (r === 5 && !sad) q.pose = 'hold'; if (o.turn === undefined) q.turn = [.45, -.45, 0, .45, -.45, .3][(B + seedN) % 6]; } }
+    if (G.__regFig) G.__regFig(ctx, x, y, s * .8, q);
     ctx.save(); if (o.lean) { ctx.translate(x, y); ctx.rotate(o.lean * q.face); ctx.translate(-x, -y); } G.Paint.person(ctx, x, y, s * .8, t, q); ctx.restore(); }
 
   // ---------- paper props ----------

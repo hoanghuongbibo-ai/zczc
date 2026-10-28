@@ -1,0 +1,1 @@
+window.CA_IMAGES = {};

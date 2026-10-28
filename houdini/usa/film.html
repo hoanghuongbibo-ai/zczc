@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The American Revolution</title>
+<style>
+  @font-face { font-family: "Special Elite"; src: url(../canada/assets/fonts/SpecialElite-Regular.ttf); }
+  @font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+  @font-face { font-family: Anton; src: url(../canada/assets/fonts/Anton-Regular.ttf); }
+  @font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #5c1f1b; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div><button id="play">▶ Play</button><span id="time"></span></div>
+<script>window.TOON_FINISH = { grain: 0, vignette: 0 };</script>
+<script src="../js/toon.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../canada/js/foley.js"></script>
+<script src="../rome/js/paint.js"></script>
+<script src="../rome/js/monk.js"></script>
+<script src="../rome/js/animals.js"></script>
+<script src="../rome/js/cine.js"></script>
+<script src="../rome/js/kit.js"></script>
+<script src="js/cast.js"></script>
+<script src="../canada/js/geo.js"></script>
+<script src="js/timing.js"></script>
+<script src="js/lipsync.js"></script>
+<script src="js/soundmap.js"></script>
+<script src="js/autosfx.js"></script>
+<script src="js/images.js"></script>
+<script src="../canada/js/collage.js"></script>
+<script src="js/film.js"></script>
+<script src="../canada/js/coverage.js"></script>
+<script src="js/overlays.js"></script>
+<script src="../canada/js/scenes.js"></script>
+<script src="../canada/js/type.js"></script>
+<script src="js/sets.js"></script>
+<script src="js/ch00.js"></script>
+<script src="js/ch01.js"></script>
+<script src="js/ch02.js"></script>
+<script src="js/ch03.js"></script>
+<script src="js/ch04.js"></script>
+<script src="js/ch05.js"></script>
+<script src="js/ch06.js"></script>
+<script src="js/ch07.js"></script>
+<script src="js/ch08.js"></script>
+<script src="js/ch09.js"></script>
+<script src="js/ch10.js"></script>
+<script src="js/ch11.js"></script>
+
+<script>window.Show = Film.build(1124.5);</script>
+<script src="../js/player.js"></script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

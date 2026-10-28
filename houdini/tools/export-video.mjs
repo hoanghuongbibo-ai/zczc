@@ -10,7 +10,9 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const [page_ = 'preview.html', out = 'out/preview.mp4', fpsArg = '30'] = process.argv.slice(2);
 const fps = +fpsArg;
-const tmp = fs.mkdtempSync(path.join(process.env.TMPDIR || '/tmp', 'collage-'));
+// RESUME=<frames dir> continues a crashed render: frames already on disk are skipped
+const tmp = process.env.RESUME || fs.mkdtempSync(path.join(process.env.TMPDIR || '/tmp', 'collage-'));
+console.log('frames in', tmp);
 fs.mkdirSync(path.dirname(path.resolve(root, out)), { recursive: true });
 
 const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--allow-file-access-from-files'] });
@@ -26,7 +28,11 @@ const frames = Math.round(duration * fps);
 // WORKERS=n renders frames in n parallel browser contexts (one renderer process each); frames are saved as high-quality JPEG then
 const WORKERS = +(process.env.WORKERS || 1), EXT = WORKERS > 1 ? 'jpg' : 'png';
 async function work(pg, w) {
+  let n = 0;
   for (let f = w; f < frames; f += WORKERS) {
+    if (fs.existsSync(path.join(tmp, `f${String(f).padStart(5, '0')}.${EXT}`))) continue;
+    // reload the page every 1500 frames so the renderer's memory never builds up (a 23-minute film crashed Chromium at ~17k frames)
+    if (++n % 1500 === 0) { await pg.reload(); await pg.waitForFunction(() => window.READY === true); }
     const b64 = await pg.evaluate(([t, jpg]) => { window.renderAt(t); return document.getElementById('stage').toDataURL(jpg ? 'image/jpeg' : 'image/png', .95).split(',')[1]; }, [f / fps, EXT === 'jpg']);
     fs.writeFileSync(path.join(tmp, `f${String(f).padStart(5, '0')}.${EXT}`), Buffer.from(b64, 'base64'));
     if (f % 120 === w) process.stdout.write(`frame ${f}/${frames}\n`);

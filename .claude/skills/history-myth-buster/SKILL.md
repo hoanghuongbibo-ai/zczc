@@ -472,3 +472,34 @@ A narrated myth-buster with skits. It reuses merer's flora/sets/kit and the vind
 - `UI.keepOut` reserves the SALT COUNTER corner — cards slide clear of it; no counter on the end screen.
 - Period check every crowd shot: no modern suits in 1360/1789, medieval court ≠ Versailles wigs, draft physicals in an
   army exam room (not a kitchen). Run `tools/_edges.mjs` and a full contact sheet before every render.
+
+### Reference study #3 (10 "Historically Facts"-style clips, Oct '28) — editing, story, text, sound
+**Pacing rule: a new visual BEAT every 1–2 s, a new SHOT every ≤3.5 s.** Their shots can last 7–10 s only because
+something changes inside them every second: the flip-chart map swaps eras (1813 QING → 1427 MING → 630 TANG → 157 HAN),
+a hand stamps a flag, a label morphs (XIA DYNASTY? → XIA KINGDOM?), a character pulls a prop, a wave sweeps the frame.
+NEVER hold characters standing/swaying/waving — if nobody DOES something new on the next phrase, cut or add an action.
+**Devices worth stealing**
+- Insert hands: a gloved hand plants a flag on the map, a wristwatch shows the year ("1912") = time jump.
+- TIME MACHINE bar: a timeline slider racing back through years over a landscape that fades to the old era.
+- Persistent ERA BADGE top-left (mini-map + dynasty + year) that changes when the era changes; slanted white YEAR TAG
+  bottom-right ("1600 B.C.", heavy italic black text, black outline box).
+- Anthropomorphic maps: regions get faces and attitudes (JIN flexes arms, QI wears sunglasses holding cash, QIN sleeps
+  under a straw hat, CHU scowls, ZHOU smiles then frowns as it shrinks). Zoom between them on the map.
+- Literalised metaphors as mini-skits: "Mandate of Heaven" = a KING LICENSE from the HEAVEN DMV, cut with scissors when
+  the king lounges with grapes and a flood washes him away; a rebel snatches the hat (crown) off the king's head.
+- Open-loop QUESTION CHECKLIST: the narrator poses questions ("A KING? WHAT NOW?", "WHY NOT KINGDOM?") → they sit as red-X
+  tickets in a corner and flip to green ticks when answered. Keeps viewers waiting for the payoff.
+- Dictionary/book insert: book opens to "KINGDOM" with an illustration whose outfits change; page flip → "DYNASTY", POOF.
+- Concept objects on maps: dynasty = a HOUSE labelled TUDOR/BOURBON dropped onto the country, tied with a ribbon.
+- Quick reaction cutaways (presenter yelling, a meme flash ≤0.5 s), evil silhouette with red eyes for ominous lines,
+  full-screen red tint + caption for dark facts (CHILDREN), real-artifact photo inset popping in a small frame.
+- Spinning title word on a sunburst (ZHOU), carved stone tablet gag ("ZHAD KING — ZHOU KING IS A FRAUD").
+**Story shape**: hook on today's name/fact → "before that…" quick montage of eras → "let's start here" → title card
+→ time machine back → story of the first figure (problem → hero's 30-year effort → people reward him) → "you probably
+have two questions" (on-screen checklist) → answer 1 (with ironic foreshadowing: "I sure hope that doesn't cause
+problems later") → answer 2 with a modern analogy (a kingdom is like a business; a dynasty is a family) → tick the
+boxes → cliffhanger into the next era. Body = cause → effect → consequence; conclusion = callback to the hook.
+**Text**: big heavy rounded sans (white fill, thick black outline, soft drop shadow) for titles/names; dark heavy sans
+for map labels; marker hand-lettering only for small map names; ribbons for chapter titles. Never thin or busy fonts.
+**Sound**: voice forward, soft continuous music, a short real-sounding accent on every action (stamp, whoosh, splash,
+poof, scissors snip, arrow thunk) — about one accent per visual beat.

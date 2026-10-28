@@ -33,7 +33,7 @@
     S.fact(ctx, 'families split for decades — men couldn\'t afford to bring wives and children', k01(t, A.families, .4)); C.finish(ctx, t); }
   // 4. 1 July 1923: the calendar page — Dominion Day crossed out, Humiliation Day; the ban 1923–1947; apology 2006
   function sBan(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.05 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft');
-      ctx.save(); ctx.translate(380, 290); ctx.rotate(-.04); C.shadow(ctx, true, 10, .4); ctx.fillStyle = '#fbf8f0'; ctx.fillRect(-170, -200, 340, 400); C.shadow(ctx, false); ctx.fillStyle = '#c23a2c'; ctx.fillRect(-170, -200, 340, 80); ctx.fillStyle = '#fff'; ctx.font = '900 46px Anton'; ctx.textAlign = 'center'; ctx.fillText('JULY 1923', 0, -142); ctx.fillStyle = INK; ctx.font = '900 190px Anton'; ctx.fillText('1', 0, 90); ctx.font = '22px "Special Elite"'; ctx.fillText('Dominion Day', 0, 150);
+      ctx.save(); ctx.translate(380, 290); ctx.rotate(-.04); C.shadow(ctx, true, 10, .4); ctx.fillStyle = '#fbf8f0'; ctx.fillRect(-170, -200, 340, 400); C.shadow(ctx, false); ctx.fillStyle = '#c23a2c'; ctx.fillRect(-170, -200, 340, 80); ctx.fillStyle = '#fff'; ctx.font = '900 46px Anton'; ctx.textAlign = 'center'; ctx.fillText('JULY 1923', 0, -142); ctx.fillStyle = INK; ctx.font = '900 190px Anton'; ctx.fillText('1', 0, 90); ctx.font = '700 22px Fredoka, sans-serif'; ctx.fillText('Dominion Day', 0, 150);
       if (t > A.humiliation) C.marker(ctx, 'x', [0, 142, 40], k01(t, A.humiliation, .4)); ctx.restore(); if (t > A.humiliation) C.scrawl(ctx, 'HUMILIATION DAY', 390, 560, 44, '#c23a2c', -.06);
       if (t > A.banned) { ctx.save(); ctx.globalAlpha = k01(t, A.banned, .4); ['CHINESE IMMIGRATION ACT', 'almost all Chinese', 'immigration BANNED'].forEach((l, i) => C.headline(ctx, l, 930, 150 + i * 56, i ? 30 : 34, { rot: .03 - i * .02, bg: i === 2 ? '#f4c44a' : '#fbf8f0' })); ctx.restore(); }
       if (t > A.lasted) S.timeline(ctx, 450, 1920, 2010, [{ v: 1923, text: '1923 ban', k: 1, size: 20 }, { v: 1947, text: '1947 ends', size: 20, k: k01(t, A.lasted, .5) }, { v: 2006, text: '2006 apology', size: 20, k: k01(t, A.apol, .5) }].map(m => Object.assign(m, { up: false })), { x0: 680, x1: 1120 }); });
@@ -70,7 +70,7 @@
   // 8. the TRC, 2015: "cultural genocide"
   function sTRC(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.05 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft');
       ctx.save(); ctx.translate(640, 320); ctx.rotate(-.02); C.shadow(ctx, true, 10, .4); ctx.drawImage(C.paper('cream', 640, 440), -320, -220); C.shadow(ctx, false); C.tape(ctx, -260, -220, 90, -.3, 4); C.tape(ctx, 260, -220, 90, .3, 5);
-      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '22px "Special Elite"'; ctx.fillText('TRUTH AND RECONCILIATION COMMISSION OF CANADA', 0, -150); ctx.fillText('Final Report · 2015', 0, -115); ctx.fillRect(-260, -95, 520, 3);
+      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '700 22px Fredoka, sans-serif'; ctx.fillText('TRUTH AND RECONCILIATION COMMISSION OF CANADA', 0, -150); ctx.fillText('Final Report · 2015', 0, -115); ctx.fillRect(-260, -95, 520, 3);
       if (t > A.genocide - .3) { ctx.font = '900 82px Anton'; ctx.fillStyle = '#7a1a14'; ctx.globalAlpha = k01(t, A.genocide - .3, .4); ctx.fillText('"CULTURAL', 0, 10); ctx.fillText('GENOCIDE"', 0, 100); } ctx.restore(); });
     C.finish(ctx, t); }
   // 9. the empty chair: never at the table

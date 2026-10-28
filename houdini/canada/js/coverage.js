@@ -18,7 +18,7 @@
     const wrap = (obj, name, fn) => { const f = obj[name]; if (!f) return; obj[name] = function (...a) { if (REG) try { fn(...a); } catch (e) { } return f.apply(this, a); }; };
     const tw = (text, size, k = .62) => { const ls = String(text).split('\n'); return [Math.max(...ls.map(l => l.length)) * size * k + size, ls.length * size * 1.35]; };
     wrap(C, 'stamp', (ctx, text, x, y, size) => { const [w, h] = tw(text, size, .66); box(ctx, x, y, w, h); });
-    wrap(C, 'headline', (ctx, text, x, y, size) => { const [w, h] = tw(text, size, .55); box(ctx, x, y - size * .3, w, h); });
+    wrap(C, 'headline', (ctx, text, x, y, size) => { const [w, h] = tw(text, size, .68); box(ctx, x, y - size * .3, w, h); });
     wrap(C, 'label', (ctx, text, x, y, size = 22) => { const [w, h] = tw(text, size, .62); box(ctx, x, y, w, h); });
     wrap(C, 'scrawl', (ctx, text, x, y, size) => { const [w, h] = tw(text, size, .5); box(ctx, x, y, w, h); });
     wrap(C, 'ransom', (ctx, text, x, y, size) => { const [w, h] = tw(text, size, .7); box(ctx, x, y, w, h); });

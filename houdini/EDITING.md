@@ -93,3 +93,14 @@ The rules here apply to every video in this repo. They come from 15 clips the us
 - **Widen to meaning:** who was left out, and what is still unfinished.
 - **Close the loop with the cold-open image** (Buster's border, now full of trade).
 - **Call to action** with a question for the comments, and a next video that fits.
+
+## 5. Typography (learned from the reference clips)
+- **Two faces only:**
+  - **Luckiest Guy** (chunky display) for titles, headlines, names and dates;
+  - **Fredoka 700** (rounded bold) for captions, facts and labels.
+  - No typewriter or thin serif fonts for anything the viewer must read.
+- **On-picture text:** white (or a strong colour) fill, a thick dark outline (~26% of the size) and a soft drop shadow. It pops in with a small scale overshoot.
+- **Labels and tags:** a white rounded pill with a dark edge (or a tinted one for categories). Map names are bold and dark.
+- **Dates:** a slanted white plate with a black edge in the corner ("1600 B.C." style).
+- **Keep it short:** one line, two at most. Long text shrinks to fit or wraps; it never runs off screen.
+- Implemented once in `canada/js/type.js`, so every chapter inherits it.

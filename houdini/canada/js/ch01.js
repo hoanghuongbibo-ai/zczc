@@ -95,7 +95,7 @@
   // 14. the Vikings didn't stay: a gym membership card, stamped CANCELLED
   function sGym(ctx, lt, dur, t) { ctx.save(); C.cam(ctx, lt, dur, { z: 1.1 }, { z: 1.0 }); C.bg(ctx, 'kraft');
       ctx.save(); ctx.translate(640, 360); ctx.rotate(-.05); C.shadow(ctx, true, 12, .45); ctx.fillStyle = '#fbf8f0'; ctx.beginPath(); ctx.roundRect(-330, -200, 660, 400, 26); ctx.fill(); C.shadow(ctx, false); ctx.fillStyle = '#2c5a8a'; ctx.beginPath(); ctx.roundRect(-330, -200, 660, 110, [26, 26, 0, 0]); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '900 54px Anton'; ctx.textAlign = 'center'; ctx.fillText('VINLAND FITNESS', 0, -125);
-      ctx.fillStyle = INK; ctx.font = '400 28px "Special Elite"'; ctx.textAlign = 'left'; ['MEMBER: Norse explorers', 'JOINED: ~1021', 'VISITS: a few', 'STATUS: did not renew'].forEach((l, i) => ctx.fillText(l, -290, -30 + i * 46)); ctx.restore();
+      ctx.fillStyle = INK; ctx.font = '700 28px Fredoka, sans-serif'; ctx.textAlign = 'left'; ['MEMBER: Norse explorers', 'JOINED: ~1021', 'VISITS: a few', 'STATUS: did not renew'].forEach((l, i) => ctx.fillText(l, -290, -30 + i * 46)); ctx.restore();
       C.ship(ctx, 1100, 640, .4, t, { viking: true, flip: true }); C.stamp(ctx, 'CANCELLED', 700, 420, 84, -.15, k01(t, A.which + .5, .4)); ctx.restore(); C.finish(ctx, t); }
 
   const cut = [[A.start, sCalendar, .3], [A.ice - .2, sIce, .4], [A.when - .2, sArgue, .3], [A.mainstream + 3.2, sBluefish, .4], [A.many - .2, sImmemorial, .5], [A.nobody - .1, sNations, .4], [A.haud - .2, sHaud, .3], [A.cree - .2, sCree, .3], [A.inuit - .2, sInuit, .3],

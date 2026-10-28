@@ -7,7 +7,7 @@
   const A = { start: a('so canada goes shopping'), hands: a("hands rupert's"), crown: a('back to the british crown'), passes: a('which passes it'), pays: a('canada pays'), plus: a('plus millions'), largest: a("it's the largest land"),
     did: a('and canada did what canada does', 727), deal: a('it made a deal', 727), problem: a("there's just one problem"), nobody: a('nobody asked'), people: a('11,000 people'), red: a('red river settlement'), mixed: a('people of mixed'), own: a('with their own language') };
   // the deed: a rolled scroll marked RUPERT'S LAND
-  const deed = (ctx, x, y, s = 1) => { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); P.cel(ctx, c => c.rect(-60, -22, 120, 44), '#efe0b8', { shade: '#c8b080', dx: 0, dy: 6, lw: 3 }); for (const d of [-1, 1]) P.cel(ctx, c => c.ellipse(d * 62, 0, 10, 24, 0, 0, 7), '#d8c498', { dx: 0, dy: 0, lw: 3 }); ctx.fillStyle = INK; ctx.font = '700 13px "Special Elite"'; ctx.textAlign = 'center'; ctx.fillText("RUPERT'S LAND", 0, 5); P.ink(ctx, '#b8322a', c => c.arc(30, 16, 8, 0, 7), 2); ctx.restore(); };
+  const deed = (ctx, x, y, s = 1) => { ctx.save(); ctx.translate(x, y); ctx.scale(s, s); P.cel(ctx, c => c.rect(-60, -22, 120, 44), '#efe0b8', { shade: '#c8b080', dx: 0, dy: 6, lw: 3 }); for (const d of [-1, 1]) P.cel(ctx, c => c.ellipse(d * 62, 0, 10, 24, 0, 0, 7), '#d8c498', { dx: 0, dy: 0, lw: 3 }); ctx.fillStyle = INK; ctx.font = '700 13px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.fillText("RUPERT'S LAND", 0, 5); P.ink(ctx, '#b8322a', c => c.arc(30, 16, 8, 0, 7), 2); ctx.restore(); };
   // 1. the hand-off: HBC governor → the Crown → Canada (Macdonald), in a panelled office
   function sHandoff(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.04, x: -20 }, { z: 1.0, x: 20 }); Cn.layer(ctx, c, 1, () => { S.room(ctx, t, { wall: '#c8b48a', window: true, wx: 1040, sky: 'golden' });
       C.photo(ctx, 'signing-of-hbc-charter-2', 640, 170, 330, 131, { rot: -.02, tape: true, seed: 81, filter: 'sepia' });
@@ -20,7 +20,7 @@
   // 2. the receipt: £300,000 + land for the company — a typed receipt pinned on the board, then the biggest purchase
   function sReceipt(ctx, lt, dur, t) { const c = Cn.cam(lt, dur, { z: 1.0 }, { z: 1.05 }); Cn.layer(ctx, c, 1, () => { C.bg(ctx, 'kraft');
       ctx.save(); ctx.translate(640, 300); ctx.rotate(-.03); C.shadow(ctx, true, 10, .4); ctx.drawImage(C.paper('cream', 520, 440), -260, -220); C.shadow(ctx, false); C.tape(ctx, 0, -220, 110, .05, 3);
-      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '900 40px Anton'; ctx.fillText('RECEIPT', 0, -160); ctx.font = '22px "Special Elite", "Liberation Serif", serif'; ctx.textAlign = 'left';
+      ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.font = '900 40px Anton'; ctx.fillText('RECEIPT', 0, -160); ctx.font = '700 22px Fredoka, sans-serif'; ctx.textAlign = 'left';
       const lines = [["Item:", "Rupert's Land"], ["Seller:", "Hudson's Bay Co."], ["Buyer:", "Canada"], ["Price:", "£300,000"], ["Plus:", "millions of acres"], ["", "kept by the company"]];
       lines.forEach(([l, r], i) => { const kt = A.pays + i * .4; if (t < kt - 1.6) return; ctx.globalAlpha = k01(t, kt - 1.6, .3); ctx.fillText(l, -220, -100 + i * 40); ctx.fillText(r, -90, -100 + i * 40); }); ctx.globalAlpha = 1;
       if (t > A.pays) C.marker(ctx, 'circle', [30, 14, 120, 24], k01(t, A.pays + .3, .6)); ctx.restore();

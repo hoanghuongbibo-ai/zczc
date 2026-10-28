@@ -2,8 +2,8 @@
 (function (G) {
   'use strict';
   G.Guide.straight = true;
-  const DUR = 893, EP = G.EP, shots = G.SALT2.build(DUR);
-  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { d(ctx, lt, dur, t); if (t < 885.6) EP.drawCounter(ctx, t); else G.UI.keepOut = null; }; }   // no badge on the end screen
+  const DUR = 893, EP = G.EP; EP.counterAt = [140, 60]; const shots = G.SALT2.build(DUR);
+  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { d(ctx, lt, dur, t); if (t < 885.6) { EP.drawCounter(ctx, t); if (EP.drawTickets) EP.drawTickets(ctx, t); } else G.UI.keepOut = null; }; }   // no badge on the end screen
   G.TOON_FINISH = { grain: .018, vignette: .28 };
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;
   const bg = buf.getContext('2d'), blg = bl.getContext('2d');
@@ -14,5 +14,5 @@
     ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .14; ctx.drawImage(G.Paint2.canvasTex(), 0, 0);
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; };
   G.Show = { duration: DUR, narration: '../salt/assets/audio/narration.mp3', shots, sfx: [], moods: EP.moods.slice().sort((a, b) => a.t - b.t), images: {}, cues: G.CUES,
-    fonts: ['700 26px Fredoka', '600 26px Fredoka', '46px "Luckiest Guy"', '40px "Permanent Marker"', '30px "Patrick Hand"'] };
+    fonts: ['700 26px Fredoka', '600 26px Fredoka', '46px "Luckiest Guy"', '40px "Permanent Marker"', '30px "Patrick Hand"', '40px "Lilita One"', '40px Anton'] };
 })(window);

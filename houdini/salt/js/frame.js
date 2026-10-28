@@ -23,7 +23,7 @@
     c.font = (show === '∞' ? '62px' : '64px') + ' "Luckiest Guy"'; c.fillStyle = '#fff'; c.fillText(String(show), 0, 4); c.restore(); c.restore(); }
   const box0 = UI.box; EP.drawCounter = (ctx, t) => { const past = COUNTS.filter(c => c.t <= t); UI.keepOut = null; if (!past.length) return; const cur = past[past.length - 1], prev = past.length > 1 ? past[past.length - 2].n : 0, lt = t - cur.t;
     const k = clamp(lt / .35), flip = clamp((lt - .35) / .45), go = ease.inOut(clamp((lt - 2.4) / .5));
-    const x = lerp(640, 1118, go), y = lerp(330, 668, go), s = lerp(1.2 * FX.settle(k), .6, go);
+    const cx = EP.counterAt ? EP.counterAt[0] : 1118, cy = EP.counterAt ? EP.counterAt[1] : 668, x = lerp(640, cx, go), y = lerp(330, cy, go), s = lerp(1.2 * FX.settle(k), EP.counterAt ? .64 : .6, go);
     if (go > .5) UI.keepOut = [x - 150 * s - 5, y - 54 * s - 5, x + 150 * s + 5, y + 54 * s + 5];
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); box0(ctx, x, y, 300 * s + 10, 108 * s + 10, c => { c.translate(x, y); plaque(c, cur.n, prev, flip, s); }, { free: true, keep: true }); ctx.restore(); };
 

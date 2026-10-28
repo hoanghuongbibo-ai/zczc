@@ -24,7 +24,7 @@
   'use strict';
   const T = G.Toon, { W, H, clamp, lerp, rng } = T, TAU = Math.PI * 2, PI = Math.PI;
   const ease = { inOut: k => k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2, out: k => 1 - Math.pow(1 - k, 3), in: k => k * k * k, lin: k => k, sine: k => .5 - .5 * Math.cos(PI * k) };
-  const MK = s => `${s}px "Permanent Marker", "Luckiest Guy"`, HAND = s => `${s}px "Patrick Hand", Fredoka`;
+  const MK = s => `${s}px "Lilita One", "Luckiest Guy"`, HAND = s => `${s}px "Patrick Hand", Fredoka`;
   const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
   const buf = mk(W, H), bg = buf.getContext('2d'), small = mk(320, 180), sg = small.getContext('2d'), fgc = mk(320, 180), fgg = fgc.getContext('2d');
   let CAM = { x: 640, y: 360, z: 1 };
@@ -102,24 +102,33 @@
   // ---------- text kit (crisp UI layer) ----------
   const UI = () => G.UI, pop = (lt, t0, d = .35) => { const k = clamp((lt - t0) / d); return k <= 0 ? 0 : G.FX ? G.FX.settle(k) : k; };
   function box(c, w, h, fill = '#fffdf6', lw = 5) { c.fillStyle = 'rgba(20,12,6,.35)'; c.fillRect(-w / 2 + 5, -h / 2 + 6, w, h); c.fillStyle = fill; c.fillRect(-w / 2, -h / 2, w, h); c.lineWidth = lw; c.strokeStyle = '#1e1612'; c.strokeRect(-w / 2, -h / 2, w, h); }
+  function rbox(c, w, h, fill = '#ffffff') { c.fillStyle = 'rgba(10,6,4,.4)'; c.beginPath(); c.roundRect(-w / 2 + 5, -h / 2 + 7, w, h, h * .28); c.fill(); c.fillStyle = fill; c.beginPath(); c.roundRect(-w / 2, -h / 2, w, h, h * .28); c.fill(); c.lineWidth = 5; c.strokeStyle = '#15100c'; c.stroke(); }
   function arrowTo(c, x0, y0, x1, y1, k, col = '#d8261c') { if (k <= 0) return; const x = lerp(x0, x1, k), y = lerp(y0, y1, k), a = Math.atan2(y1 - y0, x1 - x0);
     c.save(); c.lineCap = 'round'; c.strokeStyle = '#1e1612'; c.lineWidth = 11; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x, y); c.stroke(); c.strokeStyle = col; c.lineWidth = 6; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x, y); c.stroke();
     c.translate(x, y); c.rotate(a); c.fillStyle = col; c.strokeStyle = '#1e1612'; c.lineWidth = 3; c.beginPath(); c.moveTo(14, 0); c.lineTo(-12, -13); c.lineTo(-12, 13); c.closePath(); c.fill(); c.stroke(); c.restore(); }
   // callout: label box at screen (x,y); arrow to a WORLD point (tx,ty) (or screen if o.screen)
-  function callout(ctx, text, x, y, lt, t0, tx, ty, o = {}) { const k = pop(lt, t0); if (k <= 0) return; ctx.save(); ctx.font = MK(o.size || 30); const w = ctx.measureText(text).width + 36, h = (o.size || 30) * 1.55; ctx.restore();
+  function callout(ctx, text, x, y, lt, t0, tx, ty, o = {}) { const k = pop(lt, t0); if (k <= 0) return; o = Object.assign({}, o, { size: Math.max(30, o.size || 34) }); ctx.save(); ctx.font = MK(o.size); const w = ctx.measureText(text).width + 40, h = o.size * 1.6; ctx.restore();
     const [sx, sy] = tx == null ? [null, null] : o.screen ? [tx, ty] : toScreen(tx, ty), ak = clamp((lt - t0 - .15) / .35);
     UI().box(ctx, x, y, w + 10, h + 10, c => { if (sx != null) { const ex = sx - x, ey = sy - y, d = Math.hypot(ex, ey), ux = ex / d, uy = ey / d, sx0 = x + ux * Math.min(w / 2, Math.abs(h / 2 / (uy || 1e-3))) * .9, sy0 = y + uy * Math.min(h / 2 + 4, Math.abs(w / 2 / (ux || 1e-3))); arrowTo(c, sx0, sy0, sx - ux * 18, sy - uy * 18, ak, o.arrow); }
-      c.translate(x, y); c.rotate(o.rot || 0); c.scale(k, k); box(c, w, h, o.fill); c.font = MK(o.size || 30); c.fillStyle = o.ink || '#1e1612'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 0, 3); }, { free: o.free }); }
-  // marker text writing on (left → right), optional red underline
-  function write(ctx, text, x, y, size, lt, t0, o = {}) { const k = clamp((lt - t0) / (o.d || .45 + text.length * .03)); if (k <= 0) return; ctx.save(); ctx.font = MK(size); const w = ctx.measureText(text).width; ctx.restore();
-    UI().box(ctx, x, y, w + 20, size * 1.3, c => { c.font = MK(size); c.textAlign = 'left'; c.textBaseline = 'middle'; c.save(); c.beginPath(); c.rect(x - w / 2 - 6, y - size, (w + 12) * k, size * 2); c.clip();
-      if (o.halo !== false) { c.lineWidth = size * .22; c.strokeStyle = o.halo || 'rgba(255,250,236,.92)'; c.lineJoin = 'round'; c.strokeText(text, x - w / 2, y); } c.fillStyle = o.col || '#1e1612'; c.fillText(text, x - w / 2, y); c.restore();
-      if (o.underline) { const u = clamp((lt - t0 - .3) / .3); if (u > 0) { c.strokeStyle = o.underline; c.lineWidth = 5; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - w / 2, y + size * .55); c.quadraticCurveTo(x, y + size * .62, x - w / 2 + w * u, y + size * .52); c.stroke(); } } }, { free: o.free }); }
+      c.translate(x, y); c.rotate(o.rot || 0); c.scale(k, k); rbox(c, w, h, o.fill); c.font = MK(o.size || 30); c.fillStyle = o.ink || '#1e1612'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 0, 3); }, { free: o.free }); }
+  // title text (reference style): heavy rounded letters pop in — white (or o.col) fill, thick dark outline, drop shadow.
+  // o.halo: outline colour (false → automatic: light edge on dark text, black on light text); o.underline: red swoosh
+  function write(ctx, text, x, y, size, lt, t0, o = {}) { const k = pop(lt, t0, .3); if (k <= 0) return; ctx.save(); ctx.font = MK(size); const w = ctx.measureText(text).width; ctx.restore();
+    const col = o.col || '#ffffff', dark = (() => { const h = col.replace('#', ''); if (h.length < 6) return false; const n = parseInt(h.slice(0, 6), 16); return ((n >> 16) * .3 + ((n >> 8) & 255) * .59 + (n & 255) * .11) < 110; })();
+    const edge = o.halo === false || o.halo == null ? (dark ? 'rgba(255,250,238,.95)' : '#15100c') : o.halo, ew = dark ? size * .14 : size * .2;
+    UI().box(ctx, x, y, w + 30, size * 1.4, c => { c.translate(x, y); c.rotate(o.rot || 0); c.scale(k, k); c.font = MK(size); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round';
+      if (!dark) { c.fillStyle = 'rgba(10,6,4,.45)'; c.fillText(text, size * .06, size * .1); c.lineWidth = ew; c.strokeStyle = 'rgba(10,6,4,.45)'; c.strokeText(text, size * .06, size * .1); }
+      c.lineWidth = ew; c.strokeStyle = edge; c.strokeText(text, 0, 0); c.fillStyle = col; c.fillText(text, 0, 0);
+      if (o.underline) { const u = clamp((lt - t0 - .25) / .3); if (u > 0) { c.strokeStyle = '#15100c'; c.lineCap = 'round'; c.lineWidth = 11; c.beginPath(); c.moveTo(-w / 2, size * .58); c.quadraticCurveTo(0, size * .66, -w / 2 + w * u, size * .56); c.stroke(); c.strokeStyle = o.underline; c.lineWidth = 6; c.stroke(); } } }, { free: o.free }); }
+  // slanted year tag (bottom-right, like the references): white box, heavy black italic text
+  function yearTag(ctx, text, lt, t0, o = {}) { const k = clamp((lt - t0) / .3); if (k <= 0) return; const sz = o.size || 40; ctx.save(); ctx.font = MK(sz); const w = ctx.measureText(text).width + 50; ctx.restore(); const x = o.x ?? W - 40 - w / 2, y = o.y ?? H - 50;
+    UI().box(ctx, x, y, w + 20, sz * 1.6, c => { c.translate(x + (1 - ease.out(k)) * 300, y); c.transform(1, 0, -.22, 1, 0, 0); c.fillStyle = 'rgba(10,6,4,.4)'; c.fillRect(-w / 2 + 6, -sz * .62 + 7, w, sz * 1.24); c.fillStyle = '#fff'; c.fillRect(-w / 2, -sz * .62, w, sz * 1.24); c.lineWidth = 5; c.strokeStyle = '#15100c'; c.strokeRect(-w / 2, -sz * .62, w, sz * 1.24);
+      c.font = MK(sz); c.fillStyle = '#15100c'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, 0, 2); }, { free: true, keep: o.keep }); }
   function banner(ctx, text, x, y, lt, t0, o = {}) { const k = pop(lt, t0, .4); if (k <= 0) return; const sz = o.size || 42; ctx.save(); ctx.font = MK(sz); const w = ctx.measureText(text).width + 90; ctx.restore(); const n = Math.ceil(text.length * clamp((lt - t0 - .15) / .5));
     UI().box(ctx, x, y, w + 120, sz * 2.2, c => { c.translate(x, y); c.scale(k, k); c.rotate(o.rot ?? -.02); const h = sz * 1.5, col = o.col || '#c8281e';
       for (const sd of [-1, 1]) { c.fillStyle = G.Guide.hexMul(col, .7); c.beginPath(); c.moveTo(sd * (w / 2 - 20), -h / 2 + 14); c.lineTo(sd * (w / 2 + 50), -h / 2 + 14); c.lineTo(sd * (w / 2 + 30), 14); c.lineTo(sd * (w / 2 + 50), h / 2 + 14); c.lineTo(sd * (w / 2 - 20), h / 2 + 14); c.closePath(); c.fill(); c.lineWidth = 4; c.strokeStyle = '#1e1612'; c.stroke(); }
       c.fillStyle = col; c.fillRect(-w / 2, -h / 2, w, h); c.lineWidth = 5; c.strokeStyle = '#1e1612'; c.strokeRect(-w / 2, -h / 2, w, h); c.strokeStyle = 'rgba(255,230,180,.6)'; c.lineWidth = 2; c.strokeRect(-w / 2 + 7, -h / 2 + 7, w - 14, h - 14);
-      c.font = MK(sz); c.fillStyle = '#fff8e8'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text.slice(0, n), 0, 3); }, { free: true }); }
+      c.font = MK(sz); c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = sz * .16; c.strokeStyle = 'rgba(20,8,4,.85)'; c.strokeText(text.slice(0, n), 0, 3); c.fillStyle = '#fff8e8'; c.fillText(text.slice(0, n), 0, 3); }, { free: true }); }
   function sign(ctx, text, x, y, lt, t0, o = {}) { const k = pop(lt, t0, .4); if (k <= 0) return; const lines = text.split('\n'), sz = o.size || 30, n = Math.floor(text.length * clamp((lt - t0 - .3) / (text.length * .045)));
     ctx.save(); ctx.font = MK(sz); const w = Math.max(...lines.map(l => ctx.measureText(l).width)) + 70, h = lines.length * sz * 1.35 + 44; ctx.restore();
     UI().box(ctx, x, y, w + 20, h + 20, c => { c.translate(x, y); c.scale(k, k); c.rotate(o.rot ?? -.02); c.fillStyle = 'rgba(20,10,5,.4)'; c.fillRect(-w / 2 + 6, -h / 2 + 8, w, h); c.fillStyle = '#8a5a34'; c.fillRect(-w / 2, -h / 2, w, h); c.lineWidth = 5; c.strokeStyle = '#2a1608'; c.strokeRect(-w / 2, -h / 2, w, h);
@@ -180,5 +189,5 @@
     ctx.save(); ctx.setLineDash([12, 10]); ctx.lineWidth = 4; ctx.strokeStyle = '#c8281e'; ctx.beginPath(); let rem = L * k, end = P[0], dir = 0; ctx.moveTo(...P[0]); for (let i = 1; i < P.length && rem > 0; i++) { const f = Math.min(1, rem / d[i - 1]); end = [lerp(P[i - 1][0], P[i][0], f), lerp(P[i - 1][1], P[i][1], f)]; dir = P[i][0] - P[i - 1][0]; ctx.lineTo(...end); rem -= d[i - 1]; } ctx.stroke(); ctx.setLineDash([]);
     if (k > 0 && G.TS.boat) G.TS.boat(ctx, end[0], end[1] + 6, .3, t, 'roman', 0); ctx.restore(); return end; }
 
-  G.DR = { shot, toScreen, crowd, army, rider, sprite, callout, write, banner, sign, tally, statCard, mystery, exclaim, sunburst, blueprint, bpDraw, pencil, circle, map, mapWrite, mapPin, mapPortrait, mapArmy, mapShip, arrowTo, box, ease, MK, HAND, atmos, fgProps, cam: CAM, blurInto };
+  G.DR = { shot, toScreen, crowd, army, rider, sprite, callout, write, yearTag, rbox, banner, sign, tally, statCard, mystery, exclaim, sunburst, blueprint, bpDraw, pencil, circle, map, mapWrite, mapPin, mapPortrait, mapArmy, mapShip, arrowTo, box, ease, MK, HAND, atmos, fgProps, cam: CAM, blurInto };
 })(window);

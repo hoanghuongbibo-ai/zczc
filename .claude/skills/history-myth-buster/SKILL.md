@@ -503,3 +503,29 @@ boxes → cliffhanger into the next era. Body = cause → effect → consequence
 for map labels; marker hand-lettering only for small map names; ribbons for chapter titles. Never thin or busy fonts.
 **Sound**: voice forward, soft continuous music, a short real-sounding accent on every action (stamp, whoosh, splash,
 poof, scissors snip, arrow thunk) — about one accent per visual beat.
+- (batch 3) Hanging wooden COUNT sign on ropes ("WARRING STATES COUNT: 0" → card flips to 1); era badge = icon +
+  red label ("FREE FOR ALL" crossed swords). Map regions grow arms holding swords/axes/crossbows and swing at each other;
+  a giant gloved hand slams down on a region; one region SWALLOWS another (mouth opens, neighbour shrinks, burp);
+  a broom sweeps a region away; a paintbrush draws clown make-up on a stone carving of the disgraced king.
+  Divine reveal: white silhouette on a cosmic gradient, glowing hand presents a weapon (sword → crossbow morph).
+  Game-show presenter on a stage with a "WHO WINS??" board between map sequences. Holographic gold army marching on a
+  blueprint field. Speech-bubble punchlines ("NOT MY I'M-IN-CHARGE BUCKETS!!!"). Dark close-ups of a silhouette with a
+  glint for threats. A scene almost never runs 3 s without a NEW action, even while the camera holds.
+- (batch 4) Game parody: a retro dialog box ("What? Qin is evolving!") + white-flash silhouette morph. Wall of portrait
+  frames (emperor line-up) with a gold-framed one labelled. Low-angle POV through bars/gates for power. The map
+  CRACKS into shards and a scroll "THIS IS WAR" pops out. Shadows of figures on paper screens for intrigue; a dead
+  character fades into a translucent ghost. Black letterbox bars for a dramatic close-up of eyes. Character name as a
+  big white outlined caption at the bottom ("LIU BANG"). Burning palace behind a lone silhouette. A finger flicks a
+  region off the map. Count sign re-used later to show the count going 1 → 2 (callback). The emperor's hat flies off on
+  death (literal "lost the crown").
+- (batch 5) A leader on the map throws game-capture balls; little soldiers pop out across the provinces. Split
+  screen with a jagged lightning line + "VS", each fighter's name slides in as a bottom caption. A hand holds a
+  photo of an earlier scene (flashback), then the character crumples it. A named EVENT gets a tagged lower-third
+  ("THE HONGMEN FEAST"). Comedy timing on a dark stage: a sword dance that keeps "almost" hitting; a character
+  tiptoes out of frame and the shot holds on the empty room (the gag is the absence). Soldiers' eyes turn into $
+  signs (bribery). A cannonball-style token rolls across the map, flipping regions to the new colour with
+  flags. A kneeling general's defeat in a cold dark blue grade, then black → "HAN DYSNASTY" title on black → new era
+  badge. Neighbouring states appear as sulky faces; a message in a bottle floats to them; a handwritten note
+  close-up ("Look, just say I'm technically the boss and we're cool. — Liu Bang") as the punchline.
+**Workflow rule (user, Oct '28)**: when the user is sending references, study + save notes and WAIT for the script;
+do not start building until the script arrives.

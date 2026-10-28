@@ -96,7 +96,7 @@
   S.desk = (ctx, x, y, w = 420) => { const cel = G.Paint.cel; cel(ctx, c => c.rect(x - w / 2, y, w, 26), '#7a4a28', { shade: '#5a3418', light: '#9a6a42', dx: 0, dy: 8, lw: 4 }); for (const d of [-1, 1]) G.Paint.ink(ctx, '#5a3418', c => c.rect(x + d * (w / 2 - 30) - 10, y + 26, 20, 110), 3); };
 
   // the running gag: the beaver pops up — "And Canada did what Canada does." — then DEAL #n is stamped: "It made a deal."
-  S.dealStamp = (ctx, t, tDid, tDeal, n, o = {}) => { if (t < tDid) return; S.beaverSays(ctx, t, tDid, 'And Canada did\nwhat Canada does…', { x: o.x ?? 1150, s: .85, size: 22, bx: 220, until: o.until }); if (t > tDeal) { C.stamp(ctx, 'DEAL #' + n, o.sx ?? 640, o.sy ?? 470, 80, -.08, k01(t, tDeal, .35)); if (!o.until || t < o.until) P2().caption(ctx, 'It made a deal.', k01(t, tDeal + .2, .4), { size: 34, x: 640, y: 676, align: 'center' }); } };
+  S.dealStamp = (ctx, t, tDid, tDeal, n, o = {}) => { if (t < tDid) return; if (G.dealSign) G.dealSign(ctx, t, tDeal, n); S.beaverSays(ctx, t, tDid, 'And Canada did\nwhat Canada does…', { x: o.x ?? 1150, s: .85, size: 22, bx: 220, until: o.until }); if (t > tDeal) { C.stamp(ctx, 'DEAL #' + n, o.sx ?? 640, o.sy ?? 470, 80, -.08, k01(t, tDeal, .35)); if (!o.until || t < o.until) P2().caption(ctx, 'It made a deal.', k01(t, tDeal + .2, .4), { size: 34, x: 640, y: 676, align: 'center' }); } };
   const P2 = () => G.Paint;
 
   // the Red River: the far bank with long narrow river-lot strips running back to the horizon and log houses on the bank; the river; the near bank with a cart trail

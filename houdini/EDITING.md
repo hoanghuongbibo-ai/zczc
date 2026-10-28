@@ -116,3 +116,17 @@ The rules here apply to every video in this repo. They come from 15 clips the us
   - a tiny state hides behind a big one.
 - **Running counters on a hanging sign** ("WARRING STATES COUNT: 1"), and a "FREE FOR ALL" era badge in the corner.
 - **Zoom from the whole map into the two rivals**, then back out to show the new balance. Every new region pops in with its name written beside it and an arrow.
+
+## 7. Character and story devices (from the Qin / Han clips)
+- **Name cards on introduction:**
+  - a big outlined name with a handwritten role line and an arrow ("THE FIRST EMPEROR of Qin", "LIU BANG", "HAN XIN");
+  - "A VS B" title splits divided by a lightning crack for rivalries.
+  - In the Canada film this is `canada/js/overlays.js` (`NAMES`).
+- **An era badge in a corner** that flips when the era changes (the Qin icon becomes the Han icon), plus a date plate bottom-right. In the Canada film this is `ERAS`.
+- **Letterbox bars and hard dark colour** for the serious beats: the poison, the betrayal, the death. Then a hard cut back to the bright map. In the Canada film this is `BARS`.
+- **The counter sign swings in and flips its number** when the state of the world changes. In the Canada film this is `G.dealSign`.
+- **Parody frames from pop culture** (a game "evolution" dialog box, a trading-card wall of rulers, a "THIS IS WAR" scroll unrolled from a cracking map). Use them sparingly, at most once a chapter, and always to land a story point.
+- **Characters travel across the map** (a general sweeping over territory, flags planted behind him), and armies are shown as a crowd of little figures appearing in a pop of smoke.
+- **Event title plates** ("THE HONGMEN FEAST") slide in on a red-trimmed white bar as the scene opens.
+- **Letters and documents are written in a personal hand** and read out ("Look, just say I'm technically the boss… — Liu Bang").
+- **Silhouettes and shadows on a wall** for violence; ghosts fade out for deaths.

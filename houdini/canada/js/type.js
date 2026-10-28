@@ -22,7 +22,7 @@
     ctx.translate(x, y); ctx.scale(pop, pop); ctx.translate(-x, -y); lines.forEach((l, i) => outlined(ctx, l, x, y0 + i * lh, s, o.col && o.col !== '#fbf0d8' ? o.col : '#ffffff'));
     if (o.sub) { ctx.font = ROUND(o.subSize || 18); outlined(ctx, o.sub, x, y + s * .9 + 10, o.subSize || 18, '#ffe8b0'); } ctx.restore(); };
   // ---- date badge: a slanted white plate with a black edge, top-left ----
-  S.date = (ctx, text, k = 1) => { if (k <= 0 || !text) return; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const u = clamp(k / .3), size = 30; ctx.font = CHUNK(size); const w = ctx.measureText(text).width + 46, h = 50, x = 26 - (1 - u) * (w + 60), y = 24;
+  S.date = (ctx, text, k = 1) => { if (k <= 0 || !text) return; ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const u = clamp(k / .3), size = 30; ctx.font = CHUNK(size); const w = ctx.measureText(text).width + 46, h = 50, x = 26 - (1 - u) * (w + 60), y = (G.__frameT || 0) > 2 ? 86 : 24;
     ctx.globalAlpha = u; ctx.fillStyle = 'rgba(0,0,0,.4)'; const plate = (dx, dy) => { ctx.beginPath(); ctx.moveTo(x + 14 + dx, y + dy); ctx.lineTo(x + w + dx, y + dy); ctx.lineTo(x + w - 14 + dx, y + h + dy); ctx.lineTo(x + dx, y + h + dy); ctx.closePath(); };
     plate(4, 5); ctx.fill(); plate(0, 0); ctx.fillStyle = '#fbf8f0'; ctx.fill(); ctx.lineWidth = 4; ctx.strokeStyle = INK; ctx.lineJoin = 'round'; ctx.stroke();
     ctx.fillStyle = INK; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text.toUpperCase(), x + w / 2, y + h / 2 + 3); ctx.restore(); };

@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Sketch asset sheet</title>
+<style>@font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+@font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+body{margin:0;background:#222}</style></head><body><canvas id="c" width="1920" height="2160"></canvas>
+<script src="js/rig.js"></script><script src="js/world.js"></script>
+<script>
+(async () => { await Promise.all(['700 20px Fredoka','20px "Luckiest Guy"','20px "Permanent Marker"'].map(f => document.fonts.load(f)));
+const c = document.getElementById('c'), x = c.getContext('2d'), R = Rig, W = World, t = 1.3;
+x.fillStyle = '#ece6d8'; x.fillRect(0, 0, 1920, 2160);
+const title = (s, y) => { x.fillStyle = '#2a1a10'; x.font = '44px "Luckiest Guy"'; x.textAlign = 'left'; x.fillText(s, 40, y); x.fillRect(40, y + 10, 1840, 4); };
+const cell = (cx, cy, label, fn, bg = '#f8f4ec') => { x.fillStyle = bg; x.fillRect(cx - 110, cy - 150, 220, 210); x.strokeStyle = '#b8ac94'; x.lineWidth = 2; x.strokeRect(cx - 110, cy - 150, 220, 210); x.save(); fn(cx, cy); x.restore(); x.fillStyle = '#2a1a10'; x.font = '700 16px Fredoka'; x.textAlign = 'center'; x.fillText(label, cx, cy + 50); };
+// 1 · YOU, exploded into separate parts
+title('1 · ONE CHARACTER = SEPARATE PARTS (YOU, exploded)', 70);
+const YOU = new R.Person({ seed: 16, coat: '#7a5236', shawl: '#8a8a84', feet: 'rags' });
+const parts = ['feet', 'legs', 'coat', 'shawl', 'arms', 'hands', 'head', 'hat', 'musket'];
+parts.forEach((p, i) => { const cx = 140 + i * 205, cy = 300; cell(cx, cy, p.toUpperCase(), () => { const ex = {}; for (const q of parts) ex[q] = q === p ? [0, 0] : [99999, 0]; const ys = { feet: 30, legs: 70, coat: 160, shawl: 220, arms: 170, hands: 170, head: 300, hat: 340, musket: 160 }[p]; YOU.draw(x, cx, cy + ys * .6 - 30, .6, t, { arms: 'cross', explode: ex, noShadow: true }); }); });
+cell(960, 620, 'ASSEMBLED', (cx, cy) => YOU.draw(x, cx, cy + 40, .55, t, { arms: 'cross' }));
+// 2 · each soldier owns his own props
+title('2 · EVERY SOLDIER GETS HIS OWN PROPS (separate instances, not shared)', 820);
+for (let i = 0; i < 4; i++) { const p = new R.Person({ seed: 30 + i }); const cx = 140 + i * 230; cell(cx, 1060, `soldier ${i + 1}`, () => p.draw(x, cx, 1090, .5, t, { arms: 'hold' })); cell(cx + 920, 1060, `soldier ${i + 1}: musket + hat`, () => { p.musket.draw(x, cx + 920 - 80, 1090, 1.05, .52); p.hat.draw(x, cx + 920 + 40, 970, .7); }); }
+// 3 · props on their own
+title('3 · PROPS (each its own asset)', 1250);
+const props = [['MUSKET (bayonet)', () => { const m = new R.Musket(2); m.bayonet = true; m.draw(x, 140 - 80, 1510, 1.05, .52); }], ['MUSKET (plain)', () => { const m = new R.Musket(5); m.bayonet = false; m.draw(x, 355 - 80, 1510, 1.05, .52); }], ['TRICORNE', () => new R.Hat(3).draw(x, 570, 1450, .9)], ['BEARSKIN', () => new R.Hat(4, 'bearskin').draw(x, 760, 1470, .9)], ['LANTERN', () => new R.Lantern(1).draw(x, 970, 1370, 1.4, t, { noGlow: true })], ['OLD SHOE', () => new R.Shoe(2).draw(x, 1215, 1450, .95, t)], ['REDCOAT GRENADIER', () => new R.Person({ seed: 90, uniform: 'redcoat', coat: '#c8241a', legs: '#f2eee6', hatKind: 'bearskin', feet: 'shoes', ragged: false, shawl: null }).draw(x, 1390, 1500, .42, t, { arms: 'hold' })], ['SILHOUETTE (camp)', () => new R.Person({ seed: 61 }).draw(x, 1600, 1500, .42, t, { arms: 'hold', silhouette: '#0c1020' })]];
+props.forEach(([n, fn], i) => cell(140 + i * 215, 1480, n, fn));
+// 4 · nature + animals
+title('4 · NATURE & ANIMALS (each its own asset)', 1640);
+const nat = [['BARE OAK', () => W.bareTree(x, 140, 1910, .55, t, 7, { h: 120, w: 12, col: '#2a2a34', snow: true })], ['WHITE PINE', () => W.pine(x, 355, 1910, 1.1, '#2a3a3a', { snow: true })], ['REEDS / CATTAILS', () => W.reeds(x, 570, 1910, .65, t, 3, { snow: true })], ['ICE SLAB', () => W.slab(x, 785, 1860, 80, 28, 5, { t })], ['AMERICAN CROW', () => W.crow(x, 1000, 1890, 1.3, t, { seed: 1 })], ['BARRED OWL', () => W.owl(x, 1215, 1900, 1.4, t)], ['RED FOX', () => W.fox(x, 1430, 1900, 1.3, t)], ['HORSE', () => W.horse(x, 1640, 1910, .65, t, { breath: false })], ['CAMP DOG', () => W.dog(x, 1860, 1900, .9, t)]];
+nat.forEach(([n, fn], i) => cell(140 + i * 215, 1900, n, fn));
+window.READY = true; })();
+</script></body></html>

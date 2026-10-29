@@ -127,7 +127,27 @@ Pop-culture parodies in the reference (Among Us, Pikmin) → use our own generic
 - History accuracy: dates on HUD tags, borders and names must match the script and mainstream scholarship; when the
   script says "legend says" (e.g. Xia, Yu the Great) keep that framing on screen too.
 
+## Toolkit (built for the Revolution video, reuse it)
+
+| File | What it gives you |
+|---|---|
+| `dynasty/js/kit.js` | `G.Kit`: text (`txt`, `title`, `rich`, `label`), HUD (`dateTag`, `lowerThird`, `badge`, `qcard` ✗→✓, hanging `sign` with number flips), `stamp`, hand-drawn `arrow`, `photoCard` (real painting on paper), `calendar`, `sunburst`, fades |
+| `dynasty/js/cast.js` | `G.Cast.person(ctx, x, y, s, o)`: round-head people; costumes you/continental/militia/redcoat/grenadier/hessian/civilian; face {eyes, brows, mouth, look, sweat}; arm poses; musket; frost, shiver, snow; `silhouette` for night crowds |
+| `dynasty/js/map.js` | `G.Atlas` (never `G.Map`, which would replace JS's built-in `Map` and break Playwright): parchment `base`, `fill`/`flood`/`blob` regions, `route` that draws on, `dot` + label, 1707 `unionFlag`, HUD `mini` map |
+| `dynasty/js/geo-colonies.js` | built by `dynasty/tools/build-geo.mjs` from npm `world-atlas` + `us-atlas` (Natural Earth / Census; npm works when other hosts are blocked) |
+| `dynasty/js/sets.js` | night sky, sleet, ice slabs/field, water, Durham boat, banks, lantern, fire, tents, camp, winter road, fleet |
+| `dynasty/js/sound.js` | moods cold/warm/tense/drum/strings/none + foley (ice, scrape, gust, creak, flip, stamp, ding, boom, poof, rope…); reads `Show.musicGain`/`sfxGain` |
+| `dynasty/tools/export.mjs` | **parallel** export (4 pages, JPEG frames): `node dynasty/tools/export.mjs dynasty/<page>.html dynasty/out/<name>.mp4 30 4` from the repo root, ~5 fps; honours `Show.narrationOffset` for part pages |
+
+Stills: `node tools/_at.mjs dynasty/<page>.html <dir> 12.5 …` and `node tools/_stills.mjs ../dynasty/<page>.html <dir> 0.7` (from `houdini/`).
+Chromium: tools use `$CHROMIUM` or `/opt/pw-browsers/chromium`. `dynasty/node_modules` and `houdini/node_modules` are symlinks to `npm root -g` (gitignored).
+Night scenes: draw normally, then `T.grade(ctx, '#7d8fb8', .35–.5, 'multiply')`; composite tricks like `source-atop` light the whole frame, so clip to the figure instead.
+
 ## Lessons (keep adding)
 
 - Study session (15 clips, China: Xia → Qin): frames read at 1 fps; clips are screen recordings (first clip shows the
   YouTube player UI) with quiet audio (~−46 dB mean), so judge sound design from the user's notes, not the clips.
+- Revolution video (first use of this style for a non-dynasty topic): the HUD "current dynasty" badge became a "NOW"
+  badge with a place, a mini map and the month; the question card carries the video's big question for its whole
+  length; a script that says "immersive, no skits" keeps the look but plays death/slavery beats straight.
+- The full voice can be one long file. Deliver it in parts cut at beat boundaries, each part a page with `narrationOffset`.

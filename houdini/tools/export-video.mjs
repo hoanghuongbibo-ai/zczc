@@ -13,7 +13,7 @@ const fps = +fpsArg;
 const tmp = fs.mkdtempSync(path.join(process.env.TMPDIR || '/tmp', 'collage-'));
 fs.mkdirSync(path.dirname(path.resolve(root, out)), { recursive: true });
 
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--allow-file-access-from-files'] });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM || '/opt/pw-browsers/chromium', args: ['--allow-file-access-from-files'] });
 const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
 await page.goto(pathToFileURL(path.join(root, page_)).href + '?t=0');
 await page.waitForFunction(() => window.READY === true);

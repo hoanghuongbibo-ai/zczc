@@ -11,9 +11,9 @@
       C.fig(ctx, x + (o.shiver ? Math.sin(t * 37 + this.seed) * 1.5 * s : 0), y, s, t, Object.assign({}, this.look, { pose, mood: o.mood || 'calm', still: true, speak: false, turn: o.turn ?? .45, flip: o.flip }, o.brow ? { brow: o.brow } : {}, o.fig || {},
         { prop: pose === 'hold' && m ? (cc) => m.draw(cc, 0, 62, -.06, .34) : undefined })); } }
   const YOU = new Soldier(Object.assign({}, G.CAST.you, { lead: false }), 16, { lantern: true });
-  const LINE = Array.from({ length: 9 }, (_, i) => i === 4 ? YOU : new Soldier(i % 3 === 0 ? PP.continental(i) : i % 3 === 1 ? PP.ragged(i) : PP.militia(i), 30 + i));
-  const CAMP = Array.from({ length: 14 }, (_, i) => new Soldier(i % 2 ? PP.ragged(i + 3) : PP.militia(i), 60 + i, { musket: i % 3 !== 0 }));
-  const GREN = Array.from({ length: 8 }, (_, i) => new Soldier(PP.redcoat(i), 90 + i));
+  const LINE = Array.from({ length: 9 }, (_, i) => i === 4 ? YOU : new Soldier(Object.assign(i % 3 === 0 ? PP.continental(i) : i % 3 === 1 ? PP.ragged(i) : PP.militia(i), i % 4 === 1 ? { hat: 'knit', hatCol: ['#8a3a2a', '#4a5a6a', '#6a5a3a'][i % 3] } : {}, i % 3 === 2 ? { gloves: ['#7a6a58', '#5a4a3a', '#8a7a68'][i % 3] } : {}), 30 + i));
+  const CAMP = Array.from({ length: 14 }, (_, i) => new Soldier(Object.assign(i % 2 ? PP.ragged(i + 3) : PP.militia(i), i % 3 === 1 ? { hat: 'knit' } : {}), 60 + i, { musket: i % 3 !== 0 }));
+  const GREN = Array.from({ length: 8 }, (_, i) => new Soldier(Object.assign(PP.redcoat(i), { hat: 'bearskin' }), 90 + i));
   const POST_LANTERN = new R_.Lantern(3), SHOE = new R_.Shoe(2);
   // ---------------- per-character effect layers (frost rising, fade to grey, night silhouette) ----------------
   const layers = {}; const layer = (k) => { if (!layers[k]) { const c = document.createElement('canvas'); c.width = 1280; c.height = 720; layers[k] = c; } const c = layers[k], x = c.getContext('2d'); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, 1280, 720); return [c, x]; };
@@ -32,7 +32,7 @@
     if (o.bank !== false) { ctx.save(); const g = ctx.createLinearGradient(0, 640, 0, 820); g.addColorStop(0, 'rgba(206,218,236,.95)'); g.addColorStop(1, 'rgba(160,176,204,1)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(-200, 700); for (let x = -200; x <= 1500; x += 80) ctx.lineTo(x, 690 + Math.sin(x * .007) * 10); ctx.lineTo(1500, 900); ctx.lineTo(-200, 900); ctx.fill(); ctx.restore(); for (let i = 0; i < 14; i++) W.grassTuft(ctx, (i * 113) % 1500 - 100, 712 + (i * 37) % 90, .7, t, i); }
     if (o.post !== false) W.post(ctx, 300, 740, .62, t, POST_LANTERN);
     W.bareTree(ctx, -90, 760, 1.1, t, 77, { h: 260, w: 24, col: '#121826', snow: true }); ctx.strokeStyle = '#121826'; ctx.lineWidth = 11; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-110, 520); ctx.quadraticCurveTo(-10, 494, 80, 506); ctx.stroke(); W.owl(ctx, 46, 500, .62, t);
-    W.reeds(ctx, 1160, 800, .9, t, 3, { snow: true }); }
+    W.holly(ctx, 1010, 770, .9, t, 2); W.reeds(ctx, 1160, 800, .9, t, 3, { snow: true }); }
   const blurred = (ctx, px, fn) => { ctx.save(); ctx.filter = `blur(${px}px)`; fn(); ctx.restore(); ctx.filter = 'none'; };
   // rag bundles over the feet (their own asset), placed at the figure's feet
   const rags = (ctx, x, y, s, t, step = 0) => { for (const sx of [-1, 1]) { const lift = step * sx > 0 ? Math.abs(step) * 14 * s : 0; ctx.save(); ctx.translate(x + sx * 24 * s, y - 4 * s - lift); ctx.scale(s, s); R_.shape(ctx, c => c.ellipse(sx * 4, -6, 26, 15, 0, 0, 7), '#b8ac94', { lw: 4, shade: '#8a7e68', dx: 6 }); ctx.strokeStyle = '#7a6e58'; ctx.lineWidth = 2.5; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.moveTo(sx * 4 - 18 + i * 12, -18); ctx.lineTo(sx * 4 - 10 + i * 12, 6); ctx.stroke(); } ctx.restore(); } };
@@ -76,7 +76,7 @@
     for (const [lo, la, kt] of [[-73.98, 40.74, 30.4], [-73.96, 40.86, 30.6], [-74.45, 40.49, 31.7], [-74.17, 40.73, 31.9]]) { const p = pr(lo, la); UKFLAG(ctx, p[0], p[1], k01(t, kt, .3)); } if (t > 32) { const p = pr(-74.6, 40.1); C.stamp(ctx, 'LOST', p[0], p[1], 56, -.12, k01(t, 32.05, .25)); }
     ctx.restore(); U.datePlate(ctx, 'AUG → DEC 1776', 1); U.finish(ctx, t, .35); }
   function s10(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[32.9, 1.06, 640, 420], [37.6, 1.0, 640, 400]]); blurred(ctx, 2, () => plate(ctx, 'delaware_ice', { tint: 'rgba(200,214,236,.5)', fy: .2 }));
-    ctx.fillStyle = 'rgba(232,238,244,.95)'; ctx.fillRect(-300, 520, 1900, 400); ctx.fillStyle = '#b8a888'; ctx.fillRect(-300, 640, 1900, 70); ctx.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < 40; i++) ctx.fillRect(-300 + i * 50, 660 + (i % 3) * 12, 20, 4); for (let i = 0; i < 9; i++) W.bareTree(ctx, -100 + i * 190, 540, .55, t, 200 + i, { h: 150, w: 10, col: '#4a5464', snow: true });
+    ctx.fillStyle = 'rgba(232,238,244,.95)'; ctx.fillRect(-300, 520, 1900, 400); ctx.fillStyle = '#b8a888'; ctx.fillRect(-300, 640, 1900, 70); ctx.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < 40; i++) ctx.fillRect(-300 + i * 50, 660 + (i % 3) * 12, 20, 4); for (let i = 0; i < 9; i++) W.bareTree(ctx, -100 + i * 190, 540, .55, t, 200 + i, { h: 150, w: 10, col: '#4a5464', snow: true }); W.holly(ctx, 1220, 600, .8, t, 4); W.holly(ctx, 40, 610, .7, t, 6);
     for (let i = 0; i < 9; i++) { const p = LINE[i], x = 140 + i * 125, y = 700; let a = 1, dx = 0, dy = 0, grey = 0; if (i >= 7) { grey = k01(t, 34.6, .4); dx = 900 * ease.inOut(k01(t, 35.6 + (i - 7) * .2, .8)); } if (i === 1) { a = 1 - k01(t, 35.6, .8) * .8; dy = -60 * k01(t, 35.6, 1); grey = k01(t, 35.4, .3); } if (i === 0) dx = -500 * ease.inOut(k01(t, 36.8, 1));
       const mood = i === 4 ? (t > 35 ? 'shock' : 'calm') : (grey ? 'sad' : 'calm'); const draw = (c) => p.draw(c, x + dx, y + dy, .5, t, { mood, pose: i === 4 ? 'crossed' : undefined, fig: i === 0 && t > 36.8 ? { pose: 'walk', profile: true, flip: true } : {} });
       if (a < .99 || grey > 0) onLayer(ctx, 'fade', draw, null, a, `grayscale(${grey}) brightness(${1 + grey * .2})`); else draw(ctx); }

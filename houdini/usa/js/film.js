@@ -20,6 +20,6 @@
     for (const ph of ['it made a deal']) { let from = 0; for (;;) { const t = at(ph, from); if (t <= from) break; sfx.push({ t: t - 1.6, type: 'riser', gain: .32 }, { t, type: 'impact', gain: .45 }); from = t + 1; } }
     return { duration, narration: 'usa/assets/audio/narration-full.mp3', shots: P.cutList(G.Coverage ? G.Coverage.wrap(cut, duration, sfx, (name, t0) => { const m = marks.find(mm => Math.abs(mm[0] - t0) < .01); return m ? m[1] : null; }) : cut, duration), sfx, moods, amb, images: G.CA_IMAGES, fonts: ['400 20px "Special Elite"', '400 20px "Permanent Marker"', '400 20px Anton', '400 20px "Luckiest Guy"', '700 20px Fredoka'] }; };
   // per-frame bookkeeping for lip-sync: the absolute time, and whether this frame's main character has been claimed yet
-  if (G.Toon && !G.Toon.__wrapped) { const rf = G.Toon.renderFrame; G.Toon.renderFrame = (ctx, shots, t) => { G.__frameT = t; G.__spoke = false; const r = rf(ctx, shots, t); if (G.drawOverlays) G.drawOverlays(ctx, t); return r; }; G.Toon.__wrapped = true; }
+  if (G.Toon && !G.Toon.__wrapped) { const rf = G.Toon.renderFrame; G.Toon.renderFrame = (ctx, shots, t) => { G.__frameT = t; G.__spoke = false; const r = rf(ctx, shots, t); if (G.drawTransitions) G.drawTransitions(ctx, t); if (G.drawOverlays) G.drawOverlays(ctx, t); return r; }; G.Toon.__wrapped = true; }
   G.Film = F;
 })(window);

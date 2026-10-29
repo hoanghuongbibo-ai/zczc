@@ -31,7 +31,7 @@
   // ---------- the far shore: snowy line, a treeline of bare trees and pines ----------
   W.farShore = (ctx, y, t, o = {}) => { ctx.fillStyle = o.land || '#1c2840'; ctx.beginPath(); ctx.moveTo(-1000, y); for (let x = -1000; x <= 2300; x += 60) ctx.lineTo(x, y - 14 - Math.sin(x * .004) * 16 - Math.sin(x * .013) * 6); ctx.lineTo(2300, y + 30); ctx.lineTo(-1000, y + 30); ctx.fill();
     ctx.fillStyle = 'rgba(200,214,236,.35)'; ctx.fillRect(-1000, y + 6, 3300, 6); const R = rng(o.seed || 3);
-    for (let i = 0; i < 70; i++) { const x = -1000 + i * 48 + R() * 30, sc = .35 + R() * .3; if (R() > .7) W.pine(ctx, x, y - 4, sc * .9, '#18233a'); else W.bareTree(ctx, x, y - 4, sc, t, i + (o.seed || 0), { col: '#18233a', h: 120, w: 10 }); } };
+    for (let i = 0; i < 70; i++) { const x = -1000 + i * 48 + R() * 30, sc = .35 + R() * .3; if (R() > .7) W.pine(ctx, x, y - 4, sc * .9, o.tree || '#18233a', { snow: o.snow }); else W.bareTree(ctx, x, y - 4, sc, t, i + (o.seed || 0), { col: o.tree || '#18233a', h: 120, w: 10, leaves: false }); } };
   // ---------- river: dark water, sheen lines, sleet ripples ----------
   W.river = (ctx, top, bot, t, o = {}) => { const g = ctx.createLinearGradient(0, top, 0, bot); g.addColorStop(0, '#1e3050'); g.addColorStop(1, '#14223c'); ctx.fillStyle = g; ctx.fillRect(-1000, top, 3300, bot - top);
     const R = rng(7); ctx.strokeStyle = 'rgba(160,190,230,.18)'; ctx.lineWidth = 2; for (let i = 0; i < 40; i++) { const y = top + R() * (bot - top), x = ((R() * 2600 + t * 30) % 3000) - 900, w = 40 + R() * 80; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.stroke(); }

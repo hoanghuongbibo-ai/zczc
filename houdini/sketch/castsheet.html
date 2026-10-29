@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Cast sheet (code)</title>
+<style>@font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+@font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+body{margin:0}</style></head><body><canvas id="c" width="1280" height="720"></canvas>
+<script src="js/cast.js"></script>
+<script>
+(async () => { await Promise.all(['20px "Luckiest Guy"', '20px "Permanent Marker"'].map(f => document.fonts.load(f)));
+const c = document.getElementById('c'), x = c.getContext('2d'), M = Cast2.make, t = 1.0;
+x.fillStyle = '#efe2c6'; x.fillRect(0, 0, 1280, 720); x.font = '34px "Luckiest Guy"'; x.textAlign = 'center'; x.lineJoin = 'round'; x.lineWidth = 7; x.strokeStyle = '#241c1a'; x.strokeText('CAST — THE AMERICAN REVOLUTION', 640, 48); x.fillStyle = '#fff'; x.fillText('CAST — THE AMERICAN REVOLUTION', 640, 48);
+x.strokeStyle = 'rgba(80,60,40,.25)'; x.lineWidth = 2; x.beginPath(); x.moveTo(30, 380); x.lineTo(1250, 380); x.stroke();
+const label = (s, cx, y) => { x.font = '20px "Permanent Marker"'; x.fillStyle = '#241c1a'; x.textAlign = 'center'; x.fillText(s, cx, y); };
+// row 1: YOU and his expressions — six separate YOU instances only for the sheet
+const row1 = [['YOU (16)', {}], ['COLD', { face: 'cold', arms: 'cross', snow: true, shiver: true, frost: true }], ['SHOCK', { face: 'shock' }], ['TIRED', { face: 'tired' }], ['WIN', { face: 'win', arms: 'fist' }], ['READY', { face: 'stern', arms: 'port' }]];
+row1.forEach(([n, o], i) => { const f = M.you(16 + i), cx = 120 + i * 205; if (o.frost) { const off = document.createElement('canvas'); off.width = 1280; off.height = 720; const g = off.getContext('2d'); f.draw(g, cx, 350, 1, t, o); g.globalCompositeOperation = 'source-atop'; g.fillStyle = 'rgba(150,200,255,.62)'; g.fillRect(0, 290, 1280, 80); x.drawImage(off, 0, 0); } else f.draw(x, cx, 350, 1, t, o); label(n, cx, 378); });
+const row2 = [['CONTINENTAL', M.continental()], ['MILITIA', M.militia()], ['REDCOAT', M.redcoat()], ['GRENADIER', M.grenadier()], ['HESSIAN', M.hessian(), { face: 'angry' }], ['CIVILIAN', M.civilian(), { face: 'stern' }]];
+row2.forEach(([n, f, o], i) => { const cx = 120 + i * 205; f.draw(x, cx, 690, 1, t, o || {}); label(n, cx, 708); });
+window.READY = true; })();
+</script></body></html>

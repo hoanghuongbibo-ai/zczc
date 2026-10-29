@@ -6,14 +6,16 @@
   const C = G.Col, US = G.US, PP = G.PEOPLE, R_ = G.Rig, W = G.World, U = G.SUI, { clamp, lerp, rng } = R_, k01 = U.k01, ease = U.ease;
   const IMG = k => G.Toon.IMG[k];
   // ---------------- the cast: one instance per man, each with his own props ----------------
-  class Soldier { constructor(look, seed, o = {}) { this.look = look; this.seed = seed; this.musket = o.musket === false ? null : new R_.Musket(seed); this.lantern = o.lantern ? new R_.Lantern(seed) : null; }
-    draw(ctx, x, y, s, t, o = {}) { const pose = o.pose || (this.musket ? 'hold' : 'crossed'); const m = this.musket;
-      C.fig(ctx, x + (o.shiver ? Math.sin(t * 37 + this.seed) * 1.5 * s : 0), y, s, t, Object.assign({}, this.look, { pose, mood: o.mood || 'calm', still: true, speak: false, turn: o.turn ?? .45, flip: o.flip }, o.brow ? { brow: o.brow } : {}, o.fig || {},
-        { prop: pose === 'hold' && m ? (cc) => m.draw(cc, 0, 62, -.06, .34) : undefined })); } }
-  const YOU = new Soldier(Object.assign({}, G.CAST.you, { lead: false }), 16, { lantern: true });
-  const LINE = Array.from({ length: 9 }, (_, i) => i === 4 ? YOU : new Soldier(Object.assign(i % 3 === 0 ? PP.continental(i) : i % 3 === 1 ? PP.ragged(i) : PP.militia(i), i % 4 === 1 ? { hat: 'knit', hatCol: ['#8a3a2a', '#4a5a6a', '#6a5a3a'][i % 3] } : {}, i % 3 === 2 ? { gloves: ['#7a6a58', '#5a4a3a', '#8a7a68'][i % 3] } : {}), 30 + i));
-  const CAMP = Array.from({ length: 14 }, (_, i) => new Soldier(Object.assign(i % 2 ? PP.ragged(i + 3) : PP.militia(i), i % 3 === 1 ? { hat: 'knit' } : {}), 60 + i, { musket: i % 3 !== 0 }));
-  const GREN = Array.from({ length: 8 }, (_, i) => new Soldier(Object.assign(PP.redcoat(i), { hat: 'bearskin' }), 90 + i));
+  // the channel's cast (js/cast.js): each Soldier wraps one Cast2 Figure that owns its own hat, musket and shawl; the lantern is his own too
+  const K2 = G.Cast2.make, FACE = { calm: 'neutral', sad: 'tired', shock: 'shock', angry: 'angry', happy: 'win' };
+  class Soldier { constructor(fig, seed, o = {}) { this.fig = fig; this.seed = seed; this.musket = fig.musket; this.lantern = o.lantern ? new R_.Lantern(seed) : null; }
+    draw(ctx, x, y, s, t, o = {}) { const f = o.fig || {}, pose = o.pose || 'hold', arms = f.arms || (pose === 'crossed' || pose === 'chin' ? 'cross' : 'side');
+      this.fig.draw(ctx, x, y, s * 1.55, t, { face: f.face || (pose === 'chin' ? 'tired' : FACE[o.mood] || 'neutral'), arms, shiver: o.shiver, snow: o.snow, breath: o.breath, look: o.turn ? Math.sign(o.turn) * .6 : 0, step: f.step || 0, flip: o.flip, noShadow: o.noShadow }); } }
+  const coatOf = i => ['#7a5232', '#6a5a44', '#5a4a3a', '#7a6a50', '#4a4a3a'][i % 5];
+  const YOU = new Soldier(K2.you(16), 16, { lantern: true });
+  const LINE = Array.from({ length: 9 }, (_, i) => i === 4 ? YOU : new Soldier(i % 3 === 0 ? K2.continental(30 + i) : i % 3 === 1 ? K2.militia(30 + i) : new G.Cast2.Figure({ seed: 30 + i, coat: coatOf(i), hat: new G.Cast2.Tricorne(), musket: new G.Cast2.Musket(), shawl: new G.Cast2.Shawl({ col: ['#8a8680', '#7a7468', '#9a948a'][i % 3] }) }), 30 + i));
+  const CAMP = Array.from({ length: 14 }, (_, i) => new Soldier(i % 2 ? K2.militia(60 + i) : new G.Cast2.Figure({ seed: 60 + i, coat: coatOf(i), hat: new G.Cast2.Tricorne(), musket: i % 3 ? new G.Cast2.Musket() : null, shawl: new G.Cast2.Shawl() }), 60 + i));
+  const GREN = Array.from({ length: 8 }, (_, i) => new Soldier(K2.grenadier(90 + i), 90 + i));
   const POST_LANTERN = new R_.Lantern(3), SHOE = new R_.Shoe(2);
   // ---------------- per-character effect layers (frost rising, fade to grey, night silhouette) ----------------
   const layers = {}; const layer = (k) => { if (!layers[k]) { const c = document.createElement('canvas'); c.width = 1280; c.height = 720; layers[k] = c; } const c = layers[k], x = c.getContext('2d'); x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, 1280, 720); return [c, x]; };
@@ -40,9 +42,9 @@
   function s1(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[0, 1.3, 640, 160], [.6, 1.3, 640, 160], [2.9, 1.0, 640, 360]]); river(ctx, t, { crows: true }); ctx.restore(); W.sleet(ctx, t, 150);
     ctx.save(); ctx.fillStyle = `rgba(0,0,0,${1 - k01(t, 0, 1.4)})`; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); U.datePlate(ctx, 'DEC 25, 1776', k01(t, 2.2, .35)); U.finish(ctx, t, .5); }
   function s2(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[3, 1.2, 560, 470], [5, 1.25, 560, 470]]); blurred(ctx, 3, () => river(ctx, t, { post: false })); ctx.restore(); W.sleet(ctx, t, 120);
-    const z = lerp(1.45, 1.55, ease.inOut(k01(t, 3, 2))); YOU.draw(ctx, 560, 330 + 330 * z, z, t, { mood: 'calm', brow: 'angry' });
+    const z = lerp(1.45, 1.55, ease.inOut(k01(t, 3, 2))); YOU.draw(ctx, 560, 330 + 248 * z, z, t, { mood: 'calm', breath: true, snow: true, fig: { arms: 'cross' } });
     U.hand(ctx, 'YOU', 930, 170, 56, k01(t, 3.15, .35)); U.arrow(ctx, 880, 190, 680, 170, k01(t, 3.3, .3), { bend: -30 }); U.hand(ctx, 'AGE 16', 960, 236, 32, k01(t, 3.6, .4), { col: '#ffd040' }); U.datePlate(ctx, 'DEC 25, 1776', 1); U.finish(ctx, t, .5); }
-  function s3(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[5, 1.6, 230, 600], [6.8, 1.02, 640, 400], [8, 1.0, 650, 400]]); river(ctx, t); YOU.draw(ctx, 220, 760, .42, t, { mood: 'calm' }); rags(ctx, 220, 760, .42, t);
+  function s3(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[5, 1.6, 230, 600], [6.8, 1.02, 640, 400], [8, 1.0, 650, 400]]); river(ctx, t); YOU.draw(ctx, 220, 760, .42, t, { mood: 'calm', fig: { arms: 'cross' } });
     U.hand(ctx, 'PENNSYLVANIA', 300, 800, 30, k01(t, 5.6, .5)); U.hand(ctx, 'DELAWARE RIVER', 720, 600, 30, k01(t, 6.5, .5), { rot: -.03 }); U.hand(ctx, 'NEW JERSEY', 1040, 380, 26, k01(t, 7.2, .4)); U.arrow(ctx, 1120, 395, 1180, 440, k01(t, 7.5, .3), { bend: 30 }); ctx.restore();
     W.sleet(ctx, t, 150); U.finish(ctx, t, .5); }
   function s4(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[8, 2.2, 760, 560], [12, 2.35, 820, 570]]); plate(ctx, 'delaware_ice', { tint: 'rgba(16,30,64,.55)' }); ctx.restore();
@@ -56,13 +58,13 @@
       c.strokeStyle = 'rgba(80,50,30,.8)'; c.lineWidth = 3; for (let i = 0; i < 3; i++) { c.beginPath(); c.moveTo(cx + 64 + i * 10, -8); c.lineTo(cx + 72 + i * 10, 4); c.lineTo(cx + 64 + i * 10, 16); c.stroke(); } c.font = '24px "Luckiest Guy"'; c.textAlign = 'center'; c.fillStyle = '#d8241a'; c.fillText('SCRAAAPE', 0, r - 28); });
     U.finish(ctx, t, .5); }
   function s6(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[16.9, 1.2, 560, 470], [17.6, 1.24, 560, 470]]); blurred(ctx, 3, () => river(ctx, t, { post: false })); ctx.restore(); W.sleet(ctx, t, 260);
-    const z = lerp(1.25, 1.4, k01(t, 16.9, .7)); YOU.draw(ctx, 640, 330 + 330 * z, z, t, { mood: 'sad', shiver: true }); U.finish(ctx, t, .55); }
+    const z = lerp(1.25, 1.4, k01(t, 16.9, .7)); YOU.draw(ctx, 640, 330 + 248 * z, z, t, { shiver: true, snow: true, fig: { face: 'cold', arms: 'cross' } }); U.finish(ctx, t, .55); }
   function s7(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[17.6, 1, 640, 250], [18.4, 1, 640, 360]]); blurred(ctx, 4, () => { ctx.save(); ctx.translate(640, 300); ctx.scale(1.6, 1.6); ctx.translate(-640, -560); river(ctx, t, { post: false, bank: false }); ctx.restore(); });
     const g = ctx.createLinearGradient(0, 430, 0, 760); g.addColorStop(0, '#c8d4e6'); g.addColorStop(1, '#a4b2ca'); ctx.fillStyle = g; ctx.fillRect(-300, 440, 1900, 600); for (let i = 0; i < 18; i++) W.grassTuft(ctx, (i * 97) % 1400 - 60, 480 + (i * 53) % 240, .9, t, i);
-    SHOE.draw(ctx, 300, 640, ease.back(k01(t, 18, .4)) * 1.15, t, { rot: -.12 }); const step = t > 20.8 && t < 21.8 ? Math.sin((t - 20.8) * Math.PI) : 0; YOU.draw(ctx, 720, 700, 2.6, t, { mood: 'calm' }); rags(ctx, 720, 700, 2.6, t, step);
+    SHOE.draw(ctx, 300, 640, ease.back(k01(t, 18, .4)) * 1.15, t, { rot: -.12 }); const step = t > 20.8 && t < 21.8 ? Math.sin((t - 20.8) * Math.PI) : 0; YOU.draw(ctx, 720, 700, 2.6, t, { mood: 'calm', fig: { arms: 'cross', step } });
     ctx.restore(); U.hand(ctx, 'WEEKS AGO', 300, 560, 34, k01(t, 18.4, .5)); U.hand(ctx, 'RAGS', 1060, 470, 40, k01(t, 20.3, .4)); U.arrow(ctx, 1020, 500, 860, 650, k01(t, 20.5, .35), { bend: -40 }); W.sleet(ctx, t, 140); U.finish(ctx, t, .5); }
   function s8(ctx, lt, dur, t) { ctx.save(); U.cam(ctx, t, [[22, 1.25, 600, 560], [26.3, 1.32, 600, 570]]); river(ctx, t); const fk = ease.inOut(k01(t, 24.2, 1.9)); const step = Math.max(0, Math.sin((t - 22) * 2.2)) * (t < 24.2 ? 1 : .3); const s = .72, x = 600, y = 790;
-    onLayer(ctx, 'frost', (c) => { YOU.draw(c, x, y, s, t, { mood: t > 24.4 ? 'sad' : 'calm', shiver: t > 24.4 }); rags(c, x, y, s, t, step); }, (c) => { const top = ctx.getTransform().transformPoint({ x, y: y - 480 * s * fk }).y; frost(top, fk)(c); });
+    onLayer(ctx, 'frost', (c) => { YOU.draw(c, x, y, s, t, { shiver: t > 24.4, snow: true, breath: true, fig: { face: t > 24.4 ? 'cold' : 'neutral', arms: 'cross', step } }); }, (c) => { const top = ctx.getTransform().transformPoint({ x, y: y - 350 * s * fk }).y; frost(top, fk)(c); });
     U.hand(ctx, 'COLD', 830, 650, 34, k01(t, 24.4, .35), { col: '#bfe0ff' }); U.arrow(ctx, 800, 665, 660, 740, k01(t, 24.6, .3), { bend: 30, col: '#bfe0ff' }); ctx.restore(); W.sleet(ctx, t, 160); U.finish(ctx, t, .5); }
   const UKFLAG = (ctx, x, y, k) => { if (k <= 0) return; const s = ease.back(clamp(k)); ctx.save(); ctx.translate(x, y); ctx.scale(s, s); ctx.strokeStyle = '#2a1a10'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -40); ctx.stroke(); ctx.fillStyle = '#1e3a8a'; ctx.fillRect(0, -40, 34, 22); ctx.strokeStyle = '#fff'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(0, -40); ctx.lineTo(34, -18); ctx.moveTo(34, -40); ctx.lineTo(0, -18); ctx.stroke(); ctx.strokeStyle = '#d8241a'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = '#fff'; ctx.fillRect(13, -40, 8, 22); ctx.fillRect(0, -33, 34, 8); ctx.fillStyle = '#d8241a'; ctx.fillRect(15, -40, 4, 22); ctx.fillRect(0, -31, 34, 4); ctx.lineWidth = 2; ctx.strokeStyle = '#2a1a10'; ctx.strokeRect(0, -40, 34, 22); ctx.restore(); };
   function s9(ctx, lt, dur, t) { const v = { lon: -74.35, lat: 40.6, s: lerp(26000, 30000, ease.inOut(k01(t, 26.3, 6.6))), x: 640, y: 380 }; ctx.save(); W.parchment(ctx); const pr = C.map(ctx, v, { prov: true, seaTop: '#ead9b0', seaBot: '#dcc79a', fill: n => ['New York', 'New Jersey', 'Pennsylvania', 'Connecticut', 'Delaware'].includes(n) ? '#d6b878' : null, faces: false, alpha: .95 });
@@ -86,7 +88,7 @@
     for (let i = 0; i < 7; i++) W.tent(ctx, -40 + i * 220, 540 + (i % 2) * 14, .9, { col: '#3a4258', snow: true }); W.fire(ctx, 300, 620, .7, t); W.fire(ctx, 1010, 610, .6, t + 3); W.horse(ctx, 1180, 640, .55, t, { col: '#2a2420', flip: true }); W.dog(ctx, 430, 660, .55, t);
     const pos = [[120, 630, .42], [210, 670, .46], [300, 620, .38], [480, 630, .4], [540, 680, .48], [760, 670, .48], [830, 620, .4], [930, 660, .45], [1080, 670, .48], [1150, 620, .38], [60, 700, .52], [1230, 710, .52], [380, 720, .54], [880, 730, .55]];
     const order = [3, 9, 0, 6, 12, 1, 10, 7, 13, 2, 5, 11, 8, 4];
-    pos.forEach(([x, y, s], i) => { const vt = 46.4 + order.indexOf(i) * .2; if (t < vt) { onLayer(ctx, 'sil', (c) => CAMP[i].draw(c, x, y, s, t, { mood: 'calm' }), silhouette('#0c1020')); U.tag(ctx, x + 10, y - 470 * s, 'DEC 31', k01(t, 40.4 + i * .08, .3), .9); } U.poof(ctx, x, y - 200 * s, k01(t, vt, .7), s * 1.4); });
+    pos.forEach(([x, y, s], i) => { const vt = 46.4 + order.indexOf(i) * .2; if (t < vt) { onLayer(ctx, 'sil', (c) => CAMP[i].draw(c, x, y, s, t, { mood: 'calm' }), silhouette('#0c1020')); U.tag(ctx, x + 10, y - 365 * s, 'DEC 31', k01(t, 40.4 + i * .08, .3), .9); } U.poof(ctx, x, y - 150 * s, k01(t, vt, .7), s * 1.4); });
     ctx.save(); const g = ctx.createRadialGradient(640, 720, 10, 640, 720, 210); g.addColorStop(0, 'rgba(255,200,110,.45)'); g.addColorStop(1, 'rgba(255,190,100,0)'); ctx.fillStyle = g; ctx.fillRect(400, 500, 480, 320); ctx.restore(); YOU.lantern.draw(ctx, 710, 690, .8, t, { noGlow: true });
     YOU.draw(ctx, 640, 735, .55, t, { mood: t > 46.8 ? 'shock' : 'calm', pose: 'crossed', turn: t > 47 ? Math.sin(t * 2) * .45 : .45 }); }
   function s11(ctx, lt, dur, t) { ctx.save(); camp(ctx, lt, dur, t); ctx.restore(); W.sleet(ctx, t, 90); U.note(ctx, 860, 430, k01(t, 38.6, .4), 'ENLISTED UNTIL', 'DEC 31, 1776'); U.sign(ctx, 980, 110, k01(t, 42.4, .55), t, 'ENLISTMENTS', 'END IN:', 6, 'DAYS'); U.finish(ctx, t, .55); }

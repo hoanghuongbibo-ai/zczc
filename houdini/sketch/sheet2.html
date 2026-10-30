@@ -39,19 +39,13 @@
 <script src="../usa/js/timing.js"></script>
 <script src="js/props.js"></script>
 <script src="js/ui2.js"></script>
-<script src="js/sets2.js"></script>
+<script src="js/sets2.js"></script><script src="js/horse.js"></script>
 <script src="js/shots.js"></script><script src="js/film2.js"></script><script src="js/ck.js"></script><script>
 (async()=>{ await document.fonts.load('40px "Luckiest Guy"'); await document.fonts.load('700 20px Fredoka');
 const c=document.getElementById('c'),ctx=c.getContext('2d'); ctx.fillStyle='#cfd8e0'; ctx.fillRect(0,0,1920,2160); const P=G2=window.P2, S=window.Sets2, t=1.3;
-const names=Object.keys(P).filter(k=>!['crowd'].includes(k)); let i=0;
-console.log('start');for(const n of names){console.log('fig '+n); const x=90+(i%16)*115, y=300+Math.floor(i/16)*330; const f=P[n](); f.draw(ctx,x,y,.42,t,{arms: n==='clinton'||n==='dunmore'?'hold':n==='revere'?'side':undefined}); ctx.fillStyle='#000'; ctx.font='700 14px Fredoka'; ctx.textAlign='center'; ctx.fillText(n,x,y+20); i++; }
-const poses=['side','point','up','hold','hip','shrug','wave','shout','fist','cross','port']; poses.forEach((p,j)=>{console.log('pose '+p); const f=P.washington(); f.draw(ctx,90+j*160,1260,.5,t,{arms:p}); ctx.fillStyle='#000'; ctx.fillText(p,90+j*160,1280); });
-const panel=(x,y,fn)=>{console.log('panel '+x+','+y); ctx.save(); ctx.beginPath(); ctx.rect(x,y,640,360); ctx.clip(); ctx.translate(x,y); ctx.scale(.5,.5); fn(); ctx.restore(); };
-panel(0,1340,()=>{ S.sky(ctx,t,'spring',{sun:[1000,140]}); S.hills(ctx,430,'#7aa85a',3,50); S.ground(ctx,520,'#8ab85a'); S.farmhouse(ctx,820,560,1,t); S.barn(ctx,1150,560,.9,{}); S.tree(ctx,300,600,1.1,t,3,{kind:'apple',season:'spring',blossom:true}); S.wall(ctx,640,-100,1500,1); S.cow(ctx,560,700,.9,t); S.chicken(ctx,760,700,1,t,1); S.chicken(ctx,820,710,1,t,2); S.goose(ctx,200,720,1,t); S.sheep(ctx,1000,720,1,t); S.meadow(ctx,600,760,t); });
-panel(640,1340,()=>{ S.sky(ctx,t,'autumn'); S.ground(ctx,520,'#a89a5a'); for(let k=0;k<6;k++) S.tree(ctx,k*240,620,1,t,k,{kind:k%2?'maple':'oak',season:'autumn',falling:true}); S.deer(ctx,600,700,1,t,{buck:true}); S.squirrel(ctx,900,700,1.4,t); S.longhouse(ctx,300,640,.9,t); S.corn(ctx,1100,720,1,t); S.tobacco(ctx,1200,720,1,t); });
-panel(1280,1340,()=>{ S.sky(ctx,t,'tropic',{sun:[1100,120]}); S.sea(ctx,420,t); S.palm(ctx,150,700,1.2,t,2); S.ship(ctx,700,470,.5,t,'fr'); S.pelican(ctx,400,200,1,t); S.gull(ctx,900,180,1,t); S.hulk(ctx,1050,560,.6,t); S.greyhound(ctx,700,700,1.2,t,{run:true}); });
-panel(0,1700,()=>{ S.room(ctx,t,{window:1000,hearth:300,sky:'night'}); S.table(ctx,700,480,400,{cloth:'#6a2a2a'}); S.candle(ctx,700,480,t); S.barrel(ctx,1150,700,1); });
-panel(640,1700,()=>{ S.sky(ctx,t,'day'); S.ground(ctx,560,'#9a8a6a'); S.stateHouse(ctx,640,600,.9,t); S.church(ctx,1150,600,.7,t,{lanterns:true}); S.street(ctx,560,t,{seed:3}); });
-panel(1280,1700,()=>{ S.sky(ctx,t,'winter'); CK.snowGround(ctx,520,t); for(let k=0;k<4;k++) S.hut(ctx,150+k*330,600+k%2*40,.9,t,{snow:true}); S.earthwork(ctx,720,100,900,'#8a7050',{abatis:true,gabions:true}); S.cannon(ctx,1100,700,1,t,{fireAt:1}); window.CK.rider(ctx,P.revere(),640,560,1,t,{gallop:true}); });
+ctx.fillStyle='#cfe0c0'; ctx.fillRect(0,0,1920,2160); const H=window.World.horse;
+[[0,{}],[.4,{walk:true}],[.8,{walk:true}],[0,{gallop:true}],[.05,{gallop:true}],[.1,{gallop:true}],[.15,{gallop:true}],[0,{saddle:true,col:'#d8d0c4',graze:true}]].forEach(([tt,o],i)=>{ H(ctx,170+(i%4)*460,330+Math.floor(i/4)*330,1.5,1+tt,o); });
+const riders=[[P.revere(),{gallop:true,fig:{arms:'shout',face:'angry'}}],[P.steuben(),{horse:'#d8d0c4',fig:{arms:'side',face:'stern'}}],[P.washington(),{walk:true,horse:'#f2eee6',fig:{arms:'side',face:'stern'}}],[P.rider(),{gallop:true,flip:true}]];
+riders.forEach(([f,o],i)=>{ window.CK.rider(ctx,f,240+i*460,1100,1.4,1.3+i*.07,o); });
 window.READY=true; })();
 </script></body></html>

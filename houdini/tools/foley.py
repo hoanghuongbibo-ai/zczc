@@ -238,6 +238,21 @@ ONE = dict(whoosh=whoosh, swish=swish, whip=whip, pop=pop, ding=ding, chime=chim
            salthiss=salthiss, crunch=crunch, footsteps=footsteps, march=march, machine=machine, truck=truck, impact=impact, sword=sword, gallop=gallop, drum=drum, bell=bell, typewriter=typewriter, cramp=cramp,
            cheer=cheer, crowd=crowd, fire=fire_one, sizzle=lambda: salthiss(1.5))
 VAR = {'pencil', 'paper', 'fly', 'salthiss', 'footsteps', 'march', 'machine', 'truck', 'gallop', 'typewriter', 'crowd', 'cheer', 'fire', 'rumble'}
+def whistle():   # police pea whistle: two-tone trill (2.6 + 2.9 kHz) with a breathy edge, warbling at ~28 Hz
+    d = .9; tt = t_(d); tr = .5 + .5 * np.sign(np.sin(2 * np.pi * 28 * tt)); f = 2600 + 300 * tr; ph = np.cumsum(2 * np.pi * f / SR)
+    y = np.sin(ph) + .25 * np.sin(2 * ph) + .3 * bp(noise(d), 2200, 4200); y *= env(len(tt), .02, .1, .9, .55, .12); return reverb(st(norm(y, .55)), .2, .6)
+def glass():     # glass crack + small shards
+    d = 1.0; y = hp(noise(.08), 3000) * expd(int(.08 * SR), .02); out = np.zeros(int(d * SR)); out[:len(y)] += y
+    for i in range(14): o = int(rng.uniform(.05, .8) * SR); c = tone(rng.uniform(3500, 7500), .12, .6, ((1, 1), (2.7, .4))) * rng.uniform(.2, .6); out[o:o + len(c)] += c[:len(out) - o]
+    return reverb(st(norm(out, .7)), .25, .8)
+def camera():    # phone camera shutter click
+    y = np.zeros(int(.18 * SR)); a = hp(noise(.012), 1500) * expd(int(.012 * SR), .003); y[:len(a)] += a; o = int(.07 * SR); y[o:o + len(a)] += a * .7; return st(norm(y, .45))
+def gavel():     # wooden gavel: two hard knocks
+    y = np.zeros(int(.7 * SR)); k = bp(noise(.09), 300, 1800) * expd(int(.09 * SR), .02) + np.sin(2 * np.pi * 180 * t_(.09)) * expd(int(.09 * SR), .03)
+    for o in (0, .28): i = int(o * SR); y[i:i + len(k)] += k
+    return reverb(st(norm(y, .8)), .3, .7)
+ONE.update(whistle=whistle, glass=glass, camera=camera, gavel=gavel)
+
 def make(name, dur=None):
     if name.startswith('amb_'): return globals()[name](max(2.5, dur or 8))
     f = ONE.get(name)

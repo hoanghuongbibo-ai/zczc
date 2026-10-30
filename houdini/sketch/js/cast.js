@@ -40,25 +40,37 @@
     draw(ctx) { shp(ctx, k => { k.moveTo(-46, -126); k.quadraticCurveTo(0, -136, 46, -126); k.quadraticCurveTo(54, -104, 48, -90); k.quadraticCurveTo(0, -76, -48, -90); k.quadraticCurveTo(-54, -104, -46, -126); k.closePath(); }, this.col, { shade: mix(this.col, '#000000', .25), dx: 8 }); } }
   // ======================= A CHARACTER: an assembly of separate parts =======================
   class Figure { constructor(c = {}) { this.c = Object.assign({ coat: '#7a5232', legs: '#c8b890', feet: 'rags', hair: '#4a3022', head: '#f8f6f2' }, c); this.seed = c.seed || 1;
-      this.hat = c.hat === undefined ? new Tricorne() : c.hat; this.musket = c.musket === undefined ? new Musket() : c.musket; this.shawl = c.shawl === undefined ? (c.uniform ? null : new Shawl()) : c.shawl; }
+      this.props = c.props || []; this.hat = c.hat === undefined ? new Tricorne() : c.hat; this.musket = c.musket === undefined ? new Musket() : c.musket; this.shawl = c.shawl === undefined ? (c.uniform ? null : new Shawl()) : c.shawl; }
     // parts ---------------------------------------------------------------
     feet(ctx, o) { const c = this.c; for (const sx of [-1, 1]) { const lift = (o.step || 0) * sx > 0 ? Math.abs(o.step) * 6 : 0; if (c.feet === 'rags') { shp(ctx, k => k.ellipse(sx * 19, -11 - lift, 20, 10, 0, 0, 7), '#b8ae98', { lw: 3.5, shade: '#8e8470', dx: 0, dy: -4 }); ctx.strokeStyle = '#6e6656'; ctx.lineWidth = 2; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(sx * 19 - 13 + i * 8, -18 - lift); ctx.lineTo(sx * 19 - 7 + i * 8, -3 - lift); ctx.stroke(); } }
-        else shp(ctx, k => k.ellipse(sx * 19, -10 - lift, 19, 10, 0, 0, 7), '#221c1c', { lw: 3 }); } }
-    legsP(ctx, o) { const c = this.c; for (const sx of [-1, 1]) { const lift = (o.step || 0) * sx > 0 ? Math.abs(o.step) * 6 : 0; shp(ctx, k => k.rect(sx * 15 - 8, -48 - lift, 16, 34), c.legs, { lw: 3.5, shade: mix(c.legs, '#000000', .2), dx: 4 }); } }
-    coatP(ctx, o, t) { const c = this.c, sway = Math.sin(t * 1.6 + this.seed) * 1.5, hem = -30, col = c.coat;
+        else if (c.feet === 'bare') shp(ctx, k => k.ellipse(sx * 19, -9 - lift, 17, 9, 0, 0, 7), c.head, { lw: 3 });
+        else { if (c.feet === 'boots') shp(ctx, k => k.roundRect(sx * 19 - 10, -46 - lift, 20, 40, 5), '#1a1414', { lw: 3 }); shp(ctx, k => k.ellipse(sx * 19, -10 - lift, 19, 10, 0, 0, 7), '#221c1c', { lw: 3 }); } } }
+    legsP(ctx, o) { const c = this.c; if (c.dress) return; for (const sx of [-1, 1]) { const lift = (o.step || 0) * sx > 0 ? Math.abs(o.step) * 6 : 0; shp(ctx, k => k.rect(sx * 15 - 8, -48 - lift, 16, 34), c.legs, { lw: 3.5, shade: mix(c.legs, '#000000', .2), dx: 4 }); } }
+    coatP(ctx, o, t) { const c = this.c, sway = Math.sin(t * 1.6 + this.seed) * 1.5, hem = c.dress ? -8 : -30, col = c.coat;
       const body = k => { k.moveTo(-40, -126); k.quadraticCurveTo(0, -132, 40, -126); k.lineTo(48 + sway, hem); if (c.uniform) k.lineTo(-48 + sway, hem); else for (let i = 0; i <= 8; i++) k.lineTo(lerp(48 + sway, -48 + sway, i / 8), hem + (i % 2 ? 7 : 0)); k.closePath(); };
       shp(ctx, body, col, { shade: mix(col, '#000000', .28), dx: 12 }); ctx.save(); ctx.beginPath(); body(ctx); ctx.clip();
       if (c.waistcoat) { ctx.fillStyle = c.waistcoat; ctx.fillRect(-10, -126, 20, 70); ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.strokeRect(-10, -126, 20, 70); ctx.fillStyle = mix(c.waistcoat, '#6a4a10', .5); for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(-4, -112 + i * 14, 2.4, 0, 7); ctx.fill(); } }
       if (c.facings) { ctx.fillStyle = c.facings; ctx.fillRect(-20, -126, 8, 70); ctx.fillRect(12, -126, 8, 70); }
       if (c.belts) { ctx.strokeStyle = INK; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(-38, -122); ctx.lineTo(30, -50); ctx.moveTo(38, -122); ctx.lineTo(-30, -50); ctx.stroke(); ctx.strokeStyle = '#f4f0e8'; ctx.lineWidth = 6.5; ctx.stroke(); }
+      if (c.sash) { ctx.strokeStyle = c.sash; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(-38, -124); ctx.lineTo(40, -56); ctx.stroke(); }
+      if (c.apron) { ctx.fillStyle = c.apron; ctx.fillRect(-30, -96, 60, 90); ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.strokeRect(-30, -96, 60, 90); }
+      if (c.star) { ctx.save(); ctx.translate(-22, -100); ctx.fillStyle = '#e8c048'; ctx.strokeStyle = INK; ctx.lineWidth = 2; ctx.beginPath(); for (let i = 0; i < 16; i++) { const r = i % 2 ? 5 : 13, a = i * Math.PI / 8; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore(); }
       if (c.texture) { ctx.strokeStyle = mix(col, '#000000', .35); ctx.lineWidth = 1.5; for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.moveTo(-36 + i * 6, -50); ctx.lineTo(-35 + i * 6, -44); ctx.stroke(); } }
+      if (c.stripes) { ctx.strokeStyle = c.stripes; ctx.lineWidth = 6; for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.moveTo(-50, -118 + i * 16); ctx.lineTo(50, -118 + i * 16); ctx.stroke(); } }
       if (!c.uniform && !c.waistcoat) { ctx.strokeStyle = mix(col, '#000000', .4); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sway * .3, -120); ctx.lineTo(sway, hem); ctx.stroke(); }
-      ctx.restore(); }
+      ctx.restore(); if (c.epaulettes) for (const sx of [-1, 1]) { shp(ctx, k => k.ellipse(sx * 40, -124, 16, 7, sx * .2, 0, 7), c.epaulettes, { lw: 3 }); ctx.strokeStyle = c.epaulettes; ctx.lineWidth = 2; for (let i = 0; i < 6; i++) { ctx.beginPath(); ctx.moveTo(sx * (30 + i * 4), -118); ctx.lineTo(sx * (30 + i * 4), -106); ctx.stroke(); } } }
     // arms: 'side' (down by the sides; the right hand holds the musket upright), 'cross' (hugging himself), 'fist' (right fist up), 'port' (musket across the body)
     armsP(ctx, o, t) { const c = this.c, col = c.coat, cuff = c.cuffs || mix(col, '#000000', .2), pose = o.arms || 'side', sh = o.shiver ? Math.sin(t * 40) * 1.2 : 0; let H;
       if (pose === 'cross') { tube(ctx, [[-40, -118], [-48, -96], [8 + sh, -92]], 20, col); tube(ctx, [[40, -118], [46, -98], [-4 - sh, -100]], 20, col); H = [[10 + sh, -94]]; }
       else if (pose === 'fist') { tube(ctx, [[-40, -118], [-46, -60]], 20, col); tube(ctx, [[40, -118], [56, -128], [62, -170]], 20, col); H = [[-46, -56], [62, -176]]; }
       else if (pose === 'port') { tube(ctx, [[-40, -118], [-34, -84], [12, -108]], 20, col); tube(ctx, [[40, -118], [48, -96], [38, -88]], 20, col); H = [[12, -108], [38, -86]]; }
+      else if (pose === 'point') { tube(ctx, [[-40, -118], [-46, -60]], 20, col); tube(ctx, [[40, -118], [80, -122], [112, -128]], 20, col); H = [[-46, -56], [118, -130]]; }
+      else if (pose === 'up') { const w = Math.sin(t * 6 + this.seed) * 4; tube(ctx, [[-40, -118], [-62, -160], [-70 - w, -200]], 20, col); tube(ctx, [[40, -118], [62, -160], [70 + w, -200]], 20, col); H = [[-72 - w, -206], [72 + w, -206]]; }
+      else if (pose === 'hold') { tube(ctx, [[-40, -118], [-44, -88], [-16, -84]], 20, col); tube(ctx, [[40, -118], [44, -88], [16, -84]], 20, col); H = [[-14, -84], [14, -84]]; }
+      else if (pose === 'hip') { tube(ctx, [[-40, -118], [-68, -96], [-46, -74]], 20, col); tube(ctx, [[40, -118], [68, -96], [46, -74]], 20, col); H = [[-46, -72], [46, -72]]; }
+      else if (pose === 'shrug') { tube(ctx, [[-40, -118], [-64, -100], [-84, -114]], 20, col); tube(ctx, [[40, -118], [64, -100], [84, -114]], 20, col); H = [[-88, -118], [88, -118]]; }
+      else if (pose === 'wave') { const w = Math.sin(t * 9 + this.seed) * 10; tube(ctx, [[-40, -118], [-46, -60]], 20, col); tube(ctx, [[40, -118], [70, -140], [78 + w, -184]], 20, col); H = [[-46, -56], [80 + w, -190]]; }
+      else if (pose === 'shout') { tube(ctx, [[-40, -118], [-46, -60]], 20, col); tube(ctx, [[40, -118], [46, -128], [30, -136]], 20, col); H = [[-46, -56], [26, -138]]; }
       else { tube(ctx, [[-40, -118], [-46, -60]], 20, col); tube(ctx, [[40, -118], [52, -62]], 20, col); H = [[-46, -56], [54, -58]]; }
       this._hands = H; this._pose = pose; }
     handsP(ctx) { for (const [x, y] of this._hands || []) { shp(ctx, k => k.arc(x, y, 12, 0, 7), '#fbfaf6', { lw: 3.5 }); shp(ctx, k => k.ellipse(x - 9, y - 3, 5, 6, -.4, 0, 7), '#fbfaf6', { lw: 2.5 }); } }
@@ -80,11 +92,11 @@
       if (o.breath) { const ph = (t * .5 + this.seed * .3) % 1; if (ph < .55) { const k = ph / .55; ctx.fillStyle = `rgba(236,242,250,${.6 * (1 - k)})`; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(22 + k * 40 + i * 8, my - k * 14 - i * 4, 6 + k * 12, 0, 7); ctx.fill(); } } } }
     // the whole figure ----------------------------------------------------
     draw(ctx, x, y, s, t, o = {}) { const ex = o.explode || {}; const part = (n, fn) => { if (o.only && !o.only.includes(n)) return; const d = ex[n]; ctx.save(); if (d) ctx.translate(d[0], d[1]); fn(); ctx.restore(); };
-      ctx.save(); ctx.translate(x + (o.shiver ? Math.sin(t * 37 + this.seed) * 1.2 * s : 0), y); ctx.scale(s * (o.flip ? -1 : 1), s * (1 + Math.sin(t * 2 + this.seed) * .008));
+      ctx.save(); ctx.translate(x + (o.shiver ? Math.sin(t * 37 + this.seed) * 1.2 * s : 0), y); ctx.scale(s * (o.flip ? -1 : 1) * (this.c.wide || 1), s * (1 + Math.sin(t * 2 + this.seed) * .008)); if (this.c.tall) { ctx.translate(0, 0); ctx.scale(1, this.c.tall); }
       if (!o.noShadow) { ctx.fillStyle = 'rgba(20,16,10,.18)'; ctx.beginPath(); ctx.ellipse(0, 0, 50, 8, 0, 0, 7); ctx.fill(); }
       const pose = o.arms || 'side', m = this.musket;
       part('legs', () => this.legsP(ctx, o)); part('feet', () => this.feet(ctx, o)); part('coat', () => this.coatP(ctx, o, t)); if (this.shawl) part('shawl', () => this.shawl.draw(ctx));
-      part('arms', () => this.armsP(ctx, o, t)); if (m && pose === 'side' && o.musket !== false) part('musket', () => m.draw(ctx, 62, -40, .02)); if (m && pose === 'port' && o.musket !== false) part('musket', () => m.draw(ctx, -58, -54, 1.0)); part('hands', () => this.handsP(ctx));
+      part('arms', () => this.armsP(ctx, o, t)); for (const pr of this.props) part('prop', () => pr.draw(ctx, { pose, t, hands: this._hands, o, fig: this })); if (m && pose === 'side' && o.musket !== false) part('musket', () => m.draw(ctx, 62, -40, .02)); if (m && pose === 'port' && o.musket !== false) part('musket', () => m.draw(ctx, -58, -54, 1.0)); part('hands', () => this.handsP(ctx));
       part('head', () => this.headP(ctx, o, t)); if (this.hat && !o.noHat) part('hat', () => { ctx.save(); ctx.translate((o.look || 0) * 2, Math.sin(t * 1.5 + this.seed) * 1.2 + (o.hatLift || 0)); ctx.rotate(o.hatTilt || 0); this.hat.draw(ctx, { snow: o.snow }); ctx.restore(); });
       ctx.restore(); } }
   G.Cast2 = { INK, LW, mix, shp, Figure, Tricorne, WideBrim, Bearskin, Mitre, Musket, Shawl,

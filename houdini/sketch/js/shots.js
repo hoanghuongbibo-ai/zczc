@@ -146,5 +146,6 @@
   const DUR = 61.4, IM = {}; for (const k of ['delaware_ice', 'delaware_air', 'icicles']) IM[k] = '../usa/assets/img/' + k + '.jpg';
   G.SketchShow = { duration: DUR, narration: 'usa/assets/audio/narration-full.mp3', shots: G.Paint.cutList(cut, DUR), sfx, moods, amb, images: IM, fonts: ['400 20px "Permanent Marker"', '400 20px "Luckiest Guy"', '700 20px Fredoka'] };
   G.SketchCast = { YOU, LINE, CAMP, GREN, POST_LANTERN, SHOE };
-  if (G.Toon && !G.Toon.__sk) { const rf = G.Toon.renderFrame; G.Toon.renderFrame = (ctx, shots, t) => { G.__frameT = t; G.__spoke = false; const r = rf(ctx, shots, t); G.drawSketchOverlays(ctx, t); return r; }; G.Toon.__sk = true; }
+  G.SketchOpen = { cut, sfx, moods, amb, IM, river, blurred, onLayer, plate, rags, frost, silhouette, owlFly, cargoBoat, landing, Soldier, CREW, YOU, LINE, CAMP, GREN, UKFLAG, s15 };
+  if (!G.FULL_FILM && G.Toon && !G.Toon.__sk) { const rf = G.Toon.renderFrame; G.Toon.renderFrame = (ctx, shots, t) => { G.__frameT = t; G.__spoke = false; const r = rf(ctx, shots, t); G.drawSketchOverlays(ctx, t); return r; }; G.Toon.__sk = true; }
 })(window);

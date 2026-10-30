@@ -15,6 +15,7 @@
   // a shot: spec = { cam: [[z, x, y], …] or [[u, z, x, y], …], world(ctx, t, lt, d), ui(ctx, t, lt, d), shake: [t…], vig, sky }
   F2.shot = (spec) => function (ctx, lt, dur, t) { ctx.save(); const ks = spec.cam || [[1, 640, 360], [1.05, 640, 360]]; const keys = ks.map((k, i) => k.length === 4 ? [t - lt + k[0] * dur, k[1], k[2], k[3]] : [t - lt + (ks.length > 1 ? i / (ks.length - 1) : 0) * dur, k[0], k[1], k[2]]);
     if (spec.bg) { ctx.save(); ctx.fillStyle = spec.bg; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); }
+    const cv = G.__cov; if (cv) { ctx.translate(cv.cx, cv.cy); ctx.scale(cv.z, cv.z); ctx.translate(-cv.cx, -cv.cy); }
     U.cam(ctx, t, keys, { shake: (spec.shake || []).map(s => Array.isArray(s) ? s : [s, 6]), drift: spec.drift ?? 1, ease: spec.ease }); spec.world(ctx, t, lt, dur); ctx.restore();
     if (spec.ui) { ctx.save(); spec.ui(ctx, t, lt, dur); ctx.restore(); } U.finish(ctx, t, spec.vig ?? .4); };
   // ---------- overlays ----------
@@ -27,7 +28,13 @@
     for (const [rt, num, title] of F2.ribbons) U.ribbon(ctx, num, title, t - rt); };
   F2.build = (duration) => { const open = G.SketchOpen, cut = [...open.cut], sfx = [...open.sfx], moods = [...open.moods], amb = [...open.amb];
     for (const ch of F2.chapters) { cut.push(...ch.cut); sfx.push(...(ch.sfx || [])); moods.push(...(ch.moods || [])); amb.push(...(ch.amb || [])); }
-    cut.sort((a, b) => a[0] - b[0]); moods.sort((a, b) => a.t - b.t); amb.sort((a, b) => a.t0 - b.t0);
+    cut.sort((a, b) => a[0] - b[0]);
+    // coverage: a shot longer than ~6 s is cut into 4–5 s pieces that alternate framings (wide / push-in left / push-in right), like cutting
+    // between camera angles; the shot's own animation and its screen-space type continue untouched across the cuts
+    const VAR = [null, { z: 1.2, cx: 560, cy: 400 }, { z: 1.14, cx: 760, cy: 380 }, { z: 1.24, cx: 640, cy: 440 }];
+    for (let i = cut.length - 1; i >= 0; i--) { const [t0, fn, tr] = cut[i], t1 = i + 1 < cut.length ? cut[i + 1][0] : duration, D = t1 - t0; if (t0 < 61.4 || D <= 6.2) continue; const n = Math.ceil(D / 4.6), seg = D / n, extra = [];
+      for (let k = 1; k < n; k++) { const v = VAR[(k + i) % VAR.length]; extra.push([t0 + k * seg, (ctx, lt, d, t) => { G.__cov = v; fn(ctx, t - t0, D, t); G.__cov = null; }, 0]); } cut.splice(i + 1, 0, ...extra); cut[i] = [t0, (ctx, lt, d, t) => { G.__cov = null; fn(ctx, t - t0, D, t); }, tr]; }
+    moods.sort((a, b) => a.t - b.t); amb.sort((a, b) => a.t0 - b.t0);
     // a soft swish on every cut past the cold open that has no sound of its own nearby
     for (const c of cut) if (c[0] > 61 && !sfx.some(s => Math.abs(s.t - c[0]) < .35)) sfx.push({ t: c[0], type: 'swish', gain: .14 });
     // the ribbons get a riser + hit

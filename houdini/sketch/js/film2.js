@@ -10,6 +10,8 @@
   const at = (ph, from = 0) => { const q = norm(ph); for (let i = 0; i <= WD.length - q.length; i++) { if (WD[i][1] < from) continue; let ok = true; for (let k = 0; k < q.length; k++) if (WD[i + k][0] !== q[k]) { ok = false; break; } if (ok) return WD[i][1]; } console.warn('anchor not found: ' + ph + ' @' + from); return from; };
   // end of a phrase: start of its last word + that word's length estimate
   const after = (ph, from = 0) => { const q = norm(ph), t0 = at(ph, from); let i = WD.findIndex(w => w[1] >= t0 - .001); return i >= 0 && WD[i + q.length] ? WD[i + q.length][1] : t0 + q.length * .3; };
+  // safety: a transition can evaluate a shot slightly before its own start; never let a negative radius abort a long export
+  if (G.CanvasRenderingContext2D && !G.__arcSafe) { const P_ = G.CanvasRenderingContext2D.prototype, arc = P_.arc, ell = P_.ellipse; P_.arc = function (x, y, r, a, b, c) { return arc.call(this, x, y, Math.abs(r), a, b, c); }; P_.ellipse = function (x, y, rx, ry, ro, a, b, c) { return ell.call(this, x, y, Math.abs(rx), Math.abs(ry), ro, a, b, c); }; G.__arcSafe = true; }
   const F2 = { chapters: [], at, after, badges: [], ribbons: [], meter: [], trackers: [], images: {} };
   F2.chapter = (ch) => { F2.chapters.push(ch); for (const b of ch.badges || []) F2.badges.push(b); for (const r of ch.ribbons || []) F2.ribbons.push(r); for (const m of ch.meter || []) F2.meter.push(m); for (const tr of ch.trackers || []) F2.trackers.push(tr); Object.assign(F2.images, ch.images || {}); };
   // a shot: spec = { cam: [[z, x, y], …] or [[u, z, x, y], …], world(ctx, t, lt, d), ui(ctx, t, lt, d), shake: [t…], vig, sky }

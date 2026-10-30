@@ -15,7 +15,7 @@
   // a shot: spec = { cam: [[z, x, y], …] or [[u, z, x, y], …], world(ctx, t, lt, d), ui(ctx, t, lt, d), shake: [t…], vig, sky }
   F2.shot = (spec) => function (ctx, lt, dur, t) { ctx.save(); const ks = spec.cam || [[1, 640, 360], [1.05, 640, 360]]; const keys = ks.map((k, i) => k.length === 4 ? [t - lt + k[0] * dur, k[1], k[2], k[3]] : [t - lt + (ks.length > 1 ? i / (ks.length - 1) : 0) * dur, k[0], k[1], k[2]]);
     if (spec.bg) { ctx.save(); ctx.fillStyle = spec.bg; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); }
-    const cv = G.__cov; if (cv) { ctx.translate(cv.cx, cv.cy); ctx.scale(cv.z, cv.z); ctx.translate(-cv.cx, -cv.cy); }
+    const cv = spec.noCov ? null : G.__cov; if (cv) { ctx.translate(cv.cx, cv.cy); ctx.scale(cv.z, cv.z); ctx.translate(-cv.cx, -cv.cy); }
     U.cam(ctx, t, keys, { shake: (spec.shake || []).map(s => Array.isArray(s) ? s : [s, 6]), drift: spec.drift ?? 1, ease: spec.ease }); spec.world(ctx, t, lt, dur); ctx.restore();
     if (spec.ui) { ctx.save(); spec.ui(ctx, t, lt, dur); ctx.restore(); } U.finish(ctx, t, spec.vig ?? .4); };
   // ---------- overlays ----------

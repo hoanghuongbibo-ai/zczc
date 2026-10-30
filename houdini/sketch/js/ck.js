@@ -22,7 +22,7 @@
   CK.spot = (ctx, x, y, r, a = .7) => { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); const g = ctx.createRadialGradient(x, y, r * .6, x, y, r * 1.6); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, `rgba(0,0,0,${a})`); ctx.fillStyle = g; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); };
   // map shot: the view eases from v0 to v1 over the shot; draw(ctx, pr, t, lt, d) adds routes, pins and labels
   const lerpV = (a, b, k) => ({ lon: lerp(a.lon, b.lon, k), lat: lerp(a.lat, b.lat, k), s: Math.exp(lerp(Math.log(a.s), Math.log(b.s), k)), x: lerp(a.x ?? 640, b.x ?? 640, k), y: lerp(a.y ?? 380, b.y ?? 380, k) });
-  CK.mapShot = (v0, v1, opts, draw, ui) => F2.shot({ cam: [[1, 640, 360], [1, 640, 360]], drift: .4, vig: .35, world: (ctx, t, lt, d) => { const v = lerpV(v0, v1 || v0, ease.inOut(clamp(lt / d))); const pr = S.map(ctx, v, opts || {}); if (draw) draw(ctx, pr, t, lt, d); }, ui });
+  CK.mapShot = (v0, v1, opts, draw, ui) => F2.shot({ noCov: true, cam: [[1, 640, 360], [1, 640, 360]], drift: .4, vig: .35, world: (ctx, t, lt, d) => { const v = lerpV(v0, v1 || v0, ease.inOut(clamp(lt / d))); const pr = S.map(ctx, v, opts || {}); if (draw) draw(ctx, pr, t, lt, d); }, ui });
   // the recurring stamp
   CK.stillHere = (ctx, x, y, k, rot = -.08) => { if (k <= 0) return; G.Col.stamp(ctx, 'STILL HERE', x, y, 64, rot, k, '#2a8a3a'); };
   CK.stamp = (ctx, text, x, y, size, k, rot = -.08, col) => { if (k <= 0) return; G.Col.stamp(ctx, text, x, y, size, rot, k, col); };

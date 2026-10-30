@@ -21,7 +21,7 @@ def bp(x, lo, hi, o=2): return sosfilt(butter(o, [lo, hi], 'band', fs=SR, output
 def lp(x, f, o=2): return sosfilt(butter(o, f, 'low', fs=SR, output='sos'), x)
 def hp(x, f, o=2): return sosfilt(butter(o, f, 'high', fs=SR, output='sos'), x)
 def env(n, a=.005, d=.2, s=0., sus=0., r=.05):
-    a, d, sus, r = int(a * SR), int(d * SR), int(sus * SR), int(r * SR); e = np.concatenate([np.linspace(0, 1, max(1, a)), np.linspace(1, s, max(1, d)), np.full(sus, s), np.linspace(s, 0, max(1, r))])
+    a, d, sus, r = int(a * SR), int(d * SR), max(0, int(sus * SR)), int(r * SR); e = np.concatenate([np.linspace(0, 1, max(1, a)), np.linspace(1, s, max(1, d)), np.full(sus, s), np.linspace(s, 0, max(1, r))])
     return np.pad(e, (0, max(0, n - len(e))))[:n]
 def expd(n, tau): return np.exp(-np.arange(n) / SR / tau)
 def norm(x, pk=.9): m = np.max(np.abs(x)) or 1; return x / m * pk

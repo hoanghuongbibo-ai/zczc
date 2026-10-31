@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Pig War</title>
+<style>
+  @font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+  @font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #5c1f1b; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div><button id="play">▶ Play</button><span id="time"></span></div>
+<script>window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true; window.FILM_CFG = { narration: 'pigwar/assets/audio/narration-full.mp3', openUntil: 0, tracker: ['HOW DOES ONE ', 'DEAD PIG', ' START A WAR?'], badgeIcon: (c, t) => { c.fillStyle = '#9ac8e8'; c.fillRect(0, 0, 76, 50); c.fillStyle = '#7aa85a'; c.fillRect(0, 36, 76, 14); G_PIG(c, t); } }; function G_PIG(c, t) { if (window.PW) window.PW.pig(c, 30, 46, .32, t, {}); }</script>
+<script src="../js/toon.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../canada/js/foley.js"></script>
+<script src="../rome/js/paint.js"></script>
+<script src="../rome/js/monk.js"></script>
+<script src="../rome/js/animals.js"></script>
+<script src="../rome/js/cine.js"></script>
+<script src="../rome/js/kit.js"></script>
+<script src="../usa/js/cast.js"></script>
+<script src="../canada/js/geo.js"></script>
+<script src="../canada/js/collage.js"></script>
+<script src="../canada/js/scenes.js"></script>
+<script src="../canada/js/type.js"></script>
+<script src="../usa/js/sets.js"></script>
+<script src="../sketch/js/rig.js"></script>
+<script src="../sketch/js/cast.js"></script>
+<script src="../sketch/js/world.js"></script>
+<script src="../sketch/js/ui.js"></script>
+<script src="js/timing.js"></script>
+<script src="../sketch/js/props.js"></script>
+<script src="../sketch/js/ui2.js"></script>
+<script src="../sketch/js/sets2.js"></script>
+<script src="../sketch/js/horse.js"></script>
+<script src="../sketch/js/film2.js"></script>
+<script src="../sketch/js/ck.js"></script>
+<script src="../sketch/js/life.js"></script>
+<script src="js/cast-pw.js"></script>
+<script src="js/sets-pw.js"></script>
+<script src="js/p00.js"></script>
+<script src="../js/player.js"></script>
+<script>window.Show = F2.build(73.2);</script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

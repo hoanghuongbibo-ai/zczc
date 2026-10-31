@@ -529,3 +529,12 @@ poof, scissors snip, arrow thunk) — about one accent per visual beat.
   close-up ("Look, just say I'm technically the boss and we're cool. — Liu Bang") as the punchline.
 **Workflow rule (user, Oct '28)**: when the user is sending references, study + save notes and WAIT for the script;
 do not start building until the script arrives.
+
+### Detail + collage rules (user, Oct '31: "too basic — add plants, animals, objects; never leave the screen blank; real
+details = collage art")
+- Every set gets a LIFE layer (monalisa/js/life.js pattern: wrap each set, add animals, plants, birds, props, small
+  motions — period-true where possible, e.g. Joséphine's pug on the bed, orange trees in Versailles planters).
+- Real photos from the user's asset pack go in as COLLAGE: taped polaroids / torn cut-outs (js/collage.js CL.photo),
+  timed to the words that name them, at the screen sides; plain graphic backgrounds (sunburst, blueprint, flat fills)
+  are auto-dressed with paper scraps + era photos (CL.dress). Check every asset photo is who/what its file name says —
+  flag mislabeled ones to the user instead of using them.

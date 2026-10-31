@@ -253,9 +253,9 @@
   function dissolve(draw, fade = .5, fadeOut = 0) { return (ctx, lt, dur, t) => {
     const a = Math.min(fade ? clamp(lt / fade) : 1, fadeOut ? clamp((dur - lt) / fadeOut) : 1);
     if (a >= 1) return draw(ctx, lt, dur, t);
-    const k = (draw.name || 'x') + fade; let c = OFF[k]; if (!c) { c = OFF[k] = document.createElement('canvas'); c.width = W; c.height = H; }
-    const g = c.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H); g.save(); draw(g, lt, dur, t); g.restore();
-    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = ease.inOut(a); ctx.drawImage(c, 0, 0); ctx.restore(); }; }
+    const k = (draw.name || 'x') + fade; let c = OFF[k]; const RS = G.__RS || 1; if (!c) { c = OFF[k] = document.createElement('canvas'); c.width = W * RS; c.height = H * RS; }
+    const g = c.getContext('2d'); if (RS !== 1) T.scaleCtx(g, RS); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, W, H); g.save(); draw(g, lt, dur, t); g.restore();
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = ease.inOut(a); ctx.drawImage(c, 0, 0, W, H); ctx.restore(); }; }
   // build overlapping shots from [start, draw] cuts: each shot dissolves in over `fade` (cut: fade 0)
   function cutList(list, end) { return list.map(([s, draw, fade = .5], i) => ({ start: Math.max(0, s - (fade || 0)), end: i + 1 < list.length ? list[i + 1][0] : end, draw: dissolve(draw, fade) })); }
   // slow camera: push from z0 to z1 toward (fx,fy) across the shot

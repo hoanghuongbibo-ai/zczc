@@ -3,6 +3,11 @@
 (function (G) {
   'use strict';
   const W = 1280, H = 720, LINE = '#1d1a17';
+  // high-res rendering: make a context draw in 1280×720 units on a canvas RS times larger (setTransform/resetTransform premultiplied by RS,
+  // getTransform reported unscaled so plain 1280×720 offscreen layers still line up)
+  const scaleCtx = (ctx, RS) => { if (ctx.__RS) return ctx; ctx.__RS = RS; const st = ctx.setTransform.bind(ctx), gt = ctx.getTransform.bind(ctx);
+    ctx.setTransform = (a, b, c, d, e, f) => { if (a === undefined) return st(RS, 0, 0, RS, 0, 0); if (typeof a === 'object') ({ a, b, c, d, e, f } = a); return st(a * RS, b * RS, c * RS, d * RS, e * RS, f * RS); };
+    ctx.resetTransform = () => st(RS, 0, 0, RS, 0, 0); ctx.getTransform = () => gt().preMultiplySelf(new DOMMatrix([1 / RS, 0, 0, 1 / RS, 0, 0])); return ctx; };
 
   // ---------- math ----------
   function rng(seed) { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return s / 4294967296; }; }
@@ -131,6 +136,6 @@
     return ks[ks.length - 1][1];
   }
 
-  G.Toon = { W, H, LINE, E, rng, clamp, prog, lerp, ease, IMG, loadImages, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, finish, fill, renderFrame,
+  G.Toon = { W, H, LINE, scaleCtx, E, rng, clamp, prog, lerp, ease, IMG, loadImages, shape, poly, rect, circle, ellipse, smooth, line, grad, cam, finish, fill, renderFrame,
     noise, glow, shaft, dust, grade, blurred, shadow, rimmed, keys };
 })(window);

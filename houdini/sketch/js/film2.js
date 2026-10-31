@@ -26,7 +26,7 @@
     const b = inRange(F2.badges, t); if (b) U.badge(ctx, t, Math.min(k01(t, b[0], .5), 1 - k01(t, b[1] - .4, .4)), b[2], b[3]);
     const tr = inRange(F2.trackers, t); if (tr) U.tracker(ctx, Math.min(k01(t, tr[0], .5), 1 - k01(t, tr[1] - .4, .4)));
     // the meter: shows ~5 s around each change (value eases from the previous one)
-    for (let i = 0; i < F2.meter.length; i++) { const [mt, lv, tag, hold = 5] = F2.meter[i]; if (t >= mt - .3 && t < mt + hold) { const prev = i ? F2.meter[i - 1][1] : 1, v = lerp(prev, lv, ease.inOut(k01(t, mt + .4, 1.2))); if (!(tr && t > tr[0])) U.meter(ctx, v, Math.min(k01(t, mt - .3, .4), 1 - k01(t, mt + hold - .4, .4)), t, { tag }); } }
+    for (let i = 0; i < F2.meter.length; i++) { const [mt, lv, tag, hold = 5] = F2.meter[i]; if (t >= mt - .3 && t < mt + hold) { const prev = i ? F2.meter[i - 1][1] : ((G.FILM_CFG && G.FILM_CFG.meterStart) ?? 1), v = lerp(prev, lv, ease.inOut(k01(t, mt + .4, 1.2))); if (!(tr && t > tr[0])) U.meter(ctx, v, Math.min(k01(t, mt - .3, .4), 1 - k01(t, mt + hold - .4, .4)), t, { tag }); } }
     for (const [rt, num, title] of F2.ribbons) U.ribbon(ctx, num, title, t - rt); };
   F2.build = (duration) => { const CFG = G.FILM_CFG || {}, OPEN = CFG.openUntil ?? (G.SketchOpen ? 61.4 : 0), open = G.SketchOpen || { cut: [], sfx: [], moods: [], amb: [], IM: {} }, cut = [...open.cut], sfx = [...open.sfx], moods = [...open.moods], amb = [...open.amb];
     for (const ch of F2.chapters) { cut.push(...ch.cut); sfx.push(...(ch.sfx || [])); moods.push(...(ch.moods || [])); amb.push(...(ch.amb || [])); }

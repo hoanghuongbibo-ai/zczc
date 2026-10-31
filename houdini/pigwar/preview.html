@@ -17,7 +17,7 @@
 <body>
 <canvas id="stage"></canvas>
 <div><button id="play">▶ Play</button><span id="time"></span></div>
-<script>window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true; window.FILM_CFG = { narration: 'pigwar/assets/audio/narration-full.mp3', openUntil: 0, tracker: ['HOW DOES ONE ', 'DEAD PIG', ' START A WAR?'], badgeIcon: (c, t) => { c.fillStyle = '#9ac8e8'; c.fillRect(0, 0, 76, 50); c.fillStyle = '#7aa85a'; c.fillRect(0, 36, 76, 14); G_PIG(c, t); } }; function G_PIG(c, t) { if (window.PW) window.PW.pig(c, 30, 46, .32, t, {}); }</script>
+<script>window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true; window.FILM_CFG = { narration: 'pigwar/assets/audio/narration-full.mp3', openUntil: 0, meterLabel: 'WAR RISK', meterInvert: true, meterStart: 0, meterIcon: (c, lv, t) => { c.font = '28px serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = lv > .7 ? '#ff5a3a' : '#ffd040'; c.beginPath(); c.arc(0, 0, 14, 0, 7); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 3; c.stroke(); c.fillStyle = '#2a1e18'; c.font = '20px "Luckiest Guy"'; c.fillText('!', 0, 2); }, tracker: ['HOW DOES ONE ', 'DEAD PIG', ' START A WAR?'], badgeIcon: (c, t) => { c.fillStyle = '#9ac8e8'; c.fillRect(0, 0, 76, 50); c.fillStyle = '#7aa85a'; c.fillRect(0, 36, 76, 14); G_PIG(c, t); } }; function G_PIG(c, t) { if (window.PW) window.PW.pig(c, 30, 46, .32, t, {}); }</script>
 <script src="../js/toon.js"></script>
 <script src="../js/sound.js"></script>
 <script src="../canada/js/foley.js"></script>
@@ -46,6 +46,7 @@
 <script src="../sketch/js/life.js"></script>
 <script src="js/cast-pw.js"></script>
 <script src="js/sets-pw.js"></script>
+<script src="js/pw-kit.js"></script>
 <script src="js/p00.js"></script>
 <script src="../js/player.js"></script>
 <script>window.Show = F2.build(73.2);</script>

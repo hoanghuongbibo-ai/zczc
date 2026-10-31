@@ -17,7 +17,7 @@
   function build(DUR) {
     const L = LIST.slice().sort((a, b) => a.t - b.t); const shots = [];
     L.forEach((s, i) => { const start = s.t, end = (L[i + 1] || { t: DUR }).t, prev = L[i - 1], R = (n, k) => tOf(n, k) - start;
-      const run = (ctx, sh, t) => { const st = sh.t, en = (L[L.indexOf(sh) + 1] || { t: DUR }).t, Rp = (n, k) => tOf(n, k) - st; ctx.save(); sh.fn(ctx, t - st, en - st, t, Rp); ctx.restore(); };
+      const run = (ctx, sh, t) => { G.SHOTSEED = Math.round(sh.t * 7) % 997; const st = sh.t, en = (L[L.indexOf(sh) + 1] || { t: DUR }).t, Rp = (n, k) => tOf(n, k) - st; ctx.save(); sh.fn(ctx, t - st, en - st, t, Rp); ctx.restore(); };
       shots.push({ start, end, draw: (ctx, lt, dur, t) => { G.EP.frame = t; const tr = typeof s.tr === 'string' ? { type: s.tr } : s.tr, td = tr ? Math.min((end - start) * .45, tr.d || (tr.type === 'ink' ? .7 : tr.type === 'dissolve' ? .5 : .32)) : 0;
         if (!tr || !prev || lt >= td) { run(ctx, s, t); return; }
         const k = clamp(lt / td), e = easeIO(k), type = tr.type;

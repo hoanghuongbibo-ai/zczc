@@ -93,7 +93,7 @@
     if (!o.freeCam) { const hx = 640 / c.z, hy = 360 / c.z; if (hy * 2 <= H) c.y = clamp(c.y, hy, H - hy); if (hx * 2 <= W + 440) c.x = clamp(c.x, hx - 220, W + 220 - hx); }
     CAM = c; G.DR.cam = c;
     bg.setTransform(1, 0, 0, 1, 0, 0); bg.fillStyle = '#000'; bg.fillRect(0, 0, W, H); bg.save(); apply(bg, c);
-    G.DR.crowdOn = !!o.crowd; if (o.bg) o.bg(bg, t, lt); G.DR.crowdOn = false; if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
+    G.DR.crowdOn = !!o.crowd; if (o.bg) { o.bg(bg, t, lt); if (G.CL && G.CL.dressPlain !== false) { const src = o.bg.__src || (o.bg.__src = o.bg.toString()); if (src.length < 220 && /fillRect\(-300, -300, 1900, 1400\)/.test(src)) G.CL.dress(bg, t, 11 + (G.SHOTSEED || 0)); } } G.DR.crowdOn = false; if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); blurInto(ctx, buf, o.dof || 0); ctx.restore();
     if (o.act) { ctx.save(); apply(ctx, c); o.act(ctx, t, lt); ctx.restore(); }
     fgProps(ctx, o.fg, c, t); atmos(ctx, o.atm, t);

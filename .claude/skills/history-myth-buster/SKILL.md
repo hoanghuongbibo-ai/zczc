@@ -538,3 +538,21 @@ details = collage art")
   timed to the words that name them, at the screen sides; plain graphic backgrounds (sunburst, blueprint, flat fills)
   are auto-dressed with paper scraps + era photos (CL.dress). Check every asset photo is who/what its file name says —
   flag mislabeled ones to the user instead of using them.
+
+### "Did Medieval Peasants Work Less Than You?" (houdini/medieval/, Nov '26)
+- Loads ../monalisa/js/{cast,art,kit}.js for shared kit, then its own cast/sets/s1–s5/final. 206 shots, 3 skits, all
+  carrying the "★ SKIT ★ invented dialogue" card (G.MH.skitCard).
+- **Work actually moves**: `G.FARM.WORK(kind, t)` returns animated pose objects + hand props (hoe, flail, sickle, goad,
+  bucket, candle, bread, mug, spindle; registered on `G.Guide.PROPS`) — spread into P options: `{ ...WK('hoe', t) }`.
+  Poses can be raw objects `{ L:[x,y], R:[x,y], hL, hR }` in figure space (feet 0,0; shoulders ≈ -310).
+- **Long shots auto-cut**: final.js sets `G.DR.punch` (zoom/offset) per ~3 s segment of any shot ≥ 7 s, so a long
+  explainer card plays as wide → punch-in → offset cuts instead of a frozen frame.
+- **Tickets**: `ok` may be a string → amber "?" verdict stamped with that word ('UNCERTAIN', 'NOT HUGH'). Active
+  tickets are added to `UI.keepOut` (now a list; `UI.keepOutAny = true` = push each box the shortest way out) so
+  titles never sit under them — the badge rule alone shoved top-left speech bubbles off screen.
+- No emoji glyphs in canvas text (✋ ⛪ ☠ render as tofu in headless Chromium) — draw them (GX.hand etc.).
+- Mood names defined in another episode's s1 (heist, renaissance) must be copied into this episode's s1.
+- Foley added to tools/foley.py: rooster, moo, ox, baa, cluck, grind (quern), bubble, thwack, scythe, snore, thunder,
+  horn, caw, pour + beds amb_farm / amb_hearth / amb_storm.
+- `tools/_errsweep.mjs page a b step` renders every frame in a time range and prints draw errors; `tools/_durs.mjs`
+  lists long shots. Run both before any full render.

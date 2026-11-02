@@ -90,10 +90,10 @@
   mood(328, 'modern'); K2.era(t0(328, 0), 'YOU', 'TOMORROW'); PTO.push({ a: t0(328, 13), b: t0(330, 0), v0: .4, v1: .13 });
   SFX(328, 6, 'buzz', .8, 1.6); SFX(328, 14, 'tick', .5); SFX(328, 20, 'boing', .4);
   C(328, null, S((lt, R, t) => ({ cam: [[640, 380, 1.0], [760, 420, 1.3], 'inOut'], bg: (g, t) => MD.bedroom(g, t, { ring: lt > R(328, 5) && lt < R(328, 11) ? 1 : 0 }), act: (g, t) => { G.P(g, 'viewer2@sit', 300, 470, .5, t, { pose: lt > R(328, 11) ? 'facepalm' : 'idle', turn: .3, face: lt > R(328, 18) ? { mouth: 'flat', eyes: 'half' } : { mouth: 'grit', eyes: 'half' } }); },
-    ui: c => { DR.write(c, 'TOMORROW MORNING…', 640, 90, 50, lt, .1); if (lt > R(328, 18)) DR.callout(c, "IT'S NOT GREAT.", 640, 620, lt, R(328, 20)); } })), 'whip');
+    ui: c => { DR.write(c, 'TOMORROW MORNING…', 640, 90, 50, lt, .1); if (lt > R(328, 18)) DR.callout(c, "IT'S NOT GREAT.", 640, 560, lt, R(328, 20)); } })), 'whip');
   egg(t0(329, 6), 5, false); egg(t0(329, 7) + .6, 0, false); SFX(329, 6, 'pop', .6); SFX(329, 7, 'rooster', .6);
   C(329, null, S((lt, R, t) => ({ bg: g => DR.sunburst(g, t, '#e8c060', '#f8e098'), act: (g, t) => { const k = clamp((lt - R(329, 7)) / .6); eggRow(g, 640, 360, 5, 1.6, lt - R(329, 5)); if (k > 0) { g.strokeStyle = '#c8281e'; g.lineWidth = 22; g.beginPath(); g.moveTo(300, 240); g.lineTo(300 + 680 * k, 240 + 240 * k); g.stroke(); } F.rooster(g, 1100, 650, .55, t, { dir: -1, crow: lt > R(329, 7) }); },
-    ui: c => DR.write(c, 'NOBODY WANTS YOUR 5 EGGS', 640, 620, 58, lt, R(329, 4)) })), 'whip');
+    ui: c => DR.write(c, 'NOBODY WANTS YOUR 5 EGGS', 640, 570, 58, lt, R(329, 4)) })), 'whip');
   mood(330, 'pipe'); SFX(330, 4, 'ding', .8); SFX(330, 4, 'pop', .6);
   C(330, null, S((lt, R, t) => ({ cam: [[640, 400, 1.04], [640, 400, 1.1]], bg: (g, t) => MD.scriptorium(g, t), act: (g, t) => { G.P(g, 'monk@sit', 340, 470, .6, t, { pose: 'thumbsUp', turn: .5, face: { mouth: 'grin', eyes: 'happy' } }); const k = GX.pop(lt, R(330, 4) - .3, .35); if (k > 0) { g.save(); g.translate(860, 360); g.scale(k, k); sh(g, '#c8281e', 6, c => c.roundRect(-200, -56, 400, 112, 22)); label(g, 'SUBSCRIBE', 0, 4, 60, '#fff'); g.restore(); } },
     ui: c => {} })), 'whip');

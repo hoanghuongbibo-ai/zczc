@@ -2,7 +2,7 @@
  * (top-left), the PTO meter (cold open + close), question tickets, real-photo collage inserts, music moods, grade. */
 (function (G) {
   'use strict';
-  G.Guide.straight = true;
+  G.Guide.straight = true; G.UI.keepOutAny = true;
   const T = G.Toon, DR = G.DR, K2 = G.K2, EP = G.EP, C = G.C, { W, H, clamp, lerp } = T, TAU = Math.PI * 2, MK = DR.MK;
   const DUR = 1132, END = 1126, shots = G.SALT2.build(DUR), tl = n => C.t(n, null);
   const ERAS = K2.ERAS.sort((a, b) => a.t - b.t), EGGS = (G.EGGS || []).sort((a, b) => a.t - b.t);
@@ -31,8 +31,8 @@
       const im = T.IMG[key]; if (!im) continue; const [, , fw, fh] = crop || [0, 0, 1, 1], h = w * im.height * fh / (im.width * fw);
       G.UI.box(ctx, x, y, w + 40, h + 80, c => { c.save(); c.globalAlpha = out; G.CL.photo(c, key, x + (x > 640 ? 1 : -1) * (1 - k) * 300, y, w, rot + Math.sin(t * 1.3) * .015, { k: Math.max(.01, k), caption: cap, crop, sepia: sep, style: cap ? 'polaroid' : 'torn' }); c.restore(); }); } }
   const POOLS = [[0, [['luttrell'], ['peterborough']]], [89, [['peterborough'], ['peterborough_5'], ['hundred_rolls_2'], ['luttrell']]], [300, [['longhouse'], ['quern_2'], ['luttrell'], ['laxton']]],
-    [690, [['schor_2'], ['luttrell'], ['laxton_2']]], [770, [['tournai'], ['tournai_1'], ['tournai_2']]], [880, [['statute'], ['edward_iii'], ['froissart']]], [1040, [['luttrell'], ['peterborough_3'], ['laxton']]]];
-  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { G.CL.pool((POOLS.filter(p => p[0] <= t).pop() || [0, []])[1]); d(ctx, lt, dur, t); if (t < END) { photos(ctx, t); pto(ctx, t); badge(ctx, t); if (EP.drawTickets) EP.drawTickets(ctx, t); } else G.UI.keepOut = null; }; }
+    [690, [['laxton_2'], ['luttrell'], ['peterborough_6']]], [770, [['tournai'], ['tournai_1'], ['tournai_2']]], [880, [['statute'], ['edward_iii'], ['froissart']]], [1000, [['froissart'], ['froissart_2'], ['statute']]], [1040, [['luttrell'], ['peterborough_3'], ['laxton']]]];
+  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { G.CL.pool((POOLS.filter(p => p[0] <= t).pop() || [0, []])[1]); const nSeg = dur >= 7 ? Math.max(2, Math.round(dur / 3)) : 1, seg = Math.min(nSeg - 1, Math.floor(lt / (dur / nSeg))), PZ = [[1, 0, 0], [1.12, -40, -10], [1.05, 50, 0], [1.16, 20, -16]][seg % 4]; G.DR.punch = seg ? { z: PZ[0], dx: PZ[1], dy: PZ[2] } : null; d(ctx, lt, dur, t); G.DR.punch = null; if (t < END) { photos(ctx, t); pto(ctx, t); badge(ctx, t); const tk = (EP.tickets || []).filter(q => t >= q.from && t < q.to); if (tk.length) { const k0 = G.UI.keepOut; G.UI.keepOut = (k0 ? [k0] : [[-99, -99, -98, -98]]).concat(tk.map((q, i) => [W - 470, 50 + i * 62 - 28, W - 30, 50 + i * 62 + 28])); } if (EP.drawTickets) EP.drawTickets(ctx, t); } else G.UI.keepOut = null; }; }
   G.TOON_FINISH = { grain: .02, vignette: .3 };
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;
   const bg = buf.getContext('2d'), blg = bl.getContext('2d');

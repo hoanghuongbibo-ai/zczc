@@ -28,8 +28,11 @@
             if (nb[0] < M || nb[2] > W - M || nb[1] < M || nb[3] > H - M) continue; const s = at(cx, cy) * 1000 + Math.hypot(cx - dx, cy - dy); if (!best || s < best[0]) best = [s, cx, cy]; if (s < 1000 && at(cx, cy) === 0) break; }
           if (best) { dx = best[1]; dy = best[2]; } } }
       // a reserved corner (UI.keepOut, e.g. the episode's counter badge) pushes every other box left or up, free ones too
-      const ko = UI.keepOut; if (ko && !it.keep) { const nb = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy]; if (ov(nb, ko) > 0) { const l = ko[0] - 8 - nb[2], u = ko[1] - 8 - nb[3];
-        if (nb[0] + l >= M && (-l <= -u || nb[1] + u < M)) dx += l; else dy += u; } }
+      const KO = UI.keepOut ? (Array.isArray(UI.keepOut[0]) ? UI.keepOut : [UI.keepOut]) : [];
+      if (!it.keep) for (let ki = 0; ki < KO.length; ki++) { const ko = KO[ki], nb = [b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy]; if (ov(nb, ko) <= 0) continue;
+        if (ki === 0 && !UI.keepOutAny) { const l = ko[0] - 8 - nb[2], u = ko[1] - 8 - nb[3]; if (nb[0] + l >= M && (-l <= -u || nb[1] + u < M)) dx += l; else dy += u; continue; }
+        const c = [[ko[0] - 8 - nb[2], 0], [ko[2] + 8 - nb[0], 0], [0, ko[1] - 8 - nb[3]], [0, ko[3] + 8 - nb[1]]].filter(([x, y]) => nb[0] + x >= M && nb[2] + x <= W - M && nb[1] + y >= M && nb[3] + y <= H - M).sort((p, q) => Math.hypot(...p) - Math.hypot(...q))[0];
+        if (c) { dx += c[0]; dy += c[1]; } }
       placed.push([b[0] + dx, b[1] + dy, b[2] + dx, b[3] + dy]);
       ctx.save(); ctx.setTransform(new DOMMatrix().translate(dx, dy).multiply(it.m)); ctx.globalAlpha = it.a; it.draw(ctx); ctx.restore(); }
     Q.length = 0; UI.flushing = false; }

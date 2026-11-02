@@ -88,7 +88,7 @@
     ctx.restore(); }
 
   // ---------- the shot ----------
-  function shot(ctx, lt, dur, t, o) { const c = camAt(o.cam, lt, dur); if (o.shake) { const k = o.shake * Math.max(0, 1 - lt / .5); c.x += Math.sin(t * 61) * 14 * k / c.z; c.y += Math.sin(t * 47) * 10 * k / c.z; }
+  function shot(ctx, lt, dur, t, o) { const c = camAt(o.cam, lt, dur); if (G.DR.punch) { const p = G.DR.punch; c.z *= p.z; c.x += p.dx / c.z; c.y += (p.dy || 0) / c.z; } if (o.shake) { const k = o.shake * Math.max(0, 1 - lt / .5); c.x += Math.sin(t * 61) * 14 * k / c.z; c.y += Math.sin(t * 47) * 10 * k / c.z; }
     // the camera never looks past the painted set (no black band under the ground or beside the scenery)
     if (!o.freeCam) { const hx = 640 / c.z, hy = 360 / c.z; if (hy * 2 <= H) c.y = clamp(c.y, hy, H - hy); if (hx * 2 <= W + 440) c.x = clamp(c.x, hx - 220, W + 220 - hx); }
     CAM = c; G.DR.cam = c;

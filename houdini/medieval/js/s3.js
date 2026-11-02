@@ -78,12 +78,12 @@
     ui: c => DR.write(c, 'THE SUN GOES DOWN…', 640, 100, 54, lt, .1) })), 'dissolve');
   SFX(197, 1, 'coins', .6); SFX(198, 3, 'snore', .5, 1.6);
   C(197, null, S((lt, R, t) => { const b = since(198, 0, 197); return { cam: [[640, 420, 1.2], [640, 440, 1.3]], bg: (g, t) => MD.house(g, t, { night: true }), act: (g, t) => { if (lt < b) { G.P(g, 'hughH', 640, 760, .6, t, { ...WK('candle', t), face: { mouth: 'flat', brows: 'worried' } }); sh(g, '#f2c43a', 4, c => c.ellipse(820, 520, 30, 12, 0, 0, TAU)); label(g, '£', 820, 470, 50, '#f2c43a'); }
-      else { pallet(g, 640, 690, 520); lying(g, 'hughH', 450, 680, .32, t); lying(g, 'agnes', 560, 690, .3, t); lying(g, 'kidBoy', 680, 690, .22, t); lying(g, 'kidGirl', 760, 690, .22, t); label(g, 'z z z', 700 + Math.sin(t) * 10, 520 - (lt * 30) % 40, 46, '#fff'); } },
+      else { pallet(g, 640, 640, 640); lying(g, 'hughH', 420, 630, .4, t); lying(g, 'agnes', 560, 640, .38, t); lying(g, 'kidBoy', 700, 640, .28, t); lying(g, 'kidGirl', 800, 640, .28, t); label(g, 'z z z', 700 + Math.sin(t) * 10, 520 - (lt * 30) % 40, 46, '#fff'); } },
     ui: c => DR.write(c, lt < b ? 'CANDLES COST MONEY' : 'SO YOU SLEEP EARLY', 640, 100, 54, lt, lt < b ? .1 : b) }; }), 'dissolve');
   mood(199, 'curious'); EP.ticket('PEOPLE SLEPT TWICE?', t0(199, 0), t0(206, 0), t0(205, 6), 'UNCERTAIN'); SFX(199, 6, 'ding', .5);
   C(199, null, S((lt, R, t) => { const b = since(200, 0, 199); return { cam: [[640, 420, 1.15], [640, 420, 1.2]], bg: (g, t) => MD.house(g, t, { night: true }),
-    act: (g, t) => { pallet(g, 640, 690, 520); const aw = lt > b + R(200, 5) - R(200, 0) && lt < b + R(200, 15) - R(200, 0); if (aw) { G.P(g, 'hughH@sit', 470, 690, .4, t, { pose: 'think', face: { mouth: 'flat', eyes: 'open' } }); G.P(g, 'agnes@sit', 620, 690, .38, t, { ...WK('spin', t), face: { mouth: 'smile', eyes: 'open' } }); } else { lying(g, 'hughH', 450, 680, .32, t); lying(g, 'agnes', 560, 690, .3, t); }
-      lying(g, 'kidBoy', 680, 690, .22, t); lying(g, 'kidGirl', 760, 690, .22, t); },
+    act: (g, t) => { pallet(g, 640, 640, 640); const aw = lt > b + R(200, 5) - R(200, 0) && lt < b + R(200, 15) - R(200, 0); if (aw) { G.P(g, 'hughH@sit', 440, 640, .45, t, { pose: 'think', face: { mouth: 'flat', eyes: 'open' } }); G.P(g, 'agnes@sit', 600, 640, .43, t, { ...WK('spin', t), face: { mouth: 'smile', eyes: 'open' } }); } else { lying(g, 'hughH', 420, 630, .4, t); lying(g, 'agnes', 560, 640, .38, t); }
+      lying(g, 'kidBoy', 700, 640, .28, t); lying(g, 'kidGirl', 800, 640, .28, t); },
     ui: c => { if (lt < b) DR.write(c, 'SLEEP… TWICE?', 640, 100, 60, lt, R(199, 6)); else { const ph = lt < b + R(200, 5) - R(200, 0) ? 0 : lt < b + R(200, 15) - R(200, 0) ? 1 : 2; DR.write(c, ['1ST SLEEP', 'AWAKE ~1 HOUR', '2ND SLEEP'][ph], 640, 100, 60, lt, b + [0, R(200, 5), R(200, 15)][ph] - (ph ? R(200, 0) : 0)); } } }; }), 'dissolve');
   PH.push([201, 202, 'ekirch', 1090, 360, 220, .05, 'A. ROGER EKIRCH']);
   [19, 20, 23].forEach(k => SFX(201, k, 'paper', .5)); SFX(202, 3, 'ding', .5);

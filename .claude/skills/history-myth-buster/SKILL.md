@@ -556,3 +556,24 @@ details = collage art")
   horn, caw, pour + beds amb_farm / amb_hearth / amb_storm.
 - `tools/_errsweep.mjs page a b step` renders every frame in a time range and prints draw errors; `tools/_durs.mjs`
   lists long shots. Run both before any full render.
+
+### Reference study #4 + medieval v2 (user, Nov '26: "still rudimentary — clear details: animals, plants, objects, soil,
+### sand; real foreground/background with occlusion; engaging but not chaotic camera; sound alternating intense/gentle")
+Asset pack (27 stills + 4 clips, "Historically Facts"-style knights/Romans) taught:
+- **Ground is a surface, not a colour**: perspective scatter (small near the horizon, big near the lens) of tufts, weeds
+  (dandelion, thistle, dock), flowers, clover, moss-capped stones, pebbles, clods, molehills, ruts, puddles that mirror
+  the sky; ploughed land = furrows converging on a vanishing point (`G.DK.ground / furrows / stubble / wheat / stook`).
+- **Depth = 3–4 planes**: misty hills + tree line dissolved in a haze band → mid buildings/hedges/fences → near ground →
+  a blurred foreground occluder in front of the actors (`DK.fg(kind)` registers `G.DR.autoFg`; kinds weeds, wheat, reeds,
+  herbs, candles, branch, rail, barrels; side 'L'|'R'|'LR' keeps the centre clear).
+- **Over-the-shoulder skits**: listener's back huge + soft-focus in a lower corner, speaker facing the lens
+  (`G.MH.ots({ bg, sp, li, bub })`; seated listener: y≈930, s≈1.45; standing: y≈1120, s≈1.35).
+- **Ground-level inserts** for dramatic beats: camera in the mud, `dof` blurs the set behind, giant clods / rotting
+  stalks / a crow / a dropped bowl in front (`DK.lowGround`, `DK.rotStalk`).
+- Interiors are crowded at the walls, calm in the middle: shelves of crocks, tools on pegs, cloaks + hats, herbs from the
+  rafters, window light shafts with dust motes, rushes on an earth floor, a mouse, a cat.
+- Animals everywhere but small and busy: fox (dusk/empty), crows pecking/hopping, sparrows, bees at skeps, goat, rabbit.
+- **Sound dynamics**: `{type:'dyn', gain:dB, dur:fade}` cues shape the music bed in tools/mix.py (swell on intense
+  beats, drop −5…−6 dB for night / grief); risers into hits on reveals; heartbeat, amb_tension under death toll,
+  amb_drums under the revolt; ambience is chosen automatically per set (`Show.autoCues` in final.js — MD.* calls are
+  logged per shot and mapped to beds: farm, hearth, hall, scribe, court, town, storm, wind, night, fire, modern).

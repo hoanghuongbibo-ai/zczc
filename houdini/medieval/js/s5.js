@@ -13,7 +13,7 @@
 
   // ---------------- L299–306 poll taxes, the revolt, the bonfire of records ----------------
   mood(299, 'danger'); K2.era(t0(299, 0), "PEASANTS' REVOLT", '1381'); SFX(299, 4, 'sting', .4);
-  C(299, null, S((lt, R, t) => ({ cam: [[640, 400, 1.05], [640, 400, 1.1]], bg: (g, t) => MD.abbotHall(g, t), act: (g, t) => G.P(g, 'abbot@sit', 640, 560, .72, t, { pose: 'crossed', face: { mouth: 'flat', brows: 'angry' } }), ui: c => DR.write(c, "THE LORDS DIDN'T GIVE UP", 640, 100, 54, lt, .1) })), 'whip');
+  C(299, null, S((lt, R, t) => ({ cam: [[760, 400, 1.12], [800, 390, 1.2]], bg: (g, t) => MD.abbotHall(g, t), act: (g, t) => G.P(g, 'abbot@sit', 870, 560, .72, t, { pose: 'crossed', face: { mouth: 'flat', brows: 'angry' } }), ui: c => DR.write(c, "THE LORDS DIDN'T GIVE UP", 640, 100, 54, lt, .1) })), 'whip');
   SFX(300, 6, 'coins', .6); SFX(300, 10, 'rumble', .5, 2);
   C(300, null, S((lt, R, t, dur) => ({ bg: g => DR.blueprint(g), act: (g, t) => { const k = clamp((lt - R(300, 9)) / (dur - R(300, 9) + .01)); g.save(); g.translate(640, 420); sh(g, '#e8e0d0', 5, c => c.rect(-90, -260, 180, 340)); g.fillStyle = `rgb(${200 + 55 * k},${80 - 40 * k},40)`; g.fillRect(-80, 70 - 320 * k, 160, 320 * k); for (let i = 0; i < 6; i++) ln(g, [[-90, -200 + i * 50], [-60, -200 + i * 50]], 4, '#15100c'); g.restore(); label(g, 'ANGER', 640, 560, 40, '#fff');
       ['LABOR LAWS', 'POLL TAX 1377', 'POLL TAX 1379', 'POLL TAX 1380'].forEach((s, i) => { const kk = GX.pop(lt, .2 + i * .5, .3); if (kk <= 0) return; g.save(); g.translate(i % 2 ? 1000 : 280, 220 + Math.floor(i / 2) * 180); g.scale(kk, kk); card(g, 0, 0, 280, 80, '#fff'); label(g, s, 0, 4, 28); g.restore(); }); },
@@ -51,7 +51,7 @@
     ui: c => { DR.write(c, 'SERFDOM SLOWLY DIED OUT', 640, 80, 50, lt, R(311, 8)); } })), 'whip');
   SFX(312, 5, 'buzz', .4); SFX(313, 6, 'boing', .4);
   C(312, null, S((lt, R, t) => { const b = since(313, 0, 312); return { cam: [[640, 400, 1.05], [640, 400, 1.12]], bg: (g, t) => lt < b ? MD.palace(g, t) : MD.abbotHall(g, t), act: (g, t) => { if (lt < b) { parchment(g, 640, 380, 400, 300, 1, { title: 'A law freeing everyone', lines: 6 }); g.strokeStyle = '#c8281e'; g.lineWidth = 16; const k = clamp((lt - .4) / .3); g.beginPath(); g.moveTo(440, 230); g.lineTo(440 + 400 * k, 230 + 300 * k); g.stroke(); }
-      else G.P(g, 'abbot@sit', 640, 560, .72, t, { pose: 'shrug', face: { mouth: 'frown', brows: 'worried' } }); },
+      else G.P(g, 'abbot@sit', 870, 560, .72, t, { pose: 'shrug', face: { mouth: 'frown', brows: 'worried' } }); },
     ui: c => DR.write(c, lt < b ? 'NOT WITH A LAW' : "LORDS REALIZED IT DIDN'T WORK", 640, 100, 52, lt, lt < b ? .05 : b) }; }), 'whip');
 
   // ---------------- L314–321 the verdict ----------------

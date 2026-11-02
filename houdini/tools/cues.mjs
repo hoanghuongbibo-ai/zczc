@@ -8,5 +8,6 @@ const p = await b.newPage(); await p.goto('file:///home/user/zczc/houdini/' + pa
 const cues = await p.evaluate(() => { const c = (Show.cues || []).slice(), AUTO = { whip: ['whip', .5], whipL: ['whip', .5], ink: ['whoosh', .45], flash: ['swish', .3], zoom: ['swish', .35] };
   for (const s of (window.SALT2 ? SALT2.LIST : [])) { const tr = typeof s.tr === 'string' ? s.tr : s.tr && s.tr.type; if (AUTO[tr]) c.push({ t: Math.max(0, s.t - .12), type: AUTO[tr][0], gain: AUTO[tr][1] }); }
   for (const k of (G => (G.EP.COUNTS || []))(window)) c.push({ t: k.t, type: 'cash', gain: .8 });
+  if (Show.autoCues) { const a = Show.autoCues(); const keep = c.filter(x => !String(x.type).startsWith('amb_') || ['amb_tension', 'amb_drums'].includes(x.type)); c.length = 0; c.push(...keep, ...a); }
   return c.sort((a, b) => a.t - b.t); });
 writeFileSync(out, JSON.stringify(cues)); console.log(cues.length, 'cues'); await b.close();

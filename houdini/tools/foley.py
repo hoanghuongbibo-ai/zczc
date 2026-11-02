@@ -306,6 +306,44 @@ def amb_storm(d):
 ONE.update(rooster=rooster, moo=moo, ox=ox, baa=baa, cluck=cluck, grind=grind, bubble=bubble, thwack=thwack, scythe=scythe, snore=snore, thunder=thunder, horn=horn, caw=caw, pour=pour)
 VAR.update({'moo', 'cluck', 'grind', 'bubble', 'snore', 'pour'})
 
+# ---------- dynamics: risers, hits, heartbeat, beds ----------
+def riser(d=2.2):   # filtered noise + rising tone into a hit
+    tt = t_(d); f = 120 * (2 ** (tt / d * 3)); ph = np.cumsum(2 * np.pi * f / SR); y = np.sin(ph) * .4 + bp(noise(d), 800, 6000) * (tt / d) ** 2
+    return reverb(st(norm(y * (tt / d) ** 1.6, .6), 0, .8), .3, 1.2)
+def hit():   # cinematic low hit: sub thump + noise burst + long tail
+    d = 2.5; tt = t_(d); f = 55 * np.exp(-tt * 1.5) + 30; y = np.sin(np.cumsum(2 * np.pi * f / SR)) * np.exp(-tt * 1.8); y += lp(noise(d), 1200) * np.exp(-tt * 9) * .8
+    return reverb(st(norm(y, .9)), .35, 1.4)
+def heartbeat(d=3.0):
+    n = int(d * SR); y = np.zeros(n); beat = .85
+    for i in range(int(d / beat) + 1):
+        for off, a in ((0, 1), (.2, .7)):
+            o = int((i * beat + off) * SR)
+            if o >= n: continue
+            tt = t_(.18); s = np.sin(2 * np.pi * (60 - 20 * tt / .18) * tt) * np.exp(-tt * 22) * a; y[o:o + len(s)] += s[:n - o]
+    return st(norm(lp(y, 300), .7))
+def amb_drums(d):   # slow war drums (taiko-ish), toms answering
+    n = int(d * SR); y = np.zeros(n); beat = 60 / 84
+    for i in range(int(d / beat)):
+        o = int(i * beat * SR); pat = [1, 0, .6, 0, 1, .5, .6, .4][i % 8]
+        if pat: tt = t_(.6); f = 70 + 30 * (i % 3 == 2); s = np.sin(2 * np.pi * f * tt * (1 - .3 * tt)) * np.exp(-tt * 6) * pat + lp(noise(.6), 900) * np.exp(-tt * 30) * .5 * pat; y[o:o + len(s)] += s[:n - o]
+    return reverb(st(norm(y * env(n, 1, .1, 1, d - 2.2, 1.1), .6), 0, .6), .3, 1.3)
+def amb_tension(d):   # low drone: detuned low strings + slow swell
+    tt = t_(d); y = sum(np.sin(2 * np.pi * f * tt + k) for k, f in enumerate([55, 55.6, 82.4, 110.3])) * (1 + .3 * np.sin(2 * np.pi * .08 * tt)); y = lp(y, 600) + bp(noise(d), 200, 900) * .2
+    return st(norm(y * env(len(tt), 1.5, .1, 1, d - 3, 1.5), .5), 0, .8)
+def amb_hall(d):   # stone room tone + distant footsteps + far bell
+    y = lp(noise(d), 400) * .3 + bp(noise(d), 1500, 3000) * .03; n = len(y)
+    for i in range(int(d / 3)): o = int(rng.uniform(0, d - .2) * SR); s = thud(160, .08)[:, 0] * .2; y[o:o + len(s)] += s[:n - o]
+    return reverb(st(norm(y * env(n, 1, .1, 1, d - 2.2, 1.1), .4), 0, 1), .4, 1.6)
+def amb_scribe(d):   # quills scratching + page turns in a quiet room
+    n = int(d * SR); y = lp(noise(d), 300) * .15
+    for i in range(int(d * 2.5)): o = int(rng.uniform(0, d - .3) * SR); dd = rng.uniform(.08, .25); s = bp(noise(dd), 2500, 7000) * np.sin(np.pi * t_(dd) / dd) * .6; y[o:o + len(s)] += s[:n - o]
+    return reverb(st(norm(y * env(n, 1, .1, 1, d - 2.2, 1.1), .35), 0, 1), .25, 1)
+def amb_town(d): return norm(amb_crowd(d) * .6 + amb_farm(d) * .5, .45)
+def amb_modern(d):   # modern bedroom: fridge hum + distant traffic
+    tt = t_(d); y = np.sin(2 * np.pi * 60 * tt) * .05 + lp(noise(d), 250) * .4; return st(norm(y * env(len(tt), 1, .1, 1, d - 2.2, 1.1), .3), 0, .8)
+ONE.update(riser=riser, hit=hit, heartbeat=heartbeat)
+VAR.update({'riser', 'heartbeat'})
+
 def make(name, dur=None):
     if name.startswith('amb_'): return globals()[name](max(2.5, dur or 8))
     f = ONE.get(name)

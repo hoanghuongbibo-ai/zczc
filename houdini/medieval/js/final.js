@@ -33,6 +33,22 @@
   const POOLS = [[0, [['luttrell'], ['peterborough']]], [89, [['peterborough'], ['peterborough_5'], ['hundred_rolls_2'], ['luttrell']]], [300, [['longhouse'], ['quern_2'], ['luttrell'], ['laxton']]],
     [690, [['laxton_2'], ['luttrell'], ['peterborough_6']]], [770, [['tournai'], ['tournai_1'], ['tournai_2']]], [880, [['statute'], ['edward_iii'], ['froissart']]], [1000, [['froissart'], ['froissart_2'], ['statute']]], [1040, [['luttrell'], ['peterborough_3'], ['laxton']]]];
   for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { G.CL.pool((POOLS.filter(p => p[0] <= t).pop() || [0, []])[1]); const nSeg = dur >= 7 ? Math.max(2, Math.round(dur / 3)) : 1, seg = Math.min(nSeg - 1, Math.floor(lt / (dur / nSeg))), PZ = [[1, 0, 0], [1.12, -40, -10], [1.05, 50, 0], [1.16, 20, -16]][seg % 4]; G.DR.punch = seg ? { z: PZ[0], dx: PZ[1], dy: PZ[2] } : null; d(ctx, lt, dur, t); G.DR.punch = null; if (t < END) { photos(ctx, t); pto(ctx, t); badge(ctx, t); const tk = (EP.tickets || []).filter(q => t >= q.from && t < q.to); if (tk.length) { const k0 = G.UI.keepOut; G.UI.keepOut = (k0 ? [k0] : [[-99, -99, -98, -98]]).concat(tk.map((q, i) => [W - 470, 50 + i * 62 - 28, W - 30, 50 + i * 62 + 28])); } if (EP.drawTickets) EP.drawTickets(ctx, t); } else G.UI.keepOut = null; }; }
+  // ---------- v2 sound design: automatic ambience per set + music dynamics + risers / hits / tension beds ----------
+  for (const k of Object.keys(G.MD)) { const f = G.MD[k]; G.MD[k] = function (g, t, o) { if (!G.__set) G.__set = k + (o && o.v ? ':' + o.v : '') + (o && o.night ? ':night' : '') + (o && o.aerial ? ':air' : ''); return f.apply(this, arguments); }; }
+  for (const s of shots) { const d = s.draw; s.draw = (ctx, lt, dur, t) => { G.__set = null; d(ctx, lt, dur, t); s.__set = s.__set || G.__set; }; }
+  const BED = { 'village': ['farm', .55], 'village:day': ['farm', .55], 'village:dawn': ['birds', .6], 'village:dusk': ['night', .5], 'village:empty': ['wind', .6], 'village:rain': ['storm', .65], 'church': ['birds', .5],
+    'house': ['hearth', .55], 'house:night': ['hearth', .4], 'houseExt': ['farm', .55], 'abbey': ['birds', .55], 'abbotHall': ['hall', .6], 'court': ['court', .5], 'demesne': ['farm', .6], 'demesne:plough': ['farm', .6], 'demesne:harvest': ['farm', .55],
+    'strips': ['farm', .5], 'strips:air': ['wind', .45], 'flood': ['storm', .7], 'market': ['town', .55], 'palace': ['hall', .55], 'revolt': ['fire', .7], 'scriptorium': ['scribe', .6], 'table': ['hearth', .35], 'bedroom': ['modern', .5] };
+  const Show_autoCues = () => { const out = []; let run = null; const flush = () => { if (run && run.bed) out.push({ t: Math.max(0, run.a - .3), type: 'amb_' + run.bed[0], gain: run.bed[1], dur: run.b - run.a + .8 }); };
+    for (const s of shots) { if (s.start >= END) break; if (!s.__set) { G.__set = null; G.renderAt((s.start + s.end) / 2); } const bed = BED[s.__set] || null, key = bed ? bed[0] : null;
+      if (run && run.key === key) run.b = s.end; else { flush(); run = { key, bed, a: s.start, b: s.end }; } } flush(); return out; };
+  const CU = G.CUES, tL = (n, k) => C.t(n, k), dyn = (n, gain, fade = 1.5, k = null) => CU.push({ t: tL(n, k), type: 'dyn', gain, dur: fade }), at = (t, type, gain, dur) => CU.push({ t, type, gain, dur });
+  [[9, 2], [14, 0], [84, 3, 1], [92, 0], [107, -5, 2.5], [119, 0], [135, 1], [143, 0], [190, -4, 2], [196, -6, 2.5], [208, 2, 1], [216, 0], [231, -3, 2], [238, 2, 1.5], [251, -5, 2], [257, 4, .6], [261, -6, 2.5], [266, 0, 3],
+    [276, 2, 1], [279, 0], [285, 0], [299, 3, 1], [307, -3, 2], [314, 0], [322, -4, 2], [326, 2, 2], [327, 5, .5], [328, 0, 1.5]].forEach(([n, g, f]) => dyn(n, g, f || 1.5));
+  for (const [n, k] of [[9, 0], [88, 13], [257, 7], [301, 5], [327, 4]]) { const h = tL(n, k); at(h - 2.2, 'riser', .7, 2.2); at(h, 'hit', .8); }
+  at(tL(258, 0), 'hit', .6); at(tL(259, 0), 'heartbeat', .7, Math.min(6, tL(261, 0) - tL(259, 0))); at(tL(190, 0), 'heartbeat', .35, 3);
+  at(tL(251, 0) - .2, 'amb_tension', .9, tL(257, 0) - tL(251, 0) + .5); at(tL(263, 0) - .2, 'amb_tension', .7, tL(266, 0) - tL(263, 0) + .5); at(tL(231, 0), 'amb_tension', .5, tL(238, 0) - tL(231, 0));
+  at(tL(299, 0), 'amb_drums', .9, tL(307, 0) - tL(299, 0) + 1); at(tL(276, 0), 'amb_drums', .45, tL(279, 0) - tL(276, 0)); at(tL(84, 0), 'amb_drums', .35, tL(92, 0) - tL(84, 0));
   G.TOON_FINISH = { grain: .02, vignette: .3 };
   const buf = document.createElement('canvas'), bl = document.createElement('canvas'); buf.width = 1280; buf.height = 720; bl.width = 320; bl.height = 180;
   const bg = buf.getContext('2d'), blg = bl.getContext('2d');
@@ -42,6 +58,6 @@
     ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = .1; ctx.drawImage(bl, 0, 0, 1280, 720);
     ctx.globalCompositeOperation = 'overlay'; ctx.globalAlpha = .14; ctx.drawImage(G.Paint2.canvasTex(), 0, 0, 1280, 720);
     ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1; };
-  G.Show = { duration: DUR, narration: 'assets/audio/narration.mp3', shots, sfx: [], moods: EP.moods.slice().sort((a, b) => a.t - b.t), images, cues: G.CUES,
+  G.Show = { autoCues: Show_autoCues, duration: DUR, narration: 'assets/audio/narration.mp3', shots, sfx: [], moods: EP.moods.slice().sort((a, b) => a.t - b.t), images, cues: G.CUES,
     fonts: ['700 26px Fredoka', '600 26px Fredoka', '46px "Luckiest Guy"', '40px "Permanent Marker"', '30px "Patrick Hand"', '40px "Lilita One"', '40px Anton'] };
 })(window);

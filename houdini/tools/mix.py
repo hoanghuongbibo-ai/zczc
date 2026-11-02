@@ -26,8 +26,15 @@ step = 240; cur = 0.
 for i in range(0, N, step): tgt = act[i]; cur += (tgt - cur) * (1 - (1 - (a_att if tgt > cur else a_rel)) ** step); sm[i:i + step] = cur
 db = lambda x: 10 ** (x / 20)
 mix = voice.copy()
-mix += mus * (db(-14) * (1 - sm * (1 - db(-7))))[:, None] / max(1e-6, np.max(np.abs(mus))) * .9
-cues = json.load(open(cues_p)); cache = {}; rng = np.random.default_rng(3); fx = np.zeros((N, 2)); amb = np.zeros((N, 2))
+cues = json.load(open(cues_p))
+# dynamics: {type:'dyn', t, gain (dB offset of the music bed), dur (fade s)} — intense passages swell, gentle ones drop away
+dyn = np.zeros(N); cur_db = 0.; last = 0
+for c in sorted([c for c in cues if c['type'] == 'dyn'], key=lambda c: c['t']):
+    i0 = int(c['t'] * SR); i0 = min(max(i0, 0), N); dyn[last:i0] = cur_db; fd = int((c.get('dur') or 1.5) * SR); i1 = min(N, i0 + fd)
+    dyn[i0:i1] = np.linspace(cur_db, c['gain'], i1 - i0, endpoint=False) if i1 > i0 else c['gain']; cur_db = c['gain']; last = i1
+dyn[last:] = cur_db
+mix += mus * (db(-14) * db(dyn) * (1 - sm * (1 - db(-7))))[:, None] / max(1e-6, np.max(np.abs(mus))) * .9
+cues = [c for c in cues if c['type'] != 'dyn']; cache = {}; rng = np.random.default_rng(3); fx = np.zeros((N, 2)); amb = np.zeros((N, 2))
 for c in cues:
     t0 = int(c['t'] * SR)
     if t0 >= N or t0 < 0: continue

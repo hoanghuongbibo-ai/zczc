@@ -62,8 +62,9 @@
   // ---------- foreground props (blurred, parallax) ----------
   function fgProps(ctx, f, c, t) { if (!f) return; const r = rng(f.seed || 3), n = f.n || 6, kind = f.kind || 'grass'; fgg.setTransform(1, 0, 0, 1, 0, 0); fgg.clearRect(0, 0, 320, 180); fgg.scale(.25, .25);
     const px = -(c.x - 640) * 1.6 * (f.par ?? 1), col = f.col || (kind === 'spears' ? '#4a3420' : kind === 'leaves' ? '#2e5a2e' : kind === 'shields' ? '#8a2a22' : '#3e6a2e');
-    for (let i = 0; i < n; i++) { const x = ((r() * (W + 600) + px + (f.drift || 0) * t) % (W + 600) + W + 600) % (W + 600) - 300, side = f.side; if (side === 'L' && x > 420) continue; if (side === 'R' && x < 860) continue;
+    for (let i = 0; i < n; i++) { const x = ((r() * (W + 600) + px + (f.drift || 0) * t) % (W + 600) + W + 600) % (W + 600) - 300, side = f.side; if (side === 'L' && x > 420) continue; if (side === 'R' && x < 860) continue; if (side === 'LR' && x > 260 && x < 1020) continue;
       fgg.save(); fgg.translate(x, H + 40); fgg.fillStyle = col; fgg.strokeStyle = col;
+      if (G.DK && G.DK.EXTRA_FG && G.DK.EXTRA_FG(fgg, kind, i, r, t, f)) { fgg.restore(); continue; }
       if (kind === 'grass') { for (let k = 0; k < 9; k++) { fgg.beginPath(); const bx = (k - 4) * 16, h = 160 + r() * 200, sw = Math.sin(t * 1.3 + i + k) * 20; fgg.moveTo(bx - 10, 0); fgg.quadraticCurveTo(bx + sw * .5, -h * .6, bx + sw, -h); fgg.quadraticCurveTo(bx + sw * .5 + 6, -h * .6, bx + 10, 0); fgg.fill(); } }
       else if (kind === 'spears') { fgg.lineWidth = 16; fgg.beginPath(); fgg.moveTo(0, 0); fgg.lineTo(40 + r() * 60, -H - 200); fgg.stroke(); }
       else if (kind === 'leaves') { for (let k = 0; k < 6; k++) { fgg.beginPath(); fgg.ellipse((k - 3) * 60, -60 - r() * 300, 90, 40, r() * PI, 0, TAU); fgg.fill(); } }
@@ -93,10 +94,10 @@
     if (!o.freeCam) { const hx = 640 / c.z, hy = 360 / c.z; if (hy * 2 <= H) c.y = clamp(c.y, hy, H - hy); if (hx * 2 <= W + 440) c.x = clamp(c.x, hx - 220, W + 220 - hx); }
     CAM = c; G.DR.cam = c;
     bg.setTransform(1, 0, 0, 1, 0, 0); bg.fillStyle = '#000'; bg.fillRect(0, 0, W, H); bg.save(); apply(bg, c);
-    G.DR.crowdOn = !!o.crowd; if (o.bg) { o.bg(bg, t, lt); if (G.CL && G.CL.dressPlain !== false) { const src = o.bg.__src || (o.bg.__src = o.bg.toString()); if (src.length < 220 && /fillRect\(-300, -300, 1900, 1400\)/.test(src)) G.CL.dress(bg, t, 11 + (G.SHOTSEED || 0)); } } G.DR.crowdOn = false; if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
+    G.DR.crowdOn = !!o.crowd; G.DR.autoFg = null; if (o.bg) { o.bg(bg, t, lt); if (G.CL && G.CL.dressPlain !== false) { const src = o.bg.__src || (o.bg.__src = o.bg.toString()); if (src.length < 220 && /fillRect\(-300, -300, 1900, 1400\)/.test(src)) G.CL.dress(bg, t, 11 + (G.SHOTSEED || 0)); } } G.DR.crowdOn = false; if (o.crowd) crowd(bg, typeof o.crowd === 'function' ? o.crowd(t, lt) : o.crowd, t); if (o.bgAct) o.bgAct(bg, t, lt); bg.restore();
     ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); blurInto(ctx, buf, o.dof || 0); ctx.restore();
     if (o.act) { ctx.save(); apply(ctx, c); o.act(ctx, t, lt); ctx.restore(); }
-    fgProps(ctx, o.fg, c, t); atmos(ctx, o.atm, t);
+    fgProps(ctx, o.fg === false ? null : (o.fg || G.DR.autoFg), c, t); atmos(ctx, o.atm, t);
     if (o.ui) { ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0); o.ui(ctx, t, lt); ctx.restore(); } }
 
   // ---------- text kit (crisp UI layer) ----------

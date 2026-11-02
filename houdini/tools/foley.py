@@ -253,6 +253,59 @@ def gavel():     # wooden gavel: two hard knocks
     return reverb(st(norm(y, .8)), .3, .7)
 ONE.update(whistle=whistle, glass=glass, camera=camera, gavel=gavel)
 
+# ---------- medieval farm foley ----------
+def _voice(f, d, form, nz=.15, vib=(5, .02)):
+    tt = t_(d); fr = f(tt) * (1 + vib[1] * np.sin(2 * np.pi * vib[0] * tt)); ph = np.cumsum(2 * np.pi * fr / SR)
+    src = sum(np.sin(ph * k) / k ** .7 for k in range(1, 14)) + nz * noise(d); return sum(bp(src, lo, hi) * g for lo, hi, g in form)
+def rooster():   # cock-a-doodle-doo: 4 syllables, rising then long falling
+    out = []; segs = [(.12, 700, 900), (.1, 900, 1000), (.16, 1000, 1150), (.7, 1250, 800)]
+    for d, a, b in segs: y = _voice(lambda tt: a + (b - a) * tt / d, d, ((900, 1500, 1), (2200, 3200, .5)), .3, (30, .04)); out += [y * env(len(y), .02, .05, .8, d - .1, .05), np.zeros(int(.03 * SR))]
+    return reverb(st(norm(np.concatenate(out), .5)), .2, .8)
+def moo(d=1.6):
+    y = _voice(lambda tt: 110 + 40 * np.sin(np.pi * np.clip(tt / d, 0, 1)) , d, ((150, 500, 1), (600, 1100, .6), (1400, 2000, .2)), .05, (4, .015))
+    return reverb(st(norm(y * env(len(y), .2, .1, 1, d - .6, .3), .5)), .2, 1)
+def ox(): return moo(2.2)
+def baa():
+    d = .9; y = _voice(lambda tt: 380 - 40 * tt, d, ((500, 1200, 1), (2000, 3000, .4)), .2, (9, .08)); return reverb(st(norm(y * env(len(y), .03, .1, .9, d - .25, .12), .45)), .15, .7)
+def cluck(d=1.5):
+    n = int(d * SR); y = np.zeros(n)
+    for i in range(int(d * 5)): o = int(rng.uniform(0, d - .12) * SR); dd = rng.uniform(.06, .12); c = _voice(lambda tt: rng.uniform(500, 900) + 600 * tt, dd, ((700, 2200, 1),), .3, (1, 0)) * env(int(dd * SR), .005, .03, .6, dd - .05, .02); y[o:o + len(c)] += c[:n - o] * rng.uniform(.4, 1)
+    return st(norm(y, .4), .2, .5)
+def grind(d=2.0):   # stone quern: rotating rumble + grit
+    tt = t_(d); y = lp(noise(d), 300) * (1 + .6 * np.sin(2 * np.pi * 1.6 * tt)) + bp(noise(d), 1500, 4000) * .25 * (1 + np.sin(2 * np.pi * 1.6 * tt))
+    return st(norm(y * env(len(tt), .1, .1, 1, d - .3, .2), .4), 0, .6)
+def bubble(d=2.0):
+    n = int(d * SR); y = np.zeros(n)
+    for i in range(int(d * 14)): o = int(rng.uniform(0, d - .06) * SR); dd = .05; tt = t_(dd); f = rng.uniform(250, 600) * (1 + 3 * tt / dd); c = np.sin(np.cumsum(2 * np.pi * f / SR)) * np.hanning(len(tt)); y[o:o + len(c)] += c[:n - o] * rng.uniform(.3, 1)
+    return st(norm(y + lp(noise(d), 200) * .2, .35), 0, .5)
+def thwack(): return st(norm(thud(160, .12)[:, 0] + hp(noise(.12), 900) * expd(int(.12 * SR), .015) * 1.4, .7))
+def scythe(): tt = t_(.45); y = bp(noise(.45), 2500, 7000) * np.sin(np.pi * tt / .45) ** 2; return st(norm(y, .45), .3, .6)
+def snore(d=2.4):
+    tt = t_(d); br = np.clip(np.sin(2 * np.pi * tt / d), 0, 1); y = (np.sign(np.sin(2 * np.pi * 28 * tt)) * .6 + lp(noise(d), 600)) * br ** 2; return st(norm(lp(y, 900), .35))
+def thunder(): r = rumble(3.5); c = st(hp(noise(.2), 400) * expd(int(.2 * SR), .05)); r[:len(c)] += c * .8; return norm(r, .8)
+def horn():   # herald trumpet: two notes
+    out = []
+    for f, d in ((392, .3), (523, .7)): tt = t_(d); ph = np.cumsum(2 * np.pi * f * (1 + .006 * np.sin(2 * np.pi * 6 * tt)) / SR); y = sum(np.sin(ph * k) / k ** .5 for k in range(1, 10)); out.append(bp(y, 300, 4000) * env(len(tt), .03, .05, .9, d - .1, .06))
+    return reverb(st(norm(np.concatenate(out), .5)), .3, 1.1)
+def caw():
+    out = []
+    for i in range(3): d = .22; y = _voice(lambda tt: 600 - 200 * tt / d, d, ((800, 2500, 1),), .9, (40, .05)) * env(int(d * SR), .01, .05, .8, .12, .04); out += [y, np.zeros(int(.12 * SR))]
+    return reverb(st(norm(np.concatenate(out), .4), -.3), .25, 1)
+def pour(d=1.4): tt = t_(d); y = bp(noise(d), 600, 3000) * (1 + .4 * np.sin(2 * np.pi * 9 * tt)) + bubble(d)[:, 0] * .5; return st(norm(y * env(len(tt), .08, .1, 1, d - .3, .2), .4))
+def amb_farm(d):
+    b = amb_birds(d); n = len(b)
+    for o, f in ((.3, lambda: moo(1.6)), (.55, lambda: cluck(1.5)), (.8, baa)):
+        if d > 4: s = f(); k = int(o * (d - 2) * SR); m = min(len(s), n - k); b[k:k + m] += s[:m] * .35
+    return norm(b, .45)
+def amb_hearth(d): f = amb_fire(d); bb = bubble(d); return norm(f + bb[:len(f)] * .3, .45)
+def amb_storm(d):
+    r = amb_rain(d); n = len(r)
+    for o in (.25, .7):
+        if d > 4: s = thunder(); k = int(o * (d - 3) * SR); m = min(len(s), n - k); r[k:k + m] += s[:m] * .5
+    return norm(r, .5)
+ONE.update(rooster=rooster, moo=moo, ox=ox, baa=baa, cluck=cluck, grind=grind, bubble=bubble, thwack=thwack, scythe=scythe, snore=snore, thunder=thunder, horn=horn, caw=caw, pour=pour)
+VAR.update({'moo', 'cluck', 'grind', 'bubble', 'snore', 'pour'})
+
 def make(name, dur=None):
     if name.startswith('amb_'): return globals()[name](max(2.5, dur or 8))
     f = ONE.get(name)

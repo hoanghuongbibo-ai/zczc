@@ -110,5 +110,7 @@ The aligner maps the script to the transcript with difflib and interpolates unma
 - Captions/bubbles over faces were the most common contact-sheet fix: put bubbles above heads (y ≈ 80–120) and labels away from figures.
 - Reuse earlier self-contained shots when the story revisits them (water cell, casket descent, minute counter,
   hospital room, cemetery, grave) and override the date tag / caption.
+- Chromium path changes between containers (`chromium-1194` was gone, `/opt/pw-browsers/chromium-1243`): launch with no `executablePath` first, or `ls /opt/pw-browsers`.
+- Medieval series (`houdini/medieval/`, Hugh Miller 1279): cast in `medieval/js/cast-med.js` (hugh, abbot, steward, walter, wife, kidBoy/kidGirl, edward, advisor + outfits tunic/tunicWork/habit/stewardRobe/walterTunic/kirtle/kidTunic/kidDress/royal/advisorGown). Long robes: use `poly`, not `smooth`, for 4-point panels (smooth turns them into blobs below the feet). Plan = 4 parts; motifs = egg counter, Wheel of the Year, abbot's hand, ledger roll.
 - The user asked for "precise, reasonable" motion and called an early generic attempt "amateur": every shot needs a
   motivated action on a word, not just a static picture with a push-in.

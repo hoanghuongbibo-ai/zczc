@@ -1,0 +1,46 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Fredoka; font-weight: 700; src: url(../../assets/fonts/fredoka-latin-700-normal.woff2); } body{margin:0}</style>
+<canvas id="c" width="2400" height="2500"></canvas>
+<script src="../../js/chars.js"></script><script src="../../js/cast3.js"></script><script src="../js/cast-med.js"></script>
+<script>
+const c = document.getElementById('c'), g = c.getContext('2d'), C = Chars;
+const label = (t, x, y, size = 26, col = '#2b2622') => { g.font = `700 ${size}px Fredoka`; g.fillStyle = col; g.textAlign = 'center'; g.fillText(t, x, y); };
+const fig = (x, y, s, pose, mirror) => { g.save(); g.translate(x, y); g.scale(mirror ? -s : s, s); C.figure(g, pose); g.restore(); };
+const head = (x, y, s, key, face) => { g.save(); g.translate(x, y); g.scale(s, s); g.translate(-C.HEAD.neck[0], -C.HEAD.neck[1] - 140); C.HEADS[key](g, face); g.restore(); };
+const ground = (x0, x1, y) => { g.fillStyle = 'rgba(60,40,20,.12)'; g.beginPath(); g.ellipse((x0 + x1) / 2, y, (x1 - x0) / 2, 16, 0, 0, 7); g.fill(); };
+document.fonts.load('700 30px Fredoka').then(() => {
+  g.fillStyle = '#efe6d2'; g.fillRect(0, 0, 2400, 2500);
+  g.font = '700 54px Fredoka'; g.fillStyle = '#2b2622'; g.textAlign = 'left'; g.fillText('HUGH MILLER, ALWALTON 1279 — CHARACTER SHEET (draft)', 60, 84);
+  const S = .42, base = 800;
+  // ---- row 1: Hugh ----
+  label('HUGH — villein of Alwalton (main character)', 640, 150, 32);
+  const H = (x, pose, txt, mir) => { ground(x - 120, x + 120, base); fig(x, base - 10, S, { head: 'hugh', outfit: 'tunic', feet: { L: [-80, -40], R: [80, -40] }, ...pose }, mir); label(txt, x, base + 50); };
+  H(180, { hands: { L: [-120, -460], R: [120, -460] }, face: { mouth: 'flat', brows: 'calm', look: [.3, 0] } }, 'neutral');
+  H(480, { hands: { L: [-120, -460], R: [190, -1060] }, handShape: { R: 'open' }, face: { mouth: 'smile', brows: 'up', look: [.6, -.2] }, headTilt: -.05 }, '"Hi. Time off?"');
+  H(780, { hands: { L: [-130, -480], R: [130, -480] }, face: { mouth: 'flat', brows: 'worried', eyes: .7, look: [-.4, 0] }, headTilt: .08 }, '"…A rooster."');
+  H(1080, { outfit: 'tunicWork', hands: { L: [250, -700], R: [330, -660] }, handShape: { L: 'fist', R: 'fist' }, bendL: 1, bendR: 1, face: { mouth: 'grit', brows: 'strain', look: [.7, .4] }, lean: .18, feet: { L: [-40, -40], R: [160, -40] } }, 'ploughing / work');
+  H(1380, { hands: { L: [-20, -650], R: [50, -620] }, face: { mouth: 'frown', brows: 'worried', look: [0, .5] }, headTilt: .14, lean: .05 }, 'famine (1315)');
+  // head turnaround / expressions
+  [['tired', 'calm', 'flat', .45, [0, .3]], ['wry', 'smug', 'smile', 1, [.5, 0]], ['alarmed', 'up', 'o', 1, [.4, -.3]], ['grief', 'worried', 'frown', .3, [0, .6]]]
+    .forEach(([n, b, m, e, lk], i) => { head(1720 + (i % 2) * 330, 380 + Math.floor(i / 2) * 340, .58, 'hugh', { brows: b, mouth: m, eyes: e, look: lk }); label(n, 1720 + (i % 2) * 330, 450 + Math.floor(i / 2) * 340); });
+  // ---- row 2: the manor ----
+  const r2 = 1560; label('THE MANOR', 140, r2 - 620, 32);
+  ground(130, 430, r2); fig(280, r2 - 10, S, { head: 'abbot', outfit: 'habit', hands: { L: [-60, -720], R: [70, -720] }, handShape: { L: 'steeple', R: 'steeple' }, face: { mouth: 'smile', brows: 'smug', eyes: .8, look: [.4, 0] } }); label('the Abbot of Peterborough', 280, r2 + 50);
+  ground(530, 830, r2); fig(680, r2 - 10, S, { head: 'abbot', outfit: 'habit', hands: { L: [-110, -500], R: [420, -880] }, handShape: { R: 'point' }, bendR: 1, face: { mouth: 'flat', brows: 'calm', eyes: .8, look: [.6, 0] } }); label('abbot: "three days a week"', 680, r2 + 50);
+  ground(930, 1230, r2); fig(1080, r2 - 10, S, { head: 'steward', outfit: 'stewardRobe', hands: { L: [-40, -700], R: [60, -660] }, face: { mouth: 'flat', brows: 'strain', look: [-.2, .5] } }); label('the steward (court roll)', 1080, r2 + 50);
+  ground(1330, 1630, r2); fig(1480, r2 - 10, S, { head: 'walter', outfit: 'walterTunic', hands: { L: [-150, -520], R: [180, -800] }, handShape: { R: 'open' }, face: { mouth: 'smile', brows: 'up', look: [-.6, 0] }, headTilt: -.06 }); label('Walter of Elsworth', 1480, r2 + 50);
+  ground(1730, 2030, r2); fig(1880, r2 - 10, S, { head: 'walter', outfit: 'walterTunic', hands: { L: [-60, -720], R: [60, -720] }, face: { mouth: 'flat', brows: 'worried', eyes: .8, look: [.7, -.2] } }); label('"…emotional support oxen"', 1880, r2 + 50);
+  // ---- row 3: family + crown ----
+  const r3 = 2340; label("HUGH'S HOUSEHOLD (names not recorded)  ·  THE CROWN, 1349", 560, r3 - 640, 32);
+  ground(120, 420, r3); fig(270, r3 - 10, S, { head: 'wife', outfit: 'kirtle', hands: { L: [-30, -620], R: [110, -560] }, face: { mouth: 'flat', brows: 'calm', look: [.5, .2] } }); label("Hugh's wife: brewing, dairy", 270, r3 + 50);
+  ground(470, 690, r3); fig(560, r3 - 6, S * .62, { head: 'kidBoy', outfit: 'kidTunic', hands: { L: [-130, -500], R: [220, -1050] }, handShape: { R: 'open' }, face: { mouth: 'o', brows: 'up', look: [.6, -.4] } }); label('son: scaring birds', 580, r3 + 50);
+  fig(780, r3 - 6, S * .6, { head: 'kidGirl', outfit: 'kidDress', hands: { L: [-90, -560], R: [90, -560] }, face: { mouth: 'smile', brows: 'calm', look: [-.4, 0] } }); label('daughter', 790, r3 + 50);
+  ground(1020, 1340, r3); fig(1180, r3 - 10, S, { head: 'edward', outfit: 'royal', hands: { L: [-120, -560], R: [400, -1040] }, handShape: { R: 'point' }, face: { mouth: 'smile', brows: 'smug', look: [.5, 0] } }); label('King Edward III', 1180, r3 + 50);
+  ground(1420, 1740, r3); fig(1580, r3 - 10, S, { head: 'advisor', outfit: 'advisorGown', hands: { L: [-40, -760], R: [40, -760] }, face: { mouth: 'o', brows: 'worried', look: [-.6, 0] } }, true); label('the advisor', 1580, r3 + 50);
+  // palette swatches
+  const pal = [['russet wool', '#9a5a34'], ['woad blue', '#5a6e86'], ['madder red', '#9a4a3e'], ['undyed linen', '#e9e1cf'], ['monastic black', '#2a2628'], ['weld yellow / gold', '#e3b23c'], ['parchment', '#efe6d2']];
+  label('PALETTE (period dyes)', 2060, r3 - 560, 26);
+  pal.forEach(([n, col], i) => { g.fillStyle = col; g.strokeStyle = '#1d1a17'; g.lineWidth = 4; g.fillRect(1880, r3 - 520 + i * 74, 60, 54); g.strokeRect(1880, r3 - 520 + i * 74, 60, 54); g.font = '700 22px Fredoka'; g.fillStyle = '#2b2622'; g.textAlign = 'left'; g.fillText(n, 1960, r3 - 485 + i * 74); });
+  window.DONE = true;
+});
+</script>

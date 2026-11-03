@@ -1,0 +1,216 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* "THEFT": everyone who ever claimed the Mona Lisa grabs at it at once — Napoleon, a Renaissance
+ * king in a red beret, a bowler-hatted thief, a white-wigged aristocrat and a police officer —
+ * in a red Louvre gallery. Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 71), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const GOLD = '#d9a23a', GOLDL = '#f2c860', GOLDD = '#9a6a1e';
+const FX = 960, FY = 690, FW = 600, FH = 720, FR = -.05;   // frame centre, size, tilt
+
+function gallery() {
+  g.fillStyle = rg(W / 2, H / 2, 200, 1200, [[0, '#b8262a'], [.6, '#8e181c'], [1, '#4a0a0c']]); g.fillRect(0, 0, W, H);
+  // damask pattern on the walls
+  for (let y = 20; y < H; y += 90) for (let x = (y / 90 % 2) * 60; x < W; x += 120) { fill(ell(x, y, 16, 26), 'rgba(255,120,110,.08)'); fill(ell(x, y, 6, 10), 'rgba(90,0,0,.15)'); }
+  // cornices + pilasters at the corners, in perspective
+  ink(c => { c.moveTo(-20, -20); c.lineTo(520, -20); c.lineTo(380, 90); c.lineTo(-20, 160); c.closePath(); }, '#d9c39a', 6);
+  ink(c => { c.moveTo(W + 20, -20); c.lineTo(1400, -20); c.lineTo(1540, 90); c.lineTo(W + 20, 160); c.closePath(); }, '#d9c39a', 6);
+  [[-20, 120, 420, 90], [W + 20, 120, 1500, 90]].forEach(([x0, y0, x1, y1]) => T.line([[x0, y0], [x1, y1]], 6, 'rgba(120,90,50,.6)'));
+  ink(rr(230, 100, 70, 520, 4), '#e6d3ad', 6); ink(rr(1620, 100, 70, 520, 4), '#e6d3ad', 6);
+  for (let k = 0; k < 3; k++) { T.line([[246 + k * 18, 130], [246 + k * 18, 600]], 3, 'rgba(120,90,50,.45)'); T.line([[1636 + k * 18, 130], [1636 + k * 18, 600]], 3, 'rgba(120,90,50,.45)'); }
+  // marble statue on the left
+  const st = '#efe6d6';
+  ink(ell(110, 160, 34, 40), st, 5);
+  ink(c => { c.moveTo(70, 200); c.quadraticCurveTo(110, 190, 150, 200); c.quadraticCurveTo(170, 300, 150, 380); c.quadraticCurveTo(180, 470, 160, 560); c.lineTo(60, 560); c.quadraticCurveTo(40, 460, 70, 380); c.quadraticCurveTo(50, 300, 70, 200); c.closePath(); }, st, 5);
+  T.line([[150, 220], [200, 300], [180, 360]], 26); T.line([[150, 220], [200, 300], [180, 360]], 16, st);
+  ink(rr(40, 560, 160, 50, 4), '#d8ccb4', 5);
+  fill(c => { c.moveTo(130, 220); c.quadraticCurveTo(160, 380, 140, 560); c.lineTo(160, 560); c.quadraticCurveTo(180, 400, 150, 210); c.closePath(); }, 'rgba(120,100,80,.25)');
+  // another gilt painting on the right wall
+  ink(rr(1720, 200, 200, 260, 6), GOLD, 6); ink(rr(1744, 224, 152, 212, 4), '#5a4a30', 4);
+  fill(ell(1820, 300, 26, 32), '#d9b48a'); fill(c => { c.moveTo(1780, 436); c.quadraticCurveTo(1820, 330, 1860, 436); c.closePath(); }, '#2a2018');
+  // dramatic speed lines toward the frame
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2; T.P(c => { c.moveTo(FX + Math.cos(a) * 1300, FY + Math.sin(a) * 1300); c.lineTo(FX + Math.cos(a + .03) * 380, FY + Math.sin(a + .03) * 380); c.lineTo(FX + Math.cos(a + .06) * 1300, FY + Math.sin(a + .06) * 1300); c.closePath(); }); g.fillStyle = 'rgba(255,180,160,.07)'; g.fill(); }
+  g.restore();
+}
+function monaLisa(w, h) {
+  // a flat, cartoon homage to the portrait: hazy blue-green landscape with a winding road,
+  // dark veiled hair, dark dress, the smile and the folded hands
+  g.fillStyle = lg(0, -h / 2, 0, h / 2, [[0, '#b9c6a4'], [.3, '#8fa07c'], [.55, '#6a6a46'], [1, '#3a2c1a']]); g.fillRect(-w / 2, -h / 2, w, h);
+  fill(c => { c.moveTo(-w / 2, -h * .28); c.lineTo(-w * .38, -h * .36); c.lineTo(-w * .26, -h * .3); c.lineTo(-w * .2, -h * .22); c.lineTo(-w / 2, -h * .16); c.closePath(); }, '#8ea8a0');
+  fill(c => { c.moveTo(w / 2, -h * .34); c.lineTo(w * .36, -h * .4); c.lineTo(w * .24, -h * .32); c.lineTo(w * .2, -h * .2); c.lineTo(w / 2, -h * .14); c.closePath(); }, '#8ea8a0');
+  fill(c => { c.moveTo(-w / 2, -h * .06); c.quadraticCurveTo(-w * .34, -h * .2, -w * .18, -h * .12); c.lineTo(-w * .18, 0); c.lineTo(-w / 2, h * .04); c.closePath(); }, '#6e7a52');
+  fill(c => { c.moveTo(w / 2, -h * .1); c.quadraticCurveTo(w * .34, -h * .22, w * .18, -h * .12); c.lineTo(w * .18, 0); c.lineTo(w / 2, h * .02); c.closePath(); }, '#6a7650');
+  T.line([[-w * .46, -h * .04], [-w * .36, -h * .1], [-w * .28, -h * .06], [-w * .2, -h * .1]], 5, '#c2a878');   // winding road
+  T.line([[w * .2, -h * .2], [w * .3, -h * .16], [w * .44, -h * .2]], 5, '#a8bcc0');                         // river
+  // dress + shoulders
+  ink(c => { c.moveTo(-w * .48, h / 2); c.quadraticCurveTo(-w * .44, -h * .02, -w * .16, -h * .04); c.quadraticCurveTo(0, h * .02, w * .16, -h * .04); c.quadraticCurveTo(w * .44, -h * .02, w * .48, h / 2); c.closePath(); }, '#33281a', 5);
+  // neckline: skin, with the gathered embroidery edge
+  ink(c => { c.moveTo(-w * .15, -h * .02); c.quadraticCurveTo(0, h * .12, w * .15, -h * .02); c.quadraticCurveTo(w * .1, -h * .06, 0, -h * .06); c.quadraticCurveTo(-w * .1, -h * .06, -w * .15, -h * .02); c.closePath(); }, '#ddb184', 4);
+  T.P(c => { c.moveTo(-w * .15, -h * .02); c.quadraticCurveTo(0, h * .12, w * .15, -h * .02); }); g.lineWidth = 5; g.strokeStyle = '#8a6a3a'; g.stroke();
+  for (let k = -4; k <= 4; k++) T.line([[k * w * .03, h * .07 - Math.abs(k) * 4], [k * w * .045, h * .3]], 3, 'rgba(150,120,70,.4)');
+  // folded hands, right over left
+  ink(c => { c.moveTo(-w * .32, h * .38); c.quadraticCurveTo(-w * .14, h * .3, w * .04, h * .34); c.lineTo(w * .04, h * .42); c.quadraticCurveTo(-w * .14, h * .44, -w * .32, h * .44); c.closePath(); }, '#d9a87c', 4);
+  ink(c => { c.moveTo(-w * .08, h * .32); c.quadraticCurveTo(w * .1, h * .26, w * .3, h * .3); c.quadraticCurveTo(w * .34, h * .36, w * .28, h * .4); c.quadraticCurveTo(w * .1, h * .4, -w * .06, h * .4); c.closePath(); }, '#e6b98e', 4);
+  [.33, .35, .37].forEach(k => T.line([[w * .2, h * k], [w * .3, h * (k + .01)]], 2.5, 'rgba(120,70,40,.55)'));
+  // long dark hair under a sheer veil
+  ink(c => { c.moveTo(-w * .2, h * .08); c.quadraticCurveTo(-w * .22, -h * .4, 0, -h * .4); c.quadraticCurveTo(w * .22, -h * .4, w * .2, h * .08); c.lineTo(w * .12, h * .02); c.quadraticCurveTo(w * .12, -h * .32, 0, -h * .33); c.quadraticCurveTo(-w * .12, -h * .32, -w * .12, h * .02); c.closePath(); }, '#2a1e14', 5);
+  for (let k = -2; k <= 2; k++) if (k) T.line([[k * w * .07, -h * .32], [k * w * .09, h * .04]], 2.5, 'rgba(120,90,60,.4)');
+  // face: soft oval, gentle eyes, the famous half-smile
+  ink(ell(0, -h * .19, w * .11, h * .13), '#e6b98a', 5);
+  fill(ell(w * .04, -h * .15, w * .07, h * .1), 'rgba(150,100,50,.18)');
+  [[-w * .045, -h * .2], [w * .045, -h * .2]].forEach(([x, y]) => { fill(ell(x, y, 9, 6), '#fbf0de'); fill(ell(x + 2, y, 5, 5), '#3a2a1a'); T.P(c => c.arc(x, y + 2, 10, Math.PI * 1.15, Math.PI * 1.85)); g.lineWidth = 2.5; g.strokeStyle = 'rgba(90,60,36,.8)'; g.stroke(); });
+  T.line([[0, -h * .19], [w * .01, -h * .145], [-w * .008, -h * .14]], 3, 'rgba(120,70,40,.6)');
+  T.line([[-w * .035, -h * .11], [0, -h * .104], [w * .038, -h * .115]], 4, '#6a3a2a');
+  fill(ell(-w * .04, -h * .1, 4, 3), 'rgba(140,80,50,.5)'); fill(ell(w * .042, -h * .112, 4, 3), 'rgba(140,80,50,.5)');
+  // varnish glow + a crack across the paint
+  fill(c => c.rect(-w / 2, -h / 2, w, h), 'rgba(210,170,70,.12)');
+  T.line([[-w * .05, -h * .5], [w * .02, -h * .32], [-w * .02, -h * .26], [w * .06, -h * .06]], 3, 'rgba(255,255,255,.5)');
+}
+function frame() {
+  g.save(); g.translate(FX, FY); g.rotate(FR);
+  // outer ornate gilt frame
+  ink(rr(-FW / 2, -FH / 2, FW, FH, 10), GOLD, 8);
+  g.save(); T.P(rr(-FW / 2, -FH / 2, FW, FH, 10)); g.clip();
+  fill(c => { c.rect(-FW / 2, -FH / 2, FW, 18); c.rect(-FW / 2, -FH / 2, 18, FH); }, GOLDL);
+  fill(c => { c.rect(-FW / 2, FH / 2 - 18, FW, 18); c.rect(FW / 2 - 18, -FH / 2, 18, FH); }, GOLDD);
+  // carved scrolls along the frame
+  for (let i = 0; i < 14; i++) { const t = i / 13; [[-FW / 2 + 36 + t * (FW - 72), -FH / 2 + 34], [-FW / 2 + 36 + t * (FW - 72), FH / 2 - 34]].forEach(([x, y]) => { ink(ell(x, y, 14, 12), GOLDL, 3); T.P(c => c.arc(x, y, 6, 0, Math.PI * 1.5)); g.lineWidth = 3; g.strokeStyle = GOLDD; g.stroke(); }); }
+  for (let i = 0; i < 16; i++) { const t = i / 15; [[-FW / 2 + 34, -FH / 2 + 36 + t * (FH - 72)], [FW / 2 - 34, -FH / 2 + 36 + t * (FH - 72)]].forEach(([x, y]) => { ink(ell(x, y, 12, 14), GOLDL, 3); T.P(c => c.arc(x, y, 6, 0, Math.PI * 1.5)); g.lineWidth = 3; g.strokeStyle = GOLDD; g.stroke(); }); }
+  g.restore();
+  // corner ornaments
+  [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => ink(c => { const x = sx * (FW / 2 - 10), y = sy * (FH / 2 - 10); c.moveTo(x, y); c.quadraticCurveTo(x - sx * 70, y, x - sx * 90, y - sy * 30); c.quadraticCurveTo(x - sx * 40, y - sy * 30, x - sx * 30, y - sy * 90); c.quadraticCurveTo(x, y - sy * 70, x, y); c.closePath(); }, GOLDL, 4));
+  // painting
+  const iw = FW - 120, ih = FH - 120;
+  ink(rr(-iw / 2 - 8, -ih / 2 - 8, iw + 16, ih + 16, 4), GOLDD, 5);
+  g.save(); T.P(c => c.rect(-iw / 2, -ih / 2, iw, ih)); g.clip(); monaLisa(iw, ih); g.restore();
+  T.P(c => c.rect(-iw / 2, -ih / 2, iw, ih)); g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+  g.restore();
+}
+// frame-space point → canvas point (for hands gripping the frame)
+const fp = (x, y) => [FX + x * Math.cos(FR) - y * Math.sin(FR), FY + x * Math.sin(FR) + y * Math.cos(FR)];
+function glove(x, y, r, rot) {
+  g.save(); g.translate(x, y); g.rotate(rot);
+  ink(rr(-r, -r * .8, r * 2, r * 1.6, r * .6), '#fbf7ef', 6);
+  [-.4, 0, .4].forEach(k => T.line([[r * .2, k * r], [r * .9, k * r]], 4));
+  ink(c => { c.moveTo(-r * .6, -r * .7); c.quadraticCurveTo(-r * .2, -r * 1.3, r * .3, -r * .9); c.quadraticCurveTo(0, -r * .6, -r * .3, -r * .5); c.closePath(); }, '#fbf7ef', 5);
+  g.restore();
+}
+function arm(pts, col, w = 60) { T.line(pts, w + 14); T.line(pts, w, col); }
+function shoutFace(hx, hy, r, look = 1, mouth = 'shout') {
+  const k = r / 170;
+  T.line([[hx - 100 * k, hy - 30 * k], [hx - 20 * k, hy + 6 * k]], 13 * k + 3); T.line([[hx + 20 * k, hy + 6 * k], [hx + 100 * k, hy - 30 * k]], 13 * k + 3);
+  T.eye(hx - 55 * k, hy + 30 * k, 32 * k, 28 * k, look * 10 * k, 4 * k, .42); T.eye(hx + 55 * k, hy + 30 * k, 32 * k, 28 * k, look * 10 * k, 4 * k, .42);
+  if (mouth === 'shout') { ink(c => { c.moveTo(hx - 60 * k, hy + 90 * k); c.quadraticCurveTo(hx, hy + 70 * k, hx + 60 * k, hy + 90 * k); c.quadraticCurveTo(hx + 50 * k, hy + 160 * k, hx, hy + 160 * k); c.quadraticCurveTo(hx - 50 * k, hy + 160 * k, hx - 60 * k, hy + 90 * k); c.closePath(); }, '#7a2420', 5); fill(rr(hx - 44 * k, hy + 84 * k, 88 * k, 18 * k, 6), '#fff'); fill(ell(hx, hy + 145 * k, 30 * k, 12 * k), '#e8726a'); }
+  else { ink(rr(hx - 60 * k, hy + 96 * k, 120 * k, 44 * k, 12), '#fff', 5); for (let i = -2; i <= 2; i++) T.line([[hx + i * 22 * k, hy + 96 * k], [hx + i * 22 * k, hy + 140 * k]], 3.5); T.line([[hx - 60 * k, hy + 118 * k], [hx + 60 * k, hy + 118 * k]], 3.5); }
+}
+function bang(x, y, s, r) { g.save(); g.translate(x, y); g.rotate(r); g.scale(s, s); ink(c => { c.moveTo(-14, -60); c.lineTo(14, -60); c.lineTo(8, 20); c.lineTo(-8, 20); c.closePath(); }, '#e2231a', 5); ink(ell(0, 44, 12, 12), '#e2231a', 5); [[-40, -40, -70, -60], [40, -40, 70, -64], [-46, 0, -80, 0]].forEach(([a, b, c2, d]) => T.line([[a, b], [c2, d]], 6, '#e2231a')); g.restore(); }
+
+// ---------------- the claimants ----------------
+function napoleon() {
+  const hx = 330, hy = 420;
+  ink(c => { c.moveTo(60, 760); c.quadraticCurveTo(80, 560, 250, 540); c.quadraticCurveTo(420, 540, 480, 640); c.lineTo(420, 800); c.closePath(); }, '#24345f', 7);
+  ink(c => { c.moveTo(40, 600); c.quadraticCurveTo(-20, 700, 30, 800); c.lineTo(160, 640); c.closePath(); }, '#c7322a', 6);
+  ink(ell(250, 560, 70, 26, -.3), '#e0a43a', 5);
+  arm([[400, 580], [560, 500], fp(-FW / 2 + 40, -FH / 2 + 60)], '#24345f');
+  T.head(hx, hy, 115);
+  [[-120, 30], [-110, 90]].forEach(([dx, dy]) => ink(ell(hx + dx, hy + dy, 26, 30), '#5a5048', 4));
+  shoutFace(hx, hy, 115, 1);
+  // bicorne worn sideways with a tricolour cockade
+  ink(c => { c.moveTo(hx - 230, hy - 40); c.quadraticCurveTo(hx - 100, hy - 230, hx + 30, hy - 200); c.quadraticCurveTo(hx + 170, hy - 200, hx + 230, hy - 40); c.quadraticCurveTo(hx, hy - 110, hx - 230, hy - 40); c.closePath(); }, '#1c1a20', 7);
+  T.P(c => { c.moveTo(hx - 222, hy - 46); c.quadraticCurveTo(hx, hy - 116, hx + 222, hy - 46); }); g.lineWidth = 12; g.strokeStyle = '#e0a43a'; g.stroke();
+  [[18, '#c8202e'], [12, '#fff'], [6, '#1f3a8a']].forEach(([r, col]) => fill(ell(hx + 70, hy - 130, r, r * 1.3), col));
+}
+function bearded() {
+  const hx = 470, hy = 600;
+  arm([[400, 760], [560, 700], fp(-FW / 2 + 20, -40)], '#3a3030');
+  T.head(hx, hy, 80);
+  ink(c => { c.moveTo(hx - 70, hy + 40); c.quadraticCurveTo(hx, hy + 150, hx + 70, hy + 40); c.quadraticCurveTo(hx, hy + 90, hx - 70, hy + 40); c.closePath(); }, '#3a2a20', 4);
+  shoutFace(hx, hy, 80, 1, 'grit');
+  ink(c => { c.moveTo(hx - 90, hy - 50); c.quadraticCurveTo(hx, hy - 150, hx + 90, hy - 50); c.closePath(); }, '#2a2226', 5);
+}
+function renaissanceKing() {
+  const hx = 330, hy = 820;
+  ink(c => { c.moveTo(0, H + 20); c.quadraticCurveTo(40, 940, 200, 920); c.quadraticCurveTo(420, 900, 560, 1000); c.lineTo(600, H + 20); c.closePath(); }, '#b8261f', 7);
+  ink(c => { c.moveTo(60, 960); c.quadraticCurveTo(200, 900, 420, 930); c.quadraticCurveTo(420, 990, 380, 1000); c.quadraticCurveTo(200, 960, 70, 1010); c.closePath(); }, '#7a5a3a', 5);
+  for (let k = 0; k < 18; k++) T.line([[80 + k * 18, 950 + Math.sin(k) * 10], [90 + k * 18, 980]], 3, 'rgba(240,220,180,.5)');
+  arm([[460, 940], [640, 900], fp(-FW / 2 + 70, FH / 2 - 50)], '#8a5a34');
+  T.head(hx, hy, 120);
+  // brown beard + moustache
+  ink(c => { c.moveTo(hx - 110, hy + 50); c.quadraticCurveTo(hx - 80, hy + 200, hx, hy + 210); c.quadraticCurveTo(hx + 80, hy + 200, hx + 110, hy + 50); c.quadraticCurveTo(hx, hy + 150, hx - 110, hy + 50); c.closePath(); }, '#7a4a26', 5);
+  shoutFace(hx, hy, 120, 1, 'grit');
+  // big red beret
+  ink(c => { c.moveTo(hx - 170, hy - 40); c.quadraticCurveTo(hx - 200, hy - 190, hx - 10, hy - 200); c.quadraticCurveTo(hx + 190, hy - 180, hx + 150, hy - 50); c.quadraticCurveTo(hx, hy - 90, hx - 170, hy - 40); c.closePath(); }, '#b8261f', 7);
+  fill(ell(hx - 60, hy - 150, 70, 24, -.2), 'rgba(255,255,255,.15)');
+  glove(...fp(-FW / 2 + 70, FH / 2 - 50), 42, .2);
+}
+function thief() {
+  const hx = 1480, hy = 560;
+  ink(c => { c.moveTo(1300, 1000); c.quadraticCurveTo(1300, 720, 1460, 700); c.quadraticCurveTo(1620, 700, 1660, 900); c.lineTo(1640, 1000); c.closePath(); }, '#24222a', 7);
+  ink(c => { c.moveTo(1440, 704); c.lineTo(1500, 704); c.lineTo(1490, 860); c.lineTo(1450, 860); c.closePath(); }, '#fbf7ef', 4);
+  ink(c => { c.moveTo(1462, 712); c.lineTo(1478, 712); c.lineTo(1484, 820); c.lineTo(1470, 840); c.lineTo(1456, 820); c.closePath(); }, '#3a3a44', 3);
+  arm([[1370, 740], [1310, 620], fp(FW / 2 - 30, -FH / 2 + 160)], '#24222a');
+  arm([[1400, 860], [1330, 820], fp(FW / 2 - 20, 80)], '#2e2c34');
+  T.head(hx, hy, 120);
+  shoutFace(hx, hy, 120, -1, 'grit');
+  // thick moustache
+  ink(c => { c.moveTo(hx, hy + 80); c.quadraticCurveTo(hx - 50, hy + 60, hx - 90, hy + 92); c.quadraticCurveTo(hx - 50, hy + 106, hx, hy + 92); c.quadraticCurveTo(hx + 50, hy + 106, hx + 90, hy + 92); c.quadraticCurveTo(hx + 50, hy + 60, hx, hy + 80); c.closePath(); }, '#2a1a12', 4);
+  T.drop(hx + 120, hy + 10, .7); T.drop(hx - 150, hy - 20, .8);
+  // bowler hat
+  ink(c => { c.moveTo(hx - 110, hy - 70); c.quadraticCurveTo(hx - 110, hy - 220, hx, hy - 220); c.quadraticCurveTo(hx + 110, hy - 220, hx + 110, hy - 70); c.closePath(); }, '#1c1a20', 7);
+  ink(c => { c.moveTo(hx - 170, hy - 60); c.quadraticCurveTo(hx, hy - 110, hx + 170, hy - 60); c.quadraticCurveTo(hx + 190, hy - 40, hx + 150, hy - 36); c.quadraticCurveTo(hx, hy - 80, hx - 150, hy - 36); c.quadraticCurveTo(hx - 190, hy - 40, hx - 170, hy - 60); c.closePath(); }, '#141218', 6);
+  fill(ell(hx - 40, hy - 170, 40, 16, -.3), 'rgba(255,255,255,.15)');
+  glove(...fp(FW / 2 - 30, -FH / 2 + 160), 40, Math.PI - .2);
+  glove(...fp(FW / 2 - 20, 80), 40, Math.PI);
+}
+function officer() {
+  const hx = 1770, hy = 400;
+  ink(c => { c.moveTo(1640, 700); c.quadraticCurveTo(1660, 540, 1770, 530); c.quadraticCurveTo(1900, 530, 1940, 640); c.lineTo(1940, 700); c.closePath(); }, '#1f2a4a', 7);
+  for (let k = 0; k < 3; k++) ink(ell(1770, 580 + k * 40, 8, 8), '#f2c344', 3);
+  // raised fist
+  arm([[1680, 600], [1620, 470], [1640, 330]], '#1f2a4a', 50);
+  ink(rr(1600, 260, 84, 80, 26), '#fbf7ef', 6); [280, 300, 320].forEach(y => T.line([[1610, y], [1670, y]], 3.5));
+  T.head(hx, hy, 95);
+  shoutFace(hx, hy, 95, -1);
+  // peaked cap with red band and badge
+  ink(c => { c.moveTo(hx - 110, hy - 70); c.quadraticCurveTo(hx - 120, hy - 170, hx, hy - 180); c.quadraticCurveTo(hx + 120, hy - 170, hx + 110, hy - 70); c.closePath(); }, '#1a2240', 6);
+  ink(rr(hx - 110, hy - 96, 220, 30, 8), '#c8202e', 4);
+  ink(c => { c.moveTo(hx - 120, hy - 66); c.quadraticCurveTo(hx - 40, hy - 30, hx + 30, hy - 40); c.lineTo(hx + 40, hy - 66); c.closePath(); }, '#0e1220', 4);
+  ink(ell(hx, hy - 124, 14, 16), '#f2c344', 3);
+}
+function aristocrat() {
+  const hx = 1730, hy = 800;
+  ink(c => { c.moveTo(1320, H + 20); c.quadraticCurveTo(1380, 920, 1600, 900); c.quadraticCurveTo(1860, 890, 1940, 960); c.lineTo(1940, H + 20); c.closePath(); }, '#24408a', 7);
+  T.line([[1420, 960], [1940, 940]], 16, '#e0a43a');
+  arm([[1560, 940], [1380, 980], fp(FW / 2 - 60, FH / 2 - 40)], '#24408a', 66);
+  ink(c => { const [x, y] = fp(FW / 2 - 20, FH / 2 - 40); c.moveTo(x + 40, y - 40); c.quadraticCurveTo(x + 80, y, x + 50, y + 50); c.quadraticCurveTo(x + 20, y + 10, x + 40, y - 40); c.closePath(); }, '#fbf7ef', 4);   // lace cuff
+  // powdered wig: big white curls
+  [[-150, -60], [-170, 20], [-160, 100], [-120, 170], [150, -60], [170, 20], [160, 100], [120, 170], [-80, -140], [0, -170], [80, -140]].forEach(([dx, dy]) => ink(ell(hx + dx, hy + dy, 56, 50), '#f2eee8', 5));
+  T.head(hx, hy, 130);
+  shoutFace(hx, hy, 130, -1);
+  [[-150, 20], [150, 20], [0, -170]].forEach(([dx, dy]) => T.line([[hx + dx - 24, hy + dy + 8], [hx + dx, hy + dy - 16], [hx + dx + 22, hy + dy + 10]], 4, 'rgba(150,140,130,.7)'));
+  glove(...fp(FW / 2 - 60, FH / 2 - 40), 44, Math.PI + .2);
+}
+function title() {
+  g.save(); g.translate(960, 310); g.rotate(-.02);
+  ink(c => { c.moveTo(-430, -10); c.quadraticCurveTo(0, -30, 440, -18); c.lineTo(430, 14); c.quadraticCurveTo(0, 6, -410, 22); c.closePath(); }, '#e2231a', 5);
+  for (let k = 0; k < 8; k++) T.line([[-400 + k * 104, -6 + (k % 3) * 6], [-330 + k * 104, -8 + (k % 2) * 8]], 3, 'rgba(255,140,120,.6)');
+  g.restore();
+  T.title('THEFT', 960, 260, 270, '#ffffff', -.02, 'center');
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  gallery();
+  officer();
+  bearded(); napoleon();
+  frame();
+  glove(...fp(-FW / 2 + 40, -FH / 2 + 60), 40, .4); glove(...fp(-FW / 2 + 20, -40), 36, 0);
+  thief(); renaissanceKing(); aristocrat();
+  bang(560, 520, .8, -.3); bang(1300, 420, .9, .3);
+  T.grade('rgba(40,0,0,.6)');
+  title();
+  window.DONE = true;
+});
+</script>

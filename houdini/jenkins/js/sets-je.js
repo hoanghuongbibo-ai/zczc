@@ -33,6 +33,7 @@
     red: (ctx, w, h) => { ctx.fillStyle = '#c8302a'; ctx.fillRect(0, 0, w, h); ctx.save(); ctx.scale(.42, .5); FL.uk1707(ctx, w, h); ctx.restore(); },   // red ensign (merchant ships)
     burgundy: (ctx, w, h) => { ctx.fillStyle = '#f4f0e8'; ctx.fillRect(0, 0, w, h); ctx.strokeStyle = '#c8302a'; ctx.lineWidth = h * .12; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(w * .12, h * .12); ctx.lineTo(w * .88, h * .88); ctx.moveTo(w * .88, h * .12); ctx.lineTo(w * .12, h * .88); ctx.stroke(); ctx.fillStyle = '#c8302a'; for (let i = 1; i < 4; i++) for (const [a, b] of [[i / 4, i / 4], [1 - i / 4, i / 4]]) { ctx.beginPath(); ctx.arc(w * a, h * b, h * .06, 0, 7); ctx.fill(); } },   // Spain: the Cross of Burgundy
     spain: (ctx, w, h) => { ctx.fillStyle = '#f4f0e8'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#c8a040'; ctx.beginPath(); ctx.ellipse(w * .5, h * .5, h * .22, h * .28, 0, 0, 7); ctx.fill(); ctx.fillStyle = '#c8302a'; ctx.fillRect(w * .44, h * .32, w * .12, h * .36); },   // Bourbon naval ensign: white with the royal arms
+    white: (ctx, w, h) => { ctx.fillStyle = '#fbfaf6'; ctx.fillRect(0, 0, w, h); },
     habsburg: (ctx, w, h) => { ctx.fillStyle = '#e8c040'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#1a1a1a'; ctx.beginPath(); ctx.ellipse(w / 2, h / 2, h * .25, h * .3, 0, 0, 7); ctx.fill(); },
   };
   JS.FL = FL;

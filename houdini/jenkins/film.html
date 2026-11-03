@@ -20,7 +20,7 @@
 <script>window.RENDER_SCALE = 1.5; window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true;
 window.FILM_CFG = { narration: 'jenkins/assets/audio/narration-full.mp3', openUntil: 0, meterLabel: 'WAR FEVER', meterInvert: true, meterStart: 0, meterIcon: (c, lv, t) => { c.fillStyle = lv > .7 ? '#ff5a3a' : '#ffd040'; c.beginPath(); c.arc(0, 0, 14, 0, 7); c.fill(); c.strokeStyle = '#fff'; c.lineWidth = 3; c.stroke(); c.fillStyle = '#2a1e18'; c.font = '20px "Luckiest Guy"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('!', 0, 2); },
   tracker: ['HOW DOES ONE ', 'EAR', ' START A WAR?'], badgeIcon: (c, t) => { G_JAR(c, t); } };
-window.G_JAR = (c, t) => { if (window.JE) { c.save(); c.scale(.32, .32); c.translate(0, 40); JE.jar(c, 0, 0, 1, t, {}); c.restore(); } };</script>
+window.G_JAR = (c, t) => { if (window.JE) { c.save(); c.fillStyle = '#6a4a34'; c.fillRect(0, 0, 76, 50); c.translate(38, 47); c.scale(.4, .4); JE.jar(c, 0, 0, 1, t, {}); c.restore(); } };</script>
 <script src="../js/toon.js"></script>
 <script src="../js/sound.js"></script>
 <script src="../canada/js/foley.js"></script>

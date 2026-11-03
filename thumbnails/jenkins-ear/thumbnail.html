@@ -1,0 +1,293 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* War of Jenkins' Ear (1739): a furious British officer holds up the pickled ear in a jar and
+ * points his sword at the fight — British ships firing on Spanish ships beneath a burning
+ * Spanish fortress. Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 39), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+// true: flags as flown in 1739 (1707 Union Flag without St Patrick's saltire; Spain's Cross of
+// Burgundy). false: the modern flags from the reference image.
+const PERIOD_FLAGS = true;
+const SEA = 600;
+
+// ---------------- flags ----------------
+function britFlag(w, h) {
+  fill(c => c.rect(0, 0, w, h), '#1f3f8f');
+  g.save(); T.P(c => c.rect(0, 0, w, h)); g.clip();
+  T.line([[0, 0], [w, h]], h * .3, '#fff'); T.line([[w, 0], [0, h]], h * .3, '#fff');
+  if (!PERIOD_FLAGS) { T.line([[0, 0], [w, h]], h * .1, '#c8202e'); T.line([[w, 0], [0, h]], h * .1, '#c8202e'); }
+  fill(c => { c.rect(w * .4, 0, w * .2, h); c.rect(0, h * .33, w, h * .34); }, '#fff');
+  fill(c => { c.rect(w * .44, 0, w * .12, h); c.rect(0, h * .4, w, h * .2); }, '#c8202e');
+  g.restore();
+}
+function spainFlag(w, h) {
+  if (!PERIOD_FLAGS) { fill(c => c.rect(0, 0, w, h), '#c8202e'); fill(c => c.rect(0, h * .25, w, h * .5), '#f6c21a'); fill(ell(w * .3, h * .5, h * .12, h * .16), '#a3262a'); return; }
+  // Cross of Burgundy: a ragged red saltire on white
+  fill(c => c.rect(0, 0, w, h), '#fbf7ef');
+  g.save(); T.P(c => c.rect(0, 0, w, h)); g.clip();
+  [[[0, 0], [w, h]], [[w, 0], [0, h]]].forEach(([a, b]) => {
+    T.line([a, b], h * .17, '#c8202e');
+    for (let k = .15; k < .9; k += .17) { const x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k; fill(ell(x, y, h * .13, h * .13), '#c8202e'); }
+  });
+  g.restore();
+}
+function flag(x, y, w, h, kind, wave = 1) {
+  g.save(); g.translate(x, y);
+  // waving cloth: draw into strips with a sine offset
+  const oc = document.createElement('canvas'); oc.width = Math.ceil(w) + 4; oc.height = Math.ceil(h) + 4;
+  const og = oc.getContext('2d'), keep = T.g;
+  // reuse the flag painters on the offscreen context
+  const real = g; window._g = og;
+  drawFlagOn(og, w, h, kind);
+  for (let i = 0; i < w; i += 3) real.drawImage(oc, i, 0, 3, h, i, Math.sin(i / w * Math.PI * 1.6) * h * .1 * wave, 3, h);
+  T.P(c => { c.moveTo(0, 0); for (let i = 0; i <= w; i += 6) c.lineTo(i, Math.sin(i / w * Math.PI * 1.6) * h * .1 * wave); for (let i = w; i >= 0; i -= 6) c.lineTo(i, h + Math.sin(i / w * Math.PI * 1.6) * h * .1 * wave); c.closePath(); });
+  real.lineWidth = 4; real.strokeStyle = INK; real.stroke();
+  g.restore();
+}
+function drawFlagOn(ctx, w, h, kind) {
+  // temporarily point the shared helpers at the offscreen canvas
+  const saved = { fill: T.fill, line: T.line, P: T.P };
+  const Tmp = Toon(ctx.canvas);
+  const swap = f => { const old = [window.fill, window.line]; };
+  const draw = (fn) => { const g0 = g; };
+  // simplest: re-run the painter with a tiny local kit
+  const L = Tmp;
+  const f = (path, col) => { L.P(path); ctx.fillStyle = col; ctx.fill(); };
+  if (kind === 'brit') {
+    f(c => c.rect(0, 0, w, h), '#1f3f8f');
+    L.line([[0, 0], [w, h]], h * .3, '#fff'); L.line([[w, 0], [0, h]], h * .3, '#fff');
+    if (!PERIOD_FLAGS) { L.line([[0, 0], [w, h]], h * .1, '#c8202e'); L.line([[w, 0], [0, h]], h * .1, '#c8202e'); }
+    f(c => { c.rect(w * .4, 0, w * .2, h); c.rect(0, h * .33, w, h * .34); }, '#fff');
+    f(c => { c.rect(w * .44, 0, w * .12, h); c.rect(0, h * .4, w, h * .2); }, '#c8202e');
+  } else if (!PERIOD_FLAGS) {
+    f(c => c.rect(0, 0, w, h), '#c8202e'); f(c => c.rect(0, h * .25, w, h * .5), '#f6c21a'); f(L.ell(w * .3, h * .5, h * .12, h * .16), '#a3262a');
+  } else {
+    f(c => c.rect(0, 0, w, h), '#fbf7ef');
+    [[[0, 0], [w, h]], [[w, 0], [0, h]]].forEach(([a, b]) => {
+      L.line([a, b], h * .17, '#c8202e');
+      for (let k = .12; k < .95; k += .16) { const x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k; f(L.ell(x, y, h * .11, h * .11), '#c8202e'); }
+    });
+  }
+}
+
+// ---------------- sky, smoke, fortress ----------------
+function sky() {
+  g.fillStyle = lg(0, 0, 0, SEA, [[0, '#1d3f86'], [.6, '#3c68b4'], [1, '#86a9d6']]); g.fillRect(0, 0, W, SEA + 20);
+  const cloud = (x, y, s, col) => { g.fillStyle = col; [[0, 0, 90, 34], [-70, 12, 60, 26], [70, 10, 70, 28], [10, -26, 56, 32], [-30, -14, 40, 26]].forEach(([dx, dy, rx, ry]) => { T.P(ell(x + dx * s, y + dy * s, rx * s, ry * s)); g.fill(); }); };
+  [[180, 140, 1.2], [520, 70, .9], [980, 140, 1.3], [1230, 260, .9], [80, 330, .8], [760, 300, .7]].forEach(([x, y, s]) => { cloud(x + 6, y + 8, s, 'rgba(30,50,110,.35)'); cloud(x, y, s, '#eef3fb'); g.fillStyle = 'rgba(160,185,220,.6)'; T.P(ell(x + 10 * s, y + 18 * s, 90 * s, 12 * s)); g.fill(); });
+  // brush-stroke texture
+  for (let i = 0; i < 260; i++) { const x = T.rnd() * W, y = T.rnd() * SEA; T.line([[x, y], [x + 20 + T.rnd() * 30, y - 6]], 3, `rgba(255,255,255,${.04 + T.rnd() * .06})`); }
+}
+function smoke() {
+  // the fortress burning: a tower of dark smoke rolling up the top-right
+  const puff = (x, y, r, col) => { g.fillStyle = col; T.P(ell(x, y, r, r * .85)); g.fill(); };
+  const blobs = [];
+  for (let i = 0; i < 46; i++) { const t = T.rnd(); blobs.push([1380 + t * 560 + (T.rnd() - .5) * 120, 520 - t * 80 - T.rnd() * 540 * (1 - t * .3), 70 + T.rnd() * 110]); }
+  blobs.sort((a, b) => a[1] - b[1]);
+  blobs.forEach(([x, y, r]) => { puff(x + 10, y + 12, r, '#2a2430'); puff(x, y, r, y < 250 ? '#4a4450' : '#5b4c55'); puff(x - r * .3, y - r * .3, r * .45, 'rgba(140,120,130,.45)'); });
+  // fire glow on the underside of the smoke
+  g.fillStyle = rg(1640, 520, 0, 420, [[0, 'rgba(255,150,60,.75)'], [.5, 'rgba(240,90,40,.3)'], [1, 'rgba(240,90,40,0)']]); g.fillRect(1200, 100, 720, 520);
+}
+function fortress() {
+  // headland
+  ink(c => { c.moveTo(1240, SEA + 10); c.quadraticCurveTo(1320, 520, 1480, 520); c.lineTo(1920, 500); c.lineTo(1920, SEA + 20); c.closePath(); }, '#4f8a3c', 6);
+  fill(c => { c.moveTo(1250, SEA + 10); c.quadraticCurveTo(1330, 540, 1480, 540); c.lineTo(1920, 530); c.lineTo(1920, SEA + 20); c.closePath(); }, '#6f7a52');
+  // curtain wall + towers
+  const stone = '#a9a39a', dark = '#7d766c';
+  const tower = (x, top, w) => {
+    ink(rr(x, top, w, 520 - top, 2), stone, 5);
+    for (let k = 0; k < 4; k++) ink(rr(x - 6 + k * (w + 12) / 4, top - 22, (w + 12) / 4 - 8, 24, 2), stone, 4);
+    ink(rr(x + w / 2 - 8, top + 30, 16, 26, 7), '#2a2228', 3);
+    fill(c => c.rect(x + w * .65, top + 4, w * .33, 520 - top - 8), 'rgba(60,50,45,.3)');
+  };
+  ink(rr(1420, 430, 470, 100, 2), stone, 5);
+  for (let k = 0; k < 15; k++) ink(rr(1418 + k * 32, 410, 22, 22, 2), stone, 4);
+  for (let y = 450; y < 520; y += 24) T.line([[1424, y], [1886, y]], 2.5, 'rgba(70,60,55,.45)');
+  tower(1380, 360, 90); tower(1560, 320, 110); tower(1760, 340, 100);
+  // flames licking out of the walls
+  const flame = (x, y, s) => {
+    ink(c => { c.moveTo(x - 40 * s, y); c.quadraticCurveTo(x - 60 * s, y - 70 * s, x - 10 * s, y - 120 * s); c.quadraticCurveTo(x - 6 * s, y - 70 * s, x + 10 * s, y - 60 * s); c.quadraticCurveTo(x + 14 * s, y - 120 * s, x + 40 * s, y - 160 * s); c.quadraticCurveTo(x + 70 * s, y - 70 * s, x + 44 * s, y); c.closePath(); }, '#f2662a', 4);
+    fill(c => { c.moveTo(x - 20 * s, y); c.quadraticCurveTo(x - 30 * s, y - 50 * s, x, y - 80 * s); c.quadraticCurveTo(x + 6 * s, y - 40 * s, x + 30 * s, y - 90 * s); c.quadraticCurveTo(x + 44 * s, y - 40 * s, x + 26 * s, y); c.closePath(); }, '#ffcf3a');
+  };
+  [[1470, 440, 1.1], [1640, 330, 1.2], [1720, 440, 1], [1850, 360, 1.1], [1560, 440, .8], [1400, 380, .8]].forEach(([x, y, s]) => flame(x, y, s));
+  // Spanish flags on the towers
+  [[1615, 320, 1.1], [1810, 340, .9]].forEach(([x, top, s]) => { T.line([[x, top - 20], [x, top - 150 * s]], 6); flag(x, top - 150 * s, 110 * s, 72 * s, 'spain'); });
+}
+
+// ---------------- sea + ships ----------------
+function sea() {
+  g.fillStyle = lg(0, SEA, 0, H, [[0, '#2f5fa8'], [.5, '#1f4790'], [1, '#132e66']]); g.fillRect(0, SEA, W, H - SEA);
+  for (let i = 0; i < 260; i++) { const x = T.rnd() * W, y = SEA + 10 + T.rnd() * (H - SEA), l = 20 + (y - SEA) * .15; T.line([[x, y], [x + l, y + (T.rnd() - .5) * 6]], 3 + (y - SEA) * .008, T.rnd() > .5 ? 'rgba(255,255,255,.55)' : 'rgba(120,170,230,.55)'); }
+}
+function swell(y, amp, step, col, phase = 0) {
+  // a band of curling crests rolling across the frame, filled down to the bottom edge
+  const crest = c => {
+    c.moveTo(-40, H + 20); c.lineTo(-40, y);
+    for (let x = -40 + phase; x < W + step; x += step) {
+      const h = amp * (.75 + T.rnd() * .5);
+      c.quadraticCurveTo(x + step * .35, y - h, x + step * .62, y - h * .55);   // rising face
+      c.quadraticCurveTo(x + step * .74, y - h * .25, x + step * .62, y - h * .1);  // the curl tucks back
+      c.quadraticCurveTo(x + step * .8, y + h * .1, x + step, y);
+    }
+    c.lineTo(W + 40, H + 20); c.closePath();
+  };
+  ink(crest, col, 6);
+  // foam along the crests
+  g.save(); T.P(crest); g.clip();
+  for (let x = -40 + phase; x < W + step; x += step) {
+    fill(c => { c.moveTo(x + step * .25, y - amp * .3); c.quadraticCurveTo(x + step * .42, y - amp * 1.0, x + step * .62, y - amp * .62); c.quadraticCurveTo(x + step * .5, y - amp * .45, x + step * .3, y - amp * .12); c.closePath(); }, '#eef4fb');
+    for (let k = 0; k < 4; k++) fill(ell(x + step * (.3 + k * .09), y - amp * (.2 + k * .1) + 20, 7, 5), 'rgba(240,246,252,.9)');
+    T.line([[x + step * .1, y + 30], [x + step * .45, y + 22]], 4, 'rgba(255,255,255,.35)');
+  }
+  g.restore();
+}
+function ship(x, y, s, kind, dir, fire) {
+  g.save(); g.translate(x, y); g.scale(s * dir, s);
+  const sail = '#efe2c0', sailShade = 'rgba(150,120,70,.35)';
+  // masts
+  const masts = [[-110, 330], [10, 400], [130, 300]];
+  masts.forEach(([mx, mh]) => { T.line([[mx, -40], [mx, -mh - 30]], 9); T.line([[mx, -40], [mx, -mh - 30]], 5, '#6b4a2a'); });
+  T.line([[210, -40], [330, -110]], 8); T.line([[210, -40], [330, -110]], 4, '#6b4a2a');   // bowsprit
+  // rigging
+  masts.forEach(([mx, mh]) => { T.line([[mx, -mh - 20], [-230, -50]], 1.5, 'rgba(30,20,10,.5)'); T.line([[mx, -mh - 20], [230, -50]], 1.5, 'rgba(30,20,10,.5)'); });
+  // square sails, billowing toward the bow
+  masts.forEach(([mx, mh]) => {
+    for (let r = 0; r < 3; r++) {
+      const top = -mh * .82 + r * mh * .24, bot = top + mh * .21, sw = mh * .36 * [.7, .88, 1][r];
+      ink(c => { c.moveTo(mx - sw / 2, top); c.lineTo(mx + sw / 2, top); c.quadraticCurveTo(mx + sw / 2 + 22, (top + bot) / 2, mx + sw / 2 + 4, bot); c.quadraticCurveTo(mx, bot + 18, mx - sw / 2 + 4, bot); c.quadraticCurveTo(mx - sw / 2 + 16, (top + bot) / 2, mx - sw / 2, top); c.closePath(); }, sail, 4);
+      fill(c => { c.moveTo(mx + sw * .1, top + 4); c.lineTo(mx + sw / 2 - 2, top + 4); c.quadraticCurveTo(mx + sw / 2 + 16, (top + bot) / 2, mx + sw / 2, bot - 4); c.quadraticCurveTo(mx + sw * .2, bot + 8, mx + sw * .1, bot); c.closePath(); }, sailShade);
+      T.line([[mx - sw / 2 - 6, top], [mx + sw / 2 + 6, top]], 6);
+    }
+  });
+  // jib
+  ink(c => { c.moveTo(150, -280); c.lineTo(320, -110); c.quadraticCurveTo(230, -100, 160, -80); c.closePath(); }, sail, 4);
+  // hull: high stern on the left, gold wale, gunports
+  const hull = c => { c.moveTo(-250, -110); c.lineTo(-180, -110); c.lineTo(-170, -60); c.lineTo(200, -60); c.lineTo(250, -80); c.quadraticCurveTo(230, 20, 140, 40); c.lineTo(-170, 40); c.quadraticCurveTo(-240, 10, -250, -110); c.closePath(); };
+  ink(hull, '#6a432a', 6);
+  g.save(); T.P(hull); g.clip();
+  fill(c => c.rect(-260, -30, 520, 16), '#e0a43a'); fill(c => c.rect(-260, 0, 520, 50), 'rgba(30,15,5,.35)');
+  for (let k = 0; k < 9; k++) ink(rr(-150 + k * 38, -52, 18, 16, 2), '#1f150e', 2);
+  g.restore();
+  ink(rr(-262, -130, 90, 30, 4), '#e0a43a', 4);   // stern gallery
+  for (let k = 0; k < 3; k++) fill(rr(-252 + k * 28, -124, 18, 18, 3), '#3a2a1a');
+  // flag at the main masthead (always drawn the right way round)
+  g.restore();
+  g.save(); g.translate(x, y);
+  const fw = 170 * s, fh = 110 * s, fx = 10 * s * dir, fy = -430 * s;
+  T.line([[fx, fy + 10], [fx, fy - fh * 1.1]], 9 * s + 2);
+  flag(fx + (dir < 0 ? -fw : 0), fy - fh * 1.1, fw, fh, kind);
+  // broadside
+  if (fire) for (const k of [-1, 1]) {
+    const bx = (-30 + k * 80) * s * dir, by = -44 * s, cx = bx + fire * 50 * s;
+    [[1.1, -.2, 70], [2.1, -.5, 60], [2.9, -.1, 50]].forEach(([d, up, r]) => fill(ell(bx + fire * d * 60 * s, by + up * 60 * s, r * s, r * .7 * s), 'rgba(245,245,240,.82)'));
+    ink(c => { for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, r = (i % 2 ? 16 : 34 + T.rnd() * 30) * s, x = cx + Math.cos(a) * r * 1.5, y = by + Math.sin(a) * r * .8; i ? c.lineTo(x, y) : c.moveTo(x, y); } c.closePath(); }, '#ff9a1f', 3);
+    fill(ell(cx, by, 22 * s, 13 * s), '#fff3a0');
+  }
+  g.restore();
+  // bow wave
+  fill(ell(x + 200 * s * dir, y + 40 * s, 90 * s, 20 * s), 'rgba(255,255,255,.8)');
+}
+
+// ---------------- the officer ----------------
+function officer() {
+  const hx = 430, hy = 360;
+  // body: red coat, black cuffs, gold epaulettes, white jabot
+  const coat = c => { c.moveTo(180, 560); c.quadraticCurveTo(430, 470, 700, 540); c.lineTo(760, 1100); c.lineTo(80, 1100); c.closePath(); };
+  ink(coat, '#c7322a', 8);
+  g.save(); T.P(coat); g.clip();
+  fill(c => { c.moveTo(560, 520); c.lineTo(760, 560); c.lineTo(780, 1100); c.lineTo(620, 1100); c.closePath(); }, 'rgba(80,10,5,.3)');
+  // lapels with gold edging and buttons
+  ink(c => { c.moveTo(370, 520); c.lineTo(300, 1100); c.lineTo(380, 1100); c.lineTo(430, 600); c.closePath(); }, '#1f1a1a', 4);
+  ink(c => { c.moveTo(500, 520); c.lineTo(560, 1100); c.lineTo(480, 1100); c.lineTo(440, 600); c.closePath(); }, '#1f1a1a', 4);
+  T.line([[370, 520], [300, 1100]], 7, '#e0a43a'); T.line([[500, 520], [560, 1100]], 7, '#e0a43a');
+  for (let k = 0; k < 6; k++) { ink(ell(340 - k * 6, 660 + k * 70, 12, 12), '#f2c344', 3); ink(ell(530 + k * 6, 660 + k * 70, 12, 12), '#f2c344', 3); }
+  g.restore();
+  // jabot
+  ink(c => { c.moveTo(390, 520); c.quadraticCurveTo(360, 600, 400, 640); c.quadraticCurveTo(370, 690, 420, 720); c.quadraticCurveTo(470, 690, 450, 640); c.quadraticCurveTo(490, 600, 470, 520); c.closePath(); }, '#fbf7ef', 5);
+  T.line([[400, 600], [450, 600]], 3, 'rgba(120,110,100,.5)'); T.line([[405, 660], [445, 660]], 3, 'rgba(120,110,100,.5)');
+  // gold epaulettes
+  [[230, 560, -.25], [650, 540, .2]].forEach(([x, y, r]) => { g.save(); g.translate(x, y); g.rotate(r); ink(ell(0, 0, 90, 34), '#e0a43a', 5); for (let k = -4; k <= 4; k++) ink(rr(k * 20 - 6, 18, 12, 46, 6), '#f2c344', 3); g.restore(); });
+
+  // sword arm: pointing out over the fleet
+  T.line([[640, 560], [800, 500], [930, 430]], 70); T.line([[640, 560], [800, 500], [930, 430]], 54, '#c7322a');
+  ink(rr(870, 390, 80, 80, 20), '#1f1a1a', 5);   // black cuff
+  T.line([[880, 400], [940, 400]], 5, '#e0a43a');
+  // blade
+  ink(c => { c.moveTo(980, 410); c.lineTo(1430, 230); c.lineTo(1440, 244); c.lineTo(990, 440); c.closePath(); }, '#e6ebf0', 5);
+  T.line([[995, 422], [1420, 244]], 3, 'rgba(120,140,160,.6)');
+  // gold hilt + gloved fist
+  ink(c => { c.moveTo(960, 360); c.quadraticCurveTo(1040, 380, 1010, 470); c.quadraticCurveTo(990, 500, 960, 480); c.lineTo(970, 460); c.quadraticCurveTo(1000, 440, 990, 400); c.closePath(); }, '#e0a43a', 5);
+  ink(ell(965, 425, 52, 46), '#fbf7ef', 6);
+  [[948, 400], [948, 425], [948, 450]].forEach(([x, y]) => T.line([[x - 20, y], [x + 20, y]], 3));
+
+  // jar arm
+  T.line([[220, 600], [140, 700], [170, 640]], 70); T.line([[220, 600], [140, 700], [170, 640]], 54, '#c7322a');
+
+  // head
+  T.head(hx, hy, 170);
+  // powdered-wig curls (brown, as in the reference) on both sides
+  [[-180, 20], [-196, 80], [-170, 130], [180, 20], [196, 80], [172, 130], [-150, -40], [152, -40]].forEach(([dx, dy]) => ink(ell(hx + dx, hy + dy, 44, 40), '#8a4f2a', 5));
+  [[-180, 20], [-196, 80], [-170, 130], [180, 20], [196, 80], [172, 130]].forEach(([dx, dy]) => T.line([[hx + dx - 18, hy + dy + 6], [hx + dx, hy + dy - 14], [hx + dx + 16, hy + dy + 8]], 4, 'rgba(50,25,10,.6)'));
+  // furious face: V brows, narrowed eyes, scowl
+  T.line([[hx - 110, hy - 10], [hx - 20, hy + 26]], 16); T.line([[hx + 20, hy + 26], [hx + 110, hy - 10]], 16);
+  fill(c => { c.moveTo(hx - 92, hy + 34); c.lineTo(hx - 24, hy + 50); c.quadraticCurveTo(hx - 50, hy + 90, hx - 88, hy + 60); c.closePath(); }, INK);
+  fill(c => { c.moveTo(hx + 92, hy + 34); c.lineTo(hx + 24, hy + 50); c.quadraticCurveTo(hx + 50, hy + 90, hx + 88, hy + 60); c.closePath(); }, INK);
+  fill(ell(hx - 66, hy + 54, 6, 5), '#fff'); fill(ell(hx + 62, hy + 54, 6, 5), '#fff');
+  T.line([[hx - 40, hy + 140], [hx, hy + 124], [hx + 40, hy + 140]], 10);
+  T.line([[hx + 120, hy + 80], [hx + 150, hy + 60]], 4, 'rgba(200,60,50,.6)'); T.line([[hx + 128, hy + 96], [hx + 160, hy + 84]], 4, 'rgba(200,60,50,.6)');
+  // anger vein
+  g.save(); g.translate(hx + 110, hy - 70); [0, 1, 2, 3].forEach(i => { g.save(); g.rotate(i * Math.PI / 2); T.line([[8, 8], [26, 8], [26, 24]], 7, '#d6281e'); g.restore(); }); g.restore();
+  // tricorne: black with gold lace, one corner pointing at the viewer
+  const hat = c => { c.moveTo(hx - 270, hy - 60); c.quadraticCurveTo(hx - 250, hy - 300, hx - 40, hy - 330); c.quadraticCurveTo(hx + 60, hy - 380, hx + 140, hy - 320); c.quadraticCurveTo(hx + 300, hy - 250, hx + 250, hy - 40); c.quadraticCurveTo(hx + 120, hy - 160, hx, hy - 110); c.quadraticCurveTo(hx - 140, hy - 170, hx - 270, hy - 60); c.closePath(); };
+  ink(hat, '#24211f', 8);
+  g.save(); T.P(hat); g.clip();
+  fill(ell(hx - 30, hy - 250, 160, 60, -.1), 'rgba(255,255,255,.08)');
+  fill(c => { c.moveTo(hx + 100, hy - 320); c.quadraticCurveTo(hx + 300, hy - 250, hx + 250, hy - 40); c.lineTo(hx + 200, hy - 120); c.closePath(); }, 'rgba(0,0,0,.25)');
+  g.restore();
+  T.P(c => { c.moveTo(hx - 262, hy - 66); c.quadraticCurveTo(hx - 140, hy - 160, hx, hy - 104); c.quadraticCurveTo(hx + 120, hy - 152, hx + 244, hy - 46); }); g.lineWidth = 16; g.strokeStyle = '#e0a43a'; g.lineCap = 'round'; g.stroke();
+  T.P(c => { c.moveTo(hx - 262, hy - 66); c.quadraticCurveTo(hx - 250, hy - 290, hx - 40, hy - 322); }); g.stroke();
+  T.P(c => { c.moveTo(hx + 244, hy - 46); c.quadraticCurveTo(hx + 296, hy - 250, hx + 136, hy - 314); }); g.stroke();
+  T.P(hat); g.lineWidth = 8; g.strokeStyle = INK; g.stroke();
+  ink(ell(hx + 150, hy - 120, 24, 24), '#f2c344', 4);   // cockade button
+
+  // the jar with Jenkins' ear, held up in a white glove
+  const jx = 160, jy = 470;
+  ink(rr(jx - 70, jy - 150, 140, 210, 34), 'rgba(200,230,245,.55)', 6);
+  fill(rr(jx - 62, jy - 80, 124, 134, 28), 'rgba(235,225,170,.45)');   // brine
+  // the ear
+  ink(c => { c.moveTo(jx - 10, jy - 90); c.bezierCurveTo(jx + 60, jy - 110, jx + 70, jy - 10, jx + 30, jy + 20); c.quadraticCurveTo(jx + 10, jy + 40, jx - 6, jy + 26); c.quadraticCurveTo(jx + 20, jy - 10, jx - 20, jy - 30); c.quadraticCurveTo(jx - 40, jy - 70, jx - 10, jy - 90); c.closePath(); }, '#f4b08c', 5);
+  T.line([[jx + 4, jy - 70], [jx + 40, jy - 60], [jx + 30, jy - 10]], 5, '#b5664a');
+  T.line([[jx + 6, jy - 40], [jx + 16, jy - 20]], 5, '#b5664a');
+  // glass highlights, neck and cork
+  fill(rr(jx - 54, jy - 136, 16, 170, 8), 'rgba(255,255,255,.65)'); fill(rr(jx + 36, jy - 120, 8, 60, 4), 'rgba(255,255,255,.45)');
+  ink(rr(jx - 52, jy - 172, 104, 28, 10), 'rgba(200,230,245,.7)', 5);
+  ink(rr(jx - 40, jy - 214, 80, 46, 8), '#b27a44', 5);
+  for (let k = 0; k < 6; k++) fill(ell(jx - 28 + k * 12, jy - 200 + (k % 2) * 14, 3, 3), 'rgba(90,55,25,.6)');
+  // gloved hand round the jar
+  ink(rr(jx - 90, jy - 10, 150, 110, 40), '#fbf7ef', 6);
+  [jy + 22, jy + 50, jy + 76].forEach(y => T.line([[jx - 40, y], [jx + 50, y]], 4));
+  ink(c => { c.moveTo(jx - 90, jy + 30); c.quadraticCurveTo(jx - 120, jy - 20, jx - 60, jy - 40); c.quadraticCurveTo(jx - 50, jy - 10, jx - 70, jy + 20); c.closePath(); }, '#fbf7ef', 5);
+  // gold cuff
+  ink(rr(jx - 70, jy + 90, 130, 60, 18), '#c7322a', 5); T.line([[jx - 60, jy + 104], [jx + 50, jy + 104]], 7, '#e0a43a');
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  sky(); smoke(); fortress(); sea();
+  // far ships first, near ships last
+  ship(1880, 700, .32, 'spain', -1, 0);
+  ship(1300, 700, .36, 'spain', -1, 0);
+  ship(960, 680, .38, 'brit', 1, 1);
+  ship(1560, 730, .52, 'spain', -1, -1);
+  ship(800, 770, .58, 'brit', 1, 1);
+  ship(1760, 880, .74, 'spain', -1, -1);
+  ship(1080, 910, .86, 'brit', 1, 1);
+  swell(990, 60, 260, '#1d4c98', 120);
+  officer();
+  // foreground swell rolling across the bottom, over his coat
+  swell(1045, 80, 330, '#163f86', 0);
+  T.grade('rgba(10,15,40,.55)');
+  window.DONE = true;
+});
+</script>

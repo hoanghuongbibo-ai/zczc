@@ -1,0 +1,155 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* "THAT TIME AMERICA GAVE UP ON NEW YORK" — the 1975 fiscal crisis. A sad Uncle Sam, wrapped in a
+ * giant flag cape, hugs the Manhattan skyline as it stood in 1975 (Twin Towers, Empire State,
+ * Chrysler), with Lady Liberty, the Brooklyn Bridge and the harbour ferries.
+ * Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 83), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const WATER = 900;
+
+function sky() {
+  g.fillStyle = lg(0, 0, 0, WATER, [[0, '#0f1f45'], [.6, '#1f3f78'], [1, '#e58a4a']]); g.fillRect(0, 0, W, H);
+  g.fillStyle = rg(960, 860, 0, 700, [[0, 'rgba(255,190,110,.75)'], [.5, 'rgba(240,120,70,.25)'], [1, 'rgba(240,120,70,0)']]); g.fillRect(0, 0, W, H);
+  for (let i = 0; i < 140; i++) fill(ell(T.rnd() * W, T.rnd() * 500, 1.6, 1.6), `rgba(255,255,255,${.3 + T.rnd() * .5})`);
+  const cloud = (x, y, s) => [[0, 0, 90, 30], [-70, 10, 60, 24], [70, 8, 70, 26], [10, -22, 54, 30]].forEach(([dx, dy, rx, ry]) => { fill(ell(x + dx * s + 6, y + dy * s + 8, rx * s, ry * s), 'rgba(20,30,60,.5)'); fill(ell(x + dx * s, y + dy * s, rx * s, ry * s), '#d8c8a0'); });
+  [[150, 470, 1.2], [1800, 420, 1.1], [1700, 560, .8], [260, 580, .8]].forEach(([x, y, s]) => cloud(x, y, s));
+}
+function star(x, y, r, col) { T.P(c => { for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr0 = i % 2 ? r * .42 : r; c.lineTo(x + Math.cos(a) * rr0, y + Math.sin(a) * rr0); } c.closePath(); }); g.fillStyle = col; g.fill(); }
+function cape() {
+  // the flag draped over Uncle Sam's shoulders, spreading wide behind the city
+  const path = c => { c.moveTo(-40, 860); c.quadraticCurveTo(60, 520, 380, 420); c.quadraticCurveTo(600, 350, 760, 330); c.lineTo(1080, 320); c.quadraticCurveTo(1420, 330, 1640, 470); c.quadraticCurveTo(1900, 640, 1960, 860); c.closePath(); };
+  ink(path, '#c8202e', 8);
+  g.save(); T.P(path); g.clip();
+  // stripes follow the drape: arcs radiating down and outward
+  for (let k = 0; k < 14; k++) { const off = 60 + k * 64; T.P(c => { c.moveTo(-60, 860 + off * .2); c.quadraticCurveTo(300, 330 + off, 960, 300 + off); c.quadraticCurveTo(1600, 330 + off, 1980, 860 + off * .2); }); g.lineWidth = 32; g.strokeStyle = '#f6efe0'; g.stroke(); }
+  // canton over the left shoulder
+  const canton = c => { c.moveTo(-40, 860); c.quadraticCurveTo(60, 520, 380, 420); c.quadraticCurveTo(600, 350, 760, 330); c.lineTo(820, 620); c.quadraticCurveTo(400, 700, 200, 900); c.closePath(); };
+  T.P(canton); g.fillStyle = '#1f3a7a'; g.fill();
+  g.save(); T.P(canton); g.clip();
+  for (let r = 0; r < 9; r++) for (let k = 0; k < 12; k++) star(60 + k * 66 + (r % 2) * 33, 330 + r * 62, 18, '#f6efe0');
+  g.restore();
+  T.P(canton); g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+  // folds
+  [[300, 420, 260, 860], [560, 360, 600, 860], [1300, 340, 1260, 860], [1600, 450, 1680, 860]].forEach(([x0, y0, x1, y1]) => { T.P(c => { c.moveTo(x0, y0); c.quadraticCurveTo((x0 + x1) / 2 + 40, (y0 + y1) / 2, x1, y1); }); g.lineWidth = 46; g.strokeStyle = 'rgba(0,0,0,.14)'; g.stroke(); });
+  g.restore();
+}
+function uncleSam() {
+  const hx = 900, hy = 370;
+  // blue coat at the shoulders, red bow tie
+  ink(c => { c.moveTo(720, 580); c.quadraticCurveTo(900, 480, 1080, 580); c.lineTo(1060, 700); c.lineTo(740, 700); c.closePath(); }, '#24345f', 6);
+  ink(c => { c.moveTo(900, 540); c.lineTo(840, 510); c.lineTo(836, 576); c.closePath(); }, '#d6402a', 5);
+  ink(c => { c.moveTo(900, 540); c.lineTo(960, 510); c.lineTo(964, 576); c.closePath(); }, '#d6402a', 5);
+  ink(ell(900, 542, 16, 16), '#e8582e', 4);
+  // head, tilted down toward the city
+  g.save(); g.translate(hx, hy); g.rotate(.18); g.translate(-hx, -hy);
+  [[-150, 20], [-160, 80], [150, 20]].forEach(([dx, dy]) => ink(ell(hx + dx, hy + dy, 34, 30), '#7a5a40', 4));
+  T.head(hx, hy, 140);
+  // sad: closed downcast eyes, worried brows, little frown
+  T.line([[hx - 74, hy + 30], [hx - 50, hy + 44], [hx - 24, hy + 30]], 7);
+  T.line([[hx + 24, hy + 30], [hx + 50, hy + 44], [hx + 76, hy + 30]], 7);
+  T.line([[hx - 80, hy - 10], [hx - 26, hy - 26]], 8); T.line([[hx + 26, hy - 26], [hx + 80, hy - 10]], 8);
+  T.line([[hx - 24, hy + 104], [hx, hy + 92], [hx + 24, hy + 104]], 7);
+  T.drop(hx + 60, hy + 70, .55, '#9fdcff');
+  // stars-and-stripes top hat
+  ink(ell(hx, hy - 150, 200, 44), '#f6efe0', 7);
+  const hat = c => { c.moveTo(hx - 120, hy - 160); c.lineTo(hx - 134, hy - 340); c.quadraticCurveTo(hx, hy - 366, hx + 134, hy - 340); c.lineTo(hx + 120, hy - 160); c.closePath(); };
+  ink(hat, '#f6efe0', 7);
+  g.save(); T.P(hat); g.clip();
+  for (let k = 0; k < 5; k++) fill(c => c.rect(hx - 140 + k * 64, hy - 460, 32, 200), '#c8202e');
+  fill(c => c.rect(hx - 150, hy - 250, 300, 90), '#1f3a7a');
+  [[-80, -205], [0, -208], [80, -205]].forEach(([dx, dy]) => star(hx + dx, hy + dy, 28, '#f6efe0'));
+  fill(c => c.rect(hx + 60, hy - 460, 90, 300), 'rgba(0,0,0,.15)');
+  g.restore();
+  T.P(hat); g.lineWidth = 7; g.strokeStyle = INK; g.stroke();
+  T.line([[hx - 126, hy - 250], [hx + 128, hy - 250]], 6);
+  g.restore();
+}
+function building(x, w, top, col, opts = {}) {
+  ink(rr(x, top, w, WATER - top + 10, 2), col, 4);
+  fill(c => c.rect(x + w * .66, top + 3, w * .3, WATER - top), 'rgba(0,0,0,.18)');
+  for (let y = top + 18; y < WATER - 10; y += 22) for (let wx = x + 8; wx < x + w - 10; wx += 16) if (T.rnd() > .45) fill(c => c.rect(wx, y, 7, 10), T.rnd() > .3 ? '#ffd27a' : '#ffe9a8');
+  if (opts.setback) ink(rr(x + w * .2, top - opts.setback, w * .6, opts.setback + 4, 2), col, 4);
+}
+function skyline() {
+  // back row
+  for (let x = 380; x < 1500; x += 50 + T.rnd() * 30) building(x, 46 + T.rnd() * 30, 560 + T.rnd() * 120, '#3a4a6e');
+  // landmarks
+  // Empire State: setbacks + mast
+  const ex = 1290; building(ex, 110, 540, '#c9b48a'); building(ex + 20, 70, 480, '#c9b48a'); building(ex + 36, 38, 420, '#c9b48a');
+  T.line([[ex + 55, 420], [ex + 55, 350]], 8); ink(ell(ex + 55, 350, 7, 7), '#ffd27a', 3);
+  // Chrysler: stacked arches + spire
+  const cx = 640; building(cx, 80, 520, '#a8b2bc');
+  for (let k = 0; k < 4; k++) ink(c => { const w = 70 - k * 16; c.moveTo(cx + 40 - w / 2, 520 - k * 36); c.quadraticCurveTo(cx + 40, 480 - k * 40, cx + 40 + w / 2, 520 - k * 36); c.closePath(); }, '#d9dfe6', 4);
+  T.line([[cx + 40, 390], [cx + 40, 380]], 5);
+  // Twin Towers (completed 1973)
+  [1080, 1160].forEach((x, i) => { ink(rr(x, 350 + i * 14, 66, WATER - 340, 2), '#8a9ab4', 5); for (let k = 1; k < 7; k++) T.line([[x + k * 9.4, 360 + i * 14], [x + k * 9.4, WATER]], 2, 'rgba(30,40,70,.45)'); fill(c => c.rect(x + 44, 354 + i * 14, 20, WATER - 350), 'rgba(0,0,0,.18)'); });
+  T.line([[1113, 350], [1113, 300]], 6);
+  // mid row
+  for (let x = 400; x < 1480; x += 70 + T.rnd() * 40) { if (x > 1060 && x < 1240) continue; building(x, 60 + T.rnd() * 40, 620 + T.rnd() * 140, ['#6a5a74', '#7a6a5a', '#5a6a84', '#8a7a64'][Math.floor(T.rnd() * 4)]); }
+  // trees on the Battery
+  for (let x = 380; x < 1500; x += 40) ink(ell(x, WATER - 16, 28, 20), '#3f7a3a', 3);
+}
+function liberty() {
+  const x = 540, base = WATER - 10;
+  ink(c => { c.moveTo(x - 80, base); c.lineTo(x - 64, base - 120); c.lineTo(x + 64, base - 120); c.lineTo(x + 80, base); c.closePath(); }, '#c9b48a', 5);
+  for (let k = 0; k < 3; k++) ink(rr(x - 40 + k * 30, base - 96, 18, 40, 9), '#7a6a50', 3);
+  const g1 = '#6fbf9e', g2 = '#4f9f80';
+  ink(c => { c.moveTo(x - 46, base - 120); c.quadraticCurveTo(x - 50, base - 260, x - 30, base - 330); c.lineTo(x + 30, base - 330); c.quadraticCurveTo(x + 50, base - 260, x + 46, base - 120); c.closePath(); }, g1, 5);
+  for (let k = -2; k <= 2; k++) T.line([[x + k * 12, base - 320], [x + k * 16, base - 130]], 3, g2);
+  ink(rr(x - 46, base - 300, 30, 50, 6), g2, 4);   // tablet
+  ink(ell(x, base - 350, 26, 28), g1, 5);
+  for (let k = -3; k <= 3; k++) T.line([[x + k * 7, base - 372], [x + k * 14, base - 404]], 5, g2);
+  T.line([[x + 26, base - 320], [x + 50, base - 380], [x + 46, base - 450]], 18); T.line([[x + 26, base - 320], [x + 50, base - 380], [x + 46, base - 450]], 10, g1);
+  ink(rr(x + 34, base - 470, 24, 20, 4), g2, 4);
+  ink(c => { c.moveTo(x + 30, base - 470); c.quadraticCurveTo(x + 40, base - 510, x + 46, base - 530); c.quadraticCurveTo(x + 52, base - 500, x + 62, base - 470); c.closePath(); }, '#ffb12a', 4);
+}
+function bridge() {
+  // Brooklyn Bridge: gothic stone tower, cables sweeping down to the right
+  const tx = 1620, top = 560;
+  T.line([[1260, 800], [W + 20, 760]], 22); T.line([[1260, 800], [W + 20, 760]], 14, '#7a6a5a');
+  ink(c => { c.moveTo(tx - 70, WATER); c.lineTo(tx - 60, top); c.lineTo(tx + 60, top); c.lineTo(tx + 70, WATER); c.closePath(); }, '#b8a888', 6);
+  [[-36, 0], [36, 0]].forEach(([dx]) => ink(c => { c.moveTo(tx + dx - 18, 780); c.lineTo(tx + dx - 18, 640); c.quadraticCurveTo(tx + dx, 600, tx + dx + 18, 640); c.lineTo(tx + dx + 18, 780); c.closePath(); }, '#3a3040', 4));
+  for (let k = 0; k < 9; k++) { T.P(c => { c.moveTo(tx, top + 10); c.quadraticCurveTo(tx + 150 + k * 20, 760, W + 40, 600 + k * 16); }); g.lineWidth = 2.5; g.strokeStyle = 'rgba(30,25,30,.8)'; g.stroke(); T.P(c => { c.moveTo(tx, top + 10); c.quadraticCurveTo(tx - 150 - k * 20, 760, 1260, 780 - k * 2); }); g.stroke(); }
+  for (let x = 1280; x < W; x += 24) T.line([[x, 790 - (x - 1260) * .02], [x, 720 + Math.abs(x - tx) * .1]], 1.5, 'rgba(30,25,30,.5)');
+}
+function water() {
+  g.fillStyle = lg(0, WATER, 0, H, [[0, '#2a4f86'], [1, '#0f2448']]); g.fillRect(0, WATER, W, H - WATER);
+  for (let y = WATER + 8; y < H; y += 14) { const k = 1 - (y - WATER) / (H - WATER); T.line([[960 - 200 * k - T.rnd() * 60, y], [960 + 200 * k + T.rnd() * 60, y]], 5, `rgba(255,200,120,${.5 * k})`); }
+  for (let i = 0; i < 90; i++) { const x = T.rnd() * W, y = WATER + 10 + T.rnd() * (H - WATER); T.line([[x, y], [x + 30 + T.rnd() * 50, y]], 3, 'rgba(255,255,255,.3)'); }
+  T.line([[0, WATER], [W, WATER]], 6);
+  // ferries
+  [[400, 960, 1], [1330, 950, .8], [1760, 940, .6]].forEach(([x, y, s]) => { g.save(); g.translate(x, y); g.scale(s, s);
+    ink(c => { c.moveTo(-130, -20); c.lineTo(130, -20); c.lineTo(110, 20); c.lineTo(-120, 20); c.closePath(); }, '#f2eee6', 5);
+    ink(rr(-90, -56, 170, 38, 6), '#f2eee6', 5); ink(rr(-50, -84, 90, 30, 6), '#f2eee6', 4);
+    for (let k = 0; k < 7; k++) fill(c => c.rect(-80 + k * 22, -46, 12, 14), '#2a3a5a');
+    fill(c => c.rect(-130, 4, 250, 8), '#c8202e');
+    fill(ell(0, 30, 150, 10), 'rgba(255,255,255,.5)');
+    g.restore(); });
+}
+function glove(x, y, s, flip) {
+  g.save(); g.translate(x, y); g.scale(s * flip, s);
+  // cupped white glove seen from the side, fingers curling round the city
+  ink(rr(-230, -50, 120, 120, 30), '#24345f', 6);
+  ink(rr(-130, -60, 44, 140, 18), '#fbf7ef', 6);   // cuff
+  ink(c => { c.moveTo(-90, -70); c.quadraticCurveTo(20, -100, 90, -60); c.quadraticCurveTo(130, -30, 110, 0); c.quadraticCurveTo(140, 20, 120, 46); c.quadraticCurveTo(130, 70, 100, 86); c.quadraticCurveTo(0, 110, -90, 80); c.closePath(); }, '#fbf7ef', 7);
+  [[-10, -16, 104, -6], [-10, 22, 112, 30], [-10, 56, 100, 66]].forEach(([x0, y0, x1, y1]) => T.line([[x0, y0], [x1, y1]], 4));
+  // thumb on top
+  ink(c => { c.moveTo(-60, -66); c.quadraticCurveTo(10, -140, 80, -110); c.quadraticCurveTo(96, -90, 70, -80); c.quadraticCurveTo(20, -90, -10, -60); c.closePath(); }, '#fbf7ef', 6);
+  g.restore();
+}
+function titles() {
+  [[60, 160, "THAT TIME", 112, '#ffffff', 'left'], [50, 300, 'AMERICA', 150, '#ffffff', 'left'], [1870, 160, 'GAVE UP ON', 112, '#ffffff', 'right'], [1880, 300, 'NEW YORK', 150, '#ffffff', 'right']].forEach(([x, y, t, s, col, al]) => T.title(t, x, y, s, col, -.02, al));
+  [[50, 360, 640], [1300, 360, 1870]].forEach(([x0, y, x1]) => { ink(c => { c.moveTo(x0, y); c.quadraticCurveTo((x0 + x1) / 2, y - 16, x1, y - 8); c.lineTo(x1 - 8, y + 12); c.quadraticCurveTo((x0 + x1) / 2, y + 6, x0 + 10, y + 18); c.closePath(); }, '#e2231a', 4); });
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  sky(); cape(); uncleSam(); skyline(); bridge(); liberty(); water();
+  glove(330, 790, .95, 1); glove(1500, 810, .95, -1);
+  T.grade('rgba(5,10,30,.6)');
+  titles();
+  window.DONE = true;
+});
+</script>

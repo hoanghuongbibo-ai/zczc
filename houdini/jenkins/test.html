@@ -1,0 +1,44 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body><canvas id="c" width="1920" height="1080"></canvas>
+<script src="../js/toon.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../canada/js/foley.js"></script>
+<script src="../rome/js/paint.js"></script>
+<script src="../rome/js/monk.js"></script>
+<script src="../rome/js/animals.js"></script>
+<script src="../rome/js/cine.js"></script>
+<script src="../rome/js/kit.js"></script>
+<script src="../usa/js/cast.js"></script>
+<script src="../canada/js/geo.js"></script>
+<script src="../canada/js/collage.js"></script>
+<script src="../canada/js/scenes.js"></script>
+<script src="../canada/js/type.js"></script>
+<script src="../usa/js/sets.js"></script>
+<script src="../sketch/js/rig.js"></script>
+<script src="../sketch/js/cast.js"></script>
+<script src="../sketch/js/world.js"></script>
+<script src="../sketch/js/ui.js"></script>
+<script src="js/timing.js"></script>
+<script src="../sketch/js/props.js"></script>
+<script src="../sketch/js/ui2.js"></script>
+<script src="../sketch/js/sets2.js"></script>
+<script src="../sketch/js/horse.js"></script>
+<script src="../sketch/js/film2.js"></script>
+<script src="../sketch/js/ck.js"></script>
+<script src="../sketch/js/life.js"></script>
+<script src="js/cast-je.js"></script>
+<script src="js/sets-je.js"></script>
+<script src="js/kit-je.js"></script>
+<script>
+window.draw = (t) => { const cv = document.getElementById('c'), x = cv.getContext('2d'), S = Sets2; x.setTransform(1,0,0,1,0,0); x.fillStyle='#efe4c8'; x.fillRect(0,0,1920,1080); const J = JS, P = JEP;
+ const cell = (i, f) => { x.save(); x.translate((i%3)*640, Math.floor(i/3)*360); x.scale(.5,.5); x.beginPath(); x.rect(0,0,1280,720); x.clip(); f(); x.restore(); };
+ cell(0, () => { J.commons(x,t,{papers:true}); });
+ cell(1, () => { J.sky(x,t,'day',400); J.sea(x,t,400,{}); J.ship(x,500,480,.8,t,{kind:'line'}); J.ship(x,1050,450,.5,t,{kind:'galleon',flag:'burgundy',flip:true}); J.longboat(x,300,640,.8,t,P.crowd(5,[P.guarda],1),{flag:'burgundy'}); });
+ cell(2, () => { J.deck(x,t,{}); });
+ cell(3, () => { J.london(x,t,{}); });
+ cell(4, () => { J.carolina(x,t,{}); });
+ cell(5, () => { J.tropic(x,t,{town:640, forts:[[300,380,.4],[1000,370,.35]]}); J.ship(x,640,520,.5,t,{kind:'line'}); });
+ cell(6, () => { J.camp(x,t,{}); J.cot(x,400,640,1,P.colonial(5),t,{}); });
+ cell(7, () => { J.mose(x,t,{}); });
+ cell(8, () => { J.office(x,t,{globe:800}); J.desk(x,640,700,420,1); J.mountVernon(x,1100,300,.3,t); });
+ return cv.toDataURL('image/png'); };
+</script></body></html>

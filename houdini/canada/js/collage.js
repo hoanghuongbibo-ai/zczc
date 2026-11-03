@@ -170,8 +170,9 @@
 
   // ---------- the paper map (orthographic projection of Natural Earth data) ----------
   function proj(v) { const l0 = v.lon * Math.PI / 180, p0 = v.lat * Math.PI / 180, cp0 = Math.cos(p0), sp0 = Math.sin(p0); return (lon, lat) => { const l = lon * Math.PI / 180, p = lat * Math.PI / 180, cp = Math.cos(p), dl = l - l0; const vis = sp0 * Math.sin(p) + cp0 * cp * Math.cos(dl);
-      return [v.x + v.s * cp * Math.sin(dl), v.y - v.s * (cp0 * Math.sin(p) - sp0 * cp * Math.cos(dl)), vis]; }; }
-  function ring(ctx, pr, r) { let first = true; for (const [lo, la] of r) { const [x, y, vis] = pr(lo, la); if (vis < -.05) continue; first ? ctx.moveTo(x, y) : ctx.lineTo(x, y); first = false; } ctx.closePath(); }
+      let x = v.s * cp * Math.sin(dl), y = -v.s * (cp0 * Math.sin(p) - sp0 * cp * Math.cos(dl)); if (vis < 0) { const L = Math.hypot(x, y) || 1; x = x / L * v.s; y = y / L * v.s; } return [v.x + x, v.y + y, vis]; }; }
+  // points behind the globe are pinned to its rim, so a coastline that crosses the horizon follows the edge instead of jumping across
+  function ring(ctx, pr, r) { const P = r.map(([lo, la]) => pr(lo, la)); if (!P.some(p => p[2] > 0)) return; P.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); }
   // v = {lon, lat, s (px per earth radius), x, y}; o.fill(name) -> colour for a country or province (provinces when o.prov)
   function map(ctx, v, o = {}) { const pr = proj(v), Gd = G.GEO; { const sg = ctx.createLinearGradient(0, 0, 0, 720); sg.addColorStop(0, o.seaTop || '#5ab0d8'); sg.addColorStop(1, o.seaBot || '#2a78b8'); ctx.fillStyle = sg; ctx.fillRect(-300, -300, 1900, 1400); ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; const R = rng(3); for (let i = 0; i < 90; i++) { const x = R() * 1400 - 60, y = R() * 760; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 10, y - 4, x + 22, y); ctx.stroke(); } }
     // faint graticule

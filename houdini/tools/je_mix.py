@@ -23,7 +23,7 @@ CUES = [
     (0.0, 22.6, 'suspense', .75), (25.0, 34.4, 'suspense', .7),                 # low strings under the Commons; silence as the jar is shown
     (34.4, 52.0, 'epic', .75),                                                    # the war montage
     (52.0, 70.0, 'curious', .7), (70.0, 84.0, 'dramatic', .65),                  # the strange part; "money … human beings"
-    (84.0, 93.0, 'playful', .7),                                                  # CTA lift
+    (84.0, 89.6, 'suspense', .5), (90.6, 93.0, 'drums', .6),                      # CTA: calm → tension → (silence) → BROADSIDE → drums
     (93.0, 120.5, 'curious', .7), (120.5, 136.5, 'playful', .7), (136.5, 165.0, 'somber', .7),
     # 165–190: music out (the 4,800 are people)
     (190.0, 234.0, 'suspense', .7), (234.0, 241.0, 'playful', .65), (241.0, 252.0, 'suspense', .7),
@@ -47,14 +47,19 @@ CUES = [
 INTENSE = {'epic': 1.25, 'drums': 1.25, 'dramatic': 1.15, 'march': 1.15, 'suspense': 1.05}
 GENTLE = {'dawn': .75, 'reflective': .75, 'somber': .8, 'pastoral': .75, 'warm': .85, 'curious': .85, 'playful': .9}
 CUES[:] = [(a, b, k, g * INTENSE.get(k, GENTLE.get(k, 1))) for a, b, k, g in CUES]
-AMBS = [(598.0, 606.0, 'amb-battle.mp3', 4.0, .45), (1061.0, 1069.0, 'amb-battle.mp3', 30.0, .4), (1171.0, 1178.0, 'amb-battle.mp3', 8.0, .35),
+AMBS = [(90.0, 93.0, 'amb-battle.mp3', 4.0, .4), (598.0, 606.0, 'amb-battle.mp3', 4.0, .45), (1061.0, 1069.0, 'amb-battle.mp3', 30.0, .4), (1171.0, 1178.0, 'amb-battle.mp3', 8.0, .35),
 (852.0, 866.0, 'amb-battle.mp3', 0.0, .45), (927.0, 937.0, 'amb-battle.mp3', 14.0, .4), (1055.0, 1068.0, 'amb-battle.mp3', 25.0, .35)]
+
+HITS = [(89.72, 'sfx-gunshot.mp3', .95)]
 
 def build(total):
     P.CUES[:] = CUES; P.AMBS[:] = []
     M = P.build_music(total, [])
     for (t0, t1, f, off, g) in AMBS:
         y = P.load(os.path.join(P.AUD, f), off, t1 - t0); t = np.arange(len(y)) / SR; y = y * np.minimum(1, t / 1.2) * np.minimum(1, (len(y) / SR - t) / 1.2); P.place(M, y * g, t0)
+    # hard hits with no fade-in (the CTA broadside)
+    for (t0, f, g) in HITS:
+        y = P.load(os.path.join(P.AUD, f), 0, 3.0); n = len(y); y = y * np.minimum(1, (n / SR - np.arange(n) / SR) / 1.5); P.place(M, y * g, t0)
     return M
 
 def main():

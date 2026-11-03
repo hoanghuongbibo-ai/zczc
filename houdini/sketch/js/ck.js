@@ -6,7 +6,7 @@
   CK.k01 = k01; CK.ease = ease; CK.clamp = clamp; CK.lerp = lerp; CK.rng = rng;
   CK.IMG = k => G.Toon.IMG[k];
   // walking: feet lift alternately, the body bobs; dir moves nothing by itself (callers move x)
-  CK.walk = (f, ctx, x, y, s, t, o = {}) => { const ph = t * (o.rate || 7) + f.seed; f.draw(ctx, x, y - Math.abs(Math.sin(ph)) * 4 * s, s, t, Object.assign({ step: Math.sin(ph) }, o)); };
+  CK.walk = (f, ctx, x, y, s, t, o = {}) => { const ph = t * (o.rate || 7) + f.seed; f.draw(ctx, x, y - Math.abs(Math.sin(ph)) * 4 * s, s, t, Object.assign({ step: Math.sin(ph), turn: o.turn !== false }, o, { look: o.turn === false ? o.look : 0 })); };
   // a rider: the horse (galloping or standing), the rider's upper body on the saddle, one booted leg down the horse's side
   const RIDE = ['coat', 'shawl', 'arms', 'prop', 'musket', 'hands', 'head', 'hat'];
   CK.rider = (ctx, f, x, y, s, t, o = {}) => { const dir = o.flip ? -1 : 1, gal = !!o.gallop; W.horse(ctx, x, y, s, t, { gallop: gal, walk: o.walk, flip: o.flip, col: o.horse || '#7a4a2a', breath: o.breath, saddle: true, rider: true, blanket: o.blanket });

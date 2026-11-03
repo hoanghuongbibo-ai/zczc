@@ -311,3 +311,26 @@ The user's reference is **My Favorite Greek Myths [No AI]**; screen clips are in
   - A teal name-tag subtitle for dialogue (`P.subtitle`).
   - Painted ring seals for LEGEND / MYTH / DEBATED / NEAR-DEATH (`P.seal`).
   - No big sticker strips or bouncy pops.
+
+### Sketch-style series (Pig War `houdini/pigwar/`, Jenkins' Ear `houdini/jenkins/`) — lessons
+- **Check that the voice-over matches the script before building.** Transcribe the first minute plus a few later points (`tools/asr.py` on 25 s slices). The first "medieval peasants" upload was the Jenkins' Ear narration, so say so with quoted timestamps. Meanwhile build what doesn't need the voice: cast, sets, a short preview (`houdini/peasant/`).
+- **Rendering at 1080p:** set `window.RENDER_SCALE = 1.5` on the page. `js/toon.js scaleCtx` premultiplies transforms, so all drawing code stays in 1280×720 units. Never claim 1080p without checking with `ffprobe` (a 720p render was once reported as 1080p).
+- **Sound (user feedback):**
+  - Synthetic bird chirps, gull calls, whistles and siren-like risers are annoying; filter them out.
+  - Score scenes with the user's own tracks plus composed cues: `tools/pw_mix.py` (instruments, reverb, crossfade looper, narration ducking) and `tools/je_mix.py` (a cue sheet that follows the script's [MUSIC] notes).
+  - Silence the browser synth score: set every mood to `silence`.
+  - Where the script says "music out", play no music at all; keep the music sitting about 10 dB under the voice.
+- **Real photos:**
+  - Open every supplied file. Of 56, 19 were wrong for the story: wedding venues, modern ships named *Fort Victoria*, a parking sign, a chital deer, the wrong cemetery.
+  - Show them as framed collage inserts only while the narration names that thing (`pigwar/js/collage-pw.js`). Cabinet cards for portraits, taped polaroids for modern photos, torn clippings for paintings and maps, each with a caption.
+- **Detail and depth (user's reference frames, Asset Visual 1–27):**
+  - Warm brown ink.
+  - Mud patches with a light rim, plus puddles, tufts, pebbles and props on the ground.
+  - Hazy distant layers.
+  - Interiors with outlined bricks or stones, beams, shelves of objects, a window with the outdoors in it, and light shafts.
+  - Foreground framing that overlaps everything behind it.
+  - A different camera per shot: wide, over-the-shoulder (`JE.back`, `MED` `o.back`), reverse shot, close-up, map, split screen.
+- **Anchors (`F2.at`):** accents are stripped, so "Menéndez" becomes `menndez`; anchor on nearby plain words. Pass a `from` time 6–7 s *before* the expected moment, or the anchor is missed (the `A(ph, f)` helper in `jenkins/js/j09–j12.js`).
+- **Canvas masks:** for a spyglass or vignette hole, call `moveTo(cx + r, cy)` before the reversed `arc`, or a dark wedge cuts across the lens.
+- **Props that must sit over the face** (eye patch) go in a draw wrapper after the figure (`patched()` in `jenkins/js/cast-je.js`); figure props are drawn before the head.
+- **Labels:** the default `U.tag` luggage tag is tiny. Override it with the auto-width paper label (in `pw-kit.js` / `kit-je.js`). Counter boxes must measure their text.

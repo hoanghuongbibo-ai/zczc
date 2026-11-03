@@ -1,0 +1,158 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* "OVER AN EAR?": a sweating official signs a declaration of WAR while a grinning shadow in a
+ * tricorne looms behind him with red eyes and claws, and Jenkins' ear sits in a jar on the desk.
+ * Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 53), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const SHADOW = '#22161a';
+// white "sticker" rim behind a shape, then the normal ink outline
+function sticker(path, col, lw = 7, rim = 14) { T.P(path); g.lineJoin = 'round'; g.lineWidth = (lw + rim) * 2; g.strokeStyle = '#fff6ef'; g.stroke(); ink(path, col, lw); }
+
+function background() {
+  g.fillStyle = rg(W / 2, H * .45, 100, 1200, [[0, '#e8453a'], [.5, '#c42a26'], [1, '#6e1012']]); g.fillRect(0, 0, W, H);
+  // rolling smoke
+  for (let i = 0; i < 60; i++) { const x = T.rnd() * W, y = T.rnd() * H * .8, r = 60 + T.rnd() * 120; fill(ell(x, y, r, r * .7), `rgba(${90 + T.rnd() * 40},15,18,${.25 + T.rnd() * .25})`); fill(ell(x - r * .3, y - r * .25, r * .45, r * .3), 'rgba(255,120,100,.08)'); }
+}
+function claw(x, y, s, flip) {
+  g.save(); g.translate(x, y); g.scale(s * flip, s);
+  // long shadowy forearm rising from below, with four hooked fingers and a thumb
+  const hand = c => {
+    c.moveTo(-60, 520); c.quadraticCurveTo(-40, 300, -10, 160);
+    c.quadraticCurveTo(-90, 120, -150, 10); c.quadraticCurveTo(-170, -40, -120, -30); c.quadraticCurveTo(-90, 40, -30, 80);
+    c.quadraticCurveTo(-60, -60, -20, -160); c.quadraticCurveTo(10, -200, 30, -150); c.quadraticCurveTo(10, -60, 20, 40);
+    c.quadraticCurveTo(50, -100, 120, -170); c.quadraticCurveTo(160, -190, 160, -140); c.quadraticCurveTo(100, -60, 70, 50);
+    c.quadraticCurveTo(130, -40, 200, -70); c.quadraticCurveTo(240, -70, 220, -30); c.quadraticCurveTo(150, 30, 100, 110);
+    c.quadraticCurveTo(160, 100, 210, 60); c.quadraticCurveTo(240, 50, 230, 90); c.quadraticCurveTo(180, 160, 110, 200);
+    c.quadraticCurveTo(90, 330, 120, 520); c.closePath();
+  };
+  sticker(hand, SHADOW, 6, 10);
+  // hooked claw tips
+  [[-150, 10, -170, -50], [-20, -160, -10, -230], [120, -170, 170, -230], [210, -60, 270, -90], [225, 70, 280, 50]].forEach(([x0, y0, x1, y1]) => ink(c => { c.moveTo(x0 - 10, y0 + 6); c.quadraticCurveTo(x1, y1 + 20, x1, y1); c.quadraticCurveTo(x1 + 4, y1 + 30, x0 + 12, y0 + 10); c.closePath(); }, '#3a2a2e', 4));
+  fill(c => { c.moveTo(20, 140); c.quadraticCurveTo(60, 260, 50, 500); c.lineTo(110, 500); c.quadraticCurveTo(90, 300, 100, 160); c.closePath(); }, 'rgba(255,255,255,.06)');
+  g.restore();
+}
+function villain() {
+  const hx = 1240, hy = 510;
+  // body: dark red coat with gold epaulettes and a white jabot
+  ink(c => { c.moveTo(900, 640); c.quadraticCurveTo(1240, 560, 1580, 650); c.lineTo(1620, 1100); c.lineTo(860, 1100); c.closePath(); }, '#6e1416', 7);
+  fill(c => { c.moveTo(1180, 620); c.lineTo(1300, 620); c.lineTo(1330, 1100); c.lineTo(1150, 1100); c.closePath(); }, '#3a0c0e');
+  [[970, 650, -.25], [1500, 660, .2]].forEach(([x, y, r]) => { g.save(); g.translate(x, y); g.rotate(r); ink(ell(0, 0, 110, 40), '#e0a43a', 6); for (let k = -4; k <= 4; k++) ink(rr(k * 24 - 7, 22, 14, 60, 7), '#f2c344', 3); g.restore(); });
+  ink(c => { c.moveTo(1180, 620); c.quadraticCurveTo(1140, 720, 1190, 780); c.quadraticCurveTo(1150, 860, 1220, 900); c.quadraticCurveTo(1300, 860, 1270, 780); c.quadraticCurveTo(1330, 720, 1300, 620); c.closePath(); }, '#f6ece4', 6);
+  [[1200, 720, 1290, 720], [1200, 820, 1270, 820]].forEach(([a, b, c2, d]) => T.line([[a, b], [c2, d]], 3, 'rgba(120,100,90,.5)'));
+  // white wig curls behind the head
+  [[-200, -10], [-215, 70], [-190, 140], [200, -10], [215, 70], [190, 140]].forEach(([dx, dy]) => sticker(ell(hx + dx, hy + dy, 52, 46), '#f2ece6', 5, 6));
+  [[-200, -10], [-215, 70], [-190, 140], [200, -10], [215, 70], [190, 140]].forEach(([dx, dy]) => T.line([[hx + dx - 22, hy + dy + 8], [hx + dx, hy + dy - 16], [hx + dx + 20, hy + dy + 10]], 4, 'rgba(120,100,90,.6)'));
+  // the shadow face
+  const face = c => { c.moveTo(hx - 190, hy); c.bezierCurveTo(hx - 200, hy - 220, hx + 200, hy - 220, hx + 196, hy); c.bezierCurveTo(hx + 192, hy + 170, hx + 100, hy + 210, hx, hy + 210); c.bezierCurveTo(hx - 100, hy + 210, hx - 188, hy + 170, hx - 190, hy); c.closePath(); };
+  sticker(face, SHADOW, 8, 8);
+  // glowing red eyes
+  g.save(); g.shadowColor = '#ff2a1a'; g.shadowBlur = 40;
+  fill(c => { c.moveTo(hx - 150, hy - 30); c.lineTo(hx - 30, hy + 20); c.quadraticCurveTo(hx - 90, hy + 70, hx - 140, hy + 30); c.closePath(); }, '#ff2a1a');
+  fill(c => { c.moveTo(hx + 150, hy - 30); c.lineTo(hx + 30, hy + 20); c.quadraticCurveTo(hx + 90, hy + 70, hx + 140, hy + 30); c.closePath(); }, '#ff2a1a');
+  g.restore();
+  fill(ell(hx - 95, hy + 22, 14, 10), '#ffd0a0'); fill(ell(hx + 95, hy + 22, 14, 10), '#ffd0a0');
+  // huge toothy grin
+  const grin = c => { c.moveTo(hx - 140, hy + 80); c.quadraticCurveTo(hx, hy + 120, hx + 140, hy + 80); c.quadraticCurveTo(hx + 110, hy + 190, hx, hy + 190); c.quadraticCurveTo(hx - 110, hy + 190, hx - 140, hy + 80); c.closePath(); };
+  ink(grin, '#fbf4ea', 5);
+  g.save(); T.P(grin); g.clip();
+  for (let k = -5; k <= 5; k++) T.line([[hx + k * 24, hy + 80], [hx + k * 24, hy + 200]], 4);
+  T.line([[hx - 140, hy + 140], [hx + 140, hy + 140]], 4);
+  g.restore();
+  // tricorne
+  const hat = c => { c.moveTo(hx - 300, hy - 80); c.quadraticCurveTo(hx - 270, hy - 330, hx - 40, hy - 350); c.quadraticCurveTo(hx + 80, hy - 400, hx + 160, hy - 340); c.quadraticCurveTo(hx + 330, hy - 260, hx + 280, hy - 60); c.quadraticCurveTo(hx + 130, hy - 180, hx, hy - 130); c.quadraticCurveTo(hx - 150, hy - 190, hx - 300, hy - 80); c.closePath(); };
+  sticker(hat, '#1a1214', 8, 8);
+  T.P(c => { c.moveTo(hx - 292, hy - 86); c.quadraticCurveTo(hx - 150, hy - 182, hx, hy - 124); c.quadraticCurveTo(hx + 130, hy - 172, hx + 272, hy - 66); }); g.lineWidth = 16; g.strokeStyle = '#e0a43a'; g.lineCap = 'round'; g.stroke();
+  T.P(c => { c.moveTo(hx - 292, hy - 86); c.quadraticCurveTo(hx - 270, hy - 320, hx - 40, hy - 342); }); g.stroke();
+  T.P(c => { c.moveTo(hx + 272, hy - 66); c.quadraticCurveTo(hx + 320, hy - 260, hx + 156, hy - 334); }); g.stroke();
+  T.P(hat); g.lineWidth = 8; g.strokeStyle = INK; g.stroke();
+  // red haze around him
+  g.fillStyle = rg(hx, hy, 150, 600, [[0, 'rgba(255,60,40,0)'], [1, 'rgba(120,10,10,0)']]); g.fillRect(0, 0, W, H);
+}
+function desk() {
+  ink(c => { c.moveTo(-20, 930); c.lineTo(W + 20, 900); c.lineTo(W + 20, H + 20); c.lineTo(-20, H + 20); c.closePath(); }, '#9a6236', 7);
+  for (let k = 0; k < 6; k++) T.line([[0, 960 + k * 24], [W, 932 + k * 24 + Math.sin(k) * 6]], 3, 'rgba(60,30,10,.35)');
+  T.line([[-20, 930], [W + 20, 900]], 12, '#c08048'); T.line([[-20, 930], [W + 20, 900]], 0.1);
+}
+function official() {
+  const hx = 700, hy = 600;
+  // blue coat, gold waistcoat, white cravat
+  const coat = c => { c.moveTo(380, 1000); c.quadraticCurveTo(400, 780, 560, 740); c.quadraticCurveTo(700, 720, 860, 750); c.quadraticCurveTo(1020, 790, 1060, 1000); c.closePath(); };
+  sticker(coat, '#2e3f7a', 7, 10);
+  ink(c => { c.moveTo(620, 760); c.lineTo(780, 760); c.lineTo(800, 1000); c.lineTo(600, 1000); c.closePath(); }, '#e0a43a', 5);
+  for (let k = 0; k < 3; k++) ink(ell(700, 820 + k * 50, 9, 9), '#7a5216', 3);
+  T.line([[620, 760], [600, 1000]], 8, '#f2c344'); T.line([[780, 760], [800, 1000]], 8, '#f2c344');
+  ink(c => { c.moveTo(650, 740); c.quadraticCurveTo(620, 800, 670, 840); c.quadraticCurveTo(700, 860, 730, 840); c.quadraticCurveTo(780, 800, 750, 740); c.closePath(); }, '#f6ece4', 5);
+  fill(c => { c.moveTo(900, 770); c.quadraticCurveTo(1020, 800, 1060, 1000); c.lineTo(960, 1000); c.closePath(); }, 'rgba(10,15,40,.3)');
+  // brown wig curls at the sides
+  [[-160, 40], [-170, 110], [160, 40], [170, 110]].forEach(([dx, dy]) => ink(ell(hx + dx, hy + dy, 40, 36), '#8a5a32', 5));
+  // head
+  const head = c => { const k = 150 / 170; c.moveTo(hx - 175 * k, hy); c.bezierCurveTo(hx - 180 * k, hy - 195 * k, hx + 180 * k, hy - 195 * k, hx + 178 * k, hy); c.bezierCurveTo(hx + 176 * k, hy + 150 * k, hx + 90 * k, hy + 185 * k, hx, hy + 185 * k); c.bezierCurveTo(hx - 95 * k, hy + 185 * k, hx - 172 * k, hy + 150 * k, hx - 175 * k, hy); c.closePath(); };
+  sticker(head, '#fbf7ef', 8, 10);
+  // terrified: wide eyes, tiny pupils, gritted teeth, sweat
+  T.eye(hx - 50, hy + 20, 46, 54, 8, 4, .2); T.eye(hx + 58, hy + 20, 46, 54, 8, 4, .2);
+  T.line([[hx - 100, hy - 50], [hx - 20, hy - 34]], 10); T.line([[hx + 20, hy - 34], [hx + 104, hy - 56]], 10);
+  const mouth = c => { c.moveTo(hx - 60, hy + 100); c.quadraticCurveTo(hx, hy + 84, hx + 70, hy + 96); c.lineTo(hx + 66, hy + 146); c.quadraticCurveTo(hx, hy + 140, hx - 58, hy + 150); c.closePath(); };
+  ink(mouth, '#ffffff', 6);
+  g.save(); T.P(mouth); g.clip(); for (let k = -2; k <= 3; k++) T.line([[hx + k * 22 - 6, hy + 80], [hx + k * 22 - 6, hy + 160]], 4); T.line([[hx - 70, hy + 122], [hx + 80, hy + 120]], 4); g.restore();
+  [[hx - 10, hy - 90, 1], [hx - 100, hy + 90, .8], [hx + 120, hy + 70, .9], [hx + 40, hy - 70, .7], [hx - 150, hy - 20, .7]].forEach(([x, y, s]) => T.drop(x, y, s));
+  // brown tricorne
+  ink(c => { c.moveTo(hx - 110, hy - 120); c.quadraticCurveTo(hx - 100, hy - 230, hx, hy - 236); c.quadraticCurveTo(hx + 100, hy - 230, hx + 110, hy - 120); c.closePath(); }, '#6e4626', 6);   // crown
+  const hat = c => { c.moveTo(hx - 250, hy - 170); c.quadraticCurveTo(hx - 180, hy - 130, hx - 110, hy - 150); c.quadraticCurveTo(hx - 40, hy - 200, hx, hy - 196); c.quadraticCurveTo(hx + 40, hy - 200, hx + 110, hy - 150); c.quadraticCurveTo(hx + 180, hy - 130, hx + 250, hy - 170); c.quadraticCurveTo(hx + 240, hy - 80, hx + 150, hy - 70); c.quadraticCurveTo(hx + 60, hy - 60, hx, hy - 30); c.quadraticCurveTo(hx - 60, hy - 60, hx - 150, hy - 70); c.quadraticCurveTo(hx - 240, hy - 80, hx - 250, hy - 170); c.closePath(); };
+  sticker(hat, '#8a5a32', 7, 10);
+  T.P(c => { c.moveTo(hx - 246, hy - 164); c.quadraticCurveTo(hx - 236, hy - 86, hx - 150, hy - 76); c.quadraticCurveTo(hx - 60, hy - 66, hx, hy - 36); c.quadraticCurveTo(hx + 60, hy - 66, hx + 150, hy - 76); c.quadraticCurveTo(hx + 236, hy - 86, hx + 246, hy - 164); }); g.lineWidth = 14; g.strokeStyle = '#e0a43a'; g.lineCap = 'round'; g.stroke();
+  T.P(hat); g.lineWidth = 7; g.strokeStyle = INK; g.stroke();
+  fill(ell(hx - 60, hy - 120, 70, 16, -.1), 'rgba(255,255,255,.12)');
+}
+function paper() {
+  const pts = [[430, 950], [1330, 905], [1370, 1100], [400, 1100]];
+  const path = c => { c.moveTo(...pts[0]); pts.slice(1).forEach(p => c.lineTo(...p)); c.closePath(); };
+  sticker(path, '#f6eedc', 6, 6);
+  for (let k = 0; k < 4; k++) T.line([[480 + k * 4, 990 + k * 26], [760, 978 + k * 26]], 4, 'rgba(60,50,40,.45)');
+  // red WAR stamp
+  g.save(); g.translate(990, 1010); g.rotate(-.06);
+  T.P(ell(0, 0, 230, 82)); g.lineWidth = 14; g.strokeStyle = '#d6281e'; g.stroke();
+  g.font = '120px Lucky'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#d6281e'; g.fillText('WAR', 0, 10);
+  g.restore();
+}
+function hands() {
+  // writing hand with the quill
+  ink(c => { c.moveTo(460, 860); c.quadraticCurveTo(420, 720, 300, 640); c.quadraticCurveTo(340, 680, 360, 760); c.quadraticCurveTo(330, 720, 300, 720); c.quadraticCurveTo(380, 800, 450, 880); c.closePath(); }, '#fbf7ef', 5);
+  T.line([[300, 650], [450, 880]], 4, 'rgba(140,130,120,.7)');
+  T.line([[450, 880], [510, 990]], 8); T.line([[460, 900], [505, 982]], 4, '#e0a43a');
+  ink(rr(430, 870, 120, 90, 36), '#fbf7ef', 6);
+  [[445, 900, 525, 900], [445, 925, 525, 925]].forEach(([a, b, c2, d]) => T.line([[a, b], [c2, d]], 3.5));
+  // left hand pressing the page
+  ink(rr(930, 860, 140, 80, 34), '#fbf7ef', 6);
+  [956, 990, 1024].forEach(x => T.line([[x, 900], [x, 936]], 3.5));
+}
+function jar() {
+  const jx = 1590, jy = 880;
+  ink(rr(jx - 120, jy - 230, 240, 290, 50), '#cfe9f3', 7);
+  fill(rr(jx - 110, jy - 130, 220, 180, 40), '#b6dcec');
+  const ear = c => { c.moveTo(jx - 30, jy - 120); c.bezierCurveTo(jx + 10, jy - 190, jx + 110, jy - 170, jx + 100, jy - 70); c.bezierCurveTo(jx + 96, jy - 20, jx + 50, jy - 10, jx + 50, jy + 30); c.bezierCurveTo(jx + 50, jy + 70, jx - 10, jy + 80, jx - 20, jy + 40); c.bezierCurveTo(jx - 26, jy + 10, jx - 10, jy - 10, jx - 20, jy - 40); c.bezierCurveTo(jx - 40, jy - 70, jx - 50, jy - 90, jx - 30, jy - 120); c.closePath(); };
+  ink(ear, '#f4b08c', 6);
+  fill(ell(jx + 22, jy - 50, 34, 42, .2), '#d9876a');
+  T.line([[jx - 6, jy - 110], [jx + 50, jy - 130], [jx + 74, jy - 80]], 7, '#c56a4a');
+  T.line([[jx + 74, jy - 80], [jx + 56, jy - 20]], 7, '#c56a4a');
+  fill(ell(jx + 2, jy + 44, 18, 14), 'rgba(240,140,120,.5)');
+  [[jx - 70, jy - 30, 8], [jx + 80, jy - 120, 6], [jx - 50, jy + 20, 5]].forEach(([x, y, r]) => ink(ell(x, y, r, r), 'rgba(255,255,255,.5)', 2));
+  fill(rr(jx - 100, jy - 210, 22, 240, 11), 'rgba(255,255,255,.65)');
+  ink(rr(jx - 90, jy - 266, 180, 40, 14), 'rgba(200,232,245,.7)', 6);
+  ink(rr(jx - 74, jy - 330, 148, 70, 14), '#c48a50', 6);
+  for (let k = 0; k < 10; k++) fill(ell(jx - 56 + (k % 5) * 28, jy - 312 + Math.floor(k / 5) * 30, 4, 4), 'rgba(90,55,25,.6)');
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  background();
+  claw(260, 520, 1.0, 1); claw(1720, 640, 1.0, -1);
+  villain();
+  desk();
+  official(); paper(); hands(); jar();
+  T.grade('rgba(40,0,0,.6)');
+  T.title('OVER AN EAR?', 960, 250, 250, T.yellow(250), 0, 'center');
+  window.DONE = true;
+});
+</script>

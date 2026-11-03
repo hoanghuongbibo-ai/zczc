@@ -1,0 +1,206 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* "JUST LYING": a medieval peasant naps on a haystack, hands behind his head and a wheat stalk
+ * in his mouth, while the farm carries on around him — cows, round bales, a windmill and a
+ * village on the hill. Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 47), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const HAY = '#f2c14a', HAYD = '#d99a2a', HAYL = '#ffe08a';
+
+function sky() {
+  g.fillStyle = lg(0, 0, 0, 520, [[0, '#2e8fe0'], [.7, '#7fc4f2'], [1, '#d4eefc']]); g.fillRect(0, 0, W, H);
+  // sun peeking over the hills, with rays
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 22; i++) { const a = Math.PI + i / 21 * Math.PI, a2 = a + .05; T.P(c => { c.moveTo(1060, 470); c.lineTo(1060 + Math.cos(a) * 900, 470 + Math.sin(a) * 900); c.lineTo(1060 + Math.cos(a2) * 900, 470 + Math.sin(a2) * 900); c.closePath(); }); g.fillStyle = 'rgba(255,250,210,.16)'; g.fill(); }
+  g.restore();
+  g.fillStyle = rg(1060, 470, 0, 420, [[0, 'rgba(255,252,220,1)'], [.25, 'rgba(255,240,170,.8)'], [1, 'rgba(255,240,170,0)']]); g.fillRect(0, 0, W, H);
+  ink(c => c.arc(1060, 470, 90, Math.PI, 0), '#fff2a0', 5);
+  const cloud = (x, y, s) => { [[0, 0, 80, 30], [-60, 10, 54, 24], [62, 8, 60, 26], [10, -22, 50, 30]].forEach(([dx, dy, rx, ry]) => { ink(ell(x + dx * s, y + dy * s, rx * s, ry * s), null, 4); }); g.fillStyle = '#fff'; [[0, 0, 80, 30], [-60, 10, 54, 24], [62, 8, 60, 26], [10, -22, 50, 30]].forEach(([dx, dy, rx, ry]) => { T.P(ell(x + dx * s, y + dy * s, rx * s, ry * s)); g.fill(); }); fill(ell(x + 10 * s, y + 18 * s, 90 * s, 10 * s), 'rgba(170,205,235,.6)'); };
+  [[560, 330, .8], [1500, 120, 1.1], [1820, 330, .8], [300, 70, .7]].forEach(([x, y, s]) => cloud(x, y, s));
+}
+function land() {
+  // distant hills
+  [[470, '#7fb06a', 50], [500, '#94c070', 40]].forEach(([y, col, amp], i) => { g.fillStyle = col; T.P(c => { c.moveTo(0, H); c.lineTo(0, y); for (let x = 0; x <= W; x += 40) c.lineTo(x, y - Math.sin(x / 260 + i * 2) * amp - Math.sin(x / 90) * 6); c.lineTo(W, H); c.closePath(); }); g.fill(); });
+  // meadow
+  g.fillStyle = lg(0, 500, 0, H, [[0, '#9ccc5c'], [1, '#6ea83e']]); T.P(c => { c.moveTo(0, 540); c.bezierCurveTo(600, 500, 1300, 520, W, 500); c.lineTo(W, H); c.lineTo(0, H); c.closePath(); }); g.fill();
+  T.line([[0, 540], [W, 500]], 0.1);
+  for (let i = 0; i < 90; i++) { const x = T.rnd() * W, y = 540 + T.rnd() * 500, s = .5 + (y - 540) / 500; for (let k = -1; k <= 1; k++) T.line([[x, y], [x + k * 8 * s, y - 18 * s]], 3 * s, 'rgba(70,120,40,.55)'); }
+}
+function windmill() {
+  const x = 400, y = 470;
+  ink(c => { c.moveTo(x - 34, y); c.lineTo(x - 22, y - 120); c.lineTo(x + 22, y - 120); c.lineTo(x + 34, y); c.closePath(); }, '#efe0c0', 5);
+  ink(c => { c.moveTo(x - 30, y - 118); c.quadraticCurveTo(x, y - 160, x + 30, y - 118); c.closePath(); }, '#8a5a3a', 5);
+  ink(rr(x - 10, y - 40, 20, 40, 8), '#5a3a22', 3);
+  g.save(); g.translate(x, y - 128); g.rotate(.5);
+  for (let k = 0; k < 4; k++) { g.save(); g.rotate(k * Math.PI / 2); ink(rr(-12, -110, 24, 100, 2), '#c79a5a', 4); for (let j = 1; j < 5; j++) T.line([[-12, -110 + j * 20], [12, -110 + j * 20]], 2); g.restore(); }
+  ink(ell(0, 0, 10, 10), '#5a3a22', 3);
+  g.restore();
+}
+function village() {
+  // houses climbing the hill on the right, red roofs, a church tower
+  const house = (x, y, w, h, roof = '#d6463a') => {
+    ink(rr(x, y - h, w, h, 2), '#f3e6cc', 4);
+    ink(c => { c.moveTo(x - 10, y - h + 2); c.lineTo(x + w / 2, y - h - w * .45); c.lineTo(x + w + 10, y - h + 2); c.closePath(); }, roof, 4);
+    for (let k = 0; k < Math.floor(w / 30); k++) ink(rr(x + 10 + k * 28, y - h + 16, 12, 16, 3), '#4a3a2a', 2);
+  };
+  const tower = (x, y, w, h) => { ink(rr(x, y - h, w, h, 2), '#e6d6b6', 4); ink(c => { c.moveTo(x - 6, y - h); c.lineTo(x + w / 2, y - h - w * 1.1); c.lineTo(x + w + 6, y - h); c.closePath(); }, '#c23a30', 4); T.line([[x + w / 2, y - h - w * 1.1], [x + w / 2, y - h - w * 1.1 - 30]], 3); fill(c => { c.moveTo(x + w / 2, y - h - w * 1.1 - 30); c.lineTo(x + w / 2 + 22, y - h - w * 1.1 - 24); c.lineTo(x + w / 2, y - h - w * 1.1 - 16); c.closePath(); }, '#c23a30'); ink(rr(x + w / 2 - 7, y - h + 20, 14, 22, 7), '#4a3a2a', 2); };
+  // a little hill under the village
+  fill(c => { c.moveTo(1400, 500); c.quadraticCurveTo(1640, 330, 1920, 320); c.lineTo(1920, 520); c.closePath(); }, '#8cbf62');
+  tower(1690, 330, 54, 120);
+  [[1460, 470, 70, 50], [1540, 440, 80, 56], [1620, 420, 90, 60], [1760, 380, 80, 60], [1840, 370, 80, 56], [1580, 480, 70, 46], [1700, 450, 90, 54]].forEach(([x, y, w, h], i) => house(x, y, w, h, i % 2 ? '#c8382e' : '#e0533e'));
+  tower(1500, 400, 36, 70);
+  // trees at the village edge
+  [[1420, 500], [1880, 470], [1760, 470]].forEach(([x, y]) => ink(ell(x, y - 30, 40, 34), '#4f8f3a', 4));
+}
+function fence(x0, x1, y0, y1) {
+  const n = Math.round((x1 - x0) / 70);
+  for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n, y = y0 + (y1 - y0) * i / n; ink(rr(x - 7, y - 70, 14, 74, 4), '#8a5a32', 4); }
+  [24, 50].forEach(dy => { T.line([[x0, y0 - dy], [x1, y1 - dy]], 14); T.line([[x0, y0 - dy], [x1, y1 - dy]], 8, '#a8743e'); });
+}
+function barn() {
+  const x = 1760, y = 560;
+  ink(rr(x, y - 170, 220, 170, 2), '#b07a44', 5);
+  for (let k = 1; k < 8; k++) T.line([[x + k * 28, y - 166], [x + k * 28, y - 4]], 3, 'rgba(70,40,15,.5)');
+  ink(rr(x + 50, y - 110, 70, 110, 4), '#6b4426', 4); T.line([[x + 50, y - 110], [x + 120, y]], 4); T.line([[x + 120, y - 110], [x + 50, y]], 4);
+  const roof = c => { c.moveTo(x - 40, y - 150); c.lineTo(x + 60, y - 280); c.lineTo(x + 240, y - 280); c.lineTo(x + 240, y - 150); c.closePath(); };
+  ink(roof, HAY, 6);
+  g.save(); T.P(roof); g.clip(); for (let i = 0; i < 80; i++) { const sx = x - 40 + T.rnd() * 280, sy = y - 280 + T.rnd() * 130; T.line([[sx, sy], [sx - 10, sy + 30]], 3, T.rnd() > .5 ? HAYD : HAYL); } g.restore();
+}
+function cow(x, y, s, lying) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  const hide = '#9a6440', dark = '#6b4228', snout = '#f0c8a8';
+  if (!lying) {
+    [-90, -60, 60, 90].forEach((lx, i) => { ink(rr(lx - 12, 10, 24, 90, 10), i % 3 ? hide : dark, 4); ink(rr(lx - 13, 92, 26, 14, 5), '#3a2618', 3); });
+    T.line([[-120, -30], [-150, 30]], 7); ink(ell(-152, 38, 9, 14), dark, 3);
+    ink(rr(-125, -60, 250, 110, 50), hide, 6);
+    fill(ell(-40, -10, 50, 30), 'rgba(80,45,20,.3)');
+    // head down, eating
+    ink(c => { c.moveTo(90, -50); c.quadraticCurveTo(150, -30, 160, 40); c.lineTo(120, 50); c.quadraticCurveTo(110, 0, 80, 0); c.closePath(); }, hide, 6);
+    ink(rr(118, 20, 80, 86, 30), hide, 6); ink(rr(124, 70, 70, 44, 20), snout, 5);
+    fill(ell(146, 92, 5, 7), INK); fill(ell(172, 92, 5, 7), INK);
+    T.line([[132, 48], [146, 54], [160, 48]], 4);
+    ink(c => { c.moveTo(180, 30); c.quadraticCurveTo(220, 10, 222, -20); c.quadraticCurveTo(210, 12, 172, 20); c.closePath(); }, '#f3e6c0', 4);
+    ink(c => { c.moveTo(130, 26); c.quadraticCurveTo(96, 0, 100, -24); c.quadraticCurveTo(108, 6, 140, 18); c.closePath(); }, '#f3e6c0', 4);
+    ink(ell(118, 34, 22, 10, -.5), hide, 4);
+    T.line([[150, 116], [140, 140]], 4, '#4f8f3a'); T.line([[166, 116], [174, 140]], 4, '#4f8f3a');
+  } else {
+    ink(rr(-130, -40, 230, 90, 45), hide, 6);
+    fill(ell(-50, 0, 46, 24), 'rgba(80,45,20,.3)');
+    [[-90, 46], [40, 50]].forEach(([lx, ly]) => ink(rr(lx, ly - 14, 70, 22, 10), dark, 4));
+    T.line([[-128, 0], [-160, 30]], 7);
+    // head up, looking at the viewer, chewing
+    ink(rr(70, -90, 96, 104, 36), hide, 6); ink(rr(76, -30, 84, 50, 22), snout, 5);
+    fill(ell(100, -6, 5, 7), INK); fill(ell(136, -6, 5, 7), INK);
+    ink(ell(98, -56, 10, 11), '#fff', 3); ink(ell(140, -56, 10, 11), '#fff', 3); fill(ell(99, -54, 5, 6), INK); fill(ell(139, -54, 5, 6), INK);
+    ink(c => { c.moveTo(80, -84); c.quadraticCurveTo(50, -110, 54, -140); c.quadraticCurveTo(66, -112, 92, -96); c.closePath(); }, '#f3e6c0', 4);
+    ink(c => { c.moveTo(156, -84); c.quadraticCurveTo(186, -110, 182, -140); c.quadraticCurveTo(170, -112, 144, -96); c.closePath(); }, '#f3e6c0', 4);
+    ink(ell(56, -70, 22, 11, .4), hide, 4); ink(ell(180, -70, 22, 11, -.4), hide, 4);
+  }
+  g.restore();
+}
+function tree() {
+  ink(c => { c.moveTo(-20, 620); c.quadraticCurveTo(40, 500, 60, 300); c.quadraticCurveTo(70, 160, 40, -20); c.lineTo(150, -20); c.quadraticCurveTo(150, 200, 130, 330); c.quadraticCurveTo(110, 520, 150, 640); c.closePath(); }, '#7a4f2e', 7);
+  fill(c => c.rect(100, -20, 40, 640), 'rgba(40,20,5,.25)');
+  for (let y = 60; y < 600; y += 70) T.line([[70, y], [96, y + 24]], 4, 'rgba(40,20,5,.45)');
+  T.line([[120, 140], [300, 40]], 30); T.line([[120, 140], [300, 40]], 18, '#7a4f2e');
+  [[60, 30, 150], [230, 0, 140], [380, -30, 120], [-20, 160, 120], [160, 110, 110], [520, -40, 100]].forEach(([x, y, r]) => ink(ell(x, y, r, r * .8), '#6aa140', 6));
+  [[40, 0, 90], [220, -20, 80], [370, -40, 70], [150, 90, 60]].forEach(([x, y, r]) => fill(ell(x, y, r, r * .6), 'rgba(170,215,110,.5)'));
+}
+function roundBale(x, y, r, side = 1) {
+  // round bale seen from its end: a spiral face plus the barrel going back
+  ink(rr(x - r * .1 * side - (side < 0 ? r * 1.2 : 0), y - r, r * 1.3, r * 2, r * .3), HAYD, 6);
+  g.save(); T.P(rr(x - r * .1 * side - (side < 0 ? r * 1.2 : 0), y - r, r * 1.3, r * 2, r * .3)); g.clip();
+  for (let i = 0; i < 30; i++) { const sy = y - r + T.rnd() * r * 2; T.line([[x - r * 1.4, sy], [x + r * 1.4, sy + (T.rnd() - .5) * 8]], 3, T.rnd() > .5 ? 'rgba(160,100,20,.6)' : 'rgba(255,230,140,.6)'); }
+  g.restore();
+  ink(ell(x, y, r * .82, r), HAY, 6);
+  g.strokeStyle = 'rgba(160,100,20,.85)'; g.lineWidth = 4; g.beginPath();
+  for (let t = 0; t < Math.PI * 7; t += .1) { const k = t / (Math.PI * 7); g.lineTo(x + Math.cos(t) * r * .8 * k, y + Math.sin(t) * r * .96 * k); }
+  g.stroke();
+  fill(ell(x - r * .25, y - r * .35, r * .3, r * .18, -.5), 'rgba(255,240,180,.4)');
+}
+function haystack() {
+  const mound = c => { c.moveTo(150, H + 20); c.bezierCurveTo(200, 700, 500, 560, 800, 560); c.bezierCurveTo(1150, 560, 1500, 700, 1720, H + 20); c.closePath(); };
+  ink(mound, HAY, 8);
+  g.save(); T.P(mound); g.clip();
+  fill(c => { c.moveTo(1000, 560); c.bezierCurveTo(1300, 600, 1500, 750, 1720, 1100); c.lineTo(1300, 1100); c.closePath(); }, 'rgba(190,120,20,.25)');
+  for (let i = 0; i < 420; i++) { const x = 150 + T.rnd() * 1570, y = 560 + T.rnd() * 540, a = (T.rnd() - .5) * 1.4 + (x < 900 ? -.4 : .4), l = 20 + T.rnd() * 30; T.line([[x, y], [x + Math.cos(a) * l, y + Math.sin(a) * l]], 3.5, [HAYD, HAYL, '#e8ae36'][Math.floor(T.rnd() * 3)]); }
+  g.restore();
+  // stray straws sticking out of the outline
+  for (let i = 0; i < 40; i++) { const t = T.rnd(), x = 200 + t * 1480, y = 560 + Math.pow(Math.abs(t - .42) * 2.2, 2) * 380; T.line([[x, y + 6], [x + (T.rnd() - .5) * 40, y - 20 - T.rnd() * 20]], 3.5, HAYD); }
+}
+function peasant() {
+  // lying back on the hay, diagonal from head (upper left) to feet (lower right)
+  const hx = 760, hy = 470;
+  // white sticker outline around the whole figure, like the reference
+  g.save(); g.shadowColor = 'rgba(0,0,0,0)';
+  // legs
+  [[[960, 780], [1080, 880], [1110, 960]], [[980, 760], [1130, 840], [1210, 900]]].forEach(pts => { T.line(pts, 70); T.line(pts, 54, '#e8d6b0'); });
+  // boots
+  ink(c => { c.moveTo(1080, 930); c.quadraticCurveTo(1090, 1010, 1150, 1010); c.quadraticCurveTo(1200, 1006, 1180, 950); c.closePath(); }, '#9a6a44', 6);
+  ink(c => { c.moveTo(1180, 880); c.quadraticCurveTo(1190, 960, 1250, 960); c.quadraticCurveTo(1300, 950, 1280, 896); c.closePath(); }, '#9a6a44', 6);
+  // tunic: brown over a grey shirt, belted, lying at an angle
+  ink(c => { c.moveTo(700, 600); c.quadraticCurveTo(820, 560, 900, 620); c.lineTo(1040, 760); c.lineTo(960, 860); c.lineTo(900, 800); c.lineTo(860, 840); c.lineTo(760, 720); c.closePath(); }, '#8a5a34', 7);
+  ink(c => { c.moveTo(740, 600); c.quadraticCurveTo(800, 580, 860, 620); c.lineTo(900, 700); c.quadraticCurveTo(840, 720, 790, 680); c.closePath(); }, '#8e8a80', 5);
+  T.line([[800, 720], [970, 700]], 16); T.line([[800, 720], [970, 700]], 9, '#5a3a22');
+  fill(c => { c.moveTo(930, 640); c.lineTo(1040, 760); c.lineTo(960, 860); c.lineTo(980, 760); c.closePath(); }, 'rgba(60,30,10,.25)');
+  // arms folded behind the head: elbows out on either side
+  [[[720, 640], [600, 560], [700, 460]], [[880, 630], [960, 520], [840, 460]]].forEach(pts => { T.line(pts, 60); T.line(pts, 44, '#8a5a34'); });
+  g.restore();
+  // head, tilted back
+  g.save(); g.translate(hx, hy); g.rotate(-.2); g.translate(-hx, -hy);
+  // hair
+  ink(ell(hx, hy - 20, 140, 120), '#7a4a26', 6);
+  T.head(hx, hy, 120);
+  // closed content eyes, little smile
+  T.line([[hx - 60, hy + 6], [hx - 36, hy + 20], [hx - 12, hy + 6]], 7);
+  T.line([[hx + 24, hy + 6], [hx + 48, hy + 20], [hx + 72, hy + 6]], 7);
+  T.line([[hx - 10, hy + 70], [hx + 16, hy + 82], [hx + 40, hy + 70]], 6);
+  fill(ell(hx - 70, hy + 48, 18, 10), 'rgba(240,130,110,.4)'); fill(ell(hx + 84, hy + 48, 18, 10), 'rgba(240,130,110,.4)');
+  // flat brown cap tipped over the brow
+  ink(c => { c.moveTo(hx - 170, hy - 50); c.quadraticCurveTo(hx - 150, hy - 200, hx + 10, hy - 210); c.quadraticCurveTo(hx + 170, hy - 200, hx + 180, hy - 70); c.quadraticCurveTo(hx, hy - 110, hx - 170, hy - 50); c.closePath(); }, '#4a3426', 7);
+  fill(ell(hx - 40, hy - 160, 70, 22, -.2), 'rgba(255,255,255,.12)');
+  g.restore();
+  // wheat stalk in the corner of his mouth
+  T.line([[hx + 40, hy + 72], [hx + 210, hy + 10]], 9); T.line([[hx + 40, hy + 72], [hx + 210, hy + 10]], 5, '#e8b23a');
+  for (let k = 0; k < 6; k++) { const t = .55 + k * .08, x = hx + 40 + 170 * t, y = hy + 72 - 62 * t; [-1, 1].forEach(sd => { g.save(); g.translate(x, y); g.rotate(-.35 + sd * .6); ink(ell(10, 0, 14, 7), '#f2c14a', 3); g.restore(); }); }
+  ink(ell(hx + 220, hy + 6, 14, 8, -.35), '#f2c14a', 3);
+}
+function sack() {
+  const x = 480, y = 960;
+  ink(c => { c.moveTo(x - 110, y + 140); c.quadraticCurveTo(x - 160, y + 10, x - 50, y - 70); c.lineTo(x - 30, y - 100); c.quadraticCurveTo(x - 70, y - 140, x - 30, y - 150); c.quadraticCurveTo(x, y - 130, x + 30, y - 150); c.quadraticCurveTo(x + 70, y - 140, x + 30, y - 100); c.lineTo(x + 50, y - 70); c.quadraticCurveTo(x + 160, y + 10, x + 110, y + 140); c.closePath(); }, '#c9a878', 7);
+  T.line([[x - 44, y - 92], [x + 44, y - 92]], 9, '#7a5a34');
+  fill(ell(x + 50, y + 40, 50, 80), 'rgba(110,80,40,.25)');
+  // patches stitched with crosses
+  [[x - 50, y + 50], [x + 30, y + 90]].forEach(([px, py]) => { T.line([[px - 12, py - 12], [px + 12, py + 12]], 5, '#6b4a28'); T.line([[px + 12, py - 12], [px - 12, py + 12]], 5, '#6b4a28'); });
+}
+function pitchfork() {
+  g.save(); g.translate(1520, 860); g.rotate(-.75);
+  ink(rr(-12, 0, 24, 420, 10), '#8a5a32', 5);
+  ink(rr(-60, -20, 120, 26, 10), '#9aa2aa', 5);
+  [-48, -16, 16, 48].forEach(x => ink(c => { c.moveTo(x - 7, -10); c.lineTo(x - 5, -170); c.quadraticCurveTo(x, -186, x + 5, -170); c.lineTo(x + 7, -10); c.closePath(); }, '#b5bdc5', 4));
+  g.restore();
+}
+function fencePost() {
+  ink(rr(30, 790, 70, 320, 10), '#8a5a32', 7);
+  ink(rr(-40, 860, 280, 54, 10), '#9a6a3a', 7);
+  for (let y = 820; y < 1080; y += 60) T.line([[44, y], [70, y + 20]], 4, 'rgba(50,25,10,.5)');
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  sky(); land(); windmill(); village();
+  fence(1440, 1760, 560, 545); fence(330, 520, 660, 650);
+  barn();
+  cow(1210, 590, .9, false); cow(1530, 690, .85, true);
+  tree();
+  roundBale(250, 650, 150, -1); roundBale(150, 870, 150, -1);
+  roundBale(1780, 760, 140, 1); roundBale(1660, 960, 150, 1);
+  haystack();
+  peasant();
+  sack(); pitchfork(); fencePost();
+  T.grade('rgba(30,40,20,.4)');
+  T.title('JUST LYING', 960, 250, 270, T.yellow(270), -.02, 'center');
+  window.DONE = true;
+});
+</script>

@@ -15,11 +15,11 @@
   const F2 = { chapters: [], at, after, badges: [], ribbons: [], meter: [], trackers: [], images: {} };
   F2.chapter = (ch) => { F2.chapters.push(ch); for (const b of ch.badges || []) F2.badges.push(b); for (const r of ch.ribbons || []) F2.ribbons.push(r); for (const m of ch.meter || []) F2.meter.push(m); for (const tr of ch.trackers || []) F2.trackers.push(tr); Object.assign(F2.images, ch.images || {}); };
   // a shot: spec = { cam: [[z, x, y], …] or [[u, z, x, y], …], world(ctx, t, lt, d), ui(ctx, t, lt, d), shake: [t…], vig, sky }
-  F2.shot = (spec) => function (ctx, lt, dur, t) { ctx.save(); const ks = spec.cam || [[1, 640, 360], [1.05, 640, 360]]; const keys = ks.map((k, i) => k.length === 4 ? [t - lt + k[0] * dur, k[1], k[2], k[3]] : [t - lt + (ks.length > 1 ? i / (ks.length - 1) : 0) * dur, k[0], k[1], k[2]]);
+  F2.shot = (spec) => { const f = function (ctx, lt, dur, t) { ctx.save(); const ks = spec.cam || [[1, 640, 360], [1.05, 640, 360]]; const keys = ks.map((k, i) => k.length === 4 ? [t - lt + k[0] * dur, k[1], k[2], k[3]] : [t - lt + (ks.length > 1 ? i / (ks.length - 1) : 0) * dur, k[0], k[1], k[2]]);
     if (spec.bg) { ctx.save(); ctx.fillStyle = spec.bg; ctx.fillRect(0, 0, 1280, 720); ctx.restore(); }
     const cv = spec.noCov ? null : G.__cov; if (cv) { ctx.translate(cv.cx, cv.cy); ctx.scale(cv.z, cv.z); ctx.translate(-cv.cx, -cv.cy); }
     U.cam(ctx, t, keys, { shake: (spec.shake || []).map(s => Array.isArray(s) ? s : [s, 6]), drift: spec.drift ?? 1, ease: spec.ease }); spec.world(ctx, t, lt, dur); ctx.restore();
-    if (spec.ui) { ctx.save(); spec.ui(ctx, t, lt, dur); ctx.restore(); } U.finish(ctx, t, spec.vig ?? .4); };
+    if (spec.ui && !G.__noUI) { ctx.save(); spec.ui(ctx, t, lt, dur); ctx.restore(); } if (!G.__noUI) U.finish(ctx, t, spec.vig ?? .4); }; f.spec = spec; return f; };
   // ---------- overlays ----------
   const inRange = (list, t) => { let cur = null; for (const b of list) if (t >= b[0] && t < b[1]) cur = b; return cur; };
   F2.overlays = (ctx, t) => { const OPEN = (G.FILM_CFG && G.FILM_CFG.openUntil) ?? (G.SketchOpen ? 61.4 : 0); if (t < OPEN) { if (G.drawSketchOverlays) G.drawSketchOverlays(ctx, t); return; }

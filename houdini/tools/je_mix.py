@@ -44,7 +44,11 @@ CUES = [
     (1093.0, 1153.0, 'playful', .65), (1153.0, 1170.0, 'dramatic', .65), (1170.0, 1181.0, 'epic', .65), (1181.0, 1196.0, 'somber', .7),
     (1196.0, 1245.0, 'curious', .65), (1245.0, 1281.0, 'warm', .8), (1281.0, 1312.0, 'reflective', .75), (1312.0, 1329.0, 'playful', .8),
 ]
-AMBS = [(852.0, 866.0, 'amb-battle.mp3', 0.0, .45), (927.0, 937.0, 'amb-battle.mp3', 14.0, .4), (1055.0, 1068.0, 'amb-battle.mp3', 25.0, .35)]
+INTENSE = {'epic': 1.25, 'drums': 1.25, 'dramatic': 1.15, 'march': 1.15, 'suspense': 1.05}
+GENTLE = {'dawn': .75, 'reflective': .75, 'somber': .8, 'pastoral': .75, 'warm': .85, 'curious': .85, 'playful': .9}
+CUES[:] = [(a, b, k, g * INTENSE.get(k, GENTLE.get(k, 1))) for a, b, k, g in CUES]
+AMBS = [(598.0, 606.0, 'amb-battle.mp3', 4.0, .45), (1061.0, 1069.0, 'amb-battle.mp3', 30.0, .4), (1171.0, 1178.0, 'amb-battle.mp3', 8.0, .35),
+(852.0, 866.0, 'amb-battle.mp3', 0.0, .45), (927.0, 937.0, 'amb-battle.mp3', 14.0, .4), (1055.0, 1068.0, 'amb-battle.mp3', 25.0, .35)]
 
 def build(total):
     P.CUES[:] = CUES; P.AMBS[:] = []

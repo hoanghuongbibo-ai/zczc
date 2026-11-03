@@ -1,0 +1,174 @@
+<!doctype html><meta charset="utf-8">
+<style>@font-face { font-family: Lucky; src: url(luckiest-guy-latin-400-normal.woff2); } body { margin: 0; background: #111; }</style>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script src="../lib/toon.js"></script>
+<script>
+/* "THE PIG" — the Pig War of 1859 on San Juan Island: American and British troops glare at each
+ * other across their cannons while the cause of it all, a very smug pig in a suit, stands in the
+ * middle with his arms crossed. Redrawn from the user's reference in the channel's flat ink style. */
+const T = Toon(document.getElementById('c'), 61), { g, W, H, INK, ink, line, ell, rr, lg, rg, fill } = T;
+const BLUE = '#2b3f7a', RED = '#c7322a';
+
+function background() {
+  g.fillStyle = lg(0, 0, 0, H, [[0, '#14254f'], [.5, '#27477e'], [1, '#3a3a40']]); g.fillRect(0, 0, W, H);
+  // starburst behind the pig
+  g.save(); g.globalCompositeOperation = 'screen';
+  for (let i = 0; i < 28; i++) { const a = i / 28 * Math.PI * 2, a2 = a + .07; T.P(c => { c.moveTo(960, 560); c.lineTo(960 + Math.cos(a) * 900, 560 + Math.sin(a) * 900); c.lineTo(960 + Math.cos(a2) * 900, 560 + Math.sin(a2) * 900); c.closePath(); }); g.fillStyle = 'rgba(255,200,90,.16)'; g.fill(); }
+  g.restore();
+  g.fillStyle = rg(960, 600, 0, 520, [[0, 'rgba(255,236,150,1)'], [.35, 'rgba(255,180,60,.75)'], [1, 'rgba(255,150,40,0)']]); g.fillRect(0, 0, W, H);
+  // San Juan Island: dark pine-covered hills behind the camps
+  [[640, '#1f3a34', 0], [700, '#2a4a3c', 2]].forEach(([y, col, ph]) => {
+    g.fillStyle = col; T.P(c => { c.moveTo(0, H); c.lineTo(0, y); for (let x = 0; x <= W; x += 36) { const yy = y - Math.sin(x / 300 + ph) * 40 - (T.rnd() * 30); c.lineTo(x, yy); c.lineTo(x + 18, yy - 50 - T.rnd() * 30); } c.lineTo(W, H); c.closePath(); }); g.fill();
+  });
+  // battle smoke rolling in from both sides
+  const puff = (x, y, r) => { fill(ell(x + 8, y + 10, r, r * .8), 'rgba(90,80,70,.7)'); fill(ell(x, y, r, r * .8), '#e9dcc0'); fill(ell(x - r * .3, y - r * .3, r * .45, r * .3), 'rgba(255,255,255,.5)'); };
+  for (let i = 0; i < 22; i++) { const side = i % 2 ? 1 : -1, t = T.rnd(); puff(side < 0 ? T.rnd() * 520 : W - T.rnd() * 520, 60 + t * 560, 60 + T.rnd() * 70); }
+  // soften the smoke under the title
+  g.fillStyle = 'rgba(20,37,79,.35)'; g.fillRect(0, 0, W, H);
+  // ground
+  ink(c => { c.moveTo(-20, 900); c.quadraticCurveTo(960, 850, W + 20, 900); c.lineTo(W + 20, H + 20); c.lineTo(-20, H + 20); c.closePath(); }, '#5a4a32', 6);
+  for (let i = 0; i < 40; i++) { const x = T.rnd() * W, y = 900 + T.rnd() * 170; for (let k = -1; k <= 1; k++) T.line([[x, y], [x + k * 10, y - 26]], 4, '#4f7a35'); }
+}
+function flag(x, y, w, h, kind, side) {
+  // pole + waving cloth drawn in strips
+  T.line([[x, y - 30], [x, y + 640]], 16); T.line([[x, y - 30], [x, y + 640]], 9, '#8a5a32');
+  ink(ell(x, y - 40, 16, 20), '#e0a43a', 4);
+  const oc = document.createElement('canvas'); oc.width = w; oc.height = h; const o = Toon(oc), og = o.g;
+  if (kind === 'us') {
+    for (let k = 0; k < 13; k++) { og.fillStyle = k % 2 ? '#fbf7ef' : '#c8202e'; og.fillRect(0, k * h / 13, w, h / 13 + 1); }
+    og.fillStyle = '#1f3a7a'; og.fillRect(0, 0, w * .42, h * 7 / 13);
+    // 32 stars, as flown in June 1859
+    og.fillStyle = '#fff';
+    for (let r = 0; r < 4; r++) for (let k = 0; k < 8; k++) { const sx = w * .42 * (k + .5) / 8, sy = h * 7 / 13 * (r + .5) / 4; og.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr0 = i % 2 ? 3.4 : 8; og.lineTo(sx + Math.cos(a) * rr0, sy + Math.sin(a) * rr0); } og.fill(); }
+  } else {
+    og.fillStyle = '#1f3f8f'; og.fillRect(0, 0, w, h);
+    o.line([[0, 0], [w, h]], h * .2, '#fff'); o.line([[w, 0], [0, h]], h * .2, '#fff');
+    o.line([[0, 0], [w, h]], h * .07, '#c8202e'); o.line([[w, 0], [0, h]], h * .07, '#c8202e');
+    og.fillStyle = '#fff'; og.fillRect(w * .42, 0, w * .16, h); og.fillRect(0, h * .36, w, h * .28);
+    og.fillStyle = '#c8202e'; og.fillRect(w * .455, 0, w * .09, h); og.fillRect(0, h * .41, w, h * .18);
+  }
+  const fx = side < 0 ? x : x - w, wav = i => Math.sin(i / w * Math.PI * 2 + (side < 0 ? 0 : 1)) * 20 + i * .08 * -side;
+  for (let i = 0; i < w; i += 3) g.drawImage(oc, i, 0, 3, h, fx + i, y + wav(side < 0 ? i : w - i), 3, h);
+  // fold shading
+  for (let i = 0; i < w; i += 3) { const k = Math.cos(i / w * Math.PI * 2 + (side < 0 ? 0 : 1)); if (k > 0) { g.fillStyle = `rgba(0,0,0,${k * .2})`; g.fillRect(fx + i, y + wav(side < 0 ? i : w - i), 3, h); } }
+  T.P(c => { c.moveTo(fx, y + wav(side < 0 ? 0 : w)); for (let i = 0; i <= w; i += 6) c.lineTo(fx + i, y + wav(side < 0 ? i : w - i)); for (let i = w; i >= 0; i -= 6) c.lineTo(fx + i, y + h + wav(side < 0 ? i : w - i)); c.closePath(); });
+  g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+}
+function soldier(x, y, s, army) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  // shoulders
+  const coat = army === 'us' ? BLUE : RED;
+  ink(c => { c.moveTo(-140, 300); c.quadraticCurveTo(-130, 120, 0, 110); c.quadraticCurveTo(130, 120, 140, 300); c.closePath(); }, coat, 6);
+  T.line([[-100, 140], [80, 300]], 16, army === 'us' ? '#a8743e' : '#f3ece0');   // cross belt
+  T.line([[-100, 140], [80, 300]], 0.1);
+  if (army === 'uk') { ink(rr(-40, 116, 80, 22, 8), '#1f1f2a', 3); [-60, 60].forEach(dx => ink(ell(dx, 150, 6, 6), '#f2c344', 2)); }
+  else [-20, 20].forEach(dx => [170, 220].forEach(dy => ink(ell(dx, dy, 6, 6), '#f2c344', 2)));
+  // head
+  T.head(0, 0, 100);
+  // angry glare toward the middle
+  const look = army === 'us' ? 8 : -8;
+  T.line([[-64, -16], [-16, 6]], 10); T.line([[16, 6], [64, -16]], 10);
+  fill(ell(-34 + look, 24, 12, 14), INK); fill(ell(34 + look, 24, 12, 14), INK);
+  T.line([[-26, 80], [0, 70], [26, 80]], 8);
+  if (army === 'us') {
+    // forage cap (kepi) tipped forward with a brass badge
+    ink(c => { c.moveTo(-110, -40); c.quadraticCurveTo(-100, -130, 10, -150); c.quadraticCurveTo(120, -140, 112, -60); c.closePath(); }, '#24345f', 6);
+    ink(c => { c.moveTo(-120, -44); c.quadraticCurveTo(0, -70, 120, -50); c.quadraticCurveTo(140, -20, 90, -16); c.quadraticCurveTo(0, -30, -110, -14); c.closePath(); }, '#141c33', 5);
+    ink(ell(0, -84, 14, 12), '#e0a43a', 3);
+  } else {
+    // tall black shako with a brass plate and a white plume
+    ink(c => { c.moveTo(-90, -40); c.lineTo(-100, -230); c.lineTo(100, -230); c.lineTo(90, -40); c.closePath(); }, '#1a1a20', 6);
+    ink(c => { c.moveTo(-104, -40); c.quadraticCurveTo(0, -70, 104, -40); c.quadraticCurveTo(110, -10, 70, -14); c.quadraticCurveTo(0, -30, -70, -14); c.quadraticCurveTo(-110, -10, -104, -40); c.closePath(); }, '#101014', 4);
+    ink(c => { c.moveTo(-40, -170); c.lineTo(0, -200); c.lineTo(40, -170); c.lineTo(30, -100); c.lineTo(0, -84); c.lineTo(-30, -100); c.closePath(); }, '#e0a43a', 4);
+    ink(ell(0, -140, 12, 14), '#f2c344', 3);
+    ink(c => { c.moveTo(-14, -230); c.quadraticCurveTo(-30, -300, 0, -330); c.quadraticCurveTo(30, -300, 14, -230); c.closePath(); }, '#fbf7ef', 4);
+  }
+  g.restore();
+}
+function cannon(x, y, s, dir) {
+  g.save(); g.translate(x, y); g.scale(s * dir, s);
+  // carriage + wheel
+  ink(c => { c.moveTo(-200, 90); c.lineTo(40, 20); c.lineTo(60, 80); c.lineTo(-180, 140); c.closePath(); }, '#7a5230', 6);
+  ink(ell(-20, 110, 90, 90), '#8a5a32', 7);
+  for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; T.line([[-20, 110], [-20 + Math.cos(a) * 80, 110 + Math.sin(a) * 80]], 7); }
+  T.P(ell(-20, 110, 78, 78)); g.lineWidth = 6; g.strokeStyle = INK; g.stroke();
+  ink(ell(-20, 110, 18, 18), '#5a3a22', 4);
+  // barrel
+  ink(c => { c.moveTo(-170, -10); c.lineTo(230, -60); c.lineTo(240, 30); c.lineTo(-160, 70); c.quadraticCurveTo(-210, 30, -170, -10); c.closePath(); }, '#3a3a40', 7);
+  fill(c => { c.moveTo(-150, 0); c.lineTo(220, -46); c.lineTo(222, -30); c.lineTo(-150, 16); c.closePath(); }, 'rgba(255,255,255,.18)');
+  [[-60, -2, 72], [120, -24, 82]].forEach(([bx, by, h]) => ink(rr(bx, by - 10, 20, h + 4, 6), '#4a4a52', 4));
+  ink(ell(236, -14, 22, 48), '#2a2a30', 6); fill(ell(240, -14, 12, 32), '#0a0a0c');
+  g.restore();
+}
+function pig() {
+  g.save(); g.translate(960, 0); g.scale(.88, .88); g.translate(-960, 175);
+  const cx = 960;
+  // suit body: black tailcoat, brown waistcoat, gold chain
+  const body = c => { c.moveTo(cx - 250, H + 20); c.quadraticCurveTo(cx - 290, 760, cx - 200, 660); c.quadraticCurveTo(cx, 590, cx + 200, 660); c.quadraticCurveTo(cx + 290, 760, cx + 250, H + 20); c.closePath(); };
+  ink(body, '#232026', 8);
+  ink(c => { c.moveTo(cx - 110, 660); c.lineTo(cx + 110, 660); c.lineTo(cx + 130, H + 20); c.lineTo(cx - 130, H + 20); c.closePath(); }, '#6b4a2e', 6);
+  for (let k = 0; k < 3; k++) ink(ell(cx, 900 + k * 50, 9, 9), '#e0a43a', 3);
+  // watch chain
+  g.strokeStyle = '#f2c344'; g.lineWidth = 7; g.setLineDash([10, 6]); T.P(c => { c.moveTo(cx - 90, 900); c.quadraticCurveTo(cx - 10, 960, cx + 90, 900); }); g.stroke(); g.setLineDash([]);
+  // lapels
+  ink(c => { c.moveTo(cx - 110, 650); c.lineTo(cx - 40, 800); c.lineTo(cx - 170, 720); c.closePath(); }, '#2e2a32', 5);
+  ink(c => { c.moveTo(cx + 110, 650); c.lineTo(cx + 40, 800); c.lineTo(cx + 170, 720); c.closePath(); }, '#2e2a32', 5);
+  // crossed arms: two sleeves making an X across the chest, trotters tucked under
+  const sleeve = (x0, y0, x1, y1, col) => { T.line([[x0, y0], [x1, y1]], 112); T.line([[x0, y0], [x1, y1]], 98, col); T.line([[x0, y0 - 30], [x1, y1 - 30]], 8, 'rgba(255,255,255,.08)'); };
+  sleeve(cx - 250, 860, cx + 150, 780, '#2a262e');
+  ink(rr(cx + 140, 740, 46, 80, 14), '#fbf7ef', 4); ink(ell(cx + 196, 782, 28, 34), '#3a3036', 5);
+  sleeve(cx + 250, 880, cx - 150, 800, '#36313a');
+  ink(rr(cx - 186, 760, 46, 80, 14), '#fbf7ef', 4); ink(ell(cx - 196, 802, 28, 34), '#3a3036', 5);
+  T.line([[cx - 30, 850], [cx + 40, 860]], 4, 'rgba(0,0,0,.4)');
+  // head: dark bristly pig, smug half-lidded look
+  const hx = cx, hy = 470;
+  ink(c => { c.moveTo(hx - 140, hy - 110); c.quadraticCurveTo(hx - 200, hy - 230, hx - 150, hy - 250); c.quadraticCurveTo(hx - 110, hy - 200, hx - 60, hy - 160); c.closePath(); }, '#3a3036', 6);
+  ink(c => { c.moveTo(hx + 140, hy - 110); c.quadraticCurveTo(hx + 200, hy - 230, hx + 150, hy - 250); c.quadraticCurveTo(hx + 110, hy - 200, hx + 60, hy - 160); c.closePath(); }, '#3a3036', 6);
+  fill(c => { c.moveTo(hx - 135, hy - 130); c.quadraticCurveTo(hx - 170, hy - 210, hx - 150, hy - 228); c.quadraticCurveTo(hx - 120, hy - 190, hx - 85, hy - 160); c.closePath(); }, '#e89aa0');
+  fill(c => { c.moveTo(hx + 135, hy - 130); c.quadraticCurveTo(hx + 170, hy - 210, hx + 150, hy - 228); c.quadraticCurveTo(hx + 120, hy - 190, hx + 85, hy - 160); c.closePath(); }, '#e89aa0');
+  ink(ell(hx, hy, 210, 190), '#3a3036', 8);
+  // bristles on the crown + cheeks
+  for (let i = 0; i < 26; i++) { const a = -Math.PI + i / 25 * Math.PI, x = hx + Math.cos(a) * 200, y = hy + Math.sin(a) * 180; T.line([[x, y], [x + Math.cos(a) * 18, y + Math.sin(a) * 18]], 5); }
+  fill(ell(hx + 70, hy + 40, 120, 130), 'rgba(0,0,0,.15)');
+  fill(ell(hx - 80, hy - 90, 70, 30, -.4), 'rgba(255,255,255,.08)');
+  // smug eyes: half-lidded, one brow raised
+  [[-80, 0], [80, 0]].forEach(([dx]) => { ink(ell(hx + dx, hy - 30, 38, 30), '#fbf7ef', 5); fill(ell(hx + dx + 10, hy - 22, 12, 14), INK); fill(c => { c.rect(hx + dx - 45, hy - 66, 90, 40); }, '#3a3036'); T.line([[hx + dx - 40, hy - 28], [hx + dx + 40, hy - 28]], 7); });
+  T.line([[hx - 130, hy - 90], [hx - 40, hy - 74]], 10); T.line([[hx + 40, hy - 70], [hx + 130, hy - 110]], 10);
+  // big pink snout
+  ink(ell(hx + 10, hy + 70, 90, 66), '#f2a7ae', 7);
+  fill(ell(hx - 20, hy + 70, 14, 22), '#7a3a44'); fill(ell(hx + 40, hy + 70, 14, 22), '#7a3a44');
+  fill(ell(hx - 10, hy + 40, 40, 14), 'rgba(255,255,255,.35)');
+  // smirk
+  T.line([[hx - 70, hy + 132], [hx + 10, hy + 142], [hx + 90, hy + 116]], 8);
+  // gold bow tie
+  ink(c => { c.moveTo(hx, 640); c.lineTo(hx - 110, 600); c.lineTo(hx - 120, 690); c.closePath(); }, '#d9a23a', 6);
+  ink(c => { c.moveTo(hx, 640); c.lineTo(hx + 110, 600); c.lineTo(hx + 120, 690); c.closePath(); }, '#d9a23a', 6);
+  ink(rr(hx - 24, 618, 48, 46, 10), '#e8b64a', 5);
+  // "look at me" impact ticks
+  [[-260, -140, -1], [260, -140, 1], [-240, -40, -1], [240, -40, 1]].forEach(([dx, dy, sd], i) => { g.save(); g.translate(hx + dx, hy + dy); g.rotate(sd * (i < 2 ? .7 : 1.2)); ink(rr(-10, -40, 20, 70, 8), '#ffb12a', 5); g.restore(); });
+  g.restore();
+}
+function title() {
+  // red brush stroke under the title
+  g.save(); g.translate(960, 300); g.rotate(-.02);
+  ink(c => { c.moveTo(-460, -10); c.quadraticCurveTo(0, -30, 480, -18); c.lineTo(470, 14); c.quadraticCurveTo(0, 6, -440, 22); c.closePath(); }, '#e2231a', 5);
+  for (let k = 0; k < 8; k++) T.line([[-420 + k * 110, -6 + (k % 3) * 6], [-340 + k * 110, -8 + (k % 2) * 8]], 3, 'rgba(255,140,120,.6)');
+  g.restore();
+  T.title('THE PIG', 960, 245, 240, '#ffffff', -.02, 'center');
+}
+
+document.fonts.load('100px Lucky').then(() => {
+  background();
+  flag(110, 90, 380, 250, 'us', -1);
+  flag(1810, 120, 380, 250, 'uk', 1);
+  // back ranks first
+  soldier(540, 720, .42, 'us'); soldier(420, 660, .55, 'us'); soldier(1380, 720, .42, 'uk'); soldier(1500, 680, .55, 'uk');
+  soldier(250, 600, .75, 'us'); soldier(80, 540, .9, 'us'); soldier(1670, 640, .75, 'uk'); soldier(1840, 580, .9, 'uk');
+  cannon(330, 870, .9, 1); cannon(590, 920, .6, 1);
+  cannon(1590, 870, .9, -1); cannon(1330, 920, .6, -1);
+  pig();
+  T.grade('rgba(10,15,30,.6)');
+  title();
+  window.DONE = true;
+});
+</script>

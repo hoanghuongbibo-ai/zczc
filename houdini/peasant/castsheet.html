@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>@font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); } @font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); } body{margin:0;background:#222}</style></head>
+<body><canvas id="c" width="1920" height="1080"></canvas>
+<script src="js/cast-med.js"></script>
+<script src="js/anim-med.js"></script>
+<script>
+window.draw = (t) => { const c = document.getElementById('c'), x = c.getContext('2d'); x.setTransform(1,0,0,1,0,0); x.fillStyle = '#efe4c8'; x.fillRect(0,0,1920,1080);
+  const M = MED, rows = [
+   [['Hugh', M.hugh(), {face:'smile', arms:'wave'}], ['Hugh (hood)', M.hughHood(), {face:'tired', hold:'hoe', arms:'dig'}], ['Wife', M.wife(), {face:'smile', hold:'jug', arms:'hold'}], ['Son', M.son(), {face:'grin', arms:'side'}, .75], ['Daughter', M.daughter(), {face:'neutral', hold:'basket', arms:'carry'}, .75], ['Abbot', M.abbot(), {face:'sly', hold:'crozier', arms:'reach'}], ['Monk', M.monk(), {face:'neutral', arms:'pray'}]],
+   [['Steward', M.steward(), {face:'stern', hold:'scroll', arms:'hold'}], ['Reeve', M.reeve(), {face:'frown', arms:'hip'}], ['Walter', M.walter(), {face:'worried', arms:'shrug'}], ['Edward III', M.edward3(), {face:'grin', arms:'up'}], ['Advisor', M.advisor(), {face:'worried', arms:'cross'}], ['Clerk', M.clerk(), {face:'neutral', hold:'scroll', arms:'hold'}], ['Coroner', M.coroner(), {face:'sad', arms:'side'}]]];
+  rows.forEach((r, j) => r.forEach(([n, p, o, sc], i) => { const X = 150 + i * 270, Y = 470 + j * 520; p.draw(x, X, Y, sc || 1.25, t, o); x.fillStyle = '#2b1d16'; x.font = '28px "Luckiest Guy"'; x.textAlign = 'center'; x.fillText(n, X, Y + 50); }));
+  if (window.MEDA && MEDA.ox) { x.fillStyle = '#efe4c8'; x.fillRect(0, 560, 1920, 520); const A = MEDA; A.plough(x, 330, 980, 1.1, t); A.ox(x, 560, 980, 1.1, t, { yoke: true, walk: t * .5 }); A.pig(x, 900, 980, 1.3, t, { spots: true }); A.pig(x, 1080, 980, 1.1, t, { col: '#b86a4a', root: true }); A.hen(x, 1240, 980, 1.6, t, {}); A.hen(x, 1340, 980, 1.8, t, { rooster: true }); A.goose(x, 1470, 980, 1.4, t, {}); A.fox(x, 1640, 980, 1.5, t, {}); A.cat(x, 1820, 980, 1.6, t, {}); }
+  return c.toDataURL('image/png'); };
+</script></body></html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medieval Peasants — preview</title>
+<style>
+  @font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+  @font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #5c1f1b; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div><button id="play">▶ Play</button><span id="time"></span></div>
+<script>window.RENDER_SCALE = 1.5; window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true; window.WORDS = [];
+window.FILM_CFG = { narration: 'peasant/assets/audio/preview-bed.mp3', openUntil: 0, badgeIcon: (c, t) => { c.fillStyle = '#c8a058'; c.beginPath(); c.moveTo(-14, 6); c.lineTo(0, -10); c.lineTo(14, 6); c.closePath(); c.fill(); c.fillStyle = '#e8d8b4'; c.fillRect(-10, 6, 20, 10); } };</script>
+<script src="../js/toon.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../canada/js/foley.js"></script>
+<script src="../rome/js/paint.js"></script>
+<script src="../sketch/js/rig.js"></script>
+<script src="../sketch/js/cast.js"></script>
+<script src="../sketch/js/world.js"></script>
+<script src="../sketch/js/ui.js"></script>
+<script src="../sketch/js/props.js"></script>
+<script src="../sketch/js/ui2.js"></script>
+<script src="../sketch/js/sets2.js"></script>
+<script src="../sketch/js/horse.js"></script>
+<script src="../sketch/js/film2.js"></script>
+<script src="../sketch/js/ck.js"></script>
+<script src="../sketch/js/life.js"></script>
+<script src="js/cast-med.js"></script>
+<script src="js/anim-med.js"></script>
+<script src="js/sets-med.js"></script>
+<script src="js/preview.js"></script>
+<script src="../js/player.js"></script>
+<script>window.Show = F2.build(15.2);</script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

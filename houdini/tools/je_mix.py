@@ -70,12 +70,12 @@ def main():
     hop = 441; e = np.array([P.rms(narr[i:i + hop]) for i in range(0, len(narr), hop)]); act = np.clip((20 * np.log10(e + 1e-9) + 42) / 12, 0, 1)
     sm = np.zeros_like(act); v = 0
     for i, a in enumerate(act): v = v + (a - v) * (.5 if a > v else .04); sm[i] = v
-    gain = 1 - .58 * np.repeat(sm, hop)[:len(M)]; gain = np.pad(gain, (0, max(0, len(M) - len(gain))), constant_values=1); M = M * gain
+    gain = 1 - .7 * np.repeat(sm, hop)[:len(M)]; gain = np.pad(gain, (0, max(0, len(M) - len(gain))), constant_values=1); M = M * gain
     n = min(len(film), len(M)); mix = film[:n] + M[:n]; print('peak', np.max(np.abs(mix)))
     wav = out + '.mix.wav'
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', wav], input=mix.astype(np.float32).tobytes(), check=True)
     if '--stem' in sys.argv: subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', sys.argv[sys.argv.index('--stem') + 1]], input=M.astype(np.float32).tobytes(), check=True)
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'alimiter=limit=0.79:level=false', '-c:a', 'aac', '-b:a', '192k', out], check=True)
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', P.loud_af(wav), '-c:a', 'aac', '-b:a', '192k', out], check=True)
     os.remove(wav); print('wrote', out)
 
 if __name__ == '__main__':

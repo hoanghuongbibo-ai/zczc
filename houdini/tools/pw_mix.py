@@ -262,6 +262,20 @@ def build_music(total, shots):
         place(M, y * g, t0)
     return M
 
+def _lufs(wav, af):
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', wav, '-af', (af + ',' if af else '') + 'ebur128=peak=true', '-f', 'null', '-'], capture_output=True, text=True).stderr
+    s = r[r.rindex('Summary:'):]; import re as _r
+    return float(_r.search(r'I:\s+(-?[\d.]+) LUFS', s).group(1))
+
+def loud_af(wav, I=-14.0, TP=-3.0):  # limiter set 2 dB under the -1 dBTP target: AAC encoding adds inter-sample overs
+    """gain + true-peak limiter, iterated until the result measures YouTube's -14 LUFS (true peak under -1 dBTP)"""
+    lim = f"alimiter=limit={10 ** (TP / 20):.4f}:level=false:attack=1:release=60"; g = I - _lufs(wav, '')
+    for _ in range(3):
+        af = f"volume={g:.2f}dB,{lim}"; got = _lufs(wav, af)
+        if abs(got - I) < .3: break
+        g += I - got
+    print(f'loudness: gain {g:+.2f} dB -> {got:.1f} LUFS'); return af
+
 def main():
     src, out = sys.argv[1], sys.argv[2]
     shots = json.loads(os.environ.get('PW_SHOTS', '[36.9, 273.87, 997.3]'))
@@ -283,7 +297,7 @@ def main():
     subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', wav], input=mix.astype(np.float32).tobytes(), check=True)
     if '--stem' in sys.argv:
         subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'f32le', '-ar', str(SR), '-ac', '1', '-i', '-', sys.argv[sys.argv.index('--stem') + 1]], input=M.astype(np.float32).tobytes(), check=True)
-    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', 'alimiter=limit=0.79:level=false', '-c:a', 'aac', '-b:a', '192k', out], check=True)
+    subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', src, '-i', wav, '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-af', loud_af(wav), '-c:a', 'aac', '-b:a', '192k', out], check=True)
     os.remove(wav); print('wrote', out)
 
 if __name__ == '__main__':

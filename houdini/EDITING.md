@@ -130,3 +130,98 @@ The rules here apply to every video in this repo. They come from 15 clips the us
 - **Event title plates** ("THE HONGMEN FEAST") slide in on a red-trimmed white bar as the scene opens.
 - **Letters and documents are written in a personal hand** and read out ("Look, just say I'm technically the boss… — Liu Bang").
 - **Silhouettes and shadows on a wall** for violence; ghosts fade out for deaths.
+
+## 8. Lessons from Historically, "WORLD WAR 1 [No AI]" (31 min; the user's study notes)
+These come from the user's notes on the video (transcript and frames; nobody could listen to the sound). They sit on top of everything above.
+
+**Story shell**
+- **Wrap the history in a shell with a goal.** WW1 is played as a four-disc video game; each disc is one stage of the war and has a "mission". For every video, pick a shell before writing shots: a game, a trial, a TV show, a voyage, a heist, the jar on the shelf.
+  - Give each chapter a question or mission the viewer waits to see answered.
+- **Run a B-plot that escalates.** In WW1 the game slowly becomes self-aware: it traps the hosts, then imprisons them, then a memory leak lets them escape at the end. It needs its own rising stakes and its own climax near the end. This is what keeps people watching to minute 31.
+- **Weave the CTA or sponsor into the plot.** The game turns on the viewer ("you're just a camera for someone on YouTube"), and the sponsor read follows. Never cut away cold.
+- **Shift tone deliberately.** It is funny most of the time and serious at the right moment (the Armenian genocide, shell shock). For heavy passages:
+  - music out, no gags;
+  - colder and desaturated colour;
+  - slower cuts;
+  - numbers written by hand, with the euphemism struck through ("~~RELOCATION~~").
+- **Pay it off at the end.** Call back to an early gag, then tease the next video ("World War II: coming soon… or not").
+- **Handmade is a selling point.** Keep the house style consistent and the details hand-crafted, so the film never looks generic.
+
+**Editing**
+- **Change the picture every 2–5 s**: a new shot, a map move, a new expression or text appearing. Two consecutive frames sampled 10 s apart are almost never the same.
+  - Roughly 70% illustration and 30% host or character reactions, alternating.
+- **Let a joke breathe.** Hold the reaction 0.5–1 s before cutting.
+- **Reuse one branded UI kit** in every chapter: chapter card, mission card, "PAUSE"/loading card, lower thirds.
+  - Here: `F2.chapter` ribbons, badges and trackers, plus a mission-card variant.
+  - Name the chapters and print their timestamps for the YouTube description.
+- **Transitions to keep in the toolbox:**
+  - an eye, binocular or spyglass mask (POV);
+  - a crane-up from street level that becomes the map at the top of the move;
+  - a glitch or RGB split;
+  - a PAUSE wall as a chapter break;
+  - a stage with red curtains to re-enact a complicated event;
+  - internet formats redrawn in house style (TRADE OFFER, BREAKING NEWS, a chalkboard). At most one per chapter, and never with copied images.
+- **Text overlays:**
+  - a location and date lower third on every new place;
+  - names written on the map itself;
+  - a scrolling region banner;
+  - a date-range strip at the end of a war;
+  - bracketed "inner voice" captions as a silent second joke layer ("[we're getting closer to 20!!]").
+- **The narration moves the picture.** Mark a "/" in the script at every clause that needs a new image. Use J-cuts and L-cuts: the voice leads into or trails over a cut.
+
+**Camera (2D)**
+- **Never put two shots of the same size back to back.** Cycle wide → close → medium → wide.
+- **Push in** as information turns serious; **pull out** to conclude or to show scale. Start on a small object and **reveal** the scene by pulling back.
+- **Pan in the direction of the action** (an army advancing left to right means the camera slides right). Keep the 180° rule in two-shots.
+- **Shot vocabulary to rotate:**
+  - establishing shot with lower third;
+  - top-down street with dot crowds;
+  - map;
+  - two-shot;
+  - face close-up;
+  - over-the-shoulder at a screen or event;
+  - POV;
+  - low angle for a giant or a menace;
+  - in-trench at soldier height;
+  - insert on an object;
+  - a blueprint with a pencil (study this one: the whole assassination was drawn step by step).
+- **Shake only 3–8 frames,** for cannon, explosions and impacts.
+
+**Visuals**
+- **Characters read by silhouette.** Each nation or person is identified by one or two props (a hat, a moustache, a uniform, a flag). Personify countries: flags with faces, nations at the treaty table, Britain and Russia in boxing gloves, Germany collapsing like a drunk.
+- **Give each chapter its own palette.** For example: the front in browns and ochre with orange smoke; the evil game in deep purple; a tragedy in cold, near-mono grey-blue.
+  - Light the scene to tell the story: a warm desk lamp, a screen's glow on faces, backlit smoke.
+- **Every exterior gets three layers that parallax:** foreground (grass, sandbags, trees), the characters, then sky and smoke.
+- **Maps are built in layers:** a fixed base, country colour, then arrows and icons. Use playful icons in place of dry arrows (a beer mug, a rubber duck, a butterfly net "catching" America). Trenches draw themselves to the sea.
+- **At least one visual metaphor per minute,** rather than only illustrating the literal words.
+
+**Sound**
+- **Every on-screen action makes a sound:**
+  - text pops;
+  - map swooshes;
+  - footsteps and guns;
+  - the "over the top" whistle;
+  - UI blips;
+  - glitches.
+  - Comic stingers (record scratch, slide whistle, bonk) are allowed, but sparingly.
+- **A continuous ambience bed per location:** trench wind, street noise, room tone.
+- **One music theme per chapter, matched to its palette.** Change the music at the transition, and never let one cue run unchanged past ~60–90 s.
+  - **Silence before a heavy line or a punchline.**
+- **Mix:**
+  - priority: voice > key SFX > music > ambience;
+  - music ducks 10–15 dB under the voice;
+  - final loudness **−14 LUFS integrated, true peak ≤ −1 dBTP**;
+  - check on headphones, laptop speakers and a phone;
+  - credit licensed music and SFX in the description.
+  - `pw_mix.loud_af` in the mixers (`tools/pw_mix.py`, `tools/je_mix.py`) raises the gain and limits the peaks, re-measuring until the result reads −14 LUFS. The limiter sits at −3 dBFS because AAC encoding adds inter-sample peaks. The War of Jenkins' Ear went from −19.3 LUFS (v4) to −14.5 LUFS with a −1.4 dBTP true peak. Music ducking is now about −10.5 dB, up from about −7.5 dB.
+
+**Pre-publish checklist**
+1. A hook and the shell inside the first 30 s.
+2. Named chapters, with their timestamps.
+3. No shot still for more than ~5 s.
+4. A palette and a music theme per chapter.
+5. One serious tone shift, handled properly.
+6. The CTA woven into the plot.
+7. A callback and a teaser at the end.
+8. −14 LUFS, true peak no higher than −1 dBTP.
+9. Sources, music and SFX credited.

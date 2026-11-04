@@ -1,0 +1,185 @@
+Cold open
+[VISUAL: A half-finished Roman room. Fresh plaster, a ladder, a bucket of pigment. A bored worker picks up a stick of charcoal.]
+[SFX: scratch, scratch, scratch]
+Somewhere in a house in Pompeii, a guy who is very much not getting paid enough picks up a lump of charcoal and scribbles a note on a wall that's halfway through a remodel. A date. A few words. Probably about somebody eating too much. We're honestly not sure.
+[ON-SCREEN TEXT: "XVI K NOV" — the 16th day before the Kalends of November = October 17]
+He puts the charcoal down. He goes home. He forgets about it.
+[MUSIC: record scratch]
+Two thousand years later, that doodle is in the news all over the world, because it might prove that every textbook on Earth has the wrong date for the most famous disaster in history.
+[VISUAL: The same scrawl, October 2018. Archaeologists crowd around it like it's a winning lottery ticket.]
+And that's the thing about Pompeii. You think you know the story. Volcano goes boom. Everybody freezes in place. The end.
+Except almost none of that is quite right.
+[MAP: Bay of Naples, AD 79. Pompeii pulses red. Vesuvius looms about 6 miles away.]
+Pompeii didn't get buried once. By my count, it got buried five times: by Rome, by a volcano, by time, by our own stories, and by its own crumbling walls. And every time, somebody had to dig it back out.
+So how did a perfectly average Roman beach town, a place nobody important cared about, become the most famous dead city on Earth?
+Let's dig.
+[CTA #1] This story has more plot twists than a soap opera: a famous "mother" who turned out to be a man, more than 160 bombs, and a date that might be wrong in every textbook you've ever owned. So make sure you watch to the end. Now, back to the Bay of Naples. We have a city to dig up.
+Beat 2 — The world before: a town nobody bragged about
+[MUSIC: light, plucky strings]
+[MAP: Italy, 6th century BC. Zoom to the mouth of the Sarno River.]
+To understand why Pompeii matters, we first need to admit something slightly rude: for most of its life, Pompeii didn't matter.
+The town started out around the 6th century BC, give or take, as a settlement of the Oscans, one of the many local peoples of ancient Italy. One popular theory says the name comes from the Oscan word pumpe, meaning "five" — maybe five little villages that merged. Maybe. Nobody signed the founding paperwork.
+[ON-SCREEN TEXT: "pumpe" = five (a theory, not a fact)]
+Over the next few centuries the place gets passed around like the last slice of pizza at a party. Greeks, Etruscans, and then the Samnites, a tough hill people who build a big chunk of the city walls you can still walk along today.
+Then Rome shows up. And Rome does what Rome always does.
+[MAP: Rome's territory spreading across Italy like spilled wine.]
+For a long time Pompeii is one of Rome's "allies," which is a polite way of saying: you get to keep your language, you send us soldiers, and you don't get to vote. In 91 BC, the Italian allies get fed up and go to war for full citizenship. It's called the Social War, which sounds like a fight over who got invited to brunch, but it's a real and bloody war.
+Pompeii picks a side. The wrong side.
+Beat 3 — The spark: Sulla moves in
+[VISUAL: A Roman general, enormous chin, arms crossed, staring at Pompeii's walls.]
+This is Lucius Cornelius Sulla — that's SULL-uh. Roman general, future dictator, and a man with the warm personality of a parking ticket. In 89 BC he besieges Pompeii.
+Now, here's a fun one: historians still argue about whether he actually took the city that year. The walls show damage, but some scholars think Pompeii held out longer than people assume. Either way, Rome wins the war. And around 80 BC, Sulla punishes the town the Roman way: he moves in a colony of his retired soldiers, likely a few thousand of them.
+[SKIT]
+SULLA: Congratulations, Pompeii! You're Roman now.
+POMPEIAN: Oh, wow. Thanks. What's the catch?
+SULLA: Two thousand of my guys need houses.
+POMPEIAN: …Whose houses?
+SULLA: [smiles] Great question.
+[END SKIT]
+The town gets a new official name, Colonia Cornelia Veneria Pompeianorum, which is a mouthful, so we're sticking with Pompeii. Latin replaces Oscan on the public inscriptions. The old language doesn't vanish overnight, but officially, it's out.
+[ON-SCREEN TEXT: BURIAL #1 — kind of]
+And I'm going to count that as Pompeii's first burial. Not under ash. Under paperwork. The Oscan town gets quietly covered up by a Roman one.
+Pompeii: buried. Again. Well — for the first time. You know what I mean.
+Beat 4 — The escalation chain: a normal town next to a not-normal mountain
+[MUSIC: upbeat, market sounds]
+Over the next 150 years, Pompeii becomes… fine. Comfortable. A busy port town of maybe 10,000 to 20,000 people — historians argue about that number, and the honest answer is a range. [VISUAL: A bustling Pompeii street. Merchants sell goods from open storefronts, carts carry produce past pedestrians, and people gather outside cafés and workshops. A comfortable, thriving Roman town.]
+The historian Alison Cooley puts it bluntly: no crucial moment in Roman history hinges on Pompeii. No famous Pompeian made it big in Roman politics or literature. If Rome were the United States, Pompeii would be a pleasant coastal town you drive through on the way to somewhere you've actually heard of.
+But ordinary is exactly what makes it priceless. Because the people of Pompeii did one thing constantly.
+They wrote on the walls.
+[VISUAL: Animated street, every wall covered in scribbles that pop up like notifications.]
+Election ads. Love notes. Insults. Gladiator fan art. Pompeii's walls were basically its group chat, its Yelp reviews, and its comment section, all at once. And somebody, at some point, got so sick of it that they scratched this onto a wall — and it shows up in more than one spot in town:
+[ON-SCREEN TEXT: "I am amazed, wall, that you have not fallen in ruins, you who bear the weight of so many boring inscriptions." — graffito, CIL IV 1904, trans. Sententiae Antiquae]
+That's real. Two thousand years ago, a guy left a comment complaining about the comments. Hold onto that wall. It's going to come back.
+Now, in AD 59, Pompeii makes the news in Rome for a reason no tourism board wants. The historian Tacitus reports that during a gladiator show in Pompeii's amphitheater, trash talk between locals and visitors from the nearby town of Nuceria — noo-SEER-ee-uh — turned into stones, then swords. [VISUAL: AD 59, Pompeii amphitheater. Gladiators fight in the arena as spectators from Pompeii and Nuceria shout insults at each other from opposite sides of the stands. A stone flies through the crowd, triggering a violent brawl.]
+[MUSIC: drops out]
+People died. Tacitus says many Nucerians were carried home wounded or dead. And somebody in Pompeii later painted the riot on a wall of their house, which is how we have one of the only images of a real sporting riot from the ancient world.
+[ARTIFACT: Riot fresco, National Archaeological Museum of Naples]
+Rome's response is very familiar to any sports fan: the Senate bans Pompeii from holding these kinds of shows for ten years. The organizer gets exiled, and the town's fan clubs — the illegal associations — get shut down. Imagine your NFL team losing home games until 2036 because of one bad tailgate.
+Then comes the ground.
+[SFX: low rumble]
+On February 5th, in either AD 62 or AD 63 — Seneca says one, Tacitus the other, and scholars are still arguing — a massive earthquake hits the region. The philosopher Seneca writes that Pompeii was badly damaged, statues cracked, and a flock of 600 sheep dropped dead, which he blamed on poison gas from the ground.
+[VISUAL: 600 cartoon sheep, very still. One sheep raises a hoof: "I'm fine." It falls over.]
+And here's where you'd expect someone to say, "Hey, maybe the angry mountain is the problem." Nobody does. The Romans don't think of Vesuvius as a volcano. It's a big green mountain covered in vineyards. Seneca thinks earthquakes are caused by air rushing around underground.
+So Pompeii does the most human thing possible. It starts renovating.
+For years. Some of the damage is reportedly still being repaired when the end comes. Which is why, in AD 79, part of this town looks like your neighbor's kitchen during a remodel that has been "almost done" since 2019. Scaffolding. Wet plaster. And one bored worker with a lump of charcoal.
+[VISUAL: Callback — the cold-open worker, mid-scribble.]
+Beat 5 — Sponsor bridge
+[SPONSOR START] — see the Sponsor bridge options section. Bridge uses option 1 (the endless remodel) or option 2, delivered here.
+[SPONSOR END]
+Now where were we? Oh yeah. Pompeii joined Rome the hard way, survived a riot and an earthquake, and is halfway through the world's longest home renovation. Let's talk about the mountain.
+Beat 6 — The climax: the eruption, as an eyewitness saw it
+[MUSIC: tension builds]
+We know what happened next mostly because of one teenager.
+[VISUAL: A 17-year-old Roman with a scroll, looking deeply annoyed at his homework.]
+His name is Pliny the Younger, and he was staying across the bay at Misenum — my-SEE-num — with his uncle, Pliny the Elder. The Elder is a big deal: admiral of the Roman fleet, and the author of an encyclopedia so huge it's basically ancient Wikipedia, if Wikipedia had been written by one man who never slept.
+Decades later, the historian Tacitus asks the nephew how his uncle died. The nephew writes back two letters. They're the only eyewitness account of the eruption we have.
+In the version that comes down to us, it begins in the early afternoon, when the nephew's mother points out a cloud — he says it was of unusual size and appearance, shaped, he writes, like an umbrella pine tree, tall trunk, spreading top.
+[VISUAL: The eruption column rises over the bay, shaped like a pine.]
+And the uncle, being a scientist, looks at the end of the world and thinks: research opportunity.
+[SKIT]
+PLINY THE ELDER: Boat. Now. I need a closer look.
+PLINY THE YOUNGER: Uncle, I have homework.
+PLINY THE ELDER: Suit yourself.
+[END SKIT]
+That part is basically true, by the way. The nephew says he was invited along and chose to stay and study. Which might be the only time in history homework saved a life.
+The uncle turns his rescue fleet toward the danger, because people along the coast need help. Ash and hot pumice start falling on the ships. The helmsman tells him to turn back. According to the nephew, he refuses with a line that sounds like a movie poster: [VISUAL: A Roman rescue fleet sails toward the erupting Mount Vesuvius. Ash and glowing pumice rain down on the ships as sailors shield their faces. On the lead vessel, Pliny the Elder stands firm at the bow while the helmsman urgently gestures toward the open sea.]
+[ON-SCREEN TEXT: "Fortune stood by the courageous." — Pliny the Younger, Letters 6.16, trans. Betty Radice]
+He lands at Stabiae — STAY-bee-eye — at a friend's villa, south of Pompeii. And then, while the sky rains rocks, he takes a bath, eats dinner, and goes to sleep. His nephew reports he was snoring loud enough for people outside his door to hear.
+The household ties pillows to their heads as helmets. It's absurd and it's smart, and it's the last funny thing in this story for a while.
+[MUSIC: drops to a single low note]
+[TONE SHIFT — no jokes until the next marker]
+In Pompeii itself, the first hours are a storm of pumice. Small, light volcanic stones, pouring down, piling up in the streets, about six inches an hour by one study's estimate. Roofs begin to give way under the weight.
+This is the window. And this is the part the movies get wrong.
+Most people likely got out. Not all of them. But Pompeii was not a city frozen in a single instant. It was a city that had hours to run, and many did. Some left with what they could carry. Some stayed to guard their homes, or couldn't leave — the old, the sick, and enslaved people who may not have been allowed to go. [VISUAL: Pompeii residents flee through ash-covered streets, some carrying bundles and valuables, while others remain behind in their homes.]
+One team of volcanologists studied a single house and found a group of people who survived for more than 19 hours before the end.
+The end wasn't lava. Lava never reached Pompeii.
+What came instead were pyroclastic density currents — avalanches of superheated gas and ash that race down a volcano's slopes. A series of them hit the area overnight and into the next morning. When the deadliest ones reached Pompeii, there was no outrunning them.
+Exactly how they killed is still debated. One major study argues the heat killed people almost instantly, even indoors. Another, from 2021, argues the current had cooled by the time it reached the city, and that people died because they couldn't breathe in the ash-filled air for the 10 to 20 minutes it lasted. Either way, they died fast, and they died together.
+[VISUAL: Wide shot of the city under gray ash. No characters.]
+Archaeologists have recovered the remains of about 1,150 people in Pompeii. That's not everyone who died — about a third of the city has never been excavated, and many died outside the walls while fleeing. Italy's culture ministry has put the toll at 15 to 20 percent of the population, at least.
+At Stabiae, the elder Pliny sits down on the beach, on a sheet his servants spread for him. He collapses there, and does not get up. His nephew believed the fumes choked him. He was likely just at the edge of the last current.
+Across the bay, the nephew and his mother run for it through the dark, in a crowd, with ash falling so thick they keep standing up to shake it off. They survive. That's why we have the letters. [VISUAL: Pliny the Elder lies motionless on a beach at Stabiae as ash darkens the sky. Cut to his nephew and mother fleeing through the ash-filled streets at night.]
+When it stopped, Pompeii was under as much as 20 feet of ash and stone.
+[ON-SCREEN TEXT: BURIAL #2]
+Pompeii: buried. Again.
+[MUSIC: a slow, quiet theme — tone remains gentle]
+Beat 7 — The twist: Pompeii didn't actually die that day
+Here's the part nobody tells you.
+For a long time, the story was: Pompeii died in AD 79 and stayed dead. But in 2025, the archaeological park announced new evidence from the southern part of the city that people came back.
+Not the rich. They'd resettled elsewhere — one researcher traced more than 200 likely survivors to a dozen towns nearby, by following family names unique to the area. The people who came back were the ones with nowhere else to go, plus newcomers with nothing to lose. They lived in the upper floors of buildings still poking out of the ash. They turned the old ground floors into cellars, with ovens and mills. [VISUAL: Pompeii slowly being reoccupied. Poor residents climb into surviving upper floors while the buried ground floors become makeshift cellars with ovens and mills.]
+The park's director, Gabriel Zuchtriegel — TSOOKH-tree-gel — described it as a precarious, gray settlement, "a kind of camp." People lived like that, on and off, until about the 5th century AD.
+Why didn't we know? Because early excavators wanted the good stuff: frescoes, statues, gold. The faint traces of the squatters were in the way. So they shoveled them out, often without writing anything down.
+Which is a perfect preview of what happens next.
+[MUSIC: tone lifts — humor returns]
+Eventually, even the squatters leave, and the town is forgotten. Not completely — the locals call the hill above it La Civita, "the city." So the people who lived on top of Pompeii always knew there was a city down there. They just didn't know which one.
+[ON-SCREEN TEXT: BURIAL #3 — by time]
+Pompeii: buried. Again.
+Beat 8 — Rediscovery: the treasure hunters
+[MAP: Bay of Naples, 1590s. A thin blue canal cuts straight across the buried city.]
+Between about 1592 and 1600, an architect named Domenico Fontana is digging a water channel for the Sarno River, and his tunnel goes right through Pompeii. His workers hit walls, paintings, inscriptions.
+And he does… nothing. He keeps digging. Canal's due.
+In 1689 somebody finds an inscription mentioning a town official of Pompeii, and scholars argue about it for a while. Nobody grabs a shovel.
+The shovels finally arrive in 1748, sent by Charles of Bourbon, king of Naples — a man who will later become King Charles III of Spain. His engineer, a Spaniard named Rocque Joaquín de Alcubierre, has already been tunneling into nearby Herculaneum. He moves his crew to Pompeii because the ash there is easier to dig. [VISUAL: 1748. Bourbon-era workers dig through layers of volcanic ash at Pompeii under the direction of Rocque Joaquín de Alcubierre, uncovering the remains of an ancient Roman building.]
+But make no mistake. This isn't science. This is a treasure hunt for a king's palace.
+[SKIT]
+KING CHARLES: Did you find anything?
+ALCUBIERRE: Your Majesty, we've uncovered a Roman town! Streets, homes, the daily lives of thousands —
+KING CHARLES: Is any of it shiny?
+ALCUBIERRE: …There's a statue?
+KING CHARLES: Bring me the statue.
+[END SKIT]
+They don't even confirm which city it is until 1763, when they find an inscription naming the "res publica Pompeianorum" — the community of the Pompeians. Fifteen years of digging before anyone could say for sure where they were.
+Meanwhile, Europe's rich kids discover it. The Grand Tour is in full swing — young aristocrats, writers and artists touring Europe to get cultured. And a freshly dug-up Roman town is the ultimate stop.
+Beat 9 — Fiorelli and the stories we told about the dead
+[VISUAL: A serious 19th-century man with a notebook. Everyone else holds treasure. He holds a ruler.]
+Then comes the man who turns Pompeii from a treasure chest into a crime scene. Giuseppe Fiorelli — fyoh-REL-ee — takes over the excavations and introduces something radical: write everything down. Dig in order. Treat the town as a town.
+And in 1863, he figures out something else.
+[MUSIC: soft, respectful — no jokes in this passage]
+When the ash hardened around the bodies of the dead, the bodies themselves eventually decayed, leaving hollow spaces in the shape of a person. Fiorelli's team poured liquid plaster into those hollows. When it set, they chipped away the ash.
+What came out were people. Shapes curled on their sides, arms raised, faces covered. The casts are still some of the most powerful objects anywhere in the world.
+[ARTIFACT: Cast photographs — shown respectfully, no music sting]
+And we did the most human thing possible with them. We gave them stories. An adult wearing a gold bracelet, holding a child, became "the mother protecting her child." A pair found together became "two sisters in a final embrace." Guides told these stories for generations.
+But they were guesses, based on how the bodies looked to modern eyes.
+In 2024, a team from Harvard, the University of Florence and the Max Planck Institute got permission to test bone fragments from inside casts being restored. They sampled 14 casts and got usable DNA from a handful of individuals.
+The adult with the gold bracelet was a man. And he wasn't related to the child he was holding.
+The genetics also showed that many of these people descended from recent arrivals from the eastern Mediterranean. Pompeii wasn't a sleepy town of one kind of Roman. It was a crossroads. [VISUAL: A Roman man wearing a gold bracelet holds a child amid the ruins of Pompeii. Cut to a busy Roman street filled with merchants and travelers from across the eastern Mediterranean.]
+The researchers themselves warn against overcorrecting. A man holding an unrelated child is not less moving. If anything, it's more. It's just true.
+[ON-SCREEN TEXT: BURIAL #4 — by stories]
+So that's burial number four: not under ash, but under the comforting stories we stacked on top of the people who actually died there.
+Pompeii: buried. Again.
+Beat 10 — The 20th century: bombs and a wall that finally gave up
+[MUSIC: brass, 1940s newsreel energy]
+Fast forward to 1943. World War II. The Allies have landed at Salerno, just south of Pompeii, and German forces are counterattacking. The Allies need to slow down German reinforcements moving along the roads and railways near the site.
+So they bomb those roads and railways. And 1943 bombing is wildly inaccurate. [VISUAL: 1943. Allied bombers fly over Pompeii as explosions tear through nearby roads and railway lines, with smoke rising over the ancient ruins.]
+In August and September 1943, more than 160 Allied bombs hit the ancient city. Some of Pompeii's most famous monuments are damaged — parts of the Forum, the House of the Faun — and the site's museum is hit. The historian Nigel Pollard, who dug through the military archives, concluded the damage was a side effect of aiming at nearby targets, not a deliberate attack on the ruins.
+[VISUAL: The "amazed, wall" graffito appears on a crumbling wall. A bomb whistles. The wall shrugs.]
+Remember that guy who was amazed the wall hadn't collapsed yet? Some of them finally did.
+And the mountain still wasn't finished. In March 1944, Vesuvius erupted again, and according to accounts of the time, it wrecked dozens of American B-25 bombers parked at an airfield at its foot. Somewhere, Pliny the Elder is taking notes.
+After the war, crews rebuilt a lot of what the bombs knocked down. Keep that in mind, because it matters in about 30 seconds.
+November 6th, 2010. After a night of heavy rain, a building on Pompeii's main street, the Schola Armaturarum — often called the House of the Gladiators — collapses into a pile of rubble before the site even opens. Nobody is hurt. But the photos go around the world, and they're embarrassing. [VISUAL: November 2010. The Schola Armaturarum lies collapsed in a heap of rubble along Pompeii's empty main street after a night of heavy rain.]
+Here's the twist: much of what fell was the modern reconstruction from the 1940s, not the original Roman walls. The bombs got it first. The rain finished it.
+[ON-SCREEN TEXT: BURIAL #5 — by its own rubble]
+Pompeii: buried. Again. And that wall from AD 79 finally had something to be amazed about.
+This time the response is money. In 2012, the European Union and Italy launch the Great Pompeii Project, with a budget of 105 million euros — roughly 145 million dollars at the time. Drainage. Shoring up the edges of the unexcavated areas. Security. Actual maintenance.
+It works. And then it works a little too well.
+Beat 11 — Today: too popular to die
+[VISUAL: Split screen — empty Roman street on the left, a wall of selfie sticks on the right.]
+Pompeii now gets more than 4 million visitors a year. On one free-entry Sunday in October 2024, more than 36,000 people showed up in a single day. That's like cramming a sold-out big-league ballpark's worth of people into an ancient town that's thousands of years old and a little bit fragile.
+So starting November 15th, 2024, Pompeii capped daily visitors at 20,000 and started printing names on tickets. Two thousand years after Sulla's veterans moved in, Pompeii is still dealing with too many people showing up uninvited.
+And the digging hasn't stopped. Roughly a third of the city is still underground. Every season turns up something new: rooms, frescoes, scribbles nobody's read in 2,000 years. Thanks to new imaging, researchers in 2026 even recovered dozens of faded scribbles from a single wall, including love notes and insults.
+The comment section, it turns out, never closed.
+Beat 12 — Legacy and close: so when did Pompeii die?
+[MUSIC: warm, reflective]
+Which brings us back to our bored guy with the charcoal.
+[VISUAL: The cold-open wall, today.]
+His note was found in 2018 in a house that was under renovation. It gives a date equal to October 17th. And because charcoal doesn't usually survive long on a wall, archaeologists argued it was written in October of 79 — meaning the eruption happened in the fall, maybe October 24th, not August 24th. The press went wild. Textbooks started hedging.
+But — and you knew there'd be a but — the story isn't over. In late 2024, the park's own director co-wrote a review arguing that August 24th is still on the table. A scholar named Pedar Foss had gone back through the old manuscripts of Pliny's letter and found that August 24th is the only date with real support in that tradition. And the park reported that the charcoal note was still clearly visible years after it was uncovered. So it could have been written in October of AD 78, about ten months before an August eruption.
+On the other side: autumn fruit in the ruins, heavy wool clothing on some victims, and a coin some scholars date to September 79 or later.
+In November 2025, experts held the first international conference just to settle the date. They didn't settle it.
+[ON-SCREEN TEXT: Eruption date — August 24 or October 24, AD 79? Still debated.]
+So here's where that leaves us. Pompeii was an ordinary town. Its people argued about sports, griped about their neighbors, scribbled on walls, and fixed their houses slowly. Then a mountain they didn't understand killed many of them, and everyone who came after — kings, treasure hunters, tour guides, bombers, even well-meaning historians — buried them again, a little, with what we wanted them to be.
+The archaeologists now digging there are doing something new: trying to let Pompeii be what it actually was. Messy. Mixed. Uncertain. Real.
+And about three million people still live in the shadow of Vesuvius today. The mountain, I promise you, is not done either.
+[VISUAL: The worker with the charcoal, one last time. He pauses, looks right at us, and writes something new on the wall.]
+[ON-SCREEN TEXT (invented, clearly labeled): "Wall's still standing. Mostly."]
+[CTA #2] We started with a scribble on a wall, and two thousand years later, we're still arguing about it — which honestly might be the most Roman thing about any of us. If you enjoyed this, hit that like button — it genuinely helps the video reach more people — and subscribe for more [CHANNEL TAGLINE]. It's free, and it takes less time than the Roman Senate took to ban a gladiator show. Now I want to know: if your town got buried tomorrow, what would archaeologists in the year 4026 get completely wrong about you? Write it on the wall — I mean, in the comments. And if you haven't seen [RELATED VIDEO], watch that next. Thanks for watching.

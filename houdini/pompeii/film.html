@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pompeii: Buried Five Times</title>
+<style>
+  @font-face { font-family: "Permanent Marker"; src: url(../canada/assets/fonts/PermanentMarker-Regular.ttf); }
+  @font-face { font-family: "Luckiest Guy"; src: url(../assets/fonts/luckiest-guy-latin-400-normal.woff2) format('woff2'); }
+  @font-face { font-family: Fredoka; font-weight: 700; src: url(../assets/fonts/fredoka-latin-700-normal.woff2) format('woff2'); }
+  html, body { margin: 0; height: 100%; background: #111; color: #eee; font-family: "DejaVu Sans", sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  #stage { width: min(100vw, calc((100vh - 70px) * 16 / 9)); aspect-ratio: 16 / 9; display: block; }
+  button { font: inherit; padding: 8px 18px; border-radius: 6px; border: 2px solid #eee; background: #5c1f1b; color: #fff; cursor: pointer; }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div><button id="play">▶ Play</button><span id="time"></span></div>
+<script>window.RENDER_SCALE = 1.5; window.TOON_FINISH = { grain: 0, vignette: 0 }; window.FIG_DETAIL = true; window.FULL_FILM = true;
+window.FILM_CFG = { narration: 'pompeii/assets/audio/narration-full.mp3', openUntil: 0, meterLabel: 'BURIED', meterStart: 0,
+  tracker: ['HOW DID ', 'POMPEII', ' GET SO FAMOUS?'], badgeIcon: (c, t) => { c.fillStyle = '#9ac8e8'; c.fillRect(0, 0, 76, 50); c.fillStyle = '#6a9a52'; c.beginPath(); c.moveTo(4, 50); c.quadraticCurveTo(28, 14, 34, 12); c.lineTo(44, 12); c.quadraticCurveTo(52, 16, 72, 50); c.fill(); c.fillStyle = 'rgba(120,110,104,.8)'; c.beginPath(); c.arc(39, 6, 7 + Math.sin(t) * 1, 0, 7); c.fill(); } };</script>
+<script src="../js/toon.js"></script>
+<script src="../js/sound.js"></script>
+<script src="../canada/js/foley.js"></script>
+<script src="../rome/js/paint.js"></script>
+<script src="../rome/js/monk.js"></script>
+<script src="../rome/js/animals.js"></script>
+<script src="../rome/js/cine.js"></script>
+<script src="../rome/js/kit.js"></script>
+<script src="../usa/js/cast.js"></script>
+<script src="../canada/js/geo.js"></script>
+<script src="../canada/js/collage.js"></script>
+<script src="../canada/js/scenes.js"></script>
+<script src="../canada/js/type.js"></script>
+<script src="../usa/js/sets.js"></script>
+<script src="../sketch/js/rig.js"></script>
+<script src="../sketch/js/cast.js"></script>
+<script src="../sketch/js/world.js"></script>
+<script src="../sketch/js/ui.js"></script>
+<script src="js/timing.js"></script>
+<script src="../sketch/js/props.js"></script>
+<script src="../sketch/js/ui2.js"></script>
+<script src="../sketch/js/sets2.js"></script>
+<script src="../sketch/js/horse.js"></script>
+<script src="../sketch/js/film2.js"></script>
+<script src="../sketch/js/ck.js"></script>
+<script src="../sketch/js/life.js"></script>
+<script src="../jenkins/js/cast-je.js"></script>
+<script src="../jenkins/js/sets-je.js"></script>
+<script src="../jenkins/js/world.js"></script>
+<script src="../jenkins/js/kit-je.js"></script>
+<script src="../jenkins/js/globe-je.js"></script>
+<script src="../peasant/js/cast-med.js"></script>
+<script src="../peasant/js/anim-med.js"></script>
+<script src="../peasant/js/sets-med.js"></script>
+<script src="../jenkins/js/life-je.js"></script>
+<script src="../jenkins/js/polish-je.js"></script>
+<script src="js/cast-pom.js"></script>
+<script src="js/sets-pom.js"></script>
+<script src="js/ui-pom.js"></script>
+<script src="js/p00.js"></script>
+<script src="js/p01.js"></script>
+<script src="js/p02.js"></script>
+<script src="js/p03.js"></script>
+<script src="js/p04.js"></script>
+<script src="js/p05.js"></script>
+<script src="js/p06.js"></script>
+<script src="js/p07.js"></script>
+<script src="js/p08.js"></script>
+<script src="js/p09.js"></script>
+<script src="js/p10.js"></script>
+<script src="js/p11.js"></script>
+<script src="js/p12.js"></script>
+<script src="../js/player.js"></script>
+<script>window.Show = F2.build(1411.6);</script>
+<script>startPlayer(Show);</script>
+</body>
+</html>

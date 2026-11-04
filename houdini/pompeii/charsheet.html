@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Pompeii cast</title>
+<style>
+@font-face{font-family:Fredoka;font-weight:500;src:url(assets/fonts/fredoka-latin-500-normal.woff2)}
+@font-face{font-family:Fredoka;font-weight:600;src:url(assets/fonts/fredoka-latin-600-normal.woff2)}
+@font-face{font-family:Fredoka;font-weight:700;src:url(assets/fonts/fredoka-latin-700-normal.woff2)}
+@font-face{font-family:"Luckiest Guy";src:url(assets/fonts/luckiest-guy-latin-400-normal.woff2)}
+@font-face{font-family:Caveat;font-weight:700;src:url(assets/fonts/caveat-latin-700-normal.woff2)}
+body{margin:0;background:#111}#stage{width:100vw;display:block}</style></head><body><canvas id="stage"></canvas>
+<script src="../js/toon.js"></script><script src="js/pkit.js"></script><script src="js/folk.js"></script>
+<script>
+(async()=>{const PK=G=window.PK,F=Folk,c=document.getElementById('stage'),ctx=c.getContext('2d');c.width=1920;c.height=1080;
+await Promise.all(['600 20px Fredoka','700 20px Fredoka','20px "Luckiest Guy"','700 20px Caveat'].map(f=>document.fonts.load(f)));
+PK.reset(ctx);ctx.fillStyle='#efe3c4';ctx.fillRect(0,0,1280,720);
+const names=['worker','pompeian','sulla','vet','legion','senator','seneca','younger','elder','mother','helmsman','king','alcub','fiorelli','arch','arch2','arch3','director','scientist','guide','tourist','pilot','historian','digger','tourist18','tacitus'];
+PK.text(ctx,'POMPEII — CAST (original designs in the reference style)',640,40,{font:PK.DISPLAY(30)});const lab={worker:'the bored worker',pompeian:'a Pompeian',sulla:'Sulla',vet:'veteran',legion:'soldier',senator:'senator',seneca:'Seneca',younger:'Pliny the Younger',elder:'Pliny the Elder',mother:'his mother',helmsman:'helmsman',king:'Charles of Bourbon',alcub:'Alcubierre',fiorelli:'Fiorelli',arch:'archaeologist',arch2:'archaeologist',arch3:'archaeologist',director:'Zuchtriegel',scientist:'scientist',guide:'tour guide',tourist:'tourist',pilot:'pilot',historian:'historian',digger:'digger',tourist18:'Grand Tourist',tacitus:'Tacitus'};names.forEach((n,i)=>{const x=60+(i%13)*94,y=i<13?320:660;F.person(ctx,x,y,.78,F.cast(n,{dir:i%3-1}));PK.text(ctx,lab[n],x,y+20,{px:12,w:700,maxW:90});});
+window.READY=true;})();
+</script></body></html>

@@ -112,3 +112,30 @@ The aligner maps the script to the transcript with difflib and interpolates unma
   hospital room, cemetery, grave) and override the date tag / caption.
 - The user asked for "precise, reasonable" motion and called an early generic attempt "amateur": every shot needs a
   motivated action on a word, not just a static picture with a push-in.
+
+### Pompeii series (`houdini/pompeii/`, Nov 2026) — new style + toolkit
+
+- **Round-head style** (user's 27 reference stills + screen recordings of another channel's cartoon-history videos):
+  big white heads with a grey crescent, dot eyes, thick short brows, small tunics, white stick limbs, mitten hands,
+  sandals, flat warm sets. Built as original vectors in `pompeii/js/folk.js` (`Folk.person`, `Folk.cast(name, extra)`
+  with 26 named presets: worker, sulla, elder, younger, king, fiorelli, arch…, `Folk.roman(seed)` extras,
+  `Folk.stamp` cached sprites for crowds, `sheep`, `horse`). The reference stills carry the other channel's watermark
+  and player UI: use them for style only, never paste them into the video, and tell the user.
+- `pompeii/js/pset.js` (`G.PSet` — **never name a global `G.Set`: it clobbers JS `Set` and the page dies with
+  "Set is not a constructor"**): sky/hills/ground, Vesuvius (green, ash, angry face, umbrella-pine column), Pompeian
+  houses/street/city wall, remodel room + charcoal note writer (returns the pen tip so a hand can follow it), bay map +
+  Italy map + routes/pins, galleys, pumice/ash/rain, newspapers, calendars, frames, rubble.
+- `pompeii/js/pkit.js` (`G.PK`): 1080p renderer (logical 1280×720 × SS 1.5 — use `PK.reset(ctx)` not
+  `setTransform(1,…)`), cached layers, anchor helpers (`A`, `since`, `talk` from the narration envelope), furniture
+  (tag, caption, taped note, word-by-word quote card, stamp, big, bubble, name card, pronunciation card, chapter strip,
+  arrows/ticks/crosses, counters, the five-burials card + "buried. again." card). `plib.js` = shot helpers.
+- `pompeii/js/psound.js`: fast score (pluck/market/tension/drone/gentle/brass/warm) + ~40 foley sounds; each sound
+  writes only its own samples (the houdini `sound.js` allocates a full-length buffer per sfx — far too slow for 20+ min).
+- `pompeii/tools/export.mjs`: parallel export — N pages render frame ranges and pipe JPEGs straight into per-worker
+  ffmpeg (no PNG dump; 42k frames would be ~40 GB), audio mixed in Node, segments concatenated. 23.5 min at 1080p30
+  ≈ 20 min with 3 workers on 4 cores. `PS.cut(anchor, draw)` shots last until the next cut.
+- Whisper models can't be downloaded here (Hugging Face is blocked); pocketsphinx + difflib alignment was enough —
+  write the script with numbers spelled out as spoken (`tools/script.txt`) so anchors match.
+- Luckiest Guy has no `€` glyph (renders as `<`): write "EUROS" or use Fredoka for currency symbols. Emoji don't render.
+- Long single-voice videos: one page with show files per chapter (`show1..6.js`), contact sheet per chapter with a
+  stills script before the full render.
